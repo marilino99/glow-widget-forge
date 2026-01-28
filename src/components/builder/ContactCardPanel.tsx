@@ -7,6 +7,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ContactCardPanelProps {
   onBack: () => void;
+  selectedAvatar: string | null;
+  onSelectAvatar: (avatar: string | null) => void;
 }
 
 const avatars = [
@@ -18,11 +20,10 @@ const avatars = [
   "https://api.dicebear.com/7.x/notionists/svg?seed=Leo&backgroundColor=d5f0f0",
 ];
 
-const ContactCardPanel = ({ onBack }: ContactCardPanelProps) => {
+const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCardPanelProps) => {
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   const [email, setEmail] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [avatarTab, setAvatarTab] = useState("gallery");
 
   return (
@@ -121,7 +122,7 @@ const ContactCardPanel = ({ onBack }: ContactCardPanelProps) => {
                 {avatars.map((avatar, index) => (
                   <button
                     key={index}
-                    onClick={() => setSelectedAvatar(avatar)}
+                    onClick={() => onSelectAvatar(avatar)}
                     className={`relative h-16 w-16 overflow-hidden rounded-full transition-all ${
                       selectedAvatar === avatar
                         ? "ring-2 ring-primary ring-offset-2"

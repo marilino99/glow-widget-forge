@@ -3,7 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown } from "lucide-react";
 
-const WidgetPreviewPanel = () => {
+interface WidgetPreviewPanelProps {
+  selectedAvatar?: string | null;
+}
+
+const WidgetPreviewPanel = ({ selectedAvatar }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
 
   return (
@@ -68,9 +72,17 @@ const WidgetPreviewPanel = () => {
               {/* Contact section */}
               <div className="mx-4 mb-4 rounded-xl bg-slate-700/50 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900">
-                    C
-                  </div>
+                  {selectedAvatar ? (
+                    <img
+                      src={selectedAvatar}
+                      alt="Avatar"
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900">
+                      C
+                    </div>
+                  )}
                   <div className="flex-1">
                     <p className="text-xs text-white/60">ciao</p>
                     <p className="text-sm">Write to us</p>
