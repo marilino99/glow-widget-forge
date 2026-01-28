@@ -26,12 +26,12 @@ const WidgetPreviewPanel = ({
   // Theme-based styles
   const isLight = widgetTheme === "light";
   const widgetBg = isLight 
-    ? "bg-white" 
+    ? "bg-gradient-to-b from-violet-100 via-white to-cyan-50" 
     : "bg-gradient-to-br from-slate-800 to-slate-900";
   const widgetText = isLight ? "text-slate-900" : "text-white";
   const widgetSubtext = isLight ? "text-slate-500" : "text-white/60";
   const widgetBorder = isLight ? "border-slate-200" : "border-white/10";
-  const widgetCardBg = isLight ? "bg-slate-100" : "bg-slate-700/50";
+  const widgetCardBg = isLight ? "bg-white" : "bg-slate-700/50";
   const widgetButtonBg = isLight ? "bg-slate-200 hover:bg-slate-300" : "bg-slate-800 hover:bg-slate-700";
 
   return (
