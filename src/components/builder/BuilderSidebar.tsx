@@ -11,6 +11,7 @@ import {
   Star,
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
+import ContactCardPanel from "./ContactCardPanel";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -20,6 +21,24 @@ interface BuilderSidebarProps {
 const BuilderSidebar = ({ onSelectWidget, activeWidget }: BuilderSidebarProps) => {
   const [faqEnabled, setFaqEnabled] = useState(true);
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
+  const [showContactCardPanel, setShowContactCardPanel] = useState(false);
+
+  const handleSelectWidget = (widgetType: string) => {
+    if (widgetType === "contact-card") {
+      setShowContactCardPanel(true);
+    }
+    onSelectWidget(widgetType);
+  };
+
+  const handleBackFromContactCard = () => {
+    setShowContactCardPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
+  // Show Contact Card detail panel
+  if (showContactCardPanel) {
+    return <ContactCardPanel onBack={handleBackFromContactCard} />;
+  }
 
   return (
     <div className="h-full overflow-y-auto bg-background p-6">
@@ -34,19 +53,19 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget }: BuilderSidebarProps) =
           <SidebarItem
             icon={MessageSquare}
             label="Contact card"
-            onClick={() => onSelectWidget("contact-card")}
+            onClick={() => handleSelectWidget("contact-card")}
             active={activeWidget === "contact-card"}
           />
           <SidebarItem
             icon={Phone}
             label="WhatsApp"
-            onClick={() => onSelectWidget("whatsapp")}
+            onClick={() => handleSelectWidget("whatsapp")}
             active={activeWidget === "whatsapp"}
           />
           <SidebarItem
             icon={MessageCircle}
             label="Messenger"
-            onClick={() => onSelectWidget("messenger")}
+            onClick={() => handleSelectWidget("messenger")}
             active={activeWidget === "messenger"}
           />
           <SidebarItem
@@ -55,13 +74,13 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget }: BuilderSidebarProps) =
             hasToggle
             toggleValue={faqEnabled}
             onToggle={setFaqEnabled}
-            onClick={() => onSelectWidget("faq")}
+            onClick={() => handleSelectWidget("faq")}
             active={activeWidget === "faq"}
           />
           <SidebarItem
             icon={Link2}
             label="Custom links"
-            onClick={() => onSelectWidget("custom-links")}
+            onClick={() => handleSelectWidget("custom-links")}
             active={activeWidget === "custom-links"}
           />
         </div>
@@ -76,13 +95,13 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget }: BuilderSidebarProps) =
           <SidebarItem
             icon={LayoutGrid}
             label="Product carousel"
-            onClick={() => onSelectWidget("product-carousel")}
+            onClick={() => handleSelectWidget("product-carousel")}
             active={activeWidget === "product-carousel"}
           />
           <SidebarItem
             icon={Gift}
             label="Product recommendations"
-            onClick={() => onSelectWidget("product-recommendations")}
+            onClick={() => handleSelectWidget("product-recommendations")}
             active={activeWidget === "product-recommendations"}
           />
         </div>
@@ -100,13 +119,13 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget }: BuilderSidebarProps) =
             hasToggle
             toggleValue={visitorCounterEnabled}
             onToggle={setVisitorCounterEnabled}
-            onClick={() => onSelectWidget("visitor-counter")}
+            onClick={() => handleSelectWidget("visitor-counter")}
             active={activeWidget === "visitor-counter"}
           />
           <SidebarItem
             icon={Star}
             label="Google reviews"
-            onClick={() => onSelectWidget("google-reviews")}
+            onClick={() => handleSelectWidget("google-reviews")}
             active={activeWidget === "google-reviews"}
           />
         </div>
