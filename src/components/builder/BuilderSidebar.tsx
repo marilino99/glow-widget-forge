@@ -16,9 +16,11 @@ import ContactCardPanel from "./ContactCardPanel";
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
   activeWidget: string | null;
+  selectedAvatar: string | null;
+  onSelectAvatar: (avatar: string | null) => void;
 }
 
-const BuilderSidebar = ({ onSelectWidget, activeWidget }: BuilderSidebarProps) => {
+const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelectAvatar }: BuilderSidebarProps) => {
   const [faqEnabled, setFaqEnabled] = useState(true);
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -37,7 +39,13 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget }: BuilderSidebarProps) =
 
   // Show Contact Card detail panel
   if (showContactCardPanel) {
-    return <ContactCardPanel onBack={handleBackFromContactCard} />;
+    return (
+      <ContactCardPanel
+        onBack={handleBackFromContactCard}
+        selectedAvatar={selectedAvatar}
+        onSelectAvatar={onSelectAvatar}
+      />
+    );
   }
 
   return (

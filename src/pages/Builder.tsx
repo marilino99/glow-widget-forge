@@ -18,6 +18,7 @@ import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 const Builder = () => {
   const { user, signOut } = useAuth();
   const [activeWidget, setActiveWidget] = useState<string | null>("product-recommendations");
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -69,12 +70,14 @@ const Builder = () => {
           <BuilderSidebar
             onSelectWidget={setActiveWidget}
             activeWidget={activeWidget}
+            selectedAvatar={selectedAvatar}
+            onSelectAvatar={setSelectedAvatar}
           />
         </div>
 
         {/* Right panel - preview */}
         <div className="flex-1">
-          <WidgetPreviewPanel />
+          <WidgetPreviewPanel selectedAvatar={selectedAvatar} />
         </div>
       </div>
     </div>
