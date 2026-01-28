@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { ChevronLeft, Paperclip, Monitor, Star, MessageSquare } from "lucide-react";
+import { ChevronLeft, Paperclip, Monitor, Star, MessageSquare, Sparkles } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface ContactCardPanelProps {
   onBack: () => void;
@@ -25,6 +28,10 @@ const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCar
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   const [email, setEmail] = useState("");
   const [avatarTab, setAvatarTab] = useState("gallery");
+  const [name, setName] = useState("ciao");
+  const [offerHelp, setOfferHelp] = useState("Write to us");
+  const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
+  const [responseTime, setResponseTime] = useState("minutes");
 
   return (
     <div className="h-full overflow-y-auto bg-background">
@@ -145,6 +152,74 @@ const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCar
               <p className="text-sm text-muted-foreground">
                 Drag & drop an image or click to upload
               </p>
+            </div>
+          )}
+        </div>
+
+        {/* Add your name */}
+        <div className="mt-8">
+          <Label htmlFor="contact-name" className="mb-2 block text-base font-semibold text-foreground">
+            Add your name <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="contact-name"
+            type="text"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="bg-muted/50"
+          />
+        </div>
+
+        {/* Offer help */}
+        <div className="mt-8">
+          <div className="mb-2 flex items-center justify-between">
+            <Label htmlFor="offer-help" className="text-base font-semibold text-foreground">
+              Offer help <span className="text-destructive">*</span>
+            </Label>
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted">
+              <Sparkles className="h-4 w-4 text-foreground" />
+            </button>
+          </div>
+          <Textarea
+            id="offer-help"
+            placeholder="Write to us"
+            value={offerHelp}
+            onChange={(e) => setOfferHelp(e.target.value)}
+            className="min-h-[120px] resize-none bg-muted/50"
+          />
+        </div>
+
+        {/* Response time */}
+        <div className="mt-8">
+          <div className="flex items-center gap-3">
+            <Checkbox
+              id="response-time"
+              checked={responseTimeEnabled}
+              onCheckedChange={(checked) => setResponseTimeEnabled(checked as boolean)}
+            />
+            <Label htmlFor="response-time" className="text-base font-semibold text-foreground">
+              Response time
+            </Label>
+          </div>
+          
+          {responseTimeEnabled && (
+            <div className="mt-4">
+              <p className="mb-3 text-sm text-muted-foreground">We typically respond within a few...</p>
+              <RadioGroup value={responseTime} onValueChange={setResponseTime} className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="minutes" id="minutes" />
+                  <Label htmlFor="minutes" className="text-sm font-normal text-foreground">minutes</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="hours" id="hours" />
+                  <Label htmlFor="hours" className="text-sm font-normal text-foreground">hours</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="days" id="days" />
+                  <Label htmlFor="days" className="text-sm font-normal text-foreground">days</Label>
+                </div>
+              </RadioGroup>
             </div>
           )}
         </div>
