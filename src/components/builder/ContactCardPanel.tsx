@@ -7,11 +7,16 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 
 interface ContactCardPanelProps {
   onBack: () => void;
   selectedAvatar: string | null;
   onSelectAvatar: (avatar: string | null) => void;
+  contactName: string;
+  onContactNameChange: (name: string) => void;
+  offerHelp: string;
+  onOfferHelpChange: (help: string) => void;
 }
 
 const avatars = [
@@ -23,22 +28,45 @@ const avatars = [
   "https://api.dicebear.com/7.x/notionists/svg?seed=Leo&backgroundColor=d5f0f0",
 ];
 
-const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCardPanelProps) => {
+const ContactCardPanel = ({ 
+  onBack, 
+  selectedAvatar, 
+  onSelectAvatar,
+  contactName,
+  onContactNameChange,
+  offerHelp,
+  onOfferHelpChange
+}: ContactCardPanelProps) => {
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   const [email, setEmail] = useState("");
   const [avatarTab, setAvatarTab] = useState("gallery");
-  const [name, setName] = useState("ciao");
-  const [offerHelp, setOfferHelp] = useState("Write to us");
+  const [localName, setLocalName] = useState(contactName);
+  const [localOfferHelp, setLocalOfferHelp] = useState(offerHelp);
+  const [localAvatar, setLocalAvatar] = useState(selectedAvatar);
   const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
   const [responseTime, setResponseTime] = useState("minutes");
 
+  const handleSave = () => {
+    onContactNameChange(localName);
+    onOfferHelpChange(localOfferHelp);
+    onSelectAvatar(localAvatar);
+    onBack();
+  };
+
+  const handleCancel = () => {
+    setLocalName(contactName);
+    setLocalOfferHelp(offerHelp);
+    setLocalAvatar(selectedAvatar);
+    onBack();
+  };
+
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <div className="flex h-full flex-col bg-background">
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background px-6 py-4">
         <button
-          onClick={onBack}
+          onClick={handleCancel}
           className="flex items-center gap-2 text-foreground hover:text-muted-foreground"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -46,7 +74,7 @@ const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCar
         </button>
       </div>
 
-      <div className="p-6">
+      <div className="flex-1 overflow-y-auto p-6 pb-24">
         {/* Let customers section */}
         <p className="mb-4 text-sm text-muted-foreground">Let customers</p>
 
@@ -129,9 +157,9 @@ const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCar
                 {avatars.map((avatar, index) => (
                   <button
                     key={index}
-                    onClick={() => onSelectAvatar(avatar)}
+                    onClick={() => setLocalAvatar(avatar)}
                     className={`relative h-16 w-16 overflow-hidden rounded-full transition-all ${
-                      selectedAvatar === avatar
+                      localAvatar === avatar
                         ? "ring-2 ring-primary ring-offset-2"
                         : "hover:ring-2 hover:ring-muted-foreground/30 hover:ring-offset-2"
                     }`}
@@ -165,8 +193,8 @@ const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCar
             id="contact-name"
             type="text"
             placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={localName}
+            onChange={(e) => setLocalName(e.target.value)}
             className="bg-muted/50"
           />
         </div>
@@ -184,8 +212,8 @@ const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCar
           <Textarea
             id="offer-help"
             placeholder="Write to us"
-            value={offerHelp}
-            onChange={(e) => setOfferHelp(e.target.value)}
+            value={localOfferHelp}
+            onChange={(e) => setLocalOfferHelp(e.target.value)}
             className="min-h-[120px] resize-none bg-muted/50"
           />
         </div>
@@ -222,6 +250,18 @@ const ContactCardPanel = ({ onBack, selectedAvatar, onSelectAvatar }: ContactCar
               </RadioGroup>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Cancel / Save buttons */}
+      <div className="sticky bottom-0 border-t border-border bg-background p-4">
+        <div className="flex gap-3">
+          <Button variant="outline" className="flex-1" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button className="flex-1" onClick={handleSave}>
+            Save
+          </Button>
         </div>
       </div>
     </div>

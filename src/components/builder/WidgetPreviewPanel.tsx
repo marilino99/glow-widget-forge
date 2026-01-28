@@ -6,9 +6,16 @@ import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowL
 interface WidgetPreviewPanelProps {
   selectedAvatar?: string | null;
   faqEnabled?: boolean;
+  contactName?: string;
+  offerHelp?: string;
 }
 
-const WidgetPreviewPanel = ({ selectedAvatar, faqEnabled = true }: WidgetPreviewPanelProps) => {
+const WidgetPreviewPanel = ({ 
+  selectedAvatar, 
+  faqEnabled = true,
+  contactName = "ciao",
+  offerHelp = "Write to us"
+}: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [showChat, setShowChat] = useState(false);
 
@@ -150,10 +157,10 @@ const WidgetPreviewPanel = ({ selectedAvatar, faqEnabled = true }: WidgetPreview
                         C
                       </div>
                     )}
-                    <div className="flex-1">
-                      <p className="text-xs text-white/60">ciao</p>
-                      <p className="text-sm">Write to us</p>
-                    </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-white/60">{contactName}</p>
+                    <p className="text-sm">{offerHelp}</p>
+                  </div>
                   </div>
                   <Button 
                     className="mt-3 w-full bg-cyan-500 hover:bg-cyan-600"
