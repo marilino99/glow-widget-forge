@@ -9,6 +9,10 @@ import {
   Gift,
   Users,
   Star,
+  Palette,
+  Type,
+  Maximize2,
+  Sparkles,
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
@@ -116,7 +120,7 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelect
       </div>
 
       {/* Build trust section */}
-      <div>
+      <div className="mb-6">
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           Build trust
         </p>
@@ -135,6 +139,39 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelect
             label="Google reviews"
             onClick={() => handleSelectWidget("google-reviews")}
             active={activeWidget === "google-reviews"}
+          />
+        </div>
+      </div>
+
+      {/* Customize look section */}
+      <div>
+        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Customize look
+        </p>
+        <div className="space-y-2">
+          <SidebarItem
+            icon={Palette}
+            label="Theme & colors"
+            onClick={() => handleSelectWidget("theme-colors")}
+            active={activeWidget === "theme-colors"}
+          />
+          <SidebarItem
+            icon={Type}
+            label="Typography"
+            onClick={() => handleSelectWidget("typography")}
+            active={activeWidget === "typography"}
+          />
+          <SidebarItem
+            icon={Maximize2}
+            label="Size & position"
+            onClick={() => handleSelectWidget("size-position")}
+            active={activeWidget === "size-position"}
+          />
+          <SidebarItem
+            icon={Sparkles}
+            label="Animations"
+            onClick={() => handleSelectWidget("animations")}
+            active={activeWidget === "animations"}
           />
         </div>
       </div>
