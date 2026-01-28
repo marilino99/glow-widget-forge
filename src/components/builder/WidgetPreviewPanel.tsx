@@ -99,7 +99,7 @@ const WidgetPreviewPanel = ({
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
                       <Sparkles className="h-3 w-3 text-white" />
                     </div>
-                    <span className="text-sm font-medium">Assistenza 24/7</span>
+                    <span className="text-sm font-medium">{contactName}</span>
                   </div>
                   <button className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
