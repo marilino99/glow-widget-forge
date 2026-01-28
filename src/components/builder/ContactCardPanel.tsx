@@ -41,29 +41,29 @@ const ContactCardPanel = ({
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   const [email, setEmail] = useState("");
   const [avatarTab, setAvatarTab] = useState("gallery");
-  const [localName, setLocalName] = useState(contactName);
-  const [localOfferHelp, setLocalOfferHelp] = useState(offerHelp);
-  const [localAvatar, setLocalAvatar] = useState(selectedAvatar);
   const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
   const [responseTime, setResponseTime] = useState("minutes");
 
-  // Check if any changes have been made
+  // Store original values to detect changes and allow cancel
+  const [originalName] = useState(contactName);
+  const [originalOfferHelp] = useState(offerHelp);
+  const [originalAvatar] = useState(selectedAvatar);
+
+  // Check if any changes have been made from original values
   const hasChanges = 
-    localName !== contactName || 
-    localOfferHelp !== offerHelp || 
-    localAvatar !== selectedAvatar;
+    contactName !== originalName || 
+    offerHelp !== originalOfferHelp || 
+    selectedAvatar !== originalAvatar;
 
   const handleSave = () => {
-    onContactNameChange(localName);
-    onOfferHelpChange(localOfferHelp);
-    onSelectAvatar(localAvatar);
     onBack();
   };
 
   const handleCancel = () => {
-    setLocalName(contactName);
-    setLocalOfferHelp(offerHelp);
-    setLocalAvatar(selectedAvatar);
+    // Revert to original values
+    onContactNameChange(originalName);
+    onOfferHelpChange(originalOfferHelp);
+    onSelectAvatar(originalAvatar);
     onBack();
   };
 
@@ -163,9 +163,9 @@ const ContactCardPanel = ({
                 {avatars.map((avatar, index) => (
                   <button
                     key={index}
-                    onClick={() => setLocalAvatar(avatar)}
+                    onClick={() => onSelectAvatar(avatar)}
                     className={`relative h-16 w-16 overflow-hidden rounded-full transition-all ${
-                      localAvatar === avatar
+                      selectedAvatar === avatar
                         ? "ring-2 ring-primary ring-offset-2"
                         : "hover:ring-2 hover:ring-muted-foreground/30 hover:ring-offset-2"
                     }`}
@@ -199,8 +199,8 @@ const ContactCardPanel = ({
             id="contact-name"
             type="text"
             placeholder="Your name"
-            value={localName}
-            onChange={(e) => setLocalName(e.target.value)}
+            value={contactName}
+            onChange={(e) => onContactNameChange(e.target.value)}
             className="bg-muted/50"
           />
         </div>
@@ -218,8 +218,8 @@ const ContactCardPanel = ({
           <Textarea
             id="offer-help"
             placeholder="Write to us"
-            value={localOfferHelp}
-            onChange={(e) => setLocalOfferHelp(e.target.value)}
+            value={offerHelp}
+            onChange={(e) => onOfferHelpChange(e.target.value)}
             className="min-h-[120px] resize-none bg-muted/50"
           />
         </div>
