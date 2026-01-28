@@ -81,27 +81,27 @@ const WidgetPreviewPanel = ({
           <div className="absolute bottom-6 right-6 w-80">
             {showChat ? (
               /* Chat View */
-              <div className="flex h-[500px] flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white shadow-2xl">
+              <div className={`flex h-[500px] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`}>
                 {/* Chat header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="flex items-center gap-3">
                     <button 
                       onClick={() => setShowChat(false)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700"
+                      className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}
                     >
                       <ArrowLeft className="h-4 w-4" />
                     </button>
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700">
+                    <button className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                       <MoreHorizontal className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2">
+                  <div className={`flex items-center gap-2 rounded-full px-4 py-2 ${widgetCardBg}`}>
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                      <Sparkles className="h-3 w-3" />
+                      <Sparkles className="h-3 w-3 text-white" />
                     </div>
                     <span className="text-sm font-medium">Assistenza 24/7</span>
                   </div>
-                  <button className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700">
+                  <button className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
                   </button>
                 </div>
@@ -110,34 +110,34 @@ const WidgetPreviewPanel = ({
                 <div className="flex-1 overflow-y-auto px-4 py-4">
                   <div className="flex items-start gap-3">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                      <Sparkles className="h-4 w-4" />
+                      <Sparkles className="h-4 w-4 text-white" />
                     </div>
-                    <div className="rounded-2xl rounded-tl-sm bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3">
+                    <div className="rounded-2xl rounded-tl-sm bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
                       <p className="text-sm">Benvenuto/a! In che modo posso esserti utile?</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Chat input */}
-                <div className="border-t border-white/10 p-4">
-                  <div className="flex items-center gap-2 rounded-full border border-violet-500/50 bg-slate-800/50 px-4 py-2">
+                <div className={`border-t p-4 ${widgetBorder}`}>
+                  <div className={`flex items-center gap-2 rounded-full border border-violet-500/50 px-4 py-2 ${isLight ? "bg-white" : "bg-slate-800/50"}`}>
                     <input
                       type="text"
                       placeholder="Scrivi un messaggio..."
-                      className="flex-1 bg-transparent text-sm placeholder:text-white/40 focus:outline-none"
+                      className={`flex-1 bg-transparent text-sm focus:outline-none ${isLight ? "placeholder:text-slate-400" : "placeholder:text-white/40"}`}
                     />
-                    <button className="text-white/60 hover:text-white">
+                    <button className={widgetSubtext}>
                       <Smile className="h-5 w-5" />
                     </button>
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/60 hover:bg-white/20 hover:text-white">
+                    <button className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-100 text-slate-500 hover:bg-slate-200" : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"}`}>
                       <ArrowUp className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
 
                 {/* Powered by */}
-                <div className="border-t border-white/10 py-2 text-center">
-                  <span className="text-xs text-white/40">
+                <div className={`border-t py-2 text-center ${widgetBorder}`}>
+                  <span className={`text-xs ${widgetSubtext}`}>
                     Powered by <span className="font-medium">WidgetPop</span>
                   </span>
                 </div>
