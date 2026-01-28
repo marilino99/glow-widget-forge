@@ -27,11 +27,14 @@ const Builder = () => {
       {/* Top navbar - minimal */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-sidebar px-4">
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2">
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-2"
+          >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Boxes className="h-5 w-5" />
             </div>
-          </Link>
+          </button>
           <AddToWebsiteDialog />
         </div>
 
