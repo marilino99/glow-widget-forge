@@ -10,6 +10,10 @@ import {
 
 interface ThemeColorsPanelProps {
   onBack: () => void;
+  widgetTheme: "light" | "dark";
+  onWidgetThemeChange: (theme: "light" | "dark") => void;
+  widgetColor: string;
+  onWidgetColorChange: (color: string) => void;
 }
 
 const themeColors = [
@@ -31,18 +35,39 @@ const backgroundImages = [
   "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=100&h=100&fit=crop",
 ];
 
-const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
-  const [selectedTheme, setSelectedTheme] = useState<"light" | "dark">("dark");
-  const [selectedColor, setSelectedColor] = useState("blue");
+const ThemeColorsPanel = ({ 
+  onBack,
+  widgetTheme,
+  onWidgetThemeChange,
+  widgetColor,
+  onWidgetColorChange
+}: ThemeColorsPanelProps) => {
   const [moreColorsOpen, setMoreColorsOpen] = useState(true);
   const [backgroundType, setBackgroundType] = useState<"solid" | "gradient" | "image">("gradient");
+
+  // Store original values
+  const [originalTheme] = useState(widgetTheme);
+  const [originalColor] = useState(widgetColor);
+
+  // Check if changes were made
+  const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor;
+
+  const handleSave = () => {
+    onBack();
+  };
+
+  const handleCancel = () => {
+    onWidgetThemeChange(originalTheme);
+    onWidgetColorChange(originalColor);
+    onBack();
+  };
 
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background px-6 py-4">
         <button
-          onClick={onBack}
+          onClick={handleCancel}
           className="flex items-center gap-2 text-foreground hover:text-muted-foreground"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -50,7 +75,7 @@ const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 pb-24">
         {/* Pick theme and color */}
         <div className="mb-8">
           <Label className="mb-4 block text-base font-semibold text-foreground">
@@ -58,12 +83,12 @@ const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
           </Label>
           
           {/* Theme cards */}
-          <div className="mb-6 grid grid-cols-2 gap-4">
+          <div className="mb-2 grid grid-cols-2 gap-4">
             {/* Light theme */}
             <button
-              onClick={() => setSelectedTheme("light")}
+              onClick={() => onWidgetThemeChange("light")}
               className={`relative overflow-hidden rounded-xl border-2 transition-all ${
-                selectedTheme === "light"
+                widgetTheme === "light"
                   ? "border-primary"
                   : "border-border hover:border-muted-foreground/50"
               }`}
@@ -80,7 +105,7 @@ const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
                   </div>
                 </div>
               </div>
-              {selectedTheme === "light" && (
+              {widgetTheme === "light" && (
                 <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Check className="h-4 w-4" />
                 </div>
@@ -89,9 +114,9 @@ const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
 
             {/* Dark theme */}
             <button
-              onClick={() => setSelectedTheme("dark")}
+              onClick={() => onWidgetThemeChange("dark")}
               className={`relative overflow-hidden rounded-xl border-2 transition-all ${
-                selectedTheme === "dark"
+                widgetTheme === "dark"
                   ? "border-primary"
                   : "border-border hover:border-muted-foreground/50"
               }`}
@@ -108,7 +133,7 @@ const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
                   </div>
                 </div>
               </div>
-              {selectedTheme === "dark" && (
+              {widgetTheme === "dark" && (
                 <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Check className="h-4 w-4" />
                 </div>
@@ -127,15 +152,15 @@ const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
             {themeColors.map((item) => (
               <button
                 key={item.name}
-                onClick={() => setSelectedColor(item.name)}
+                onClick={() => onWidgetColorChange(item.name)}
                 className={`relative h-12 w-12 rounded-full transition-all ${
-                  selectedColor === item.name
+                  widgetColor === item.name
                     ? "ring-2 ring-primary ring-offset-2"
                     : "hover:scale-110"
                 }`}
                 style={{ backgroundColor: item.color }}
               >
-                {selectedColor === item.name && (
+                {widgetColor === item.name && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Check className="h-5 w-5 text-white drop-shadow-md" />
                   </div>
@@ -275,6 +300,20 @@ const ThemeColorsPanel = ({ onBack }: ThemeColorsPanelProps) => {
           </div>
         </div>
       </div>
+
+      {/* Cancel / Save buttons - only show when changes are made */}
+      {hasChanges && (
+        <div className="sticky bottom-0 border-t border-border bg-background p-4">
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button className="flex-1" onClick={handleSave}>
+              Save
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

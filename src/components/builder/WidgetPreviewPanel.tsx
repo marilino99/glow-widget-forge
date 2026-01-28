@@ -8,16 +8,31 @@ interface WidgetPreviewPanelProps {
   faqEnabled?: boolean;
   contactName?: string;
   offerHelp?: string;
+  widgetTheme?: "light" | "dark";
+  widgetColor?: string;
 }
 
 const WidgetPreviewPanel = ({ 
   selectedAvatar, 
   faqEnabled = true,
   contactName = "ciao",
-  offerHelp = "Write to us"
+  offerHelp = "Write to us",
+  widgetTheme = "dark",
+  widgetColor = "blue"
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [showChat, setShowChat] = useState(false);
+
+  // Theme-based styles
+  const isLight = widgetTheme === "light";
+  const widgetBg = isLight 
+    ? "bg-white" 
+    : "bg-gradient-to-br from-slate-800 to-slate-900";
+  const widgetText = isLight ? "text-slate-900" : "text-white";
+  const widgetSubtext = isLight ? "text-slate-500" : "text-white/60";
+  const widgetBorder = isLight ? "border-slate-200" : "border-white/10";
+  const widgetCardBg = isLight ? "bg-slate-100" : "bg-slate-700/50";
+  const widgetButtonBg = isLight ? "bg-slate-200 hover:bg-slate-300" : "bg-slate-800 hover:bg-slate-700";
 
   return (
     <div className="flex h-full flex-col bg-muted/50 p-6">
@@ -129,11 +144,13 @@ const WidgetPreviewPanel = ({
               </div>
             ) : (
               /* Home View */
-              <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white shadow-2xl">
+              <div className={`overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`}>
                 {/* Widget header with gradient */}
                 <div className="relative overflow-hidden px-6 py-5">
-                  <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />
-                  <button className="absolute right-4 top-4 text-white/60 hover:text-white">
+                  {!isLight && (
+                    <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />
+                  )}
+                  <button className={`absolute right-4 top-4 ${widgetSubtext} hover:opacity-80`}>
                     <Minus className="h-4 w-4" />
                   </button>
                   <h3 className="relative text-2xl font-bold">
@@ -144,7 +161,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Contact section */}
-                <div className="mx-4 mb-4 rounded-xl bg-slate-700/50 p-4">
+                <div className={`mx-4 mb-4 rounded-xl p-4 ${widgetCardBg}`}>
                   <div className="flex items-center gap-3">
                     {selectedAvatar ? (
                       <img
@@ -158,12 +175,12 @@ const WidgetPreviewPanel = ({
                       </div>
                     )}
                   <div className="flex-1">
-                    <p className="text-xs text-white/60">{contactName}</p>
+                    <p className={`text-xs ${widgetSubtext}`}>{contactName}</p>
                     <p className="text-sm">{offerHelp}</p>
                   </div>
                   </div>
                   <Button 
-                    className="mt-3 w-full bg-cyan-500 hover:bg-cyan-600"
+                    className="mt-3 w-full bg-cyan-500 hover:bg-cyan-600 text-white"
                     onClick={() => setShowChat(true)}
                   >
                     Contact us
@@ -172,32 +189,32 @@ const WidgetPreviewPanel = ({
 
                 {/* Quick answers section */}
                 {faqEnabled && (
-                  <div className="border-t border-white/10 px-4 py-4">
+                  <div className={`border-t px-4 py-4 ${widgetBorder}`}>
                     <div className="mb-3 flex items-center gap-2">
-                      <HelpCircle className="h-4 w-4 text-white/60" />
+                      <HelpCircle className={`h-4 w-4 ${widgetSubtext}`} />
                       <span className="text-sm font-medium">Quick answers</span>
                     </div>
                     <div className="space-y-1">
-                      <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                      <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "hover:bg-slate-100" : "hover:bg-white/5"}`}>
                         <span>What is the delivery time?</span>
-                        <ChevronDown className="h-4 w-4 text-white/40" />
+                        <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
                       </button>
-                      <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                      <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "hover:bg-slate-100" : "hover:bg-white/5"}`}>
                         <span>Do you ship internationally?</span>
-                        <ChevronDown className="h-4 w-4 text-white/40" />
+                        <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
                       </button>
                     </div>
                   </div>
                 )}
 
                 {/* Footer nav */}
-                <div className="flex border-t border-white/10">
-                  <button className="flex flex-1 flex-col items-center gap-1 py-3 text-white">
+                <div className={`flex border-t ${widgetBorder}`}>
+                  <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetText}`}>
                     <Home className="h-5 w-5" />
                     <span className="text-xs">Home</span>
                   </button>
                   <button 
-                    className="flex flex-1 flex-col items-center gap-1 py-3 text-white/60 hover:text-white"
+                    className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetSubtext} hover:opacity-80`}
                     onClick={() => setShowChat(true)}
                   >
                     <MessageCircle className="h-5 w-5" />
@@ -206,8 +223,8 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Powered by */}
-                <div className="border-t border-white/10 py-2 text-center">
-                  <span className="text-xs text-white/40">
+                <div className={`border-t py-2 text-center ${widgetBorder}`}>
+                  <span className={`text-xs ${widgetSubtext}`}>
                     Powered by <span className="font-medium">WidgetPop</span>
                   </span>
                 </div>
