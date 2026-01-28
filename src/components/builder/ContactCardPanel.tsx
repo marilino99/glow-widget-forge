@@ -47,6 +47,12 @@ const ContactCardPanel = ({
   const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
   const [responseTime, setResponseTime] = useState("minutes");
 
+  // Check if any changes have been made
+  const hasChanges = 
+    localName !== contactName || 
+    localOfferHelp !== offerHelp || 
+    localAvatar !== selectedAvatar;
+
   const handleSave = () => {
     onContactNameChange(localName);
     onOfferHelpChange(localOfferHelp);
@@ -253,17 +259,19 @@ const ContactCardPanel = ({
         </div>
       </div>
 
-      {/* Cancel / Save buttons */}
-      <div className="sticky bottom-0 border-t border-border bg-background p-4">
-        <div className="flex gap-3">
-          <Button variant="outline" className="flex-1" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button className="flex-1" onClick={handleSave}>
-            Save
-          </Button>
+      {/* Cancel / Save buttons - only show when changes are made */}
+      {hasChanges && (
+        <div className="sticky bottom-0 border-t border-border bg-background p-4">
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button className="flex-1" onClick={handleSave}>
+              Save
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
