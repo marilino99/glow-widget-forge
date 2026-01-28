@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
+import ThemeColorsPanel from "./ThemeColorsPanel";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -44,10 +45,13 @@ const BuilderSidebar = ({
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
+  const [showThemeColorsPanel, setShowThemeColorsPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
       setShowContactCardPanel(true);
+    } else if (widgetType === "theme-colors") {
+      setShowThemeColorsPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -56,6 +60,16 @@ const BuilderSidebar = ({
     setShowContactCardPanel(false);
     onSelectWidget(null as unknown as string);
   };
+
+  const handleBackFromThemeColors = () => {
+    setShowThemeColorsPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
+  // Show Theme Colors panel
+  if (showThemeColorsPanel) {
+    return <ThemeColorsPanel onBack={handleBackFromThemeColors} />;
+  }
 
   // Show Contact Card detail panel
   if (showContactCardPanel) {
