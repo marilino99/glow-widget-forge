@@ -5,9 +5,10 @@ import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown } from 
 
 interface WidgetPreviewPanelProps {
   selectedAvatar?: string | null;
+  faqEnabled?: boolean;
 }
 
-const WidgetPreviewPanel = ({ selectedAvatar }: WidgetPreviewPanelProps) => {
+const WidgetPreviewPanel = ({ selectedAvatar, faqEnabled = true }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
 
   return (
@@ -94,22 +95,24 @@ const WidgetPreviewPanel = ({ selectedAvatar }: WidgetPreviewPanelProps) => {
               </div>
 
               {/* Quick answers section */}
-              <div className="border-t border-white/10 px-4 py-4">
-                <div className="mb-3 flex items-center gap-2">
-                  <HelpCircle className="h-4 w-4 text-white/60" />
-                  <span className="text-sm font-medium">Quick answers</span>
+              {faqEnabled && (
+                <div className="border-t border-white/10 px-4 py-4">
+                  <div className="mb-3 flex items-center gap-2">
+                    <HelpCircle className="h-4 w-4 text-white/60" />
+                    <span className="text-sm font-medium">Quick answers</span>
+                  </div>
+                  <div className="space-y-1">
+                    <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                      <span>What is the delivery time?</span>
+                      <ChevronDown className="h-4 w-4 text-white/40" />
+                    </button>
+                    <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                      <span>Do you ship internationally?</span>
+                      <ChevronDown className="h-4 w-4 text-white/40" />
+                    </button>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
-                    <span>What is the delivery time?</span>
-                    <ChevronDown className="h-4 w-4 text-white/40" />
-                  </button>
-                  <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
-                    <span>Do you ship internationally?</span>
-                    <ChevronDown className="h-4 w-4 text-white/40" />
-                  </button>
-                </div>
-              </div>
+              )}
 
               {/* Footer nav */}
               <div className="flex border-t border-white/10">

@@ -19,6 +19,7 @@ const Builder = () => {
   const { user, signOut } = useAuth();
   const [activeWidget, setActiveWidget] = useState<string | null>("product-recommendations");
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+  const [faqEnabled, setFaqEnabled] = useState(true);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -75,12 +76,14 @@ const Builder = () => {
             activeWidget={activeWidget}
             selectedAvatar={selectedAvatar}
             onSelectAvatar={setSelectedAvatar}
+            faqEnabled={faqEnabled}
+            onFaqToggle={setFaqEnabled}
           />
         </div>
 
         {/* Right panel - preview */}
         <div className="flex-1">
-          <WidgetPreviewPanel selectedAvatar={selectedAvatar} />
+          <WidgetPreviewPanel selectedAvatar={selectedAvatar} faqEnabled={faqEnabled} />
         </div>
       </div>
     </div>

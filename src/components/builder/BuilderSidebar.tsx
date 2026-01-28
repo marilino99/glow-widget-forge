@@ -22,10 +22,11 @@ interface BuilderSidebarProps {
   activeWidget: string | null;
   selectedAvatar: string | null;
   onSelectAvatar: (avatar: string | null) => void;
+  faqEnabled: boolean;
+  onFaqToggle: (enabled: boolean) => void;
 }
 
-const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelectAvatar }: BuilderSidebarProps) => {
-  const [faqEnabled, setFaqEnabled] = useState(true);
+const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelectAvatar, faqEnabled, onFaqToggle }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
 
@@ -85,7 +86,7 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelect
             label="FAQ"
             hasToggle
             toggleValue={faqEnabled}
-            onToggle={setFaqEnabled}
+            onToggle={onFaqToggle}
             onClick={() => handleSelectWidget("faq")}
             active={activeWidget === "faq"}
           />
