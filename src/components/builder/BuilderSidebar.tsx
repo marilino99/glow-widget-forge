@@ -29,6 +29,10 @@ interface BuilderSidebarProps {
   onContactNameChange: (name: string) => void;
   offerHelp: string;
   onOfferHelpChange: (help: string) => void;
+  widgetTheme: "light" | "dark";
+  onWidgetThemeChange: (theme: "light" | "dark") => void;
+  widgetColor: string;
+  onWidgetColorChange: (color: string) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -41,7 +45,11 @@ const BuilderSidebar = ({
   contactName,
   onContactNameChange,
   offerHelp,
-  onOfferHelpChange
+  onOfferHelpChange,
+  widgetTheme,
+  onWidgetThemeChange,
+  widgetColor,
+  onWidgetColorChange
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -68,7 +76,15 @@ const BuilderSidebar = ({
 
   // Show Theme Colors panel
   if (showThemeColorsPanel) {
-    return <ThemeColorsPanel onBack={handleBackFromThemeColors} />;
+    return (
+      <ThemeColorsPanel 
+        onBack={handleBackFromThemeColors}
+        widgetTheme={widgetTheme}
+        onWidgetThemeChange={onWidgetThemeChange}
+        widgetColor={widgetColor}
+        onWidgetColorChange={onWidgetColorChange}
+      />
+    );
   }
 
   // Show Contact Card detail panel

@@ -22,6 +22,8 @@ const Builder = () => {
   const [faqEnabled, setFaqEnabled] = useState(true);
   const [contactName, setContactName] = useState("ciao");
   const [offerHelp, setOfferHelp] = useState("Write to us");
+  const [widgetTheme, setWidgetTheme] = useState<"light" | "dark">("dark");
+  const [widgetColor, setWidgetColor] = useState("blue");
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -84,6 +86,10 @@ const Builder = () => {
             onContactNameChange={setContactName}
             offerHelp={offerHelp}
             onOfferHelpChange={setOfferHelp}
+            widgetTheme={widgetTheme}
+            onWidgetThemeChange={setWidgetTheme}
+            widgetColor={widgetColor}
+            onWidgetColorChange={setWidgetColor}
           />
         </div>
 
@@ -94,6 +100,8 @@ const Builder = () => {
             faqEnabled={faqEnabled}
             contactName={contactName}
             offerHelp={offerHelp}
+            widgetTheme={widgetTheme}
+            widgetColor={widgetColor}
           />
         </div>
       </div>
