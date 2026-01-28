@@ -20,6 +20,8 @@ const Builder = () => {
   const [activeWidget, setActiveWidget] = useState<string | null>("product-recommendations");
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [faqEnabled, setFaqEnabled] = useState(true);
+  const [contactName, setContactName] = useState("ciao");
+  const [offerHelp, setOfferHelp] = useState("Write to us");
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -78,12 +80,21 @@ const Builder = () => {
             onSelectAvatar={setSelectedAvatar}
             faqEnabled={faqEnabled}
             onFaqToggle={setFaqEnabled}
+            contactName={contactName}
+            onContactNameChange={setContactName}
+            offerHelp={offerHelp}
+            onOfferHelpChange={setOfferHelp}
           />
         </div>
 
         {/* Right panel - preview */}
         <div className="flex-1">
-          <WidgetPreviewPanel selectedAvatar={selectedAvatar} faqEnabled={faqEnabled} />
+          <WidgetPreviewPanel 
+            selectedAvatar={selectedAvatar} 
+            faqEnabled={faqEnabled}
+            contactName={contactName}
+            offerHelp={offerHelp}
+          />
         </div>
       </div>
     </div>

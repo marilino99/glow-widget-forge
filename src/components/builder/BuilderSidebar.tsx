@@ -24,9 +24,24 @@ interface BuilderSidebarProps {
   onSelectAvatar: (avatar: string | null) => void;
   faqEnabled: boolean;
   onFaqToggle: (enabled: boolean) => void;
+  contactName: string;
+  onContactNameChange: (name: string) => void;
+  offerHelp: string;
+  onOfferHelpChange: (help: string) => void;
 }
 
-const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelectAvatar, faqEnabled, onFaqToggle }: BuilderSidebarProps) => {
+const BuilderSidebar = ({ 
+  onSelectWidget, 
+  activeWidget, 
+  selectedAvatar, 
+  onSelectAvatar, 
+  faqEnabled, 
+  onFaqToggle,
+  contactName,
+  onContactNameChange,
+  offerHelp,
+  onOfferHelpChange
+}: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
 
@@ -49,6 +64,10 @@ const BuilderSidebar = ({ onSelectWidget, activeWidget, selectedAvatar, onSelect
         onBack={handleBackFromContactCard}
         selectedAvatar={selectedAvatar}
         onSelectAvatar={onSelectAvatar}
+        contactName={contactName}
+        onContactNameChange={onContactNameChange}
+        offerHelp={offerHelp}
+        onOfferHelpChange={onOfferHelpChange}
       />
     );
   }
