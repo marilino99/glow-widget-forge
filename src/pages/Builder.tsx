@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Boxes, Menu, HelpCircle, LogOut } from "lucide-react";
+import { Boxes, HelpCircle, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
+import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 
 const Builder = () => {
   const { user, signOut } = useAuth();
@@ -30,6 +31,7 @@ const Builder = () => {
               <Boxes className="h-5 w-5" />
             </div>
           </Link>
+          <AddToWebsiteDialog />
         </div>
 
         <div className="flex items-center gap-2">
