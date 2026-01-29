@@ -127,6 +127,7 @@ const WidgetPreviewPanel = ({
   const [showChat, setShowChat] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
+  const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
   const handleLoadUrl = async () => {
     if (!previewUrl.trim()) return;
     setIsLoading(true);
@@ -484,13 +485,20 @@ const WidgetPreviewPanel = ({
                         </div>
                         <div className="space-y-1">
                           {faqItems.map((faq) => (
-                            <button 
-                              key={faq.id}
-                              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}
-                            >
-                              <span>{faq.question || "Untitled question"}</span>
-                              <ChevronDown className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
-                            </button>
+                            <div key={faq.id}>
+                              <button 
+                                onClick={() => setExpandedFaqId(expandedFaqId === faq.id ? null : faq.id)}
+                                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}
+                              >
+                                <span className="font-medium">{faq.question || "Untitled question"}</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${expandedFaqId === faq.id ? "rotate-180" : ""} ${isLight ? "text-slate-500" : widgetSubtext}`} />
+                              </button>
+                              {expandedFaqId === faq.id && faq.answer && (
+                                <div className={`px-3 pb-3 pt-1 text-sm ${isLight ? "text-slate-500" : "text-white/60"}`}>
+                                  {faq.answer}
+                                </div>
+                              )}
+                            </div>
                           ))}
                         </div>
                       </div>
