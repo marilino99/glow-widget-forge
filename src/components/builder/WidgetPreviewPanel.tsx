@@ -372,8 +372,8 @@ const WidgetPreviewPanel = ({
               <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`}>
                 {/* Scrollable content area */}
                 <div className="flex-1 overflow-y-auto">
-                {/* Main content area - colored for solid mode */}
-                <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText} pb-4` : ""}`}>
+                {/* Main content area - colored for solid mode (header + contact only) */}
+                <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText}` : ""}`}>
                   {/* Widget header */}
                   <div className="relative overflow-hidden px-6 py-5">
                     {!isSolidMode && !isLight && (
@@ -418,38 +418,38 @@ const WidgetPreviewPanel = ({
                       Contact us
                     </Button>
                   </div>
-
-                  {/* Product Cards Section */}
-                  {productCards.filter(c => !c.isLoading).length > 0 && (
-                    <div className="relative">
-                      {/* Solid mode background band - stops at ~1/4 of first card */}
-                      {isSolidMode && (
-                        <div className={`absolute top-0 left-0 right-0 h-16 ${colors.solidHeader}`} />
-                      )}
-                      <div className="relative px-4 pb-4 space-y-4">
-                        {productCards.filter(c => !c.isLoading).map((card) => (
-                          <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : ""}`}>
-                            {/* Product Image Placeholder - large rounded area */}
-                            <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : (isLight ? "bg-slate-200" : "bg-slate-300")}`}>
-                              {card.imageUrl ? (
-                                <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" />
-                              ) : (
-                                <Image className="h-12 w-12 text-slate-400" />
-                              )}
-                            </div>
-                            {/* Product Info */}
-                            <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
-                              <h4 className="font-bold text-lg mb-3">{card.title}</h4>
-                              <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
-                                Show
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
+
+                {/* Product Cards Section - outside colored wrapper */}
+                {productCards.filter(c => !c.isLoading).length > 0 && (
+                  <div className="relative">
+                    {/* Solid mode background band - stops at ~1/4 of first card */}
+                    {isSolidMode && (
+                      <div className={`absolute top-0 left-0 right-0 h-12 ${colors.solidHeader}`} />
+                    )}
+                    <div className="relative px-4 pb-4 space-y-4">
+                      {productCards.filter(c => !c.isLoading).map((card) => (
+                        <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : ""}`}>
+                          {/* Product Image Placeholder - large rounded area */}
+                          <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : (isLight ? "bg-slate-200" : "bg-slate-300")}`}>
+                            {card.imageUrl ? (
+                              <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" />
+                            ) : (
+                              <Image className="h-12 w-12 text-slate-400" />
+                            )}
+                          </div>
+                          {/* Product Info */}
+                          <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
+                            <h4 className="font-bold text-lg mb-3">{card.title}</h4>
+                            <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
+                              Show
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Quick answers section */}
                 {faqEnabled && (
