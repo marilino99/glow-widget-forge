@@ -123,6 +123,8 @@ const Builder = () => {
             onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
             buttonLogo={config.buttonLogo}
             onButtonLogoChange={(logo) => updateConfig({ buttonLogo: logo })}
+            backgroundType={config.backgroundType}
+            onBackgroundTypeChange={(type) => updateConfig({ backgroundType: type })}
             onSaveConfig={saveConfig}
             productCards={productCards}
             onAddProductCard={handleAddProductCard}
@@ -141,6 +143,7 @@ const Builder = () => {
             widgetTheme={config.widgetTheme}
             widgetColor={config.widgetColor}
             buttonLogo={config.buttonLogo}
+            backgroundType={config.backgroundType}
             productCards={productCards}
           />
         </div>

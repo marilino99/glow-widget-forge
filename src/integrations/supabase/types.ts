@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       widget_configurations: {
         Row: {
+          background_type: string
           button_logo: string | null
           contact_name: string
           created_at: string
@@ -29,6 +30,7 @@ export type Database = {
           widget_theme: string
         }
         Insert: {
+          background_type?: string
           button_logo?: string | null
           contact_name?: string
           created_at?: string
@@ -42,6 +44,7 @@ export type Database = {
           widget_theme?: string
         }
         Update: {
+          background_type?: string
           button_logo?: string | null
           contact_name?: string
           created_at?: string

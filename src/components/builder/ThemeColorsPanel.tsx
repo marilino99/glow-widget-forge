@@ -17,6 +17,8 @@ interface ThemeColorsPanelProps {
   onWidgetColorChange: (color: string) => void;
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
+  backgroundType: "solid" | "gradient" | "image";
+  onBackgroundTypeChange: (type: "solid" | "gradient" | "image") => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
 }
 
@@ -47,26 +49,29 @@ const ThemeColorsPanel = ({
   onWidgetColorChange,
   buttonLogo,
   onButtonLogoChange,
+  backgroundType,
+  onBackgroundTypeChange,
   onSaveConfig
 }: ThemeColorsPanelProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [moreColorsOpen, setMoreColorsOpen] = useState(true);
-  const [backgroundType, setBackgroundType] = useState<"solid" | "gradient" | "image">("gradient");
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
   // Store original values
   const [originalTheme] = useState(widgetTheme);
   const [originalColor] = useState(widgetColor);
   const [originalLogo] = useState(buttonLogo);
+  const [originalBackgroundType] = useState(backgroundType);
 
   // Check if changes were made
-  const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor || buttonLogo !== originalLogo;
+  const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor || buttonLogo !== originalLogo || backgroundType !== originalBackgroundType;
 
   const handleSave = () => {
     onSaveConfig({
       widgetTheme,
       widgetColor,
       buttonLogo,
+      backgroundType,
     });
     onBack();
   };
@@ -75,6 +80,7 @@ const ThemeColorsPanel = ({
     onWidgetThemeChange(originalTheme);
     onWidgetColorChange(originalColor);
     onButtonLogoChange(originalLogo);
+    onBackgroundTypeChange(originalBackgroundType);
     onBack();
   };
 
@@ -292,7 +298,7 @@ const ThemeColorsPanel = ({
           <div className="space-y-4">
             {/* Solid option */}
             <button
-              onClick={() => setBackgroundType("solid")}
+              onClick={() => onBackgroundTypeChange("solid")}
               className={`relative w-full rounded-xl border-2 p-4 text-left transition-all ${
                 backgroundType === "solid"
                   ? "border-primary"
@@ -317,7 +323,7 @@ const ThemeColorsPanel = ({
 
             {/* Gradient option */}
             <button
-              onClick={() => setBackgroundType("gradient")}
+              onClick={() => onBackgroundTypeChange("gradient")}
               className={`relative w-full rounded-xl border-2 p-4 text-left transition-all ${
                 backgroundType === "gradient"
                   ? "border-primary"
@@ -349,7 +355,7 @@ const ThemeColorsPanel = ({
               }`}
             >
               <button
-                onClick={() => setBackgroundType("image")}
+                onClick={() => onBackgroundTypeChange("image")}
                 className="w-full text-left"
               >
                 <p className="font-medium text-foreground">Image <span className="font-normal text-muted-foreground">(720×600)</span></p>
@@ -362,7 +368,7 @@ const ThemeColorsPanel = ({
                 {backgroundImages.map((img, index) => (
                   <button
                     key={index}
-                    onClick={() => setBackgroundType("image")}
+                    onClick={() => onBackgroundTypeChange("image")}
                     className="h-12 w-12 overflow-hidden rounded-lg transition-all hover:scale-110"
                   >
                     <img
