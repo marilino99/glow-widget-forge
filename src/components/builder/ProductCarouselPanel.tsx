@@ -100,20 +100,25 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
         </div>
 
         {/* Product Carousel Preview */}
-        <div className="relative">
+        <div className="relative py-8">
           <Carousel
             opts={{
               align: "center",
               loop: true,
             }}
-            className="w-full"
+            className="w-full max-w-[280px] mx-auto"
           >
             <CarouselContent className="-ml-2">
-              {products.map((product) => (
-                <CarouselItem key={product.id} className="pl-2 basis-[85%]">
-                  <div className="bg-card rounded-2xl overflow-hidden shadow-lg">
+              {products.map((product, index) => (
+                <CarouselItem key={product.id} className="pl-2 basis-full">
+                  <div 
+                    className="bg-card rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 hover:scale-105"
+                    style={{
+                      transform: `rotate(${index % 2 === 0 ? -3 : 3}deg)`,
+                    }}
+                  >
                     {/* Product Image */}
-                    <div className="aspect-square relative">
+                    <div className="aspect-[4/3] relative">
                       <img
                         src={product.imageUrl}
                         alt={product.title}
@@ -122,19 +127,20 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
                     </div>
                     
                     {/* Product Info */}
-                    <div className="p-4 bg-card">
-                      <p className="text-sm text-muted-foreground mb-1">
+                    <div className="p-3 bg-card">
+                      <p className="text-xs text-muted-foreground mb-0.5">
                         {product.price}
                       </p>
-                      <h4 className="font-semibold text-foreground mb-1">
+                      <h4 className="font-semibold text-foreground text-sm mb-0.5">
                         {product.title}
                       </h4>
-                      <p className="text-sm text-muted-foreground mb-3">
+                      <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
                         {product.description}
                       </p>
                       <Button
                         variant="outline"
-                        className="w-full rounded-full border-border"
+                        size="sm"
+                        className="w-full rounded-full border-border text-xs"
                       >
                         Show
                       </Button>
