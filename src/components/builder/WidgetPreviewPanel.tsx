@@ -374,11 +374,11 @@ const WidgetPreviewPanel = ({
 
                 {/* Quick answers section */}
                 {faqEnabled && <div className={`border-t px-4 py-4 ${widgetBorder}`}>
-                    <div className="mb-3 flex items-center gap-2">
+                    <div className="mb-3 flex items-center gap-2 bg-neutral-800">
                       <HelpCircle className={`h-4 w-4 ${widgetSubtext}`} />
                       <span className="text-sm font-medium">Quick answers</span>
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 bg-neutral-800">
                       <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "hover:bg-slate-100" : "hover:bg-white/5"}`}>
                         <span>What is the delivery time?</span>
                         <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
@@ -392,7 +392,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Footer nav - rounded dark container */}
-                <div className="px-4 pb-3 shrink-0">
+                <div className="px-4 pb-3 shrink-0 bg-black">
                   <div className={`flex rounded-2xl ${isLight ? "bg-slate-100" : "bg-slate-700/80"}`}>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetText}`}>
                       <Home className="h-5 w-5" />
@@ -406,7 +406,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Powered by */}
-                <div className="py-2 text-center shrink-0">
+                <div className="py-2 text-center shrink-0 bg-black">
                   <span className={`text-xs ${widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
