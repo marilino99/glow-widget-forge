@@ -279,10 +279,11 @@ const ProductCarouselPanel = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">None</SelectItem>
-                <SelectItem value="sale">Sale</SelectItem>
-                <SelectItem value="new">New</SelectItem>
-                <SelectItem value="hot">Hot</SelectItem>
-                <SelectItem value="bestseller">Bestseller</SelectItem>
+                <SelectItem value="bestseller">⭐ Bestseller</SelectItem>
+                <SelectItem value="new">🎉 New</SelectItem>
+                <SelectItem value="sale">% Sale</SelectItem>
+                <SelectItem value="bestprice">💰 Best price</SelectItem>
+                <SelectItem value="hotdrop">🔥 Hot drop</SelectItem>
               </SelectContent>
             </Select>
           </div>
