@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image, Smartphone, Monitor } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
 import { getTranslations } from "@/lib/translations";
@@ -122,6 +123,7 @@ const WidgetPreviewPanel = ({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
   const handleLoadUrl = async () => {
     if (!previewUrl.trim()) return;
     setIsLoading(true);
@@ -198,8 +200,16 @@ const WidgetPreviewPanel = ({
             <div className="h-3 w-3 rounded-full bg-yellow-400/60" />
             <div className="h-3 w-3 rounded-full bg-green-400/60" />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">Previewing</span>
+            <ToggleGroup type="single" value={devicePreview} onValueChange={(value) => value && setDevicePreview(value as "desktop" | "mobile")} className="bg-muted rounded-md p-0.5">
+              <ToggleGroupItem value="desktop" aria-label="Desktop view" className="h-7 w-7 p-0 data-[state=on]:bg-background">
+                <Monitor className="h-3.5 w-3.5" />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="mobile" aria-label="Mobile view" className="h-7 w-7 p-0 data-[state=on]:bg-background">
+                <Smartphone className="h-3.5 w-3.5" />
+              </ToggleGroupItem>
+            </ToggleGroup>
             <Input placeholder="Your website URL" value={previewUrl} onChange={e => setPreviewUrl(e.target.value)} onKeyDown={handleKeyDown} className="h-8 w-64 bg-background text-sm" />
             <Button size="icon" className="h-8 w-8" onClick={handleLoadUrl}>
               <ArrowRight className="h-4 w-4" />
@@ -262,7 +272,7 @@ const WidgetPreviewPanel = ({
             </div>)}
 
           {/* Widget preview in bottom-right */}
-          <div className="absolute bottom-6 right-6 w-80">
+          <div className={`absolute bottom-6 w-80 transition-all duration-300 ${devicePreview === "mobile" ? "right-1/2 translate-x-1/2" : "right-6"}`}>
             {isCollapsed ? (/* Collapsed Icon */
           <div className="flex justify-end">
                 <button onClick={() => setIsCollapsed(false)} className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}>
