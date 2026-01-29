@@ -24,6 +24,7 @@ const Builder = () => {
   const [offerHelp, setOfferHelp] = useState("Write to us");
   const [widgetTheme, setWidgetTheme] = useState<"light" | "dark">("dark");
   const [widgetColor, setWidgetColor] = useState("blue");
+  const [buttonLogo, setButtonLogo] = useState<string | null>(null);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -90,6 +91,8 @@ const Builder = () => {
             onWidgetThemeChange={setWidgetTheme}
             widgetColor={widgetColor}
             onWidgetColorChange={setWidgetColor}
+            buttonLogo={buttonLogo}
+            onButtonLogoChange={setButtonLogo}
           />
         </div>
 
@@ -102,6 +105,7 @@ const Builder = () => {
             offerHelp={offerHelp}
             widgetTheme={widgetTheme}
             widgetColor={widgetColor}
+            buttonLogo={buttonLogo}
           />
         </div>
       </div>

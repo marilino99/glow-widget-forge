@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronDown, Check, Upload } from "lucide-react";
+import { useState, useRef } from "react";
+import { ChevronLeft, ChevronDown, Check, Upload, ImagePlus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,8 @@ interface ThemeColorsPanelProps {
   onWidgetThemeChange: (theme: "light" | "dark") => void;
   widgetColor: string;
   onWidgetColorChange: (color: string) => void;
+  buttonLogo: string | null;
+  onButtonLogoChange: (logo: string | null) => void;
 }
 
 const themeColors = [
@@ -40,17 +42,21 @@ const ThemeColorsPanel = ({
   widgetTheme,
   onWidgetThemeChange,
   widgetColor,
-  onWidgetColorChange
+  onWidgetColorChange,
+  buttonLogo,
+  onButtonLogoChange
 }: ThemeColorsPanelProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [moreColorsOpen, setMoreColorsOpen] = useState(true);
   const [backgroundType, setBackgroundType] = useState<"solid" | "gradient" | "image">("gradient");
 
   // Store original values
   const [originalTheme] = useState(widgetTheme);
   const [originalColor] = useState(widgetColor);
+  const [originalLogo] = useState(buttonLogo);
 
   // Check if changes were made
-  const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor;
+  const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor || buttonLogo !== originalLogo;
 
   const handleSave = () => {
     onBack();
@@ -59,7 +65,16 @@ const ThemeColorsPanel = ({
   const handleCancel = () => {
     onWidgetThemeChange(originalTheme);
     onWidgetColorChange(originalColor);
+    onButtonLogoChange(originalLogo);
     onBack();
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      onButtonLogoChange(url);
+    }
   };
 
   return (
@@ -187,7 +202,47 @@ const ThemeColorsPanel = ({
               </Button>
             </CollapsibleTrigger>
           </div>
-          <CollapsibleContent className="mt-4">
+          <CollapsibleContent className="mt-4 space-y-6">
+            {/* Logo upload section */}
+            <div>
+              <Label className="mb-3 block text-sm font-medium text-foreground">
+                Logo
+              </Label>
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-muted/50">
+                  {buttonLogo ? (
+                    <img src={buttonLogo} alt="Button logo" className="h-full w-full rounded-xl object-cover" />
+                  ) : (
+                    <ImagePlus className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+                <Button 
+                  variant="outline" 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="gap-2"
+                >
+                  Upload
+                </Button>
+                {buttonLogo && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => onButtonLogoChange(null)}
+                    className="text-muted-foreground"
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+            </div>
+
             <div className="rounded-xl border border-border bg-muted/30 p-4">
               <p className="text-sm text-muted-foreground">
                 Advanced color customization options will appear here.

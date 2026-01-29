@@ -10,6 +10,7 @@ interface WidgetPreviewPanelProps {
   offerHelp?: string;
   widgetTheme?: "light" | "dark";
   widgetColor?: string;
+  buttonLogo?: string | null;
 }
 
 const WidgetPreviewPanel = ({ 
@@ -18,7 +19,8 @@ const WidgetPreviewPanel = ({
   contactName = "ciao",
   offerHelp = "Write to us",
   widgetTheme = "dark",
-  widgetColor = "blue"
+  widgetColor = "blue",
+  buttonLogo = null
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [showChat, setShowChat] = useState(false);
@@ -85,9 +87,13 @@ const WidgetPreviewPanel = ({
               <div className="flex justify-end">
                 <button 
                   onClick={() => setIsCollapsed(false)}
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 shadow-lg hover:bg-blue-600 transition-colors"
+                  className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 shadow-lg hover:bg-blue-600 transition-colors overflow-hidden"
                 >
-                  <HelpCircle className="h-7 w-7 text-white" />
+                  {buttonLogo ? (
+                    <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" />
+                  ) : (
+                    <HelpCircle className="h-7 w-7 text-white" />
+                  )}
                 </button>
               </div>
             ) : showChat ? (
