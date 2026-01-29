@@ -315,9 +315,9 @@ const WidgetPreviewPanel = ({
             </div>
           )}
 
-          {/* Widget preview */}
+          {/* Widget preview - interactive */}
           <div 
-            className={`absolute transition-all duration-300 ${devicePreview === "mobile" ? "w-80 scale-[0.65] origin-bottom-right" : "bottom-6 right-6 w-80"}`} 
+            className={`absolute z-20 transition-all duration-300 ${devicePreview === "mobile" ? "w-80 scale-[0.65] origin-bottom-right" : "bottom-6 right-6 w-80"}`} 
             style={devicePreview === "mobile" ? { 
               bottom: '24px',
               right: 'calc(50% - 128px)'
