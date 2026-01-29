@@ -370,6 +370,14 @@ const WidgetPreviewPanel = ({
                               </div>
                               {/* Product Info */}
                               <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
+                                {card.price && (
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-bold text-base">{card.price}</span>
+                                    {card.oldPrice && (
+                                      <span className={`text-sm line-through ${isSolidMode ? "text-slate-400" : isLight ? "text-muted-foreground" : "text-slate-500"}`}>{card.oldPrice}</span>
+                                    )}
+                                  </div>
+                                )}
                                 <h4 className="font-bold text-base">{card.title}</h4>
                                 {card.subtitle && (
                                   <p className={`text-sm mt-0.5 mb-3 ${isSolidMode ? "text-slate-300" : isLight ? "text-muted-foreground" : "text-slate-400"}`}>{card.subtitle}</p>
