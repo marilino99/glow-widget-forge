@@ -125,22 +125,40 @@ const WidgetPreviewPanel = ({
               </div>
             </div>
           ) : proxyHtml ? (
-            /* Iframe with proxied website content */
-            <div className="h-full w-full overflow-hidden">
+            /* Iframe with proxied website content - navigation disabled */
+            <div className="relative h-full w-full overflow-hidden">
+              {/* Overlay to block clicks but allow visual scrolling */}
               <div 
-                className="origin-top-left"
-                style={{ 
-                  width: '177.78%', 
-                  height: '177.78%', 
-                  transform: 'scale(0.5625)',
+                className="absolute inset-0 z-10 cursor-default" 
+                style={{ pointerEvents: 'auto' }}
+                onWheel={(e) => {
+                  // Forward scroll events to the iframe container
+                  const iframeContainer = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (iframeContainer) {
+                    iframeContainer.scrollTop += e.deltaY;
+                    iframeContainer.scrollLeft += e.deltaX;
+                  }
                 }}
+              />
+              <div 
+                className="h-full w-full overflow-auto"
+                style={{ pointerEvents: 'none' }}
               >
-                <iframe
-                  srcDoc={proxyHtml}
-                  className="h-full w-full border-0"
-                  title="Website preview"
-                  sandbox="allow-scripts allow-same-origin allow-forms"
-                />
+                <div 
+                  className="origin-top-left"
+                  style={{ 
+                    width: '177.78%', 
+                    height: '177.78%', 
+                    transform: 'scale(0.5625)',
+                  }}
+                >
+                  <iframe
+                    srcDoc={proxyHtml}
+                    className="h-full w-full border-0"
+                    title="Website preview"
+                    sandbox="allow-same-origin"
+                  />
+                </div>
               </div>
             </div>
           ) : (
