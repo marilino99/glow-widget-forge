@@ -373,7 +373,7 @@ const WidgetPreviewPanel = ({
                 {/* Scrollable content area */}
                 <div className="flex-1 overflow-y-auto">
                 {/* Main content area - colored for solid mode */}
-                <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText}` : ""}`}>
+                <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText} pb-4` : ""}`}>
                   {/* Widget header */}
                   <div className="relative overflow-hidden px-6 py-5">
                     {!isSolidMode && !isLight && (
@@ -393,7 +393,7 @@ const WidgetPreviewPanel = ({
                   </div>
 
                   {/* Contact section */}
-                  <div className={`mx-4 mb-4 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
+                  <div className={`mx-4 mb-0 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
                     <div className="flex items-center gap-3">
                       {selectedAvatar ? (
                         <img
