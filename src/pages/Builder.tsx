@@ -19,7 +19,7 @@ import { ProductCardData } from "@/types/productCard";
 const Builder = () => {
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
-  const [activeWidget, setActiveWidget] = useState<string | null>("product-recommendations");
+  const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [productCards, setProductCards] = useState<ProductCardData[]>([]);
 
   const handleAddProductCard = (card: ProductCardData) => {
