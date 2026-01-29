@@ -273,10 +273,16 @@ const WidgetPreviewPanel = ({
                 pointerEvents: 'none'
               }}>
                 {devicePreview === "mobile" ? (
-                  /* Mobile: centered iframe at 375px width */
-                  <div className="flex h-full justify-center">
-                    <div className="h-full w-[375px] shadow-xl">
-                      <iframe srcDoc={proxyHtml} className="h-full w-full border-0 bg-white" title="Website preview" sandbox="allow-same-origin" />
+                  /* Mobile: centered iframe scaled to show more content */
+                  <div className="flex h-full justify-center py-4">
+                    <div className="h-full shadow-xl rounded-lg overflow-hidden" style={{ width: '320px' }}>
+                      <div className="origin-top-left" style={{
+                        width: '117.19%',
+                        height: '117.19%',
+                        transform: 'scale(0.8533)'
+                      }}>
+                        <iframe srcDoc={proxyHtml} className="h-full w-full border-0 bg-white" title="Website preview" sandbox="allow-same-origin" style={{ width: '375px' }} />
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -292,8 +298,8 @@ const WidgetPreviewPanel = ({
               </div>
             </div>
           ) : (/* Skeleton placeholder for website */
-            <div className={`h-full ${devicePreview === "mobile" ? "flex justify-center" : ""}`}>
-              <div className={`space-y-4 p-8 ${devicePreview === "mobile" ? "w-[375px] bg-background shadow-xl" : ""}`}>
+            <div className={`h-full ${devicePreview === "mobile" ? "flex justify-center py-4" : ""}`}>
+              <div className={`space-y-4 p-8 ${devicePreview === "mobile" ? "w-[320px] bg-background shadow-xl rounded-lg" : ""}`}>
                 <div className="h-8 w-48 rounded bg-muted" />
                 <div className="h-4 w-full max-w-md rounded bg-muted" />
                 <div className="h-4 w-3/4 max-w-sm rounded bg-muted" />
