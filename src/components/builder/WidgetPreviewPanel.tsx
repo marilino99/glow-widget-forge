@@ -421,8 +421,12 @@ const WidgetPreviewPanel = ({
 
                   {/* Product Cards Section */}
                   {productCards.filter(c => !c.isLoading).length > 0 && (
-                    <div className={`pt-6 ${isSolidMode ? `${colors.solidHeader}` : ""}`}>
-                      <div className="px-4 pb-4 space-y-4">
+                    <div className="relative">
+                      {/* Solid mode background band - stops at ~1/4 of first card */}
+                      {isSolidMode && (
+                        <div className={`absolute top-0 left-0 right-0 h-16 ${colors.solidHeader}`} />
+                      )}
+                      <div className="relative px-4 pb-4 space-y-4">
                         {productCards.filter(c => !c.isLoading).map((card) => (
                           <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : ""}`}>
                             {/* Product Image Placeholder - large rounded area */}
