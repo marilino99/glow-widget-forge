@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
+import { getTranslations } from "@/lib/translations";
+
 interface WidgetPreviewPanelProps {
   selectedAvatar?: string | null;
   faqEnabled?: boolean;
@@ -15,6 +17,7 @@ interface WidgetPreviewPanelProps {
   backgroundType?: "solid" | "gradient" | "image";
   productCards?: ProductCardData[];
   sayHello?: string;
+  language?: string;
 }
 
 // Color mapping for buttons and gradients
@@ -109,8 +112,10 @@ const WidgetPreviewPanel = ({
   buttonLogo = null,
   backgroundType = "gradient",
   productCards = [],
-  sayHello = "Hello, nice to see you here 👋"
+  sayHello = "Hello, nice to see you here 👋",
+  language = "en"
 }: WidgetPreviewPanelProps) => {
+  const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
   const [proxyHtml, setProxyHtml] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -293,7 +298,7 @@ const WidgetPreviewPanel = ({
                       <Sparkles className="h-4 w-4 text-white" />
                     </div>
                     <div className="rounded-2xl rounded-tl-sm bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
-                      <p className="text-sm">Benvenuto/a! In che modo posso esserti utile?</p>
+                      <p className="text-sm">{t.welcomeMessage}</p>
                     </div>
                   </div>
                 </div>
@@ -301,7 +306,7 @@ const WidgetPreviewPanel = ({
                 {/* Chat input */}
                 <div className={`border-t p-4 ${widgetBorder}`}>
                   <div className={`flex items-center gap-2 rounded-full border border-violet-500/50 px-4 py-2 ${isLight ? "bg-white" : "bg-slate-800/50"}`}>
-                    <input type="text" placeholder="Scrivi un messaggio..." className={`flex-1 bg-transparent text-sm focus:outline-none ${isLight ? "placeholder:text-slate-400" : "placeholder:text-white/40"}`} />
+                    <input type="text" placeholder={t.writeMessage} className={`flex-1 bg-transparent text-sm focus:outline-none ${isLight ? "placeholder:text-slate-400" : "placeholder:text-white/40"}`} />
                     <button className={widgetSubtext}>
                       <Smile className="h-5 w-5" />
                     </button>
@@ -346,7 +351,7 @@ const WidgetPreviewPanel = ({
                     </div>
                     </div>
                     <Button className={`mt-3 w-full ${buttonClass}`} onClick={() => setShowChat(true)}>
-                      Contact us
+                      {t.contactUs}
                     </Button>
                   </div>
                 </div>
@@ -365,7 +370,7 @@ const WidgetPreviewPanel = ({
                           <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
                             <h4 className="font-bold text-lg mb-3">{card.title}</h4>
                             <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
-                              Show
+                              {t.show}
                             </Button>
                           </div>
                         </div>)}
@@ -382,15 +387,16 @@ const WidgetPreviewPanel = ({
                       <div className="rounded-2xl p-4" style={{ backgroundColor: isLight ? '#ffffff' : '#252525' }}>
                         <div className="mb-3 flex items-center gap-2">
                           <HelpCircle className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
+                          <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>{t.quickAnswers}</span>
                           <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>Quick answers</span>
                         </div>
                         <div className="space-y-1">
                           <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}>
-                            <span>What is the delivery time?</span>
+                            <span>{t.deliveryTime}</span>
                             <ChevronDown className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
                           </button>
                           <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}>
-                            <span>Do you ship internationally?</span>
+                            <span>{t.shipInternationally}</span>
                             <ChevronDown className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
                           </button>
                         </div>
@@ -404,11 +410,11 @@ const WidgetPreviewPanel = ({
                   <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
                       <Home className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
-                      <span className="text-xs">Home</span>
+                      <span className="text-xs">{t.home}</span>
                     </button>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`} onClick={() => setShowChat(true)}>
                       <MessageCircle className="h-5 w-5" />
-                      <span className="text-xs">Contact</span>
+                      <span className="text-xs">{t.contact}</span>
                     </button>
                   </div>
                 </div>
