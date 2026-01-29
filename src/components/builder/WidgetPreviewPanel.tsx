@@ -23,9 +23,25 @@ const WidgetPreviewPanel = ({
   buttonLogo = null
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
+  const [loadedUrl, setLoadedUrl] = useState("");
   const [showChat, setShowChat] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const handleLoadUrl = () => {
+    if (previewUrl.trim()) {
+      let url = previewUrl.trim();
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+      setLoadedUrl(url);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleLoadUrl();
+    }
+  };
   // Theme-based styles
   const isLight = widgetTheme === "light";
   const widgetBg = isLight 
@@ -54,9 +70,10 @@ const WidgetPreviewPanel = ({
               placeholder="Your website URL"
               value={previewUrl}
               onChange={(e) => setPreviewUrl(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="h-8 w-64 bg-background text-sm"
             />
-            <Button size="icon" className="h-8 w-8">
+            <Button size="icon" className="h-8 w-8" onClick={handleLoadUrl}>
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
@@ -64,21 +81,42 @@ const WidgetPreviewPanel = ({
         </div>
 
         {/* Preview content area */}
-        <div className="relative flex-1 bg-muted/30 p-8">
-          {/* Skeleton placeholder for website */}
-          <div className="space-y-4">
-            <div className="h-8 w-48 rounded bg-muted" />
-            <div className="h-4 w-full max-w-md rounded bg-muted" />
-            <div className="h-4 w-3/4 max-w-sm rounded bg-muted" />
-            <div className="mt-8 h-32 w-full max-w-lg rounded bg-muted" />
-            <div className="h-4 w-full max-w-md rounded bg-muted" />
-            <div className="h-4 w-2/3 max-w-sm rounded bg-muted" />
-            <div className="mt-8 grid grid-cols-3 gap-4 max-w-xl">
-              <div className="h-24 rounded bg-muted" />
-              <div className="h-24 rounded bg-muted" />
-              <div className="h-24 rounded bg-muted" />
+        <div className="relative flex-1 overflow-hidden bg-muted/30">
+          {loadedUrl ? (
+            /* Iframe with website - scaled down */
+            <div className="h-full w-full overflow-hidden">
+              <div 
+                className="origin-top-left"
+                style={{ 
+                  width: '177.78%', 
+                  height: '177.78%', 
+                  transform: 'scale(0.5625)',
+                }}
+              >
+                <iframe
+                  src={loadedUrl}
+                  className="h-full w-full border-0"
+                  title="Website preview"
+                  sandbox="allow-scripts allow-same-origin allow-forms"
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            /* Skeleton placeholder for website */
+            <div className="space-y-4 p-8">
+              <div className="h-8 w-48 rounded bg-muted" />
+              <div className="h-4 w-full max-w-md rounded bg-muted" />
+              <div className="h-4 w-3/4 max-w-sm rounded bg-muted" />
+              <div className="mt-8 h-32 w-full max-w-lg rounded bg-muted" />
+              <div className="h-4 w-full max-w-md rounded bg-muted" />
+              <div className="h-4 w-2/3 max-w-sm rounded bg-muted" />
+              <div className="mt-8 grid grid-cols-3 gap-4 max-w-xl">
+                <div className="h-24 rounded bg-muted" />
+                <div className="h-24 rounded bg-muted" />
+                <div className="h-24 rounded bg-muted" />
+              </div>
+            </div>
+          )}
 
           {/* Widget preview in bottom-right */}
           <div className="absolute bottom-6 right-6 w-80">
