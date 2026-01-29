@@ -421,24 +421,28 @@ const WidgetPreviewPanel = ({
 
                   {/* Product Cards Section */}
                   {productCards.filter(c => !c.isLoading).length > 0 && (
-                    <div className="px-4 py-4 space-y-4">
-                      {productCards.filter(c => !c.isLoading).map((card) => (
-                        <div key={card.id}>
-                          {/* Product Image Placeholder - large rounded area */}
-                          <div className={`aspect-[4/3] flex items-center justify-center rounded-2xl mb-4 ${isSolidMode ? "bg-slate-300" : (isLight ? "bg-slate-200" : "bg-slate-300")}`}>
-                            {card.imageUrl ? (
-                              <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover rounded-2xl" />
-                            ) : (
-                              <Image className="h-12 w-12 text-slate-400" />
-                            )}
+                    <div className={`pt-6 ${isSolidMode ? `${colors.solidHeader}` : ""}`}>
+                      <div className="px-4 pb-4 space-y-4">
+                        {productCards.filter(c => !c.isLoading).map((card) => (
+                          <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : ""}`}>
+                            {/* Product Image Placeholder - large rounded area */}
+                            <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : (isLight ? "bg-slate-200" : "bg-slate-300")}`}>
+                              {card.imageUrl ? (
+                                <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" />
+                              ) : (
+                                <Image className="h-12 w-12 text-slate-400" />
+                              )}
+                            </div>
+                            {/* Product Info */}
+                            <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
+                              <h4 className="font-bold text-lg mb-3">{card.title}</h4>
+                              <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
+                                Show
+                              </Button>
+                            </div>
                           </div>
-                          {/* Product Info */}
-                          <h4 className="font-bold text-lg mb-3">{card.title}</h4>
-                          <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
-                            Show
-                          </Button>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
