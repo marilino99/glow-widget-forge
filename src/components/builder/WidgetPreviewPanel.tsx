@@ -194,28 +194,51 @@ const WidgetPreviewPanel = ({
       {/* Browser mockup */}
       <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
         {/* Browser header */}
-        <div className="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-3">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center border-b border-border bg-muted/50 px-4 py-3">
+          {/* Traffic lights */}
+          <div className="flex items-center gap-1.5">
             <div className="h-3 w-3 rounded-full bg-destructive/60" />
             <div className="h-3 w-3 rounded-full bg-yellow-400/60" />
             <div className="h-3 w-3 rounded-full bg-green-400/60" />
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">Previewing</span>
-            <ToggleGroup type="single" value={devicePreview} onValueChange={(value) => value && setDevicePreview(value as "desktop" | "mobile")} className="bg-muted rounded-md p-0.5">
-              <ToggleGroupItem value="desktop" aria-label="Desktop view" className="h-7 w-7 p-0 data-[state=on]:bg-background">
-                <Monitor className="h-3.5 w-3.5" />
+          
+          {/* Centered controls */}
+          <div className="flex flex-1 items-center justify-center gap-4">
+            {/* Status indicator */}
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-green-500" />
+              <span className="text-sm text-muted-foreground">Previewing</span>
+            </div>
+            
+            {/* Device toggle */}
+            <ToggleGroup 
+              type="single" 
+              value={devicePreview} 
+              onValueChange={(value) => value && setDevicePreview(value as "desktop" | "mobile")} 
+              className="bg-muted rounded-lg p-1"
+            >
+              <ToggleGroupItem value="desktop" aria-label="Desktop view" className="h-7 w-7 p-0 rounded-md data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                <Monitor className="h-4 w-4" />
               </ToggleGroupItem>
-              <ToggleGroupItem value="mobile" aria-label="Mobile view" className="h-7 w-7 p-0 data-[state=on]:bg-background">
-                <Smartphone className="h-3.5 w-3.5" />
+              <ToggleGroupItem value="mobile" aria-label="Mobile view" className="h-7 w-7 p-0 rounded-md data-[state=on]:bg-background data-[state=on]:shadow-sm">
+                <Smartphone className="h-4 w-4" />
               </ToggleGroupItem>
             </ToggleGroup>
-            <Input placeholder="Your website URL" value={previewUrl} onChange={e => setPreviewUrl(e.target.value)} onKeyDown={handleKeyDown} className="h-8 w-64 bg-background text-sm" />
-            <Button size="icon" className="h-8 w-8" onClick={handleLoadUrl}>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            
+            {/* URL input */}
+            <div className="flex items-center gap-2">
+              <Input 
+                placeholder="Your website URL" 
+                value={previewUrl} 
+                onChange={e => setPreviewUrl(e.target.value)} 
+                onKeyDown={handleKeyDown} 
+                className="h-8 w-64 bg-background text-sm" 
+              />
+              <Button size="icon" className="h-8 w-8" onClick={handleLoadUrl}>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <div className="w-20" />
         </div>
 
         {/* Preview content area */}
