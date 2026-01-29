@@ -400,7 +400,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Footer nav - box with backdrop blur */}
-                <div className={`px-4 pb-4 pt-2 shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                <div className={`px-4 pb-1 pt-3 shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                   <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
                       <Home className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
