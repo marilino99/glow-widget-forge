@@ -32,6 +32,7 @@ interface ProductCarouselPanelProps {
   onAddCard: (card: ProductCardData) => void;
   onUpdateCard: (cardId: string, updates: Partial<ProductCardData>) => void;
   onDeleteCard: (cardId: string) => void;
+  onPreviewUpdate?: (cardId: string | null, updates: Partial<ProductCardData> | null) => void;
 }
 
 const ProductCarouselPanel = ({ 
@@ -39,7 +40,8 @@ const ProductCarouselPanel = ({
   addedCards,
   onAddCard,
   onUpdateCard,
-  onDeleteCard 
+  onDeleteCard,
+  onPreviewUpdate
 }: ProductCarouselPanelProps) => {
   const [productUrl, setProductUrl] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -110,7 +112,12 @@ const ProductCarouselPanel = ({
   };
 
   const handleLocalEdit = (updates: Partial<ProductCardData>) => {
-    setLocalEdits(prev => ({ ...prev, ...updates }));
+    const newEdits = { ...localEdits, ...updates };
+    setLocalEdits(newEdits);
+    // Send live preview update
+    if (editingCardId && onPreviewUpdate) {
+      onPreviewUpdate(editingCardId, newEdits);
+    }
   };
 
   const handleSaveEdits = () => {
@@ -118,11 +125,19 @@ const ProductCarouselPanel = ({
       onUpdateCard(editingCardId, localEdits);
       setInitialEditState(prev => prev ? { ...prev, ...localEdits } : null);
       setLocalEdits({});
+      // Clear preview override after save
+      if (onPreviewUpdate) {
+        onPreviewUpdate(null, null);
+      }
     }
   };
 
   const handleCancelEdits = () => {
     setLocalEdits({});
+    // Clear preview override on cancel
+    if (onPreviewUpdate) {
+      onPreviewUpdate(null, null);
+    }
   };
 
   const editingCard = editingCardId ? addedCards.find(c => c.id === editingCardId) : null;
