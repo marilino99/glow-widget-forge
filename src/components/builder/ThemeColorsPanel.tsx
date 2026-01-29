@@ -209,9 +209,9 @@ const ThemeColorsPanel = ({
                 Logo
               </Label>
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-muted/50">
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-border bg-muted/50">
                   {buttonLogo ? (
-                    <img src={buttonLogo} alt="Button logo" className="h-full w-full rounded-xl object-cover" />
+                    <img src={buttonLogo} alt="Button logo" className="h-full w-full object-cover" />
                   ) : (
                     <ImagePlus className="h-5 w-5 text-muted-foreground" />
                   )}
