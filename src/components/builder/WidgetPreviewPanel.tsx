@@ -178,19 +178,22 @@ const WidgetPreviewPanel = ({
             </div>
           )}
 
-          {/* Widget preview in bottom-right */}
-          <div className="absolute bottom-6 right-6 w-80">
+          {/* Widget preview in bottom-right - scaled down to match website */}
+          <div 
+            className="absolute bottom-4 right-4 w-64 origin-bottom-right"
+            style={{ transform: 'scale(0.75)' }}
+          >
             {isCollapsed ? (
               /* Collapsed Icon */
               <div className="flex justify-end">
                 <button 
                   onClick={() => setIsCollapsed(false)}
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 shadow-lg hover:bg-blue-600 transition-colors overflow-hidden"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500 shadow-lg hover:bg-blue-600 transition-colors overflow-hidden"
                 >
                   {buttonLogo ? (
                     <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" />
                   ) : (
-                    <HelpCircle className="h-7 w-7 text-white" />
+                    <HelpCircle className="h-6 w-6 text-white" />
                   )}
                 </button>
               </div>
