@@ -7,6 +7,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import UnsavedChangesDialog from "./UnsavedChangesDialog";
 
 interface ThemeColorsPanelProps {
   onBack: () => void;
@@ -49,6 +50,7 @@ const ThemeColorsPanel = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [moreColorsOpen, setMoreColorsOpen] = useState(true);
   const [backgroundType, setBackgroundType] = useState<"solid" | "gradient" | "image">("gradient");
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
   // Store original values
   const [originalTheme] = useState(widgetTheme);
@@ -69,6 +71,14 @@ const ThemeColorsPanel = ({
     onBack();
   };
 
+  const handleBackClick = () => {
+    if (hasChanges) {
+      setShowUnsavedDialog(true);
+    } else {
+      onBack();
+    }
+  };
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -79,10 +89,18 @@ const ThemeColorsPanel = ({
 
   return (
     <div className="flex h-full flex-col bg-background">
+      <UnsavedChangesDialog
+        open={showUnsavedDialog}
+        onOpenChange={setShowUnsavedDialog}
+        onStayHere={() => setShowUnsavedDialog(false)}
+        onDiscardChanges={handleCancel}
+        sectionName="Theme & colors"
+      />
+
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background px-6 py-4">
         <button
-          onClick={handleCancel}
+          onClick={handleBackClick}
           className="flex items-center gap-2 text-foreground hover:text-muted-foreground"
         >
           <ChevronLeft className="h-5 w-5" />

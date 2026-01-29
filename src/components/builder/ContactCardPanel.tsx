@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
+import UnsavedChangesDialog from "./UnsavedChangesDialog";
 
 interface ContactCardPanelProps {
   onBack: () => void;
@@ -43,6 +44,7 @@ const ContactCardPanel = ({
   const [avatarTab, setAvatarTab] = useState("gallery");
   const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
   const [responseTime, setResponseTime] = useState("minutes");
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
   // Store original values to detect changes and allow cancel
   const [originalName] = useState(contactName);
@@ -67,12 +69,28 @@ const ContactCardPanel = ({
     onBack();
   };
 
+  const handleBackClick = () => {
+    if (hasChanges) {
+      setShowUnsavedDialog(true);
+    } else {
+      onBack();
+    }
+  };
+
   return (
     <div className="flex h-full flex-col bg-background">
+      <UnsavedChangesDialog
+        open={showUnsavedDialog}
+        onOpenChange={setShowUnsavedDialog}
+        onStayHere={() => setShowUnsavedDialog(false)}
+        onDiscardChanges={handleCancel}
+        sectionName="Contact card"
+      />
+
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-border bg-background px-6 py-4">
         <button
-          onClick={handleCancel}
+          onClick={handleBackClick}
           className="flex items-center gap-2 text-foreground hover:text-muted-foreground"
         >
           <ChevronLeft className="h-5 w-5" />
