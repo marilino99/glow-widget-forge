@@ -1,4 +1,5 @@
-import { ChevronLeft, Trash2, Sparkles, Plus } from "lucide-react";
+import React from "react";
+import { ChevronLeft, Trash2, Sparkles, Plus, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +14,7 @@ interface FaqPanelProps {
   onAddFaqItem: () => void;
   onUpdateFaqItem: (itemId: string, updates: Partial<FaqItemData>) => void;
   onDeleteFaqItem: (itemId: string) => void;
+  onReorderFaqItems: (fromIndex: number, toIndex: number) => void;
 }
 
 const getOrdinal = (n: number): string => {
@@ -29,7 +31,34 @@ const FaqPanel = ({
   onAddFaqItem,
   onUpdateFaqItem,
   onDeleteFaqItem,
+  onReorderFaqItems,
 }: FaqPanelProps) => {
+  const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+      onReorderFaqItems(draggedIndex, dragOverIndex);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Header */}
@@ -52,11 +81,26 @@ const FaqPanel = ({
           {faqItems.map((item, index) => (
             <div
               key={item.id}
-              className="rounded-xl border border-border bg-card p-4"
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragEnd={handleDragEnd}
+              onDragLeave={handleDragLeave}
+              className={`rounded-xl border bg-card p-4 transition-all ${
+                draggedIndex === index 
+                  ? "opacity-50 border-primary" 
+                  : dragOverIndex === index 
+                    ? "border-primary border-2" 
+                    : "border-border"
+              }`}
             >
               {/* Question header */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
+                  {/* Drag handle */}
+                  <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+                    <GripVertical className="h-5 w-5" />
+                  </div>
                   <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
                     {getOrdinal(index)}
                   </span>

@@ -61,6 +61,7 @@ interface BuilderSidebarProps {
   onAddFaqItem: () => void;
   onUpdateFaqItem: (itemId: string, updates: Partial<FaqItemData>) => void;
   onDeleteFaqItem: (itemId: string) => void;
+  onReorderFaqItems: (fromIndex: number, toIndex: number) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -100,7 +101,8 @@ const BuilderSidebar = ({
   faqItems,
   onAddFaqItem,
   onUpdateFaqItem,
-  onDeleteFaqItem
+  onDeleteFaqItem,
+  onReorderFaqItems
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -176,6 +178,7 @@ const BuilderSidebar = ({
         onAddFaqItem={onAddFaqItem}
         onUpdateFaqItem={onUpdateFaqItem}
         onDeleteFaqItem={onDeleteFaqItem}
+        onReorderFaqItems={onReorderFaqItems}
       />
     );
   }

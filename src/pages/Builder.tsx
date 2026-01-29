@@ -34,6 +34,7 @@ const Builder = () => {
     addFaqItem,
     updateFaqItem,
     deleteFaqItem,
+    reorderFaqItems,
   } = useFaqItems();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   
@@ -213,6 +214,7 @@ const Builder = () => {
             onAddFaqItem={addFaqItem}
             onUpdateFaqItem={updateFaqItem}
             onDeleteFaqItem={deleteFaqItem}
+            onReorderFaqItems={reorderFaqItems}
           />
         </div>
 
