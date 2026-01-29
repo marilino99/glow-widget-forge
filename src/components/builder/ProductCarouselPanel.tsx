@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Autoplay from "embla-carousel-autoplay";
@@ -17,13 +17,20 @@ interface ProductCard {
   description: string;
 }
 
+interface AddedCard {
+  id: string;
+  title: string;
+  isLoading: boolean;
+}
+
 interface ProductCarouselPanelProps {
   onBack: () => void;
 }
 
 const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
   const [productUrl, setProductUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [addedCards, setAddedCards] = useState<AddedCard[]>([]);
 
   // Demo products for the carousel
   const [products] = useState<ProductCard[]>([
@@ -52,12 +59,27 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
 
   const handleCreate = () => {
     if (!productUrl.trim()) return;
-    setIsLoading(true);
-    // TODO: Implement product URL parsing
+    
+    const newCardId = Date.now().toString();
+    
+    // Add loading card
+    setAddedCards(prev => [...prev, { id: newCardId, title: "New product", isLoading: true }]);
+    setIsCreating(true);
+    setProductUrl("");
+    
+    // Simulate loading (TODO: implement actual URL parsing)
     setTimeout(() => {
-      setIsLoading(false);
-      setProductUrl("");
-    }, 1000);
+      setAddedCards(prev => 
+        prev.map(card => 
+          card.id === newCardId ? { ...card, isLoading: false } : card
+        )
+      );
+      setIsCreating(false);
+    }, 2000);
+  };
+
+  const handleDeleteCard = (cardId: string) => {
+    setAddedCards(prev => prev.filter(card => card.id !== cardId));
   };
 
   return (
@@ -81,7 +103,7 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
         </p>
 
         {/* Create card from link */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h3 className="font-semibold text-foreground mb-3">Create card from link</h3>
           <div className="flex gap-2">
             <Input
@@ -92,13 +114,71 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
             />
             <Button
               onClick={handleCreate}
-              disabled={isLoading || !productUrl.trim()}
-              className="rounded-full px-6 bg-foreground text-background hover:bg-foreground/90"
+              disabled={isCreating || !productUrl.trim()}
+              className="rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 min-w-[90px]"
             >
-              {isLoading ? "Loading..." : "Create"}
+              {isCreating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Create"
+              )}
             </Button>
           </div>
         </div>
+
+        {/* Added cards section */}
+        {addedCards.length > 0 && (
+          <div className="mb-6">
+            <h3 className="font-semibold text-foreground mb-3">Added cards</h3>
+            <div className="space-y-3">
+              {addedCards.map((card) => (
+                <div
+                  key={card.id}
+                  className="rounded-xl border-2 border-dashed border-border p-4 bg-card"
+                >
+                  {card.isLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Card header with actions */}
+                      <div className="flex items-center justify-between mb-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="rounded-full gap-1.5 h-8 px-3"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          Edit
+                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleDeleteCard(card.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                          >
+                            <Sparkles className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      {/* Card title */}
+                      <p className="font-medium text-foreground">{card.title}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Product Carousel Preview */}
         <div className="relative py-6">
