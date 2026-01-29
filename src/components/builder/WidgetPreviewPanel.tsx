@@ -23,70 +23,80 @@ const colorMap: Record<string, {
   buttonHover: string;
   gradientLight: string; 
   gradientDark: string;
-  solid: string;
+  solidHeader: string;
+  solidHeaderText: string;
 }> = {
   gray: {
     button: "bg-gray-500",
     buttonHover: "hover:bg-gray-600",
     gradientLight: "bg-gradient-to-b from-gray-100 via-white to-slate-50",
     gradientDark: "bg-gradient-to-br from-gray-700 to-slate-900",
-    solid: "bg-gray-500",
+    solidHeader: "bg-gray-500",
+    solidHeaderText: "text-white",
   },
   purple: {
     button: "bg-purple-500",
     buttonHover: "hover:bg-purple-600",
     gradientLight: "bg-gradient-to-b from-violet-100 via-white to-pink-50",
     gradientDark: "bg-gradient-to-br from-purple-700 to-slate-900",
-    solid: "bg-purple-100",
+    solidHeader: "bg-purple-500",
+    solidHeaderText: "text-white",
   },
   blue: {
     button: "bg-blue-500",
     buttonHover: "hover:bg-blue-600",
     gradientLight: "bg-gradient-to-b from-violet-100 via-white to-cyan-50",
     gradientDark: "bg-gradient-to-br from-blue-700 to-slate-900",
-    solid: "bg-blue-100",
+    solidHeader: "bg-blue-500",
+    solidHeaderText: "text-white",
   },
   cyan: {
     button: "bg-cyan-500",
     buttonHover: "hover:bg-cyan-600",
     gradientLight: "bg-gradient-to-b from-cyan-100 via-white to-emerald-50",
     gradientDark: "bg-gradient-to-br from-cyan-700 to-slate-900",
-    solid: "bg-cyan-100",
+    solidHeader: "bg-cyan-500",
+    solidHeaderText: "text-white",
   },
   green: {
     button: "bg-green-500",
     buttonHover: "hover:bg-green-600",
     gradientLight: "bg-gradient-to-b from-green-100 via-white to-lime-50",
     gradientDark: "bg-gradient-to-br from-green-700 to-slate-900",
-    solid: "bg-green-100",
+    solidHeader: "bg-green-500",
+    solidHeaderText: "text-white",
   },
   yellow: {
     button: "bg-yellow-500",
     buttonHover: "hover:bg-yellow-600",
     gradientLight: "bg-gradient-to-b from-yellow-100 via-white to-orange-50",
     gradientDark: "bg-gradient-to-br from-yellow-600 to-slate-900",
-    solid: "bg-yellow-100",
+    solidHeader: "bg-yellow-500",
+    solidHeaderText: "text-slate-900",
   },
   orange: {
     button: "bg-orange-500",
     buttonHover: "hover:bg-orange-600",
     gradientLight: "bg-gradient-to-b from-orange-100 via-white to-red-50",
     gradientDark: "bg-gradient-to-br from-orange-600 to-slate-900",
-    solid: "bg-orange-100",
+    solidHeader: "bg-orange-500",
+    solidHeaderText: "text-slate-900",
   },
   red: {
     button: "bg-red-500",
     buttonHover: "hover:bg-red-600",
     gradientLight: "bg-gradient-to-b from-red-100 via-white to-rose-50",
     gradientDark: "bg-gradient-to-br from-red-700 to-slate-900",
-    solid: "bg-red-100",
+    solidHeader: "bg-red-500",
+    solidHeaderText: "text-white",
   },
   pink: {
     button: "bg-pink-500",
     buttonHover: "hover:bg-pink-600",
     gradientLight: "bg-gradient-to-b from-pink-100 via-white to-rose-50",
     gradientDark: "bg-gradient-to-br from-pink-600 to-slate-900",
-    solid: "bg-pink-100",
+    solidHeader: "bg-pink-500",
+    solidHeaderText: "text-white",
   },
 };
 
@@ -149,26 +159,32 @@ const WidgetPreviewPanel = ({
   // Theme-based styles
   const isLight = widgetTheme === "light";
   const colors = colorMap[widgetColor] || colorMap.blue;
+  const isSolidMode = backgroundType === "solid";
   
   // Background based on backgroundType
   const getWidgetBg = () => {
     if (backgroundType === "gradient") {
       return isLight ? colors.gradientLight : colors.gradientDark;
     } else if (backgroundType === "solid") {
-      return isLight ? colors.solid : "bg-slate-800";
+      // For solid mode, main container is dark, header section gets the color
+      return "bg-slate-800";
     }
     return isLight ? "bg-white" : "bg-slate-900";
   };
   
   const widgetBg = getWidgetBg();
-  const widgetText = isLight ? "text-slate-900" : "text-white";
-  const widgetSubtext = isLight ? "text-slate-500" : "text-white/60";
-  const widgetBorder = isLight ? "border-slate-200" : "border-white/10";
-  const widgetCardBg = isLight ? "bg-white" : "bg-slate-700/50";
-  const widgetButtonBg = isLight ? "bg-slate-200 hover:bg-slate-300" : "bg-slate-800 hover:bg-slate-700";
+  const widgetText = isSolidMode ? "text-white" : (isLight ? "text-slate-900" : "text-white");
+  const widgetSubtext = isSolidMode ? "text-white/60" : (isLight ? "text-slate-500" : "text-white/60");
+  const widgetBorder = isSolidMode ? "border-white/10" : (isLight ? "border-slate-200" : "border-white/10");
+  const widgetCardBg = isSolidMode ? "bg-slate-700/50" : (isLight ? "bg-white" : "bg-slate-700/50");
+  const widgetButtonBg = isSolidMode ? "bg-slate-800 hover:bg-slate-700" : (isLight ? "bg-slate-200 hover:bg-slate-300" : "bg-slate-800 hover:bg-slate-700");
   
   // Button colors from selected color
   const buttonClass = `${colors.button} ${colors.buttonHover} text-white`;
+  
+  // Header background for solid mode
+  const headerBg = isSolidMode ? colors.solidHeader : "";
+  const headerText = isSolidMode ? colors.solidHeaderText : "";
 
   return (
     <div className="flex h-full flex-col bg-muted/50 p-6">
@@ -356,14 +372,14 @@ const WidgetPreviewPanel = ({
               <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`}>
                 {/* Scrollable content area */}
                 <div className="flex-1 overflow-y-auto">
-                {/* Widget header with gradient */}
-                <div className="relative overflow-hidden px-6 py-5">
-                  {!isLight && (
+                {/* Widget header - colored for solid mode */}
+                <div className={`relative overflow-hidden px-6 py-5 ${headerBg} ${headerText}`}>
+                  {!isSolidMode && !isLight && (
                     <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />
                   )}
                   <button 
                     onClick={() => setIsCollapsed(true)}
-                    className={`absolute right-4 top-4 ${widgetSubtext} hover:opacity-80`}
+                    className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}
                   >
                     <Minus className="h-4 w-4" />
                   </button>
