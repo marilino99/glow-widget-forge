@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface WidgetPreviewPanelProps {
   selectedAvatar?: string | null;
@@ -23,17 +24,42 @@ const WidgetPreviewPanel = ({
   buttonLogo = null
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
-  const [loadedUrl, setLoadedUrl] = useState("");
+  const [proxyHtml, setProxyHtml] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleLoadUrl = () => {
-    if (previewUrl.trim()) {
-      let url = previewUrl.trim();
-      if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        url = 'https://' + url;
+  const handleLoadUrl = async () => {
+    if (!previewUrl.trim()) return;
+    
+    setIsLoading(true);
+    setLoadError(null);
+    setProxyHtml(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('proxy-website', {
+        body: { url: previewUrl.trim() },
+      });
+
+      if (error) {
+        console.error('Proxy error:', error);
+        setLoadError('Failed to load website');
+        return;
       }
-      setLoadedUrl(url);
+
+      // If it's an error response from the function
+      if (typeof data === 'object' && data.error) {
+        setLoadError(data.error);
+        return;
+      }
+
+      setProxyHtml(data);
+    } catch (err) {
+      console.error('Error loading website:', err);
+      setLoadError('Failed to load website');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,8 +108,24 @@ const WidgetPreviewPanel = ({
 
         {/* Preview content area */}
         <div className="relative flex-1 overflow-hidden bg-muted/30">
-          {loadedUrl ? (
-            /* Iframe with website - scaled down */
+          {isLoading ? (
+            /* Loading state */
+            <div className="flex h-full items-center justify-center">
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Loading website...</span>
+              </div>
+            </div>
+          ) : loadError ? (
+            /* Error state */
+            <div className="flex h-full items-center justify-center">
+              <div className="text-center">
+                <p className="text-sm text-destructive">{loadError}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Try a different URL</p>
+              </div>
+            </div>
+          ) : proxyHtml ? (
+            /* Iframe with proxied website content */
             <div className="h-full w-full overflow-hidden">
               <div 
                 className="origin-top-left"
@@ -94,7 +136,7 @@ const WidgetPreviewPanel = ({
                 }}
               >
                 <iframe
-                  src={loadedUrl}
+                  srcDoc={proxyHtml}
                   className="h-full w-full border-0"
                   title="Website preview"
                   sandbox="allow-scripts allow-same-origin allow-forms"
