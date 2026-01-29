@@ -192,6 +192,7 @@ const Builder = () => {
             backgroundType={config.backgroundType}
             productCards={productCards}
             sayHello={config.sayHello}
+            language={config.language}
           />
         </div>
       </div>
