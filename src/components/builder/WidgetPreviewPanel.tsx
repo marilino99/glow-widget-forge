@@ -243,75 +243,74 @@ const WidgetPreviewPanel = ({
 
         {/* Preview content area */}
         <div className="relative flex-1 overflow-hidden bg-muted/30">
-          {/* Mobile frame container */}
-          <div className={`h-full transition-all duration-300 ${devicePreview === "mobile" ? "flex items-center justify-center p-4" : ""}`}>
-            <div className={`relative transition-all duration-300 ${devicePreview === "mobile" ? "h-full w-[375px] rounded-[2.5rem] border-[12px] border-slate-800 bg-slate-800 shadow-2xl overflow-hidden" : "h-full w-full"}`}>
-              {/* Phone notch for mobile */}
-              {devicePreview === "mobile" && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20 h-6 w-32 rounded-b-2xl bg-slate-800" />
-              )}
-              
-              <div className={`relative h-full w-full ${devicePreview === "mobile" ? "rounded-[1.75rem] overflow-hidden bg-white" : ""}`}>
-                {isLoading ? (/* Loading state */
-                  <div className="flex h-full items-center justify-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Loading website...</span>
+          {isLoading ? (/* Loading state */
+            <div className="flex h-full items-center justify-center">
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Loading website...</span>
+              </div>
+            </div>
+          ) : loadError ? (/* Error state */
+            <div className="flex h-full items-center justify-center">
+              <div className="text-center">
+                <p className="text-sm text-destructive">{loadError}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Try a different URL</p>
+              </div>
+            </div>
+          ) : proxyHtml ? (/* Iframe with proxied website content */
+            <div className="relative h-full w-full overflow-hidden">
+              {/* Overlay to block clicks but allow visual scrolling */}
+              <div className="absolute inset-0 z-10 cursor-default" style={{
+                pointerEvents: 'auto'
+              }} onWheel={e => {
+                const iframeContainer = e.currentTarget.nextElementSibling as HTMLElement;
+                if (iframeContainer) {
+                  iframeContainer.scrollTop += e.deltaY;
+                  iframeContainer.scrollLeft += e.deltaX;
+                }
+              }} />
+              <div className="h-full w-full overflow-auto" style={{
+                pointerEvents: 'none'
+              }}>
+                {devicePreview === "mobile" ? (
+                  /* Mobile: centered iframe at 375px width */
+                  <div className="flex h-full justify-center">
+                    <div className="h-full w-[375px] shadow-xl">
+                      <iframe srcDoc={proxyHtml} className="h-full w-full border-0 bg-white" title="Website preview" sandbox="allow-same-origin" />
                     </div>
                   </div>
-                ) : loadError ? (/* Error state */
-                  <div className="flex h-full items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-sm text-destructive">{loadError}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">Try a different URL</p>
-                    </div>
-                  </div>
-                ) : proxyHtml ? (/* Iframe with proxied website content - navigation disabled */
-                  <div className="relative h-full w-full overflow-hidden">
-                    {/* Overlay to block clicks but allow visual scrolling */}
-                    <div className="absolute inset-0 z-10 cursor-default" style={{
-                      pointerEvents: 'auto'
-                    }} onWheel={e => {
-                      const iframeContainer = e.currentTarget.nextElementSibling as HTMLElement;
-                      if (iframeContainer) {
-                        iframeContainer.scrollTop += e.deltaY;
-                        iframeContainer.scrollLeft += e.deltaX;
-                      }
-                    }} />
-                    <div className="h-full w-full overflow-auto" style={{
-                      pointerEvents: 'none'
-                    }}>
-                      {devicePreview === "mobile" ? (
-                        <iframe srcDoc={proxyHtml} className="h-full w-full border-0" title="Website preview" sandbox="allow-same-origin" />
-                      ) : (
-                        <div className="origin-top-left" style={{
-                          width: '177.78%',
-                          height: '177.78%',
-                          transform: 'scale(0.5625)'
-                        }}>
-                          <iframe srcDoc={proxyHtml} className="h-full w-full border-0" title="Website preview" sandbox="allow-same-origin" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (/* Skeleton placeholder for website */
-                  <div className="space-y-4 p-8">
-                    <div className="h-8 w-48 rounded bg-muted" />
-                    <div className="h-4 w-full max-w-md rounded bg-muted" />
-                    <div className="h-4 w-3/4 max-w-sm rounded bg-muted" />
-                    <div className="mt-8 h-32 w-full max-w-lg rounded bg-muted" />
-                    <div className="h-4 w-full max-w-md rounded bg-muted" />
-                    <div className="h-4 w-2/3 max-w-sm rounded bg-muted" />
-                    <div className="mt-8 grid grid-cols-3 gap-4 max-w-xl">
-                      <div className="h-24 rounded bg-muted" />
-                      <div className="h-24 rounded bg-muted" />
-                      <div className="h-24 rounded bg-muted" />
-                    </div>
+                ) : (
+                  /* Desktop: scaled down full width */
+                  <div className="origin-top-left" style={{
+                    width: '177.78%',
+                    height: '177.78%',
+                    transform: 'scale(0.5625)'
+                  }}>
+                    <iframe srcDoc={proxyHtml} className="h-full w-full border-0" title="Website preview" sandbox="allow-same-origin" />
                   </div>
                 )}
+              </div>
+            </div>
+          ) : (/* Skeleton placeholder for website */
+            <div className={`h-full ${devicePreview === "mobile" ? "flex justify-center" : ""}`}>
+              <div className={`space-y-4 p-8 ${devicePreview === "mobile" ? "w-[375px] bg-background shadow-xl" : ""}`}>
+                <div className="h-8 w-48 rounded bg-muted" />
+                <div className="h-4 w-full max-w-md rounded bg-muted" />
+                <div className="h-4 w-3/4 max-w-sm rounded bg-muted" />
+                <div className="mt-8 h-32 w-full max-w-lg rounded bg-muted" />
+                <div className="h-4 w-full max-w-md rounded bg-muted" />
+                <div className="h-4 w-2/3 max-w-sm rounded bg-muted" />
+                <div className="mt-8 grid grid-cols-3 gap-4 max-w-xl">
+                  <div className="h-24 rounded bg-muted" />
+                  <div className="h-24 rounded bg-muted" />
+                  <div className="h-24 rounded bg-muted" />
+                </div>
+              </div>
+            </div>
+          )}
 
-                {/* Widget preview - inside mobile frame or absolute positioned */}
-                <div className={`absolute transition-all duration-300 ${devicePreview === "mobile" ? "bottom-3 right-3 w-64 scale-[0.85] origin-bottom-right" : "bottom-6 right-6 w-80"}`}>
+          {/* Widget preview */}
+          <div className={`absolute transition-all duration-300 ${devicePreview === "mobile" ? "bottom-4 left-1/2 -translate-x-1/2 ml-[120px] w-64 scale-[0.85] origin-bottom" : "bottom-6 right-6 w-80"}`}>
             {isCollapsed ? (/* Collapsed Icon */
           <div className="flex justify-end">
                 <button onClick={() => setIsCollapsed(false)} className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}>
@@ -503,9 +502,6 @@ const WidgetPreviewPanel = ({
                   </span>
                 </div>
               </div>)}
-          </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
