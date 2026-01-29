@@ -357,11 +357,11 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Product Cards Section - outside colored wrapper */}
-                {productCards.filter(c => !c.isLoading).length > 0 && <div className="relative">
+                {productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
                     {/* Solid mode background band - stops at ~1/4 of first card */}
                     {isSolidMode && <div className={`absolute top-0 left-0 right-0 h-12 ${colors.solidHeader}`} />}
                     <div className={`relative px-4 pb-4 space-y-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                      {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : ""}`}>
+                      {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
                           {/* Product Image Placeholder - large rounded area */}
                           <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
                             {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <Image className="h-12 w-12 text-slate-400" />}
@@ -378,12 +378,12 @@ const WidgetPreviewPanel = ({
                   </div>}
 
                 {/* Quick answers section */}
-                {faqEnabled && <div className="relative -mt-6">
+                {faqEnabled && <div className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
                     {/* Solid mode background band - stops at ~1/4 of FAQ box */}
                     {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
                       <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
                     )}
-                    <div className={`relative px-4 pt-2 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                    <div className={`relative px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                       <div className="rounded-2xl p-4" style={{ backgroundColor: isLight ? '#ffffff' : '#252525' }}>
                         <div className="mb-3 flex items-center gap-2">
                           <HelpCircle className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
