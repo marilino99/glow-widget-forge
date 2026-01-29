@@ -217,6 +217,7 @@ const ThemeColorsPanel = ({
                   )}
                 </div>
                 <input
+                  id="logo-upload-input"
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
@@ -225,9 +226,15 @@ const ThemeColorsPanel = ({
                 />
                 <Button 
                   variant="outline" 
-                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
                   className="gap-2"
                 >
+                  <Upload className="h-4 w-4" />
                   Upload
                 </Button>
                 {buttonLogo && (
