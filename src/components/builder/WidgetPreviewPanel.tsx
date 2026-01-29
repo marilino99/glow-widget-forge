@@ -388,7 +388,6 @@ const WidgetPreviewPanel = ({
                         <div className="mb-3 flex items-center gap-2">
                           <HelpCircle className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
                           <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>{t.quickAnswers}</span>
-                          <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>Quick answers</span>
                         </div>
                         <div className="space-y-1">
                           <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}>
