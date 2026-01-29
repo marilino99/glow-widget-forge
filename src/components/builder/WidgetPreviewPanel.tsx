@@ -316,7 +316,13 @@ const WidgetPreviewPanel = ({
           )}
 
           {/* Widget preview */}
-          <div className={`absolute transition-all duration-300 ${devicePreview === "mobile" ? "bottom-6 left-1/2 w-80 scale-[0.70] origin-bottom-right" : "bottom-6 right-6 w-80"}`} style={devicePreview === "mobile" ? { marginLeft: '0px', right: 'calc(50% - 130px)' } : undefined}>
+          <div 
+            className={`absolute transition-all duration-300 ${devicePreview === "mobile" ? "w-80 scale-[0.65] origin-bottom-right" : "bottom-6 right-6 w-80"}`} 
+            style={devicePreview === "mobile" ? { 
+              bottom: '24px',
+              right: 'calc(50% - 128px)'
+            } : undefined}
+          >
             {isCollapsed ? (/* Collapsed Icon */
           <div className="flex justify-end">
                 <button onClick={() => setIsCollapsed(false)} className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}>
