@@ -12,6 +12,9 @@ export interface WidgetConfiguration {
   widgetColor: string;
   buttonLogo: string | null;
   backgroundType: "solid" | "gradient" | "image";
+  logo: string | null;
+  language: string;
+  sayHello: string;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -23,6 +26,9 @@ const defaultConfig: WidgetConfiguration = {
   widgetColor: "blue",
   buttonLogo: null,
   backgroundType: "gradient",
+  logo: null,
+  language: "en",
+  sayHello: "Hello, nice to see you here 👋",
 };
 
 export const useWidgetConfiguration = () => {
@@ -60,6 +66,9 @@ export const useWidgetConfiguration = () => {
             widgetColor: data.widget_color,
             buttonLogo: data.button_logo,
             backgroundType: (data as { background_type?: string }).background_type as "solid" | "gradient" | "image" || "gradient",
+            logo: defaultConfig.logo,
+            language: defaultConfig.language,
+            sayHello: defaultConfig.sayHello,
           });
         }
       } catch (error) {

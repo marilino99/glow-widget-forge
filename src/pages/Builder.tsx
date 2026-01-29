@@ -130,6 +130,12 @@ const Builder = () => {
             onAddProductCard={handleAddProductCard}
             onUpdateProductCard={handleUpdateProductCard}
             onDeleteProductCard={handleDeleteProductCard}
+            logo={config.logo}
+            onLogoChange={(logo) => updateConfig({ logo })}
+            language={config.language}
+            onLanguageChange={(language) => updateConfig({ language })}
+            sayHello={config.sayHello}
+            onSayHelloChange={(sayHello) => updateConfig({ sayHello })}
           />
         </div>
 

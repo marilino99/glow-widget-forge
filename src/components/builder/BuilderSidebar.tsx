@@ -18,6 +18,7 @@ import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
 import ThemeColorsPanel from "./ThemeColorsPanel";
 import ProductCarouselPanel from "./ProductCarouselPanel";
+import TypographyPanel from "./TypographyPanel";
 import { ProductCardData } from "@/types/productCard";
 
 interface BuilderSidebarProps {
@@ -44,6 +45,12 @@ interface BuilderSidebarProps {
   onAddProductCard: (card: ProductCardData) => void;
   onUpdateProductCard: (cardId: string, updates: Partial<ProductCardData>) => void;
   onDeleteProductCard: (cardId: string) => void;
+  logo: string | null;
+  onLogoChange: (logo: string | null) => void;
+  language: string;
+  onLanguageChange: (language: string) => void;
+  sayHello: string;
+  onSayHelloChange: (text: string) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -69,12 +76,19 @@ const BuilderSidebar = ({
   productCards,
   onAddProductCard,
   onUpdateProductCard,
-  onDeleteProductCard
+  onDeleteProductCard,
+  logo,
+  onLogoChange,
+  language,
+  onLanguageChange,
+  sayHello,
+  onSayHelloChange
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
   const [showThemeColorsPanel, setShowThemeColorsPanel] = useState(false);
   const [showProductCarouselPanel, setShowProductCarouselPanel] = useState(false);
+  const [showTypographyPanel, setShowTypographyPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
@@ -83,6 +97,8 @@ const BuilderSidebar = ({
       setShowThemeColorsPanel(true);
     } else if (widgetType === "product-carousel") {
       setShowProductCarouselPanel(true);
+    } else if (widgetType === "typography") {
+      setShowTypographyPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -101,6 +117,27 @@ const BuilderSidebar = ({
     setShowProductCarouselPanel(false);
     onSelectWidget(null as unknown as string);
   };
+
+  const handleBackFromTypography = () => {
+    setShowTypographyPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
+  // Show Typography panel
+  if (showTypographyPanel) {
+    return (
+      <TypographyPanel
+        onBack={handleBackFromTypography}
+        logo={logo}
+        onLogoChange={onLogoChange}
+        language={language}
+        onLanguageChange={onLanguageChange}
+        sayHello={sayHello}
+        onSayHelloChange={onSayHelloChange}
+        onSaveConfig={onSaveConfig}
+      />
+    );
+  }
 
   // Show Product Carousel panel
   if (showProductCarouselPanel) {
