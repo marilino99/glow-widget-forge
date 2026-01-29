@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { Button } from "@/components/ui/button";
-import { Boxes, HelpCircle, LogOut } from "lucide-react";
+import { Boxes, HelpCircle, LogOut, Loader2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,16 +17,22 @@ import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 
 const Builder = () => {
   const { user, signOut } = useAuth();
+  const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
   const [activeWidget, setActiveWidget] = useState<string | null>("product-recommendations");
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
-  const [faqEnabled, setFaqEnabled] = useState(true);
-  const [contactName, setContactName] = useState("ciao");
-  const [offerHelp, setOfferHelp] = useState("Write to us");
-  const [widgetTheme, setWidgetTheme] = useState<"light" | "dark">("dark");
-  const [widgetColor, setWidgetColor] = useState("blue");
-  const [buttonLogo, setButtonLogo] = useState<string | null>(null);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
+
+  // Show loading state while fetching configuration
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading your configuration...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -45,6 +51,12 @@ const Builder = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {isSaving && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="text-sm">Saving...</span>
+            </div>
+          )}
           <Button variant="ghost" size="icon" className="text-muted-foreground">
             <HelpCircle className="h-5 w-5" />
           </Button>
@@ -79,33 +91,34 @@ const Builder = () => {
           <BuilderSidebar
             onSelectWidget={setActiveWidget}
             activeWidget={activeWidget}
-            selectedAvatar={selectedAvatar}
-            onSelectAvatar={setSelectedAvatar}
-            faqEnabled={faqEnabled}
-            onFaqToggle={setFaqEnabled}
-            contactName={contactName}
-            onContactNameChange={setContactName}
-            offerHelp={offerHelp}
-            onOfferHelpChange={setOfferHelp}
-            widgetTheme={widgetTheme}
-            onWidgetThemeChange={setWidgetTheme}
-            widgetColor={widgetColor}
-            onWidgetColorChange={setWidgetColor}
-            buttonLogo={buttonLogo}
-            onButtonLogoChange={setButtonLogo}
+            selectedAvatar={config.selectedAvatar}
+            onSelectAvatar={(avatar) => updateConfig({ selectedAvatar: avatar })}
+            faqEnabled={config.faqEnabled}
+            onFaqToggle={(enabled) => updateConfig({ faqEnabled: enabled })}
+            contactName={config.contactName}
+            onContactNameChange={(name) => updateConfig({ contactName: name })}
+            offerHelp={config.offerHelp}
+            onOfferHelpChange={(help) => updateConfig({ offerHelp: help })}
+            widgetTheme={config.widgetTheme}
+            onWidgetThemeChange={(theme) => updateConfig({ widgetTheme: theme })}
+            widgetColor={config.widgetColor}
+            onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
+            buttonLogo={config.buttonLogo}
+            onButtonLogoChange={(logo) => updateConfig({ buttonLogo: logo })}
+            onSaveConfig={saveConfig}
           />
         </div>
 
         {/* Right panel - preview */}
         <div className="flex-1">
           <WidgetPreviewPanel 
-            selectedAvatar={selectedAvatar} 
-            faqEnabled={faqEnabled}
-            contactName={contactName}
-            offerHelp={offerHelp}
-            widgetTheme={widgetTheme}
-            widgetColor={widgetColor}
-            buttonLogo={buttonLogo}
+            selectedAvatar={config.selectedAvatar} 
+            faqEnabled={config.faqEnabled}
+            contactName={config.contactName}
+            offerHelp={config.offerHelp}
+            widgetTheme={config.widgetTheme}
+            widgetColor={config.widgetColor}
+            buttonLogo={config.buttonLogo}
           />
         </div>
       </div>
