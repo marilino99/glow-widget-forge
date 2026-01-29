@@ -315,24 +315,22 @@ const WidgetPreviewPanel = ({
 
                 {/* Product Cards Section */}
                 {productCards.filter(c => !c.isLoading).length > 0 && (
-                  <div className={`border-t px-4 py-4 ${widgetBorder}`}>
+                  <div className="px-4 py-4 space-y-4">
                     {productCards.filter(c => !c.isLoading).map((card) => (
-                      <div key={card.id} className="rounded-xl overflow-hidden">
-                        {/* Product Image Placeholder */}
-                        <div className={`aspect-[16/10] flex items-center justify-center rounded-t-xl ${isLight ? "bg-slate-200" : "bg-slate-600"}`}>
+                      <div key={card.id}>
+                        {/* Product Image Placeholder - large rounded area */}
+                        <div className={`aspect-[4/3] flex items-center justify-center rounded-2xl mb-4 ${isLight ? "bg-slate-200" : "bg-slate-300"}`}>
                           {card.imageUrl ? (
-                            <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" />
+                            <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover rounded-2xl" />
                           ) : (
-                            <Image className={`h-10 w-10 ${isLight ? "text-slate-400" : "text-slate-500"}`} />
+                            <Image className="h-12 w-12 text-slate-400" />
                           )}
                         </div>
                         {/* Product Info */}
-                        <div className="pt-3 pb-1">
-                          <h4 className="font-semibold text-base mb-2">{card.title}</h4>
-                          <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
-                            Show
-                          </Button>
-                        </div>
+                        <h4 className="font-bold text-lg mb-3">{card.title}</h4>
+                        <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 text-base font-medium">
+                          Show
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -359,23 +357,25 @@ const WidgetPreviewPanel = ({
                 )}
                 </div>
 
-                {/* Footer nav - fixed at bottom */}
-                <div className={`flex border-t shrink-0 ${widgetBorder}`}>
-                  <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetText}`}>
-                    <Home className="h-5 w-5" />
-                    <span className="text-xs">Home</span>
-                  </button>
-                  <button 
-                    className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetSubtext} hover:opacity-80`}
-                    onClick={() => setShowChat(true)}
-                  >
-                    <MessageCircle className="h-5 w-5" />
-                    <span className="text-xs">Contact</span>
-                  </button>
+                {/* Footer nav - rounded dark container */}
+                <div className="px-4 pb-3 shrink-0">
+                  <div className={`flex rounded-2xl ${isLight ? "bg-slate-100" : "bg-slate-700/80"}`}>
+                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetText}`}>
+                      <Home className="h-5 w-5" />
+                      <span className="text-xs">Home</span>
+                    </button>
+                    <button 
+                      className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetSubtext} hover:opacity-80`}
+                      onClick={() => setShowChat(true)}
+                    >
+                      <MessageCircle className="h-5 w-5" />
+                      <span className="text-xs">Contact</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Powered by */}
-                <div className={`border-t py-2 text-center shrink-0 ${widgetBorder}`}>
+                <div className="py-2 text-center shrink-0">
                   <span className={`text-xs ${widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
