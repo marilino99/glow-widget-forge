@@ -44,6 +44,8 @@ const ProductCarouselPanel = ({
   const [productUrl, setProductUrl] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
+  const [initialEditState, setInitialEditState] = useState<ProductCardData | null>(null);
+  const [localEdits, setLocalEdits] = useState<Partial<ProductCardData>>({});
 
   // Demo products for the carousel
   const [products] = useState<ProductCard[]>([
@@ -96,13 +98,42 @@ const ProductCarouselPanel = ({
     onDeleteCard(cardId);
     if (editingCardId === cardId) {
       setEditingCardId(null);
+      setInitialEditState(null);
+      setLocalEdits({});
     }
   };
 
+  const startEditing = (card: ProductCardData) => {
+    setEditingCardId(card.id);
+    setInitialEditState({ ...card });
+    setLocalEdits({});
+  };
+
+  const handleLocalEdit = (updates: Partial<ProductCardData>) => {
+    setLocalEdits(prev => ({ ...prev, ...updates }));
+  };
+
+  const handleSaveEdits = () => {
+    if (editingCardId && Object.keys(localEdits).length > 0) {
+      onUpdateCard(editingCardId, localEdits);
+      setInitialEditState(prev => prev ? { ...prev, ...localEdits } : null);
+      setLocalEdits({});
+    }
+  };
+
+  const handleCancelEdits = () => {
+    setLocalEdits({});
+  };
+
   const editingCard = editingCardId ? addedCards.find(c => c.id === editingCardId) : null;
+  
+  // Merge initial state with local edits for display
+  const displayCard = editingCard ? { ...editingCard, ...localEdits } : null;
+  
+  const hasUnsavedChanges = Object.keys(localEdits).length > 0;
 
   // Edit form view
-  if (editingCard) {
+  if (displayCard) {
     return (
       <div className="flex h-full flex-col" style={{ backgroundColor: '#fafafa' }}>
         {/* Edit Header */}
@@ -145,8 +176,8 @@ const ProductCarouselPanel = ({
               Title <span className="text-red-500">*</span>
             </Label>
             <Input
-              value={editingCard.title}
-              onChange={(e) => onUpdateCard(editingCard.id, { title: e.target.value })}
+              value={displayCard.title}
+              onChange={(e) => handleLocalEdit({ title: e.target.value })}
               placeholder="Product title"
               className="rounded-lg bg-muted border-0"
             />
@@ -158,8 +189,8 @@ const ProductCarouselPanel = ({
               Subtitle
             </Label>
             <Input
-              value={editingCard.subtitle || ""}
-              onChange={(e) => onUpdateCard(editingCard.id, { subtitle: e.target.value })}
+              value={displayCard.subtitle || ""}
+              onChange={(e) => handleLocalEdit({ subtitle: e.target.value })}
               placeholder="Optional subtitle"
               className="rounded-lg bg-muted border-0"
             />
@@ -171,8 +202,8 @@ const ProductCarouselPanel = ({
               Product URL <span className="text-red-500">*</span>
             </Label>
             <Input
-              value={editingCard.productUrl || ""}
-              onChange={(e) => onUpdateCard(editingCard.id, { productUrl: e.target.value })}
+              value={displayCard.productUrl || ""}
+              onChange={(e) => handleLocalEdit({ productUrl: e.target.value })}
               placeholder="https://example.com/product"
               className="rounded-lg bg-muted border-0"
             />
@@ -184,8 +215,8 @@ const ProductCarouselPanel = ({
               Image URL <span className="text-red-500">*</span>
             </Label>
             <Input
-              value={editingCard.imageUrl || ""}
-              onChange={(e) => onUpdateCard(editingCard.id, { imageUrl: e.target.value })}
+              value={displayCard.imageUrl || ""}
+              onChange={(e) => handleLocalEdit({ imageUrl: e.target.value })}
               placeholder="https://example.com/image.jpg"
               className="rounded-lg bg-muted border-0"
             />
@@ -198,8 +229,8 @@ const ProductCarouselPanel = ({
                 Price
               </Label>
               <Input
-                value={editingCard.price || ""}
-                onChange={(e) => onUpdateCard(editingCard.id, { price: e.target.value })}
+                value={displayCard.price || ""}
+                onChange={(e) => handleLocalEdit({ price: e.target.value })}
                 placeholder="$99"
                 className="rounded-lg bg-muted border-0"
               />
@@ -209,8 +240,8 @@ const ProductCarouselPanel = ({
                 Old price
               </Label>
               <Input
-                value={editingCard.oldPrice || ""}
-                onChange={(e) => onUpdateCard(editingCard.id, { oldPrice: e.target.value })}
+                value={displayCard.oldPrice || ""}
+                onChange={(e) => handleLocalEdit({ oldPrice: e.target.value })}
                 placeholder="$149"
                 className="rounded-lg bg-muted border-0"
               />
@@ -223,8 +254,8 @@ const ProductCarouselPanel = ({
               Promo badge
             </Label>
             <Select
-              value={editingCard.promoBadge || "none"}
-              onValueChange={(value) => onUpdateCard(editingCard.id, { 
+              value={displayCard.promoBadge || "none"}
+              onValueChange={(value) => handleLocalEdit({ 
                 promoBadge: value as ProductCardData["promoBadge"] 
               })}
             >
@@ -241,6 +272,27 @@ const ProductCarouselPanel = ({
             </Select>
           </div>
         </div>
+
+        {/* Fixed Footer with Save/Cancel Buttons */}
+        {hasUnsavedChanges && (
+          <div className="shrink-0 border-t border-border bg-background p-4">
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={handleCancelEdits}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={handleSaveEdits}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -312,7 +364,7 @@ const ProductCarouselPanel = ({
                           variant="secondary"
                           size="sm"
                           className="rounded-full gap-1.5 h-7 px-3 text-xs"
-                          onClick={() => setEditingCardId(card.id)}
+                          onClick={() => startEditing(card)}
                         >
                           <Pencil className="h-3 w-3" />
                           Edit
