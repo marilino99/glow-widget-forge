@@ -361,20 +361,28 @@ const WidgetPreviewPanel = ({
                     {/* Solid mode background band - stops at ~1/4 of first card */}
                     {isSolidMode && <div className={`absolute top-0 left-0 right-0 h-12 ${colors.solidHeader}`} />}
                     <div className={`relative pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                      <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                        {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`flex-shrink-0 rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : isLight ? "bg-white shadow-sm" : "bg-slate-800"}`} style={{ width: 'calc(100% - 48px)' }}>
-                            {/* Product Image - tall aspect ratio like reference */}
-                            <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
-                              {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <Image className="h-12 w-12 text-slate-400" />}
-                            </div>
-                            {/* Product Info */}
-                            <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
-                              <h4 className="font-bold text-base mb-3">{card.title}</h4>
-                              <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`}>
-                                {t.show}
-                              </Button>
-                            </div>
-                          </div>)}
+                      <div className="relative">
+                        <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                          {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`flex-shrink-0 rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : isLight ? "bg-white shadow-sm" : "bg-slate-800"}`} style={{ width: 'calc(100% - 48px)' }}>
+                              {/* Product Image - tall aspect ratio like reference */}
+                              <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
+                                {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <Image className="h-12 w-12 text-slate-400" />}
+                              </div>
+                              {/* Product Info */}
+                              <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
+                                <h4 className="font-bold text-base mb-3">{card.title}</h4>
+                                <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`}>
+                                  {t.show}
+                                </Button>
+                              </div>
+                            </div>)}
+                        </div>
+                        {/* Scroll arrow button */}
+                        {productCards.filter(c => !c.isLoading).length > 1 && (
+                          <button className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+                            <ChevronDown className="h-5 w-5 text-slate-700 -rotate-90" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>}
