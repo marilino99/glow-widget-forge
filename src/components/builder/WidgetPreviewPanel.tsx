@@ -369,76 +369,79 @@ const WidgetPreviewPanel = ({
               </div>
             ) : (
               /* Home View */
-              <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`}>
+              <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`}>
                 {/* Scrollable content area */}
                 <div className="flex-1 overflow-y-auto">
-                {/* Widget header - colored for solid mode */}
-                <div className={`relative overflow-hidden px-6 py-5 ${headerBg} ${headerText}`}>
-                  {!isSolidMode && !isLight && (
-                    <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />
-                  )}
-                  <button 
-                    onClick={() => setIsCollapsed(true)}
-                    className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <h3 className="relative text-2xl font-bold">
-                    Hello, nice to
-                    <br />
-                    see you here 👋
-                  </h3>
-                </div>
-
-                {/* Contact section */}
-                <div className={`mx-4 mb-4 rounded-xl p-4 ${widgetCardBg}`}>
-                  <div className="flex items-center gap-3">
-                    {selectedAvatar ? (
-                      <img
-                        src={selectedAvatar}
-                        alt="Avatar"
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900">
-                        C
-                      </div>
+                {/* Main content area - colored for solid mode */}
+                <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText}` : ""}`}>
+                  {/* Widget header */}
+                  <div className="relative overflow-hidden px-6 py-5">
+                    {!isSolidMode && !isLight && (
+                      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />
                     )}
-                  <div className="flex-1">
-                    <p className={`text-xs ${widgetSubtext}`}>{contactName}</p>
-                    <p className="text-sm">{offerHelp}</p>
+                    <button 
+                      onClick={() => setIsCollapsed(true)}
+                      className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <h3 className="relative text-2xl font-bold">
+                      Hello, nice to
+                      <br />
+                      see you here 👋
+                    </h3>
                   </div>
-                  </div>
-                  <Button 
-                    className={`mt-3 w-full ${buttonClass}`}
-                    onClick={() => setShowChat(true)}
-                  >
-                    Contact us
-                  </Button>
-                </div>
 
-                {/* Product Cards Section */}
-                {productCards.filter(c => !c.isLoading).length > 0 && (
-                  <div className="px-4 py-4 space-y-4">
-                    {productCards.filter(c => !c.isLoading).map((card) => (
-                      <div key={card.id}>
-                        {/* Product Image Placeholder - large rounded area */}
-                        <div className={`aspect-[4/3] flex items-center justify-center rounded-2xl mb-4 ${isLight ? "bg-slate-200" : "bg-slate-300"}`}>
-                          {card.imageUrl ? (
-                            <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover rounded-2xl" />
-                          ) : (
-                            <Image className="h-12 w-12 text-slate-400" />
-                          )}
+                  {/* Contact section */}
+                  <div className={`mx-4 mb-4 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
+                    <div className="flex items-center gap-3">
+                      {selectedAvatar ? (
+                        <img
+                          src={selectedAvatar}
+                          alt="Avatar"
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900">
+                          C
                         </div>
-                        {/* Product Info */}
-                        <h4 className="font-bold text-lg mb-3">{card.title}</h4>
-                        <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
-                          Show
-                        </Button>
-                      </div>
-                    ))}
+                      )}
+                    <div className="flex-1">
+                      <p className={`text-xs ${isSolidMode ? "text-white/60" : widgetSubtext}`}>{contactName}</p>
+                      <p className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
+                    </div>
+                    </div>
+                    <Button 
+                      className={`mt-3 w-full ${buttonClass}`}
+                      onClick={() => setShowChat(true)}
+                    >
+                      Contact us
+                    </Button>
                   </div>
-                )}
+
+                  {/* Product Cards Section */}
+                  {productCards.filter(c => !c.isLoading).length > 0 && (
+                    <div className="px-4 py-4 space-y-4">
+                      {productCards.filter(c => !c.isLoading).map((card) => (
+                        <div key={card.id}>
+                          {/* Product Image Placeholder - large rounded area */}
+                          <div className={`aspect-[4/3] flex items-center justify-center rounded-2xl mb-4 ${isSolidMode ? "bg-slate-300" : (isLight ? "bg-slate-200" : "bg-slate-300")}`}>
+                            {card.imageUrl ? (
+                              <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover rounded-2xl" />
+                            ) : (
+                              <Image className="h-12 w-12 text-slate-400" />
+                            )}
+                          </div>
+                          {/* Product Info */}
+                          <h4 className="font-bold text-lg mb-3">{card.title}</h4>
+                          <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
+                            Show
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Quick answers section */}
                 {faqEnabled && (
