@@ -265,7 +265,9 @@ const WidgetPreviewPanel = ({
               </div>
             ) : (
               /* Home View */
-              <div className={`overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`}>
+              <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`}>
+                {/* Scrollable content area */}
+                <div className="flex-1 overflow-y-auto">
                 {/* Widget header with gradient */}
                 <div className="relative overflow-hidden px-6 py-5">
                   {!isLight && (
@@ -355,9 +357,10 @@ const WidgetPreviewPanel = ({
                     </div>
                   </div>
                 )}
+                </div>
 
-                {/* Footer nav */}
-                <div className={`flex border-t ${widgetBorder}`}>
+                {/* Footer nav - fixed at bottom */}
+                <div className={`flex border-t shrink-0 ${widgetBorder}`}>
                   <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetText}`}>
                     <Home className="h-5 w-5" />
                     <span className="text-xs">Home</span>
@@ -372,7 +375,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Powered by */}
-                <div className={`border-t py-2 text-center ${widgetBorder}`}>
+                <div className={`border-t py-2 text-center shrink-0 ${widgetBorder}`}>
                   <span className={`text-xs ${widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
