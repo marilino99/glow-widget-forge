@@ -134,12 +134,12 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
               {addedCards.map((card) => (
                 <div
                   key={card.id}
-                  className="rounded-xl border-2 border-dashed border-border p-4"
+                  className="rounded-2xl p-4 shadow-sm transition-shadow hover:shadow-md"
                   style={{ backgroundColor: '#ffffff' }}
                 >
                   {card.isLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
                   ) : (
                     <div>
@@ -148,31 +148,31 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
                         <Button
                           variant="secondary"
                           size="sm"
-                          className="rounded-full gap-1.5 h-8 px-3"
+                          className="rounded-full gap-1.5 h-7 px-3 text-xs"
                         >
-                          <Pencil className="h-3.5 w-3.5" />
+                          <Pencil className="h-3 w-3" />
                           Edit
                         </Button>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-0.5">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-7 w-7 text-muted-foreground hover:text-foreground"
                             onClick={() => handleDeleteCard(card.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-7 w-7 text-muted-foreground hover:text-foreground"
                           >
-                            <Sparkles className="h-4 w-4" />
+                            <Sparkles className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </div>
                       {/* Card title */}
-                      <p className="font-medium text-foreground">{card.title}</p>
+                      <p className="font-medium text-foreground text-sm">{card.title}</p>
                     </div>
                   )}
                 </div>
