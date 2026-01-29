@@ -319,8 +319,8 @@ const WidgetPreviewPanel = ({
           <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`}>
                 {/* Scrollable content area */}
                 <div className="flex-1 overflow-y-auto bg-black">
-                {/* Main content area - colored for solid mode (header + contact only) */}
-                <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText}` : ""}`}>
+                {/* Main content area - colored for solid mode (header + contact + extra space) */}
+                <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText} pb-12` : ""}`}>
                   {/* Widget header */}
                   <div className="relative overflow-hidden px-6 py-5">
                     {!isSolidMode && !isLight && <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />}
@@ -335,7 +335,7 @@ const WidgetPreviewPanel = ({
                   </div>
 
                   {/* Contact section */}
-                  <div className={`mx-4 mb-6 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
+                  <div className={`mx-4 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
                     <div className="flex items-center gap-3">
                       {selectedAvatar ? <img src={selectedAvatar} alt="Avatar" className="h-10 w-10 rounded-full object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900">
                           C
