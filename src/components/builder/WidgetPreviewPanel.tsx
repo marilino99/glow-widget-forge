@@ -373,20 +373,22 @@ const WidgetPreviewPanel = ({
                   </div>}
 
                 {/* Quick answers section */}
-                {faqEnabled && <div className={`border-t px-4 py-4 ${widgetBorder}`}>
-                    <div className="mb-3 flex items-center gap-2 bg-neutral-800">
-                      <HelpCircle className={`h-4 w-4 ${widgetSubtext}`} />
-                      <span className="text-sm font-medium">Quick answers</span>
-                    </div>
-                    <div className="space-y-1 bg-neutral-800">
-                      <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "hover:bg-slate-100" : "hover:bg-white/5"}`}>
-                        <span>What is the delivery time?</span>
-                        <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
-                      </button>
-                      <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "hover:bg-slate-100" : "hover:bg-white/5"}`}>
-                        <span>Do you ship internationally?</span>
-                        <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
-                      </button>
+                {faqEnabled && <div className="px-4 py-4">
+                    <div className="rounded-2xl p-4" style={{ backgroundColor: '#252525' }}>
+                      <div className="mb-3 flex items-center gap-2">
+                        <HelpCircle className={`h-4 w-4 ${widgetSubtext}`} />
+                        <span className="text-sm font-medium">Quick answers</span>
+                      </div>
+                      <div className="space-y-1">
+                        <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                          <span>What is the delivery time?</span>
+                          <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
+                        </button>
+                        <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                          <span>Do you ship internationally?</span>
+                          <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
+                        </button>
+                      </div>
                     </div>
                   </div>}
                 </div>
