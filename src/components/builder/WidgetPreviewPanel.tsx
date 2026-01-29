@@ -13,8 +13,82 @@ interface WidgetPreviewPanelProps {
   widgetTheme?: "light" | "dark";
   widgetColor?: string;
   buttonLogo?: string | null;
+  backgroundType?: "solid" | "gradient" | "image";
   productCards?: ProductCardData[];
 }
+
+// Color mapping for buttons and gradients
+const colorMap: Record<string, { 
+  button: string; 
+  buttonHover: string;
+  gradientLight: string; 
+  gradientDark: string;
+  solid: string;
+}> = {
+  gray: {
+    button: "bg-gray-500",
+    buttonHover: "hover:bg-gray-600",
+    gradientLight: "bg-gradient-to-b from-gray-100 via-white to-slate-50",
+    gradientDark: "bg-gradient-to-br from-gray-700 to-slate-900",
+    solid: "bg-gray-500",
+  },
+  purple: {
+    button: "bg-purple-500",
+    buttonHover: "hover:bg-purple-600",
+    gradientLight: "bg-gradient-to-b from-violet-100 via-white to-pink-50",
+    gradientDark: "bg-gradient-to-br from-purple-700 to-slate-900",
+    solid: "bg-purple-100",
+  },
+  blue: {
+    button: "bg-blue-500",
+    buttonHover: "hover:bg-blue-600",
+    gradientLight: "bg-gradient-to-b from-violet-100 via-white to-cyan-50",
+    gradientDark: "bg-gradient-to-br from-blue-700 to-slate-900",
+    solid: "bg-blue-100",
+  },
+  cyan: {
+    button: "bg-cyan-500",
+    buttonHover: "hover:bg-cyan-600",
+    gradientLight: "bg-gradient-to-b from-cyan-100 via-white to-emerald-50",
+    gradientDark: "bg-gradient-to-br from-cyan-700 to-slate-900",
+    solid: "bg-cyan-100",
+  },
+  green: {
+    button: "bg-green-500",
+    buttonHover: "hover:bg-green-600",
+    gradientLight: "bg-gradient-to-b from-green-100 via-white to-lime-50",
+    gradientDark: "bg-gradient-to-br from-green-700 to-slate-900",
+    solid: "bg-green-100",
+  },
+  yellow: {
+    button: "bg-yellow-500",
+    buttonHover: "hover:bg-yellow-600",
+    gradientLight: "bg-gradient-to-b from-yellow-100 via-white to-orange-50",
+    gradientDark: "bg-gradient-to-br from-yellow-600 to-slate-900",
+    solid: "bg-yellow-100",
+  },
+  orange: {
+    button: "bg-orange-500",
+    buttonHover: "hover:bg-orange-600",
+    gradientLight: "bg-gradient-to-b from-orange-100 via-white to-red-50",
+    gradientDark: "bg-gradient-to-br from-orange-600 to-slate-900",
+    solid: "bg-orange-100",
+  },
+  red: {
+    button: "bg-red-500",
+    buttonHover: "hover:bg-red-600",
+    gradientLight: "bg-gradient-to-b from-red-100 via-white to-rose-50",
+    gradientDark: "bg-gradient-to-br from-red-700 to-slate-900",
+    solid: "bg-red-100",
+  },
+  pink: {
+    button: "bg-pink-500",
+    buttonHover: "hover:bg-pink-600",
+    gradientLight: "bg-gradient-to-b from-pink-100 via-white to-rose-50",
+    gradientDark: "bg-gradient-to-br from-pink-600 to-slate-900",
+    solid: "bg-pink-100",
+  },
+};
 
 const WidgetPreviewPanel = ({ 
   selectedAvatar, 
@@ -24,6 +98,7 @@ const WidgetPreviewPanel = ({
   widgetTheme = "dark",
   widgetColor = "blue",
   buttonLogo = null,
+  backgroundType = "gradient",
   productCards = []
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
@@ -73,14 +148,27 @@ const WidgetPreviewPanel = ({
   };
   // Theme-based styles
   const isLight = widgetTheme === "light";
-  const widgetBg = isLight 
-    ? "bg-gradient-to-b from-violet-100 via-white to-cyan-50" 
-    : "bg-gradient-to-br from-slate-800 to-slate-900";
+  const colors = colorMap[widgetColor] || colorMap.blue;
+  
+  // Background based on backgroundType
+  const getWidgetBg = () => {
+    if (backgroundType === "gradient") {
+      return isLight ? colors.gradientLight : colors.gradientDark;
+    } else if (backgroundType === "solid") {
+      return isLight ? colors.solid : "bg-slate-800";
+    }
+    return isLight ? "bg-white" : "bg-slate-900";
+  };
+  
+  const widgetBg = getWidgetBg();
   const widgetText = isLight ? "text-slate-900" : "text-white";
   const widgetSubtext = isLight ? "text-slate-500" : "text-white/60";
   const widgetBorder = isLight ? "border-slate-200" : "border-white/10";
   const widgetCardBg = isLight ? "bg-white" : "bg-slate-700/50";
   const widgetButtonBg = isLight ? "bg-slate-200 hover:bg-slate-300" : "bg-slate-800 hover:bg-slate-700";
+  
+  // Button colors from selected color
+  const buttonClass = `${colors.button} ${colors.buttonHover} text-white`;
 
   return (
     <div className="flex h-full flex-col bg-muted/50 p-6">
@@ -188,7 +276,7 @@ const WidgetPreviewPanel = ({
               <div className="flex justify-end">
                 <button 
                   onClick={() => setIsCollapsed(false)}
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 shadow-lg hover:bg-blue-600 transition-colors overflow-hidden"
+                  className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}
                 >
                   {buttonLogo ? (
                     <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" />
@@ -306,7 +394,7 @@ const WidgetPreviewPanel = ({
                   </div>
                   </div>
                   <Button 
-                    className="mt-3 w-full bg-cyan-500 hover:bg-cyan-600 text-white"
+                    className={`mt-3 w-full ${buttonClass}`}
                     onClick={() => setShowChat(true)}
                   >
                     Contact us
@@ -328,7 +416,7 @@ const WidgetPreviewPanel = ({
                         </div>
                         {/* Product Info */}
                         <h4 className="font-bold text-lg mb-3">{card.title}</h4>
-                        <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-3 text-base font-medium">
+                        <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
                           Show
                         </Button>
                       </div>

@@ -11,6 +11,7 @@ export interface WidgetConfiguration {
   widgetTheme: "light" | "dark";
   widgetColor: string;
   buttonLogo: string | null;
+  backgroundType: "solid" | "gradient" | "image";
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -21,6 +22,7 @@ const defaultConfig: WidgetConfiguration = {
   widgetTheme: "dark",
   widgetColor: "blue",
   buttonLogo: null,
+  backgroundType: "gradient",
 };
 
 export const useWidgetConfiguration = () => {
@@ -57,6 +59,7 @@ export const useWidgetConfiguration = () => {
             widgetTheme: data.widget_theme as "light" | "dark",
             widgetColor: data.widget_color,
             buttonLogo: data.button_logo,
+            backgroundType: (data as { background_type?: string }).background_type as "solid" | "gradient" | "image" || "gradient",
           });
         }
       } catch (error) {
@@ -89,6 +92,7 @@ export const useWidgetConfiguration = () => {
           widget_theme: updatedConfig.widgetTheme,
           widget_color: updatedConfig.widgetColor,
           button_logo: updatedConfig.buttonLogo,
+          background_type: updatedConfig.backgroundType,
         }, {
           onConflict: "user_id"
         });

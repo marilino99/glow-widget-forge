@@ -37,6 +37,8 @@ interface BuilderSidebarProps {
   onWidgetColorChange: (color: string) => void;
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
+  backgroundType: "solid" | "gradient" | "image";
+  onBackgroundTypeChange: (type: "solid" | "gradient" | "image") => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
   productCards: ProductCardData[];
   onAddProductCard: (card: ProductCardData) => void;
@@ -61,6 +63,8 @@ const BuilderSidebar = ({
   onWidgetColorChange,
   buttonLogo,
   onButtonLogoChange,
+  backgroundType,
+  onBackgroundTypeChange,
   onSaveConfig,
   productCards,
   onAddProductCard,
@@ -122,6 +126,8 @@ const BuilderSidebar = ({
         onWidgetColorChange={onWidgetColorChange}
         buttonLogo={buttonLogo}
         onButtonLogoChange={onButtonLogoChange}
+        backgroundType={backgroundType}
+        onBackgroundTypeChange={onBackgroundTypeChange}
         onSaveConfig={onSaveConfig}
       />
     );
