@@ -399,9 +399,9 @@ const WidgetPreviewPanel = ({
                   </div>}
                 </div>
 
-                {/* Footer nav - rounded container */}
-                <div className={`px-4 pb-3 shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                  <div className={`flex rounded-2xl ${isLight ? "bg-white" : "bg-slate-700/80"}`}>
+                {/* Footer nav - floating with backdrop blur */}
+                <div className={`px-4 pb-4 pt-2 shrink-0 sticky bottom-0 ${isLight ? "bg-[#f8f8f8]/80" : "bg-black/80"} backdrop-blur-md`}>
+                  <div className={`flex rounded-2xl ${isLight ? "bg-white/90 shadow-sm" : "bg-slate-700/80"}`}>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
                       <Home className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
                       <span className="text-xs">Home</span>
