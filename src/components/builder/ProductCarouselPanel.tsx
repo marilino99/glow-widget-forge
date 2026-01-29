@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
   CarouselContent,
@@ -100,23 +101,24 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
         </div>
 
         {/* Product Carousel Preview */}
-        <div className="relative py-8">
+        <div className="relative py-6">
           <Carousel
             opts={{
               align: "center",
               loop: true,
             }}
-            className="w-full max-w-[280px] mx-auto"
+            plugins={[
+              Autoplay({
+                delay: 3000,
+                stopOnInteraction: false,
+              }),
+            ]}
+            className="w-full max-w-[220px] mx-auto"
           >
             <CarouselContent className="-ml-2">
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <CarouselItem key={product.id} className="pl-2 basis-full">
-                  <div 
-                    className="bg-card rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 hover:scale-105"
-                    style={{
-                      transform: `rotate(${index % 2 === 0 ? -3 : 3}deg)`,
-                    }}
-                  >
+                  <div className="bg-card rounded-xl overflow-hidden shadow-lg">
                     {/* Product Image */}
                     <div className="aspect-[4/3] relative">
                       <img
@@ -127,20 +129,20 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
                     </div>
                     
                     {/* Product Info */}
-                    <div className="p-3 bg-card">
-                      <p className="text-xs text-muted-foreground mb-0.5">
+                    <div className="p-2.5 bg-card">
+                      <p className="text-[10px] text-muted-foreground mb-0.5">
                         {product.price}
                       </p>
-                      <h4 className="font-semibold text-foreground text-sm mb-0.5">
+                      <h4 className="font-semibold text-foreground text-xs mb-0.5">
                         {product.title}
                       </h4>
-                      <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                      <p className="text-[10px] text-muted-foreground mb-2 line-clamp-2">
                         {product.description}
                       </p>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="w-full rounded-full border-border text-xs"
+                        className="w-full rounded-full border-border text-[10px] h-7"
                       >
                         Show
                       </Button>
