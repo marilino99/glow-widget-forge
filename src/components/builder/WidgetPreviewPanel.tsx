@@ -318,7 +318,7 @@ const WidgetPreviewPanel = ({
               </div>) : (/* Home View */
           <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`}>
                 {/* Scrollable content area */}
-                <div className="flex-1 overflow-y-auto bg-black">
+                <div className={`flex-1 overflow-y-auto ${isLight && !isSolidMode ? "" : "bg-black"}`} style={isLight && !isSolidMode ? { backgroundColor: '#f8f8f8' } : undefined}>
                 {/* Main content area - colored for solid mode (header + contact + extra space) */}
                 <div className={`${isSolidMode ? `${colors.solidHeader} ${colors.solidHeaderText} pb-12` : ""}`}>
                   {/* Widget header */}
@@ -355,7 +355,7 @@ const WidgetPreviewPanel = ({
                 {productCards.filter(c => !c.isLoading).length > 0 && <div className="relative">
                     {/* Solid mode background band - stops at ~1/4 of first card */}
                     {isSolidMode && <div className={`absolute top-0 left-0 right-0 h-12 ${colors.solidHeader}`} />}
-                    <div className="relative px-4 pb-4 space-y-4 bg-black">
+                    <div className={`relative px-4 pb-4 space-y-4 ${isLight && !isSolidMode ? "" : "bg-black"}`} style={isLight && !isSolidMode ? { backgroundColor: '#f8f8f8' } : undefined}>
                       {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : ""}`}>
                           {/* Product Image Placeholder - large rounded area */}
                           <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
@@ -378,20 +378,20 @@ const WidgetPreviewPanel = ({
                     {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
                       <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
                     )}
-                    <div className="relative px-4 pt-2 pb-4 bg-black">
-                      <div className="rounded-2xl p-4" style={{ backgroundColor: '#252525' }}>
+                    <div className={`relative px-4 pt-2 pb-4 ${isLight && !isSolidMode ? "" : "bg-black"}`} style={isLight && !isSolidMode ? { backgroundColor: '#f8f8f8' } : undefined}>
+                      <div className="rounded-2xl p-4" style={{ backgroundColor: isLight && !isSolidMode ? '#ffffff' : '#252525' }}>
                         <div className="mb-3 flex items-center gap-2">
-                          <HelpCircle className={`h-4 w-4 ${widgetSubtext}`} />
-                          <span className="text-sm font-medium">Quick answers</span>
+                          <HelpCircle className={`h-4 w-4 ${isLight && !isSolidMode ? "text-slate-500" : widgetSubtext}`} />
+                          <span className={`text-sm font-medium ${isLight && !isSolidMode ? "text-slate-900" : ""}`}>Quick answers</span>
                         </div>
                         <div className="space-y-1">
-                          <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                          <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight && !isSolidMode ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}>
                             <span>What is the delivery time?</span>
-                            <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
+                            <ChevronDown className={`h-4 w-4 ${isLight && !isSolidMode ? "text-slate-500" : widgetSubtext}`} />
                           </button>
-                          <button className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-white/5">
+                          <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight && !isSolidMode ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}>
                             <span>Do you ship internationally?</span>
-                            <ChevronDown className={`h-4 w-4 ${widgetSubtext}`} />
+                            <ChevronDown className={`h-4 w-4 ${isLight && !isSolidMode ? "text-slate-500" : widgetSubtext}`} />
                           </button>
                         </div>
                       </div>
@@ -400,7 +400,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Footer nav - rounded dark container */}
-                <div className="px-4 pb-3 shrink-0 bg-black">
+                <div className={`px-4 pb-3 shrink-0 ${isLight && !isSolidMode ? "" : "bg-black"}`} style={isLight && !isSolidMode ? { backgroundColor: '#f8f8f8' } : undefined}>
                   <div className={`flex rounded-2xl ${isLight ? "bg-slate-100" : "bg-slate-700/80"}`}>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${widgetText}`}>
                       <Home className="h-5 w-5" />
@@ -414,7 +414,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Powered by */}
-                <div className="py-2 text-center shrink-0 bg-black">
+                <div className={`py-2 text-center shrink-0 ${isLight && !isSolidMode ? "" : "bg-black"}`} style={isLight && !isSolidMode ? { backgroundColor: '#f8f8f8' } : undefined}>
                   <span className={`text-xs ${widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
