@@ -370,7 +370,11 @@ const WidgetPreviewPanel = ({
                               </div>
                               {/* Product Info */}
                               <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
-                                <h4 className="font-bold text-base mb-3">{card.title}</h4>
+                                <h4 className="font-bold text-base">{card.title}</h4>
+                                {card.subtitle && (
+                                  <p className={`text-sm mt-0.5 mb-3 ${isSolidMode ? "text-slate-300" : isLight ? "text-muted-foreground" : "text-slate-400"}`}>{card.subtitle}</p>
+                                )}
+                                {!card.subtitle && <div className="mb-3" />}
                                 <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`}>
                                   {t.show}
                                 </Button>
