@@ -33,6 +33,8 @@ interface BuilderSidebarProps {
   onWidgetThemeChange: (theme: "light" | "dark") => void;
   widgetColor: string;
   onWidgetColorChange: (color: string) => void;
+  buttonLogo: string | null;
+  onButtonLogoChange: (logo: string | null) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -49,7 +51,9 @@ const BuilderSidebar = ({
   widgetTheme,
   onWidgetThemeChange,
   widgetColor,
-  onWidgetColorChange
+  onWidgetColorChange,
+  buttonLogo,
+  onButtonLogoChange
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -83,6 +87,8 @@ const BuilderSidebar = ({
         onWidgetThemeChange={onWidgetThemeChange}
         widgetColor={widgetColor}
         onWidgetColorChange={onWidgetColorChange}
+        buttonLogo={buttonLogo}
+        onButtonLogoChange={onButtonLogoChange}
       />
     );
   }
