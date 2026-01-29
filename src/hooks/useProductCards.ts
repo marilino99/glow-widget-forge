@@ -106,17 +106,23 @@ export const useProductCards = () => {
       );
 
       try {
-        const { error } = await supabase
-          .from("product_cards")
-          .update({
-            title: updates.title,
-            subtitle: updates.subtitle || null,
-            product_url: updates.productUrl || null,
-            image_url: updates.imageUrl || null,
-            price: updates.price || null,
-            old_price: updates.oldPrice || null,
-            promo_badge: updates.promoBadge || null,
-          })
+        // Build update object with only the fields that are present in updates
+        const updateData: Record<string, unknown> = {};
+        
+        if ('title' in updates) updateData.title = updates.title;
+        if ('subtitle' in updates) updateData.subtitle = updates.subtitle || null;
+        if ('productUrl' in updates) updateData.product_url = updates.productUrl || null;
+        if ('imageUrl' in updates) updateData.image_url = updates.imageUrl || null;
+        if ('price' in updates) updateData.price = updates.price || null;
+        if ('oldPrice' in updates) updateData.old_price = updates.oldPrice || null;
+        if ('promoBadge' in updates) updateData.promo_badge = updates.promoBadge || null;
+
+        if (Object.keys(updateData).length === 0) return;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error } = await (supabase
+          .from("product_cards") as any)
+          .update(updateData)
           .eq("id", cardId)
           .eq("user_id", user.id);
 
