@@ -83,7 +83,7 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
   };
 
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="flex h-full flex-col" style={{ backgroundColor: '#fafafa' }}>
       {/* Header */}
       <div className="border-b border-border p-4">
         <button
@@ -134,7 +134,8 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
               {addedCards.map((card) => (
                 <div
                   key={card.id}
-                  className="rounded-xl border-2 border-dashed border-border p-4 bg-card"
+                  className="rounded-xl border-2 border-dashed border-border p-4"
+                  style={{ backgroundColor: '#ffffff' }}
                 >
                   {card.isLoading ? (
                     <div className="flex items-center justify-center py-8">
@@ -180,59 +181,61 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
           </div>
         )}
 
-        {/* Product Carousel Preview */}
-        <div className="relative py-6">
-          <Carousel
-            opts={{
-              align: "center",
-              loop: true,
-            }}
-            plugins={[
-              Autoplay({
-                delay: 3000,
-                stopOnInteraction: false,
-              }),
-            ]}
-            className="w-full max-w-[220px] mx-auto"
-          >
-            <CarouselContent className="-ml-2">
-              {products.map((product) => (
-                <CarouselItem key={product.id} className="pl-2 basis-full">
-                  <div className="bg-card rounded-xl overflow-hidden shadow-lg">
-                    {/* Product Image */}
-                    <div className="aspect-[4/3] relative">
-                      <img
-                        src={product.imageUrl}
-                        alt={product.title}
-                        className="w-full h-full object-cover"
-                      />
+        {/* Product Carousel Preview - only show when no cards added */}
+        {addedCards.length === 0 && (
+          <div className="relative py-6">
+            <Carousel
+              opts={{
+                align: "center",
+                loop: true,
+              }}
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                  stopOnInteraction: false,
+                }),
+              ]}
+              className="w-full max-w-[220px] mx-auto"
+            >
+              <CarouselContent className="-ml-2">
+                {products.map((product) => (
+                  <CarouselItem key={product.id} className="pl-2 basis-full">
+                    <div className="bg-card rounded-xl overflow-hidden shadow-lg">
+                      {/* Product Image */}
+                      <div className="aspect-[4/3] relative">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      
+                      {/* Product Info */}
+                      <div className="p-2.5 bg-card">
+                        <p className="text-[10px] text-muted-foreground mb-0.5">
+                          {product.price}
+                        </p>
+                        <h4 className="font-semibold text-foreground text-xs mb-0.5">
+                          {product.title}
+                        </h4>
+                        <p className="text-[10px] text-muted-foreground mb-2 line-clamp-2">
+                          {product.description}
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full rounded-full border-border text-[10px] h-7"
+                        >
+                          Show
+                        </Button>
+                      </div>
                     </div>
-                    
-                    {/* Product Info */}
-                    <div className="p-2.5 bg-card">
-                      <p className="text-[10px] text-muted-foreground mb-0.5">
-                        {product.price}
-                      </p>
-                      <h4 className="font-semibold text-foreground text-xs mb-0.5">
-                        {product.title}
-                      </h4>
-                      <p className="text-[10px] text-muted-foreground mb-2 line-clamp-2">
-                        {product.description}
-                      </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full rounded-full border-border text-[10px] h-7"
-                      >
-                        Show
-                      </Button>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+        )}
       </div>
     </div>
   );
