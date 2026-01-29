@@ -334,7 +334,7 @@ const WidgetPreviewPanel = ({
                     <button onClick={() => setIsCollapsed(true)} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
                       <Minus className="h-4 w-4" />
                     </button>
-                    <h3 className="relative text-2xl font-bold whitespace-pre-line max-w-[70%]">
+                    <h3 className="relative text-2xl font-bold whitespace-pre-line max-w-[70%] break-words">
                       {sayHello}
                     </h3>
                   </div>
