@@ -356,24 +356,26 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
 
-                {/* Product Cards Section - outside colored wrapper */}
+                {/* Product Cards Section - horizontal carousel */}
                 {productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
                     {/* Solid mode background band - stops at ~1/4 of first card */}
                     {isSolidMode && <div className={`absolute top-0 left-0 right-0 h-12 ${colors.solidHeader}`} />}
-                    <div className={`relative px-4 pb-4 space-y-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                      {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
-                          {/* Product Image Placeholder - large rounded area */}
-                          <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
-                            {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <Image className="h-12 w-12 text-slate-400" />}
-                          </div>
-                          {/* Product Info */}
-                          <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
-                            <h4 className="font-bold text-lg mb-3">{card.title}</h4>
-                            <Button className={`w-full ${buttonClass} rounded-full py-3 text-base font-medium`}>
-                              {t.show}
-                            </Button>
-                          </div>
-                        </div>)}
+                    <div className={`relative pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                      <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`flex-shrink-0 w-40 rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
+                            {/* Product Image */}
+                            <div className={`aspect-square flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
+                              {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <Image className="h-8 w-8 text-slate-400" />}
+                            </div>
+                            {/* Product Info */}
+                            <div className={`p-3 ${isSolidMode ? "text-white" : ""}`}>
+                              <h4 className="font-semibold text-sm mb-2 line-clamp-2">{card.title}</h4>
+                              <Button className={`w-full ${buttonClass} rounded-full py-1.5 text-xs font-medium`}>
+                                {t.show}
+                              </Button>
+                            </div>
+                          </div>)}
+                      </div>
                     </div>
                   </div>}
 
