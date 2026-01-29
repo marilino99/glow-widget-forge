@@ -5,6 +5,7 @@ import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowL
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
+import { FaqItemData } from "@/types/faqItem";
 import { getTranslations } from "@/lib/translations";
 
 interface WidgetPreviewPanelProps {
@@ -19,6 +20,7 @@ interface WidgetPreviewPanelProps {
   productCards?: ProductCardData[];
   sayHello?: string;
   language?: string;
+  faqItems?: FaqItemData[];
 }
 
 // Color mapping for buttons and gradients
@@ -114,7 +116,8 @@ const WidgetPreviewPanel = ({
   backgroundType = "gradient",
   productCards = [],
   sayHello = "Hello, nice to see you here 👋",
-  language = "en"
+  language = "en",
+  faqItems = []
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -468,7 +471,7 @@ const WidgetPreviewPanel = ({
                   </div>}
 
                 {/* Quick answers section */}
-                {faqEnabled && <div className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
+                {faqEnabled && faqItems.length > 0 && <div className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
                     {/* Solid mode background band - stops at ~1/4 of FAQ box */}
                     {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
                       <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
@@ -480,14 +483,15 @@ const WidgetPreviewPanel = ({
                           <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>{t.quickAnswers}</span>
                         </div>
                         <div className="space-y-1">
-                          <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}>
-                            <span>{t.deliveryTime}</span>
-                            <ChevronDown className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
-                          </button>
-                          <button className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}>
-                            <span>{t.shipInternationally}</span>
-                            <ChevronDown className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
-                          </button>
+                          {faqItems.map((faq) => (
+                            <button 
+                              key={faq.id}
+                              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}
+                            >
+                              <span>{faq.question || "Untitled question"}</span>
+                              <ChevronDown className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
+                            </button>
+                          ))}
                         </div>
                       </div>
                     </div>

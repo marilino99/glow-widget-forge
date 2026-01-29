@@ -230,6 +230,7 @@ const Builder = () => {
             productCards={previewProductCards}
             sayHello={config.sayHello}
             language={config.language}
+            faqItems={faqItems}
           />
         </div>
       </div>
