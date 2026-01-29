@@ -26,6 +26,8 @@ interface TypographyPanelProps {
   sayHello: string;
   onSayHelloChange: (text: string) => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
+  hasUnsavedChanges: boolean;
+  onCancel: () => void;
 }
 
 const TypographyPanel = ({
@@ -37,6 +39,8 @@ const TypographyPanel = ({
   sayHello,
   onSayHelloChange,
   onSaveConfig,
+  hasUnsavedChanges,
+  onCancel,
 }: TypographyPanelProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -148,6 +152,25 @@ const TypographyPanel = ({
             className="mt-2 bg-muted border-0"
           />
         </div>
+
+        {/* Save/Cancel Buttons */}
+        {hasUnsavedChanges && (
+          <div className="flex gap-3 pt-4">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="flex-1"
+              onClick={() => onSaveConfig({ logo, language, sayHello })}
+            >
+              Save
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

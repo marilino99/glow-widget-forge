@@ -51,6 +51,9 @@ interface BuilderSidebarProps {
   onLanguageChange: (language: string) => void;
   sayHello: string;
   onSayHelloChange: (text: string) => void;
+  initialLogo: string | null;
+  initialLanguage: string;
+  initialSayHello: string;
 }
 
 const BuilderSidebar = ({ 
@@ -82,7 +85,10 @@ const BuilderSidebar = ({
   language,
   onLanguageChange,
   sayHello,
-  onSayHelloChange
+  onSayHelloChange,
+  initialLogo,
+  initialLanguage,
+  initialSayHello
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -123,6 +129,22 @@ const BuilderSidebar = ({
     onSelectWidget(null as unknown as string);
   };
 
+  // Check if typography has unsaved changes
+  const hasTypographyUnsavedChanges = 
+    logo !== initialLogo || 
+    language !== initialLanguage || 
+    sayHello !== initialSayHello;
+
+  const handleTypographyCancel = () => {
+    onLogoChange(initialLogo);
+    onLanguageChange(initialLanguage);
+    onSayHelloChange(initialSayHello);
+  };
+
+  const handleTypographySave = (config: Record<string, unknown>) => {
+    onSaveConfig(config);
+  };
+
   // Show Typography panel
   if (showTypographyPanel) {
     return (
@@ -134,7 +156,9 @@ const BuilderSidebar = ({
         onLanguageChange={onLanguageChange}
         sayHello={sayHello}
         onSayHelloChange={onSayHelloChange}
-        onSaveConfig={onSaveConfig}
+        onSaveConfig={handleTypographySave}
+        hasUnsavedChanges={hasTypographyUnsavedChanges}
+        onCancel={handleTypographyCancel}
       />
     );
   }
