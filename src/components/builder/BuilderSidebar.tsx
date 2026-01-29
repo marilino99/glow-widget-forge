@@ -19,7 +19,9 @@ import ContactCardPanel from "./ContactCardPanel";
 import ThemeColorsPanel from "./ThemeColorsPanel";
 import ProductCarouselPanel from "./ProductCarouselPanel";
 import TypographyPanel from "./TypographyPanel";
+import FaqPanel from "./FaqPanel";
 import { ProductCardData } from "@/types/productCard";
+import { FaqItemData } from "@/types/faqItem";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -55,6 +57,10 @@ interface BuilderSidebarProps {
   initialLogo: string | null;
   initialLanguage: string;
   initialSayHello: string;
+  faqItems: FaqItemData[];
+  onAddFaqItem: () => void;
+  onUpdateFaqItem: (itemId: string, updates: Partial<FaqItemData>) => void;
+  onDeleteFaqItem: (itemId: string) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -90,13 +96,18 @@ const BuilderSidebar = ({
   onSayHelloChange,
   initialLogo,
   initialLanguage,
-  initialSayHello
+  initialSayHello,
+  faqItems,
+  onAddFaqItem,
+  onUpdateFaqItem,
+  onDeleteFaqItem
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
   const [showThemeColorsPanel, setShowThemeColorsPanel] = useState(false);
   const [showProductCarouselPanel, setShowProductCarouselPanel] = useState(false);
   const [showTypographyPanel, setShowTypographyPanel] = useState(false);
+  const [showFaqPanel, setShowFaqPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
@@ -107,6 +118,8 @@ const BuilderSidebar = ({
       setShowProductCarouselPanel(true);
     } else if (widgetType === "typography") {
       setShowTypographyPanel(true);
+    } else if (widgetType === "faq") {
+      setShowFaqPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -131,6 +144,11 @@ const BuilderSidebar = ({
     onSelectWidget(null as unknown as string);
   };
 
+  const handleBackFromFaq = () => {
+    setShowFaqPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
   // Check if typography has unsaved changes
   const hasTypographyUnsavedChanges = 
     logo !== initialLogo || 
@@ -146,6 +164,21 @@ const BuilderSidebar = ({
   const handleTypographySave = (config: Record<string, unknown>) => {
     onSaveConfig(config);
   };
+
+  // Show FAQ panel
+  if (showFaqPanel) {
+    return (
+      <FaqPanel
+        onBack={handleBackFromFaq}
+        faqEnabled={faqEnabled}
+        onFaqToggle={onFaqToggle}
+        faqItems={faqItems}
+        onAddFaqItem={onAddFaqItem}
+        onUpdateFaqItem={onUpdateFaqItem}
+        onDeleteFaqItem={onDeleteFaqItem}
+      />
+    );
+  }
 
   // Show Typography panel
   if (showTypographyPanel) {
