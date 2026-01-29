@@ -14,16 +14,16 @@ const AddToWebsiteDialog = () => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  const embedCode = `<!-- Start of WidgetPop (widgetpop.com) code -->
+  const embedCode = `<!-- Start of Widjet (widjet.com) code -->
 <script>
-  window.__wp = window.__wp || {};
-  window.__wp.widgetId = "YOUR_WIDGET_ID";
+  window.__wj = window.__wj || {};
+  window.__wj.widgetId = "YOUR_WIDGET_ID";
 </script>
 <script 
   async 
-  src="https://cdn.widgetpop.com/widget.js">
+  src="https://cdn.widjet.com/widget.js">
 </script>
-<!-- End of WidgetPop code -->`;
+<!-- End of Widjet code -->`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(embedCode);
@@ -63,7 +63,7 @@ const AddToWebsiteDialog = () => {
 
           {/* Ready message */}
           <p className="font-semibold text-foreground">
-            Your WidgetPop is ready! Add it to your website and start helping your customers right away.
+            Your Widjet is ready! Add it to your website and start helping your customers right away.
           </p>
 
           {/* Code section */}

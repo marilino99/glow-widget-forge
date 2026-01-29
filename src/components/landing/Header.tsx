@@ -11,7 +11,7 @@ const Header = () => {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Boxes className="h-5 w-5" />
           </div>
-          <span className="text-lg font-semibold text-foreground">WidgetPop</span>
+          <span className="text-lg font-semibold text-foreground">Widjet</span>
         </Link>
 
         {/* Navigation */}

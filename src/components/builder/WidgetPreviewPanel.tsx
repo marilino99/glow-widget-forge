@@ -158,7 +158,7 @@ const WidgetPreviewPanel = ({
                 {/* Powered by */}
                 <div className={`border-t py-2 text-center ${widgetBorder}`}>
                   <span className={`text-xs ${widgetSubtext}`}>
-                    Powered by <span className="font-medium">WidgetPop</span>
+                    Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
               </div>
@@ -248,7 +248,7 @@ const WidgetPreviewPanel = ({
                 {/* Powered by */}
                 <div className={`border-t py-2 text-center ${widgetBorder}`}>
                   <span className={`text-xs ${widgetSubtext}`}>
-                    Powered by <span className="font-medium">WidgetPop</span>
+                    Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
               </div>
