@@ -57,6 +57,7 @@ export const useWidgetConfiguration = () => {
         if (error) throw error;
 
         if (data) {
+          const dbData = data as typeof data & { logo?: string; language?: string; say_hello?: string };
           setConfig({
             selectedAvatar: data.selected_avatar,
             faqEnabled: data.faq_enabled,
@@ -66,9 +67,9 @@ export const useWidgetConfiguration = () => {
             widgetColor: data.widget_color,
             buttonLogo: data.button_logo,
             backgroundType: (data as { background_type?: string }).background_type as "solid" | "gradient" | "image" || "gradient",
-            logo: defaultConfig.logo,
-            language: defaultConfig.language,
-            sayHello: defaultConfig.sayHello,
+            logo: dbData.logo || null,
+            language: dbData.language || "en",
+            sayHello: dbData.say_hello || defaultConfig.sayHello,
           });
         }
       } catch (error) {
@@ -90,8 +91,9 @@ export const useWidgetConfiguration = () => {
     setConfig(updatedConfig);
 
     try {
-      const { error } = await supabase
-        .from("widget_configurations")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase
+        .from("widget_configurations") as any)
         .upsert({
           user_id: user.id,
           selected_avatar: updatedConfig.selectedAvatar,
@@ -102,6 +104,9 @@ export const useWidgetConfiguration = () => {
           widget_color: updatedConfig.widgetColor,
           button_logo: updatedConfig.buttonLogo,
           background_type: updatedConfig.backgroundType,
+          logo: updatedConfig.logo,
+          language: updatedConfig.language,
+          say_hello: updatedConfig.sayHello,
         }, {
           onConflict: "user_id"
         });

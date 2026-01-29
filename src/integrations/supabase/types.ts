@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      product_cards: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          old_price: string | null
+          price: string | null
+          product_url: string | null
+          promo_badge: string | null
+          sort_order: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          old_price?: string | null
+          price?: string | null
+          product_url?: string | null
+          promo_badge?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          old_price?: string | null
+          price?: string | null
+          product_url?: string | null
+          promo_badge?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       widget_configurations: {
         Row: {
           background_type: string
@@ -22,7 +67,10 @@ export type Database = {
           created_at: string
           faq_enabled: boolean
           id: string
+          language: string
+          logo: string | null
           offer_help: string
+          say_hello: string
           selected_avatar: string | null
           updated_at: string
           user_id: string
@@ -36,7 +84,10 @@ export type Database = {
           created_at?: string
           faq_enabled?: boolean
           id?: string
+          language?: string
+          logo?: string | null
           offer_help?: string
+          say_hello?: string
           selected_avatar?: string | null
           updated_at?: string
           user_id: string
@@ -50,7 +101,10 @@ export type Database = {
           created_at?: string
           faq_enabled?: boolean
           id?: string
+          language?: string
+          logo?: string | null
           offer_help?: string
+          say_hello?: string
           selected_avatar?: string | null
           updated_at?: string
           user_id?: string
