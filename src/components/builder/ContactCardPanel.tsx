@@ -18,6 +18,7 @@ interface ContactCardPanelProps {
   onContactNameChange: (name: string) => void;
   offerHelp: string;
   onOfferHelpChange: (help: string) => void;
+  onSaveConfig: (config: Record<string, unknown>) => void;
 }
 
 const avatars = [
@@ -36,7 +37,8 @@ const ContactCardPanel = ({
   contactName,
   onContactNameChange,
   offerHelp,
-  onOfferHelpChange
+  onOfferHelpChange,
+  onSaveConfig
 }: ContactCardPanelProps) => {
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
@@ -58,6 +60,11 @@ const ContactCardPanel = ({
     selectedAvatar !== originalAvatar;
 
   const handleSave = () => {
+    onSaveConfig({
+      selectedAvatar,
+      contactName,
+      offerHelp,
+    });
     onBack();
   };
 

@@ -17,6 +17,7 @@ interface ThemeColorsPanelProps {
   onWidgetColorChange: (color: string) => void;
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
+  onSaveConfig: (config: Record<string, unknown>) => void;
 }
 
 const themeColors = [
@@ -45,7 +46,8 @@ const ThemeColorsPanel = ({
   widgetColor,
   onWidgetColorChange,
   buttonLogo,
-  onButtonLogoChange
+  onButtonLogoChange,
+  onSaveConfig
 }: ThemeColorsPanelProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [moreColorsOpen, setMoreColorsOpen] = useState(true);
@@ -61,6 +63,11 @@ const ThemeColorsPanel = ({
   const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor || buttonLogo !== originalLogo;
 
   const handleSave = () => {
+    onSaveConfig({
+      widgetTheme,
+      widgetColor,
+      buttonLogo,
+    });
     onBack();
   };
 

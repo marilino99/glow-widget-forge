@@ -35,6 +35,7 @@ interface BuilderSidebarProps {
   onWidgetColorChange: (color: string) => void;
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
+  onSaveConfig: (config: Record<string, unknown>) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -53,7 +54,8 @@ const BuilderSidebar = ({
   widgetColor,
   onWidgetColorChange,
   buttonLogo,
-  onButtonLogoChange
+  onButtonLogoChange,
+  onSaveConfig
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -89,6 +91,7 @@ const BuilderSidebar = ({
         onWidgetColorChange={onWidgetColorChange}
         buttonLogo={buttonLogo}
         onButtonLogoChange={onButtonLogoChange}
+        onSaveConfig={onSaveConfig}
       />
     );
   }
@@ -104,6 +107,7 @@ const BuilderSidebar = ({
         onContactNameChange={onContactNameChange}
         offerHelp={offerHelp}
         onOfferHelpChange={onOfferHelpChange}
+        onSaveConfig={onSaveConfig}
       />
     );
   }
