@@ -1,90 +1,87 @@
 
-# Product Recommendation Widget Builder
 
-A clean, minimal SaaS platform that lets users create customizable product recommendation popups they can embed on any website to drive sales.
+## Plan: Dynamic Color & Background Sync for Widget Preview
 
----
-
-## Phase 1: Core Builder Experience
-
-### Landing Page
-- Hero section explaining the value: "Create product recommendation popups that convert"
-- Feature highlights (visual customization, smart triggers, A/B testing)
-- Call-to-action to sign up or try the builder
-- Clean, minimal design with lots of whitespace
-
-### Authentication
-- Sign up / Login with email
-- Simple onboarding flow
-
-### Widget Builder Dashboard
-- List of saved widgets with quick stats
-- Create new widget button
-- Clean sidebar navigation
-
-### Visual Widget Builder
-**Live Preview Panel**
-- Real-time preview of the modal popup widget as users customize it
-- Shows exactly how it will appear on their site
-
-**Customization Options**
-- **Layout**: Choose number of products to display (2, 3, 4)
-- **Colors**: Primary color, background, text color
-- **Typography**: Font style, heading/body sizes
-- **Borders & Shadows**: Corner radius, shadow depth
-- **Position**: Center, bottom-right, custom positioning
-- **Close button style**
+### Summary
+When you select a color in the Theme & Colors panel, the widget preview will update in real-time to reflect:
+1. **Button colors** - All buttons ("Contact us", "Show") will use the selected color
+2. **Background** - When "Gradient" is selected, the widget background will show a subtle gradient based on the selected color
 
 ---
 
-## Phase 2: Products & Triggers
+### Changes Overview
 
-### Product Management
-- Manual product entry to start (name, image URL, price, link)
-- E-commerce integration setup (connect Shopify or WooCommerce store)
-- Import products from connected store
-- Select which products to feature in each widget
+#### 1. Add Background Type to Configuration
+- Add `backgroundType` to the widget configuration so it syncs between the panel and preview
+- Update the configuration hook and database (if needed) to persist this setting
 
-### Behavior Triggers
-- **Time delay**: Show after X seconds on page
-- **Scroll depth**: Show after user scrolls X% of page
-- **Exit intent**: Show when user moves to leave
-- **Page URL rules**: Show only on specific pages
-- Frequency capping (don't annoy repeat visitors)
+#### 2. Create Color Mapping System
+Define how each color name translates to:
+- Button background color (e.g., "blue" → `bg-blue-500`)
+- Gradient background (e.g., "blue" → gradient from blue to a complementary shade)
 
----
+| Color | Button | Gradient (Light Theme) | Gradient (Dark Theme) |
+|-------|--------|------------------------|----------------------|
+| blue | `bg-blue-500` | Violet → White → Cyan | Blue → Slate-900 |
+| purple | `bg-purple-500` | Purple → White → Pink | Purple → Slate-900 |
+| cyan | `bg-cyan-500` | Cyan → White → Emerald | Cyan → Slate-900 |
+| green | `bg-green-500` | Green → White → Lime | Green → Slate-900 |
+| etc. | ... | ... | ... |
 
-## Phase 3: A/B Testing & Analytics
+#### 3. Update Widget Preview Panel
+Apply the selected color dynamically to:
+- "Contact us" button
+- "Show" button (product cards)
+- Chat send button accent
+- Widget background (when gradient mode is active)
 
-### A/B Testing
-- Create variants of a widget (different products, colors, triggers)
-- Automatic traffic splitting
-- Dashboard showing which variant performs better
-
-### Basic Analytics
-- Impressions (how many times widget was shown)
-- Clicks (how many times products were clicked)
-- Conversion tracking (optional pixel/webhook)
-
----
-
-## Phase 4: Embed & Publish
-
-### Widget Deployment
-- Generate unique embed code (single script tag)
-- Copy-paste installation instructions
-- Widget preview on sample site mockup
-
-### Widget Management
-- Pause/activate widgets
-- Duplicate widgets for quick iteration
-- Delete unused widgets
+#### 4. Update Theme Colors Panel
+- Pass `backgroundType` up to parent when changed
+- Show the current color in the preview thumbnails (solid/gradient options)
 
 ---
 
-## Technical Approach
+### Technical Details
 
-- **Frontend**: React with Tailwind CSS for the clean, minimal interface
-- **Backend**: Lovable Cloud for authentication, database, and edge functions
-- **E-commerce**: Edge functions to securely connect with Shopify/WooCommerce APIs
-- **Widget Embed**: Lightweight JavaScript snippet that loads the widget on user sites
+**Files to modify:**
+
+1. **`src/hooks/useWidgetConfiguration.ts`**
+   - Add `backgroundType: "solid" | "gradient" | "image"` to the configuration interface
+   - Update default value and database mapping
+
+2. **`src/components/builder/ThemeColorsPanel.tsx`**
+   - Lift `backgroundType` state to props (receive from parent, notify on change)
+   - Update preview thumbnails to reflect current selected color
+
+3. **`src/components/builder/BuilderSidebar.tsx`**
+   - Pass `backgroundType` and handler through to ThemeColorsPanel
+
+4. **`src/pages/Builder.tsx`**
+   - Add `backgroundType` to the config state passed to WidgetPreviewPanel
+
+5. **`src/components/builder/WidgetPreviewPanel.tsx`**
+   - Create color mapping object for button and gradient colors
+   - Replace hardcoded colors (`bg-blue-500`, `bg-cyan-500`) with dynamic values
+   - Apply gradient background based on `backgroundType` and `widgetColor`
+
+---
+
+### Example Color Application
+
+```text
+Selected: purple + gradient + light theme
+┌──────────────────────────────┐
+│  Background: gradient from   │
+│  violet-100 → white → pink-50│
+├──────────────────────────────┤
+│  [Contact us] → bg-purple-500│
+│  [Show]       → bg-purple-500│
+└──────────────────────────────┘
+```
+
+---
+
+### Database Migration (if persisting)
+If you want `backgroundType` to persist, we'll add it to the `widget_configurations` table:
+- Column: `background_type` (text, default: 'gradient')
+
