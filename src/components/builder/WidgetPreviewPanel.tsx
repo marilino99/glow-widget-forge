@@ -275,11 +275,11 @@ const WidgetPreviewPanel = ({
                 {devicePreview === "mobile" ? (
                   /* Mobile: centered iframe scaled to show more content */
                   <div className="flex h-full justify-center py-4">
-                    <div className="h-full shadow-xl rounded-lg overflow-hidden" style={{ width: '320px' }}>
+                    <div className="h-full shadow-xl rounded-lg overflow-hidden" style={{ width: '280px' }}>
                       <div className="origin-top-left" style={{
-                        width: '117.19%',
-                        height: '117.19%',
-                        transform: 'scale(0.8533)'
+                        width: '133.93%',
+                        height: '133.93%',
+                        transform: 'scale(0.7467)'
                       }}>
                         <iframe srcDoc={proxyHtml} className="h-full w-full border-0 bg-white" title="Website preview" sandbox="allow-same-origin" style={{ width: '375px' }} />
                       </div>
