@@ -14,6 +14,7 @@ interface WidgetPreviewPanelProps {
   buttonLogo?: string | null;
   backgroundType?: "solid" | "gradient" | "image";
   productCards?: ProductCardData[];
+  sayHello?: string;
 }
 
 // Color mapping for buttons and gradients
@@ -107,7 +108,8 @@ const WidgetPreviewPanel = ({
   widgetColor = "blue",
   buttonLogo = null,
   backgroundType = "gradient",
-  productCards = []
+  productCards = [],
+  sayHello = "Hello, nice to see you here 👋"
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [proxyHtml, setProxyHtml] = useState<string | null>(null);
@@ -327,10 +329,8 @@ const WidgetPreviewPanel = ({
                     <button onClick={() => setIsCollapsed(true)} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
                       <Minus className="h-4 w-4" />
                     </button>
-                    <h3 className="relative text-2xl font-bold">
-                      Hello, nice to
-                      <br />
-                      see you here 👋
+                    <h3 className="relative text-2xl font-bold whitespace-pre-line">
+                      {sayHello}
                     </h3>
                   </div>
 

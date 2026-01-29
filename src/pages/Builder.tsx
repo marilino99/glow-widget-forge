@@ -151,6 +151,7 @@ const Builder = () => {
             buttonLogo={config.buttonLogo}
             backgroundType={config.backgroundType}
             productCards={productCards}
+            sayHello={config.sayHello}
           />
         </div>
       </div>
