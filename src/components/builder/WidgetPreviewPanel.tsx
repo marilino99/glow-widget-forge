@@ -379,7 +379,7 @@ const WidgetPreviewPanel = ({
                       <div className={`absolute top-0 left-0 right-0 h-12 ${colors.solidHeader}`} />
                     )}
                     <div className="relative px-4 py-4 bg-black">
-                      <div className="rounded-2xl p-4" style={{ backgroundColor: widgetColor }}>
+                      <div className="rounded-2xl p-4" style={{ backgroundColor: '#252525' }}>
                         <div className="mb-3 flex items-center gap-2">
                           <HelpCircle className={`h-4 w-4 ${widgetSubtext}`} />
                           <span className="text-sm font-medium">Quick answers</span>
