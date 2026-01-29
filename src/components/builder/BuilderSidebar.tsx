@@ -17,6 +17,7 @@ import {
 import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
 import ThemeColorsPanel from "./ThemeColorsPanel";
+import ProductCarouselPanel from "./ProductCarouselPanel";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -60,12 +61,15 @@ const BuilderSidebar = ({
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
   const [showThemeColorsPanel, setShowThemeColorsPanel] = useState(false);
+  const [showProductCarouselPanel, setShowProductCarouselPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
       setShowContactCardPanel(true);
     } else if (widgetType === "theme-colors") {
       setShowThemeColorsPanel(true);
+    } else if (widgetType === "product-carousel") {
+      setShowProductCarouselPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -79,6 +83,18 @@ const BuilderSidebar = ({
     setShowThemeColorsPanel(false);
     onSelectWidget(null as unknown as string);
   };
+
+  const handleBackFromProductCarousel = () => {
+    setShowProductCarouselPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
+  // Show Product Carousel panel
+  if (showProductCarouselPanel) {
+    return (
+      <ProductCarouselPanel onBack={handleBackFromProductCarousel} />
+    );
+  }
 
   // Show Theme Colors panel
   if (showThemeColorsPanel) {
