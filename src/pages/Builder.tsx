@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
+import { useProductCards } from "@/hooks/useProductCards";
 import { Button } from "@/components/ui/button";
 import { Boxes, HelpCircle, LogOut, Loader2 } from "lucide-react";
 import {
@@ -19,8 +20,14 @@ import { ProductCardData } from "@/types/productCard";
 const Builder = () => {
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
+  const { 
+    productCards, 
+    isLoading: isLoadingCards, 
+    addProductCard, 
+    updateProductCard, 
+    deleteProductCard 
+  } = useProductCards();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [productCards, setProductCards] = useState<ProductCardData[]>([]);
   
   // Track initial typography values for cancel functionality
   const initialTypographyRef = useRef({
@@ -60,25 +67,21 @@ const Builder = () => {
   };
 
   const handleAddProductCard = (card: ProductCardData) => {
-    setProductCards(prev => [...prev, card]);
+    addProductCard(card);
   };
 
   const handleUpdateProductCard = (cardId: string, updates: Partial<ProductCardData>) => {
-    setProductCards(prev => 
-      prev.map(card => 
-        card.id === cardId ? { ...card, ...updates } : card
-      )
-    );
+    updateProductCard(cardId, updates);
   };
 
   const handleDeleteProductCard = (cardId: string) => {
-    setProductCards(prev => prev.filter(card => card.id !== cardId));
+    deleteProductCard(cardId);
   };
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
   // Show loading state while fetching configuration
-  if (isLoading) {
+  if (isLoading || isLoadingCards) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
