@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,43 @@ const Builder = () => {
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [productCards, setProductCards] = useState<ProductCardData[]>([]);
+  
+  // Track initial typography values for cancel functionality
+  const initialTypographyRef = useRef({
+    logo: config.logo,
+    language: config.language,
+    sayHello: config.sayHello,
+  });
+
+  // Update initial values when config is loaded from DB
+  useEffect(() => {
+    if (!isLoading) {
+      initialTypographyRef.current = {
+        logo: config.logo,
+        language: config.language,
+        sayHello: config.sayHello,
+      };
+    }
+  }, [isLoading]);
+
+  const handleTypographySave = (typographyConfig: Record<string, unknown>) => {
+    saveConfig(typographyConfig);
+    // Update initial values after save
+    initialTypographyRef.current = {
+      logo: config.logo,
+      language: config.language,
+      sayHello: config.sayHello,
+    };
+  };
+
+  const handleTypographyCancel = () => {
+    // Reset to initial values
+    updateConfig({
+      logo: initialTypographyRef.current.logo,
+      language: initialTypographyRef.current.language,
+      sayHello: initialTypographyRef.current.sayHello,
+    });
+  };
 
   const handleAddProductCard = (card: ProductCardData) => {
     setProductCards(prev => [...prev, card]);
@@ -136,6 +173,9 @@ const Builder = () => {
             onLanguageChange={(language) => updateConfig({ language })}
             sayHello={config.sayHello}
             onSayHelloChange={(sayHello) => updateConfig({ sayHello })}
+            initialLogo={initialTypographyRef.current.logo}
+            initialLanguage={initialTypographyRef.current.language}
+            initialSayHello={initialTypographyRef.current.sayHello}
           />
         </div>
 
