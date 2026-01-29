@@ -373,12 +373,12 @@ const WidgetPreviewPanel = ({
                   </div>}
 
                 {/* Quick answers section */}
-                {faqEnabled && <div className="relative">
+                {faqEnabled && <div className="relative -mt-6">
                     {/* Solid mode background band - stops at ~1/4 of FAQ box */}
                     {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
-                      <div className={`absolute top-0 left-0 right-0 h-12 ${colors.solidHeader}`} />
+                      <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
                     )}
-                    <div className="relative px-4 py-4 bg-black">
+                    <div className="relative px-4 pt-2 pb-4 bg-black">
                       <div className="rounded-2xl p-4" style={{ backgroundColor: '#252525' }}>
                         <div className="mb-3 flex items-center gap-2">
                           <HelpCircle className={`h-4 w-4 ${widgetSubtext}`} />
