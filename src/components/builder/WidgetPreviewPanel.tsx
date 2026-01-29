@@ -375,9 +375,17 @@ const WidgetPreviewPanel = ({
                                   <p className={`text-sm mt-0.5 mb-3 ${isSolidMode ? "text-slate-300" : isLight ? "text-muted-foreground" : "text-slate-400"}`}>{card.subtitle}</p>
                                 )}
                                 {!card.subtitle && <div className="mb-3" />}
-                                <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`}>
-                                  {t.show}
-                                </Button>
+                                {card.productUrl ? (
+                                  <a href={card.productUrl} target="_blank" rel="noopener noreferrer" className="block">
+                                    <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`}>
+                                      {t.show}
+                                    </Button>
+                                  </a>
+                                ) : (
+                                  <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`}>
+                                    {t.show}
+                                  </Button>
+                                )}
                               </div>
                             </div>)}
                         </div>
