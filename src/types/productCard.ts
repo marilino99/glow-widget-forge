@@ -6,6 +6,6 @@ export interface ProductCardData {
   imageUrl?: string;
   price?: string;
   oldPrice?: string;
-  promoBadge?: "none" | "sale" | "new" | "hot" | "bestseller";
+  promoBadge?: "none" | "sale" | "new" | "bestseller" | "bestprice" | "hotdrop";
   isLoading: boolean;
 }
