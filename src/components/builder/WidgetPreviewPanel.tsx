@@ -393,7 +393,7 @@ const WidgetPreviewPanel = ({
                   </div>
 
                   {/* Contact section */}
-                  <div className={`mx-4 mb-0 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
+                  <div className={`mx-4 mb-6 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
                     <div className="flex items-center gap-3">
                       {selectedAvatar ? (
                         <img
