@@ -22,6 +22,7 @@ const WidgetPreviewPanel = ({
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Theme-based styles
   const isLight = widgetTheme === "light";
@@ -79,7 +80,17 @@ const WidgetPreviewPanel = ({
 
           {/* Widget preview in bottom-right */}
           <div className="absolute bottom-6 right-6 w-80">
-            {showChat ? (
+            {isCollapsed ? (
+              /* Collapsed Icon */
+              <div className="flex justify-end">
+                <button 
+                  onClick={() => setIsCollapsed(false)}
+                  className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 shadow-lg hover:bg-blue-600 transition-colors"
+                >
+                  <HelpCircle className="h-7 w-7 text-white" />
+                </button>
+              </div>
+            ) : showChat ? (
               /* Chat View */
               <div className={`flex h-[500px] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`}>
                 {/* Chat header */}
@@ -101,7 +112,10 @@ const WidgetPreviewPanel = ({
                     </div>
                     <span className="text-sm font-medium">{contactName}</span>
                   </div>
-                  <button className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button 
+                    onClick={() => setIsCollapsed(true)}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}
+                  >
                     <Minus className="h-4 w-4" />
                   </button>
                 </div>
@@ -150,7 +164,10 @@ const WidgetPreviewPanel = ({
                   {!isLight && (
                     <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />
                   )}
-                  <button className={`absolute right-4 top-4 ${widgetSubtext} hover:opacity-80`}>
+                  <button 
+                    onClick={() => setIsCollapsed(true)}
+                    className={`absolute right-4 top-4 ${widgetSubtext} hover:opacity-80`}
+                  >
                     <Minus className="h-4 w-4" />
                   </button>
                   <h3 className="relative text-2xl font-bold">
