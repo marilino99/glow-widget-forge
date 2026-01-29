@@ -147,15 +147,62 @@ export const useFaqItems = () => {
         console.error("Error deleting FAQ item:", error);
         // Revert optimistic update
         setFaqItems((prev) => [...prev, itemToDelete].sort((a, b) => a.sortOrder - b.sortOrder));
-        toast({
-          title: "Error",
-          description: "Failed to delete FAQ item.",
-          variant: "destructive",
-        });
+      toast({
+        title: "Error",
+        description: "Failed to delete FAQ item.",
+        variant: "destructive",
+      });
+    }
+  },
+  [user, faqItems, toast]
+);
+
+const reorderFaqItems = useCallback(
+  async (fromIndex: number, toIndex: number) => {
+    if (!user) return;
+
+    const newItems = [...faqItems];
+    const [movedItem] = newItems.splice(fromIndex, 1);
+    newItems.splice(toIndex, 0, movedItem);
+
+    // Update sort orders
+    const updatedItems = newItems.map((item, idx) => ({
+      ...item,
+      sortOrder: idx,
+    }));
+
+    // Optimistically update UI
+    setFaqItems(updatedItems);
+
+    try {
+      // Update all items with new sort orders
+      const updates = updatedItems.map((item) =>
+        supabase
+          .from("faq_items")
+          .update({ sort_order: item.sortOrder })
+          .eq("id", item.id)
+          .eq("user_id", user.id)
+      );
+
+      const results = await Promise.all(updates);
+      const hasError = results.some((r) => r.error);
+
+      if (hasError) {
+        throw new Error("Failed to update sort order");
       }
-    },
-    [user, faqItems, toast]
-  );
+    } catch (error) {
+      console.error("Error reordering FAQ items:", error);
+      // Revert optimistic update
+      setFaqItems(faqItems);
+      toast({
+        title: "Error",
+        description: "Failed to reorder FAQ items.",
+        variant: "destructive",
+      });
+    }
+  },
+  [user, faqItems, toast]
+);
 
   return {
     faqItems,
@@ -163,5 +210,6 @@ export const useFaqItems = () => {
     addFaqItem,
     updateFaqItem,
     deleteFaqItem,
+    reorderFaqItems,
   };
 };
