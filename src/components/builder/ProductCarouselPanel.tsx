@@ -73,7 +73,7 @@ const ProductCarouselPanel = ({
   const handleCreate = () => {
     if (!productUrl.trim()) return;
     
-    const newCardId = Date.now().toString();
+    const newCardId = crypto.randomUUID();
     
     // Add loading card with productUrl
     onAddCard({ 
