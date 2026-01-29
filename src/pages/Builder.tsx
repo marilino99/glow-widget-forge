@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { useProductCards } from "@/hooks/useProductCards";
+import { useFaqItems } from "@/hooks/useFaqItems";
 import { Button } from "@/components/ui/button";
 import { Boxes, HelpCircle, LogOut, Loader2 } from "lucide-react";
 import {
@@ -27,6 +28,13 @@ const Builder = () => {
     updateProductCard, 
     deleteProductCard 
   } = useProductCards();
+  const {
+    faqItems,
+    isLoading: isLoadingFaq,
+    addFaqItem,
+    updateFaqItem,
+    deleteFaqItem,
+  } = useFaqItems();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   
   // Live preview state for product card edits
@@ -102,7 +110,7 @@ const Builder = () => {
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
   // Show loading state while fetching configuration
-  if (isLoading || isLoadingCards) {
+  if (isLoading || isLoadingCards || isLoadingFaq) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -201,6 +209,10 @@ const Builder = () => {
             initialLogo={initialTypographyRef.current.logo}
             initialLanguage={initialTypographyRef.current.language}
             initialSayHello={initialTypographyRef.current.sayHello}
+            faqItems={faqItems}
+            onAddFaqItem={addFaqItem}
+            onUpdateFaqItem={updateFaqItem}
+            onDeleteFaqItem={deleteFaqItem}
           />
         </div>
 
