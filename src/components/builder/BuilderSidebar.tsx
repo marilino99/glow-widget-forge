@@ -45,6 +45,7 @@ interface BuilderSidebarProps {
   onAddProductCard: (card: ProductCardData) => void;
   onUpdateProductCard: (cardId: string, updates: Partial<ProductCardData>) => void;
   onDeleteProductCard: (cardId: string) => void;
+  onProductCardPreviewUpdate?: (cardId: string | null, updates: Partial<ProductCardData> | null) => void;
   logo: string | null;
   onLogoChange: (logo: string | null) => void;
   language: string;
@@ -80,6 +81,7 @@ const BuilderSidebar = ({
   onAddProductCard,
   onUpdateProductCard,
   onDeleteProductCard,
+  onProductCardPreviewUpdate,
   logo,
   onLogoChange,
   language,
@@ -172,6 +174,7 @@ const BuilderSidebar = ({
         onAddCard={onAddProductCard}
         onUpdateCard={onUpdateProductCard}
         onDeleteCard={onDeleteProductCard}
+        onPreviewUpdate={onProductCardPreviewUpdate}
       />
     );
   }

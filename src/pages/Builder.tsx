@@ -29,6 +29,11 @@ const Builder = () => {
   } = useProductCards();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   
+  // Live preview state for product card edits
+  const [previewCardOverride, setPreviewCardOverride] = useState<{
+    cardId: string;
+    updates: Partial<ProductCardData>;
+  } | null>(null);
   // Track initial typography values for cancel functionality
   const initialTypographyRef = useRef({
     logo: config.logo,
@@ -77,6 +82,22 @@ const Builder = () => {
   const handleDeleteProductCard = (cardId: string) => {
     deleteProductCard(cardId);
   };
+
+  const handleProductCardPreviewUpdate = (cardId: string | null, updates: Partial<ProductCardData> | null) => {
+    if (cardId && updates) {
+      setPreviewCardOverride({ cardId, updates });
+    } else {
+      setPreviewCardOverride(null);
+    }
+  };
+
+  // Merge preview override with product cards for live preview
+  const previewProductCards = productCards.map(card => {
+    if (previewCardOverride && card.id === previewCardOverride.cardId) {
+      return { ...card, ...previewCardOverride.updates };
+    }
+    return card;
+  });
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -170,6 +191,7 @@ const Builder = () => {
             onAddProductCard={handleAddProductCard}
             onUpdateProductCard={handleUpdateProductCard}
             onDeleteProductCard={handleDeleteProductCard}
+            onProductCardPreviewUpdate={handleProductCardPreviewUpdate}
             logo={config.logo}
             onLogoChange={(logo) => updateConfig({ logo })}
             language={config.language}
@@ -193,7 +215,7 @@ const Builder = () => {
             widgetColor={config.widgetColor}
             buttonLogo={config.buttonLogo}
             backgroundType={config.backgroundType}
-            productCards={productCards}
+            productCards={previewProductCards}
             sayHello={config.sayHello}
             language={config.language}
           />
