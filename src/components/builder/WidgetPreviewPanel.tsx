@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2 } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ProductCardData } from "@/types/productCard";
 
 interface WidgetPreviewPanelProps {
   selectedAvatar?: string | null;
@@ -12,6 +13,7 @@ interface WidgetPreviewPanelProps {
   widgetTheme?: "light" | "dark";
   widgetColor?: string;
   buttonLogo?: string | null;
+  productCards?: ProductCardData[];
 }
 
 const WidgetPreviewPanel = ({ 
@@ -21,7 +23,8 @@ const WidgetPreviewPanel = ({
   offerHelp = "Write to us",
   widgetTheme = "dark",
   widgetColor = "blue",
-  buttonLogo = null
+  buttonLogo = null,
+  productCards = []
 }: WidgetPreviewPanelProps) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [proxyHtml, setProxyHtml] = useState<string | null>(null);
@@ -307,6 +310,31 @@ const WidgetPreviewPanel = ({
                     Contact us
                   </Button>
                 </div>
+
+                {/* Product Cards Section */}
+                {productCards.filter(c => !c.isLoading).length > 0 && (
+                  <div className={`border-t px-4 py-4 ${widgetBorder}`}>
+                    {productCards.filter(c => !c.isLoading).map((card) => (
+                      <div key={card.id} className="rounded-xl overflow-hidden">
+                        {/* Product Image Placeholder */}
+                        <div className={`aspect-[16/10] flex items-center justify-center rounded-t-xl ${isLight ? "bg-slate-200" : "bg-slate-600"}`}>
+                          {card.imageUrl ? (
+                            <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <Image className={`h-10 w-10 ${isLight ? "text-slate-400" : "text-slate-500"}`} />
+                          )}
+                        </div>
+                        {/* Product Info */}
+                        <div className="pt-3 pb-1">
+                          <h4 className="font-semibold text-base mb-2">{card.title}</h4>
+                          <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                            Show
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Quick answers section */}
                 {faqEnabled && (

@@ -18,6 +18,7 @@ import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
 import ThemeColorsPanel from "./ThemeColorsPanel";
 import ProductCarouselPanel from "./ProductCarouselPanel";
+import { ProductCardData } from "@/types/productCard";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -37,6 +38,10 @@ interface BuilderSidebarProps {
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
+  productCards: ProductCardData[];
+  onAddProductCard: (card: ProductCardData) => void;
+  onUpdateProductCard: (cardId: string, updates: Partial<ProductCardData>) => void;
+  onDeleteProductCard: (cardId: string) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -56,7 +61,11 @@ const BuilderSidebar = ({
   onWidgetColorChange,
   buttonLogo,
   onButtonLogoChange,
-  onSaveConfig
+  onSaveConfig,
+  productCards,
+  onAddProductCard,
+  onUpdateProductCard,
+  onDeleteProductCard
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -92,7 +101,13 @@ const BuilderSidebar = ({
   // Show Product Carousel panel
   if (showProductCarouselPanel) {
     return (
-      <ProductCarouselPanel onBack={handleBackFromProductCarousel} />
+      <ProductCarouselPanel 
+        onBack={handleBackFromProductCarousel}
+        addedCards={productCards}
+        onAddCard={onAddProductCard}
+        onUpdateCard={onUpdateProductCard}
+        onDeleteCard={onDeleteProductCard}
+      />
     );
   }
 
