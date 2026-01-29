@@ -335,8 +335,11 @@ const ProductCarouselPanel = ({
                           </Button>
                         </div>
                       </div>
-                      {/* Card title */}
+                      {/* Card title and subtitle */}
                       <p className="font-medium text-foreground text-sm">{card.title}</p>
+                      {card.subtitle && (
+                        <p className="text-muted-foreground text-sm mt-0.5">{card.subtitle}</p>
+                      )}
                     </div>
                   )}
                 </div>
