@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,29 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
+import { ProductCardData } from "@/types/productCard";
 
 const Builder = () => {
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
   const [activeWidget, setActiveWidget] = useState<string | null>("product-recommendations");
+  const [productCards, setProductCards] = useState<ProductCardData[]>([]);
+
+  const handleAddProductCard = (card: ProductCardData) => {
+    setProductCards(prev => [...prev, card]);
+  };
+
+  const handleUpdateProductCard = (cardId: string, updates: Partial<ProductCardData>) => {
+    setProductCards(prev => 
+      prev.map(card => 
+        card.id === cardId ? { ...card, ...updates } : card
+      )
+    );
+  };
+
+  const handleDeleteProductCard = (cardId: string) => {
+    setProductCards(prev => prev.filter(card => card.id !== cardId));
+  };
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -106,6 +124,10 @@ const Builder = () => {
             buttonLogo={config.buttonLogo}
             onButtonLogoChange={(logo) => updateConfig({ buttonLogo: logo })}
             onSaveConfig={saveConfig}
+            productCards={productCards}
+            onAddProductCard={handleAddProductCard}
+            onUpdateProductCard={handleUpdateProductCard}
+            onDeleteProductCard={handleDeleteProductCard}
           />
         </div>
 
@@ -119,6 +141,7 @@ const Builder = () => {
             widgetTheme={config.widgetTheme}
             widgetColor={config.widgetColor}
             buttonLogo={config.buttonLogo}
+            productCards={productCards}
           />
         </div>
       </div>

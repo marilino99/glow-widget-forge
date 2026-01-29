@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,8 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { useState } from "react";
+import { ProductCardData } from "@/types/productCard";
 
 interface ProductCard {
   id: string;
@@ -17,20 +18,23 @@ interface ProductCard {
   description: string;
 }
 
-interface AddedCard {
-  id: string;
-  title: string;
-  isLoading: boolean;
-}
-
 interface ProductCarouselPanelProps {
   onBack: () => void;
+  addedCards: ProductCardData[];
+  onAddCard: (card: ProductCardData) => void;
+  onUpdateCard: (cardId: string, updates: Partial<ProductCardData>) => void;
+  onDeleteCard: (cardId: string) => void;
 }
 
-const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
+const ProductCarouselPanel = ({ 
+  onBack,
+  addedCards,
+  onAddCard,
+  onUpdateCard,
+  onDeleteCard 
+}: ProductCarouselPanelProps) => {
   const [productUrl, setProductUrl] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const [addedCards, setAddedCards] = useState<AddedCard[]>([]);
 
   // Demo products for the carousel
   const [products] = useState<ProductCard[]>([
@@ -63,23 +67,19 @@ const ProductCarouselPanel = ({ onBack }: ProductCarouselPanelProps) => {
     const newCardId = Date.now().toString();
     
     // Add loading card
-    setAddedCards(prev => [...prev, { id: newCardId, title: "New product", isLoading: true }]);
+    onAddCard({ id: newCardId, title: "New product", isLoading: true });
     setIsCreating(true);
     setProductUrl("");
     
     // Simulate loading (TODO: implement actual URL parsing)
     setTimeout(() => {
-      setAddedCards(prev => 
-        prev.map(card => 
-          card.id === newCardId ? { ...card, isLoading: false } : card
-        )
-      );
+      onUpdateCard(newCardId, { isLoading: false });
       setIsCreating(false);
     }, 2000);
   };
 
   const handleDeleteCard = (cardId: string) => {
-    setAddedCards(prev => prev.filter(card => card.id !== cardId));
+    onDeleteCard(cardId);
   };
 
   return (
