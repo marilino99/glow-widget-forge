@@ -1,6 +1,14 @@
 import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
@@ -35,6 +43,7 @@ const ProductCarouselPanel = ({
 }: ProductCarouselPanelProps) => {
   const [productUrl, setProductUrl] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [editingCardId, setEditingCardId] = useState<string | null>(null);
 
   // Demo products for the carousel
   const [products] = useState<ProductCard[]>([
@@ -66,8 +75,13 @@ const ProductCarouselPanel = ({
     
     const newCardId = Date.now().toString();
     
-    // Add loading card
-    onAddCard({ id: newCardId, title: "New product", isLoading: true });
+    // Add loading card with productUrl
+    onAddCard({ 
+      id: newCardId, 
+      title: "New product", 
+      productUrl: productUrl.trim(),
+      isLoading: true 
+    });
     setIsCreating(true);
     setProductUrl("");
     
@@ -80,7 +94,156 @@ const ProductCarouselPanel = ({
 
   const handleDeleteCard = (cardId: string) => {
     onDeleteCard(cardId);
+    if (editingCardId === cardId) {
+      setEditingCardId(null);
+    }
   };
+
+  const editingCard = editingCardId ? addedCards.find(c => c.id === editingCardId) : null;
+
+  // Edit form view
+  if (editingCard) {
+    return (
+      <div className="flex h-full flex-col" style={{ backgroundColor: '#fafafa' }}>
+        {/* Edit Header */}
+        <div className="border-b border-border p-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="rounded-full gap-1.5 h-8 px-3"
+              onClick={() => setEditingCardId(null)}
+            >
+              <Pencil className="h-3.5 w-3.5" />
+              Done
+            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                onClick={() => handleDeleteCard(editingCard.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              >
+                <Sparkles className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Edit Form */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          {/* Title */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-foreground">
+              Title <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              value={editingCard.title}
+              onChange={(e) => onUpdateCard(editingCard.id, { title: e.target.value })}
+              placeholder="Product title"
+              className="rounded-lg bg-muted border-0"
+            />
+          </div>
+
+          {/* Subtitle */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-foreground">
+              Subtitle
+            </Label>
+            <Input
+              value={editingCard.subtitle || ""}
+              onChange={(e) => onUpdateCard(editingCard.id, { subtitle: e.target.value })}
+              placeholder="Optional subtitle"
+              className="rounded-lg bg-muted border-0"
+            />
+          </div>
+
+          {/* Product URL */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-foreground">
+              Product URL <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              value={editingCard.productUrl || ""}
+              onChange={(e) => onUpdateCard(editingCard.id, { productUrl: e.target.value })}
+              placeholder="https://example.com/product"
+              className="rounded-lg bg-muted border-0"
+            />
+          </div>
+
+          {/* Image URL */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-foreground">
+              Image URL <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              value={editingCard.imageUrl || ""}
+              onChange={(e) => onUpdateCard(editingCard.id, { imageUrl: e.target.value })}
+              placeholder="https://example.com/image.jpg"
+              className="rounded-lg bg-muted border-0"
+            />
+          </div>
+
+          {/* Price and Old Price */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-foreground">
+                Price
+              </Label>
+              <Input
+                value={editingCard.price || ""}
+                onChange={(e) => onUpdateCard(editingCard.id, { price: e.target.value })}
+                placeholder="$99"
+                className="rounded-lg bg-muted border-0"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-foreground">
+                Old price
+              </Label>
+              <Input
+                value={editingCard.oldPrice || ""}
+                onChange={(e) => onUpdateCard(editingCard.id, { oldPrice: e.target.value })}
+                placeholder="$149"
+                className="rounded-lg bg-muted border-0"
+              />
+            </div>
+          </div>
+
+          {/* Promo Badge */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-foreground">
+              Promo badge
+            </Label>
+            <Select
+              value={editingCard.promoBadge || "none"}
+              onValueChange={(value) => onUpdateCard(editingCard.id, { 
+                promoBadge: value as ProductCardData["promoBadge"] 
+              })}
+            >
+              <SelectTrigger className="rounded-lg bg-muted border-0">
+                <SelectValue placeholder="None" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="sale">Sale</SelectItem>
+                <SelectItem value="new">New</SelectItem>
+                <SelectItem value="hot">Hot</SelectItem>
+                <SelectItem value="bestseller">Bestseller</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full flex-col" style={{ backgroundColor: '#fafafa' }}>
@@ -149,6 +312,7 @@ const ProductCarouselPanel = ({
                           variant="secondary"
                           size="sm"
                           className="rounded-full gap-1.5 h-7 px-3 text-xs"
+                          onClick={() => setEditingCardId(card.id)}
                         >
                           <Pencil className="h-3 w-3" />
                           Edit
