@@ -210,7 +210,7 @@ const WidgetPreviewPanel = ({
   };
 
   // Function to load screenshot as fallback
-  const loadScreenshotFallback = async (urlToLoad?: string) => {
+  const loadScreenshotFallback = async (urlToLoad?: string, viewport: "desktop" | "mobile" = devicePreview) => {
     const url = urlToLoad || previewUrl;
     if (!url.trim() || isLoadingScreenshot) return;
     
@@ -220,7 +220,7 @@ const WidgetPreviewPanel = ({
     
     try {
       const { data, error } = await supabase.functions.invoke('website-screenshot', {
-        body: { url: url.trim() }
+        body: { url: url.trim(), viewport }
       });
       
       if (error) {
@@ -237,6 +237,13 @@ const WidgetPreviewPanel = ({
       setIsLoadingScreenshot(false);
     }
   };
+
+  // Reload screenshot when switching devices while in screenshot mode
+  useEffect(() => {
+    if (useScreenshotFallback && previewUrl && !isLoadingScreenshot) {
+      loadScreenshotFallback(previewUrl, devicePreview);
+    }
+  }, [devicePreview]);
 
   // Auto-load website URL from config on mount
   useEffect(() => {
