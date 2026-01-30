@@ -140,6 +140,27 @@ const WidgetPreviewPanel = ({
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
 
+  // Check if HTML appears to be a JavaScript-heavy SPA with minimal static content
+  const isSpaWithNoContent = (html: string): boolean => {
+    // Remove scripts and styles
+    const strippedHtml = html
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[\s\S]*?<\/style>/gi, '')
+      .replace(/<link[^>]*>/gi, '')
+      .replace(/<meta[^>]*>/gi, '')
+      .replace(/<head[\s\S]*?<\/head>/gi, '');
+    
+    // Get text content from body
+    const bodyMatch = strippedHtml.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    const bodyContent = bodyMatch ? bodyMatch[1] : strippedHtml;
+    
+    // Remove all HTML tags and get only text
+    const textContent = bodyContent.replace(/<[^>]+>/g, '').trim();
+    
+    // If text content is very short (less than 50 chars), it's likely a SPA
+    return textContent.length < 50;
+  };
+
   const handleLoadUrl = async (urlToLoad?: string) => {
     const url = urlToLoad || previewUrl;
     if (!url.trim()) return;
@@ -160,7 +181,8 @@ const WidgetPreviewPanel = ({
       });
       if (error) {
         console.error('Proxy error:', error);
-        setLoadError('Failed to load website');
+        // Try screenshot as fallback
+        await loadScreenshotFallback(url.trim());
         return;
       }
 
@@ -169,6 +191,15 @@ const WidgetPreviewPanel = ({
         setLoadError(data.error);
         return;
       }
+      
+      // Check if this is a SPA with no static content
+      if (typeof data === 'string' && isSpaWithNoContent(data)) {
+        console.log('Detected SPA with minimal content, loading screenshot...');
+        setIsLoading(false);
+        await loadScreenshotFallback(url.trim());
+        return;
+      }
+      
       setProxyHtml(data);
     } catch (err) {
       console.error('Error loading website:', err);
@@ -179,15 +210,17 @@ const WidgetPreviewPanel = ({
   };
 
   // Function to load screenshot as fallback
-  const loadScreenshotFallback = async () => {
-    if (!previewUrl.trim() || isLoadingScreenshot) return;
+  const loadScreenshotFallback = async (urlToLoad?: string) => {
+    const url = urlToLoad || previewUrl;
+    if (!url.trim() || isLoadingScreenshot) return;
     
     setIsLoadingScreenshot(true);
     setUseScreenshotFallback(true);
+    setIsLoading(false);
     
     try {
       const { data, error } = await supabase.functions.invoke('website-screenshot', {
-        body: { url: previewUrl.trim() }
+        body: { url: url.trim() }
       });
       
       if (error) {
@@ -367,7 +400,7 @@ const WidgetPreviewPanel = ({
                 variant="secondary"
                 size="sm"
                 className="absolute top-2 right-2 z-10 gap-2"
-                onClick={loadScreenshotFallback}
+                onClick={() => loadScreenshotFallback()}
                 disabled={isLoadingScreenshot}
               >
                 <Image className="h-4 w-4" />
