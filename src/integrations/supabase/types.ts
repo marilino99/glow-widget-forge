@@ -141,6 +141,7 @@ export type Database = {
           selected_avatar: string | null
           updated_at: string
           user_id: string
+          website_url: string | null
           widget_color: string
           widget_theme: string
         }
@@ -159,6 +160,7 @@ export type Database = {
           selected_avatar?: string | null
           updated_at?: string
           user_id: string
+          website_url?: string | null
           widget_color?: string
           widget_theme?: string
         }
@@ -177,6 +179,7 @@ export type Database = {
           selected_avatar?: string | null
           updated_at?: string
           user_id?: string
+          website_url?: string | null
           widget_color?: string
           widget_theme?: string
         }

@@ -38,7 +38,7 @@ const Signup = () => {
         title: "Account created",
         description: "Welcome to Widjet!",
       });
-      navigate("/builder");
+      navigate("/onboarding");
     }
 
     setLoading(false);
