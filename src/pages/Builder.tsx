@@ -224,7 +224,7 @@ const Builder = () => {
             onDeleteFaqItem={deleteFaqItem}
             onReorderFaqItems={reorderFaqItems}
             instagramEnabled={config.instagramEnabled}
-            onInstagramToggle={(enabled) => updateConfig({ instagramEnabled: enabled })}
+            onInstagramToggle={(enabled) => saveConfig({ instagramEnabled: enabled })}
             instagramPosts={instagramPosts}
             onAddInstagramPost={addInstagramPost}
             onDeleteInstagramPost={deleteInstagramPost}
