@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Boxes, Loader2, Globe, ArrowRight } from "lucide-react";
+import { Boxes, Loader2, Globe, ArrowRight, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 const Onboarding = () => {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [extractingBranding, setExtractingBranding] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -21,6 +22,7 @@ const Onboarding = () => {
     if (!user) return;
 
     setLoading(true);
+    setExtractingBranding(true);
 
     try {
       // Format URL
@@ -29,12 +31,51 @@ const Onboarding = () => {
         formattedUrl = `https://${formattedUrl}`;
       }
 
+      // Extract branding from website
+      let extractedLogo: string | null = null;
+      let extractedColor: string = 'blue';
+
+      try {
+        toast({
+          title: "Analyzing your website...",
+          description: "Extracting logo and brand colors",
+        });
+
+        const { data: brandingData, error: brandingError } = await supabase.functions.invoke('extract-branding', {
+          body: { url: formattedUrl }
+        });
+
+        if (!brandingError && brandingData?.success) {
+          extractedLogo = brandingData.logo || null;
+          extractedColor = brandingData.widgetColor || 'blue';
+          
+          console.log('Branding extracted:', { logo: extractedLogo, color: extractedColor });
+          
+          if (extractedLogo || extractedColor !== 'blue') {
+            toast({
+              title: "Brand identity detected! ✨",
+              description: `We found your ${extractedLogo ? 'logo and ' : ''}brand colors.`,
+            });
+          }
+        } else {
+          console.log('Could not extract branding, using defaults');
+        }
+      } catch (brandingErr) {
+        console.error('Branding extraction failed:', brandingErr);
+        // Continue with defaults
+      }
+
+      setExtractingBranding(false);
+
+      // Save configuration with extracted branding
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase
         .from("widget_configurations") as any)
         .upsert({
           user_id: user.id,
           website_url: formattedUrl || null,
+          logo: extractedLogo,
+          widget_color: extractedColor,
         }, {
           onConflict: "user_id"
         });
@@ -43,7 +84,7 @@ const Onboarding = () => {
 
       toast({
         title: "Setup complete!",
-        description: "Let's start building your widget.",
+        description: "Your widget is ready with your brand identity.",
       });
 
       navigate("/builder");
@@ -56,6 +97,7 @@ const Onboarding = () => {
       });
     } finally {
       setLoading(false);
+      setExtractingBranding(false);
     }
   };
 
@@ -75,7 +117,7 @@ const Onboarding = () => {
           </div>
           <CardTitle className="text-2xl">Welcome to Widjet! 🎉</CardTitle>
           <CardDescription>
-            Let's set up your widget. Enter your website URL to preview how it will look.
+            Let's set up your widget. Enter your website URL and we'll automatically match your brand identity.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,9 +134,11 @@ const Onboarding = () => {
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 className="text-base"
+                disabled={loading}
               />
-              <p className="text-xs text-muted-foreground">
-                This will be shown in the widget preview so you can see exactly how it looks on your site.
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Sparkles className="h-3 w-3" />
+                We'll extract your logo and colors automatically
               </p>
             </div>
 
@@ -108,11 +152,16 @@ const Onboarding = () => {
                 }}
               >
                 {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {extractingBranding ? "Extracting brand..." : "Saving..."}
+                  </>
                 ) : (
-                  <ArrowRight className="h-4 w-4" />
+                  <>
+                    <ArrowRight className="h-4 w-4" />
+                    Continue to Builder
+                  </>
                 )}
-                Continue to Builder
               </Button>
               <Button
                 type="button"
