@@ -281,11 +281,17 @@ const WidgetPreviewPanel = ({
               </div>
             </div>
           ) : proxyHtml ? (/* Iframe with proxied website content */
-            <div className="relative h-full w-full">
+            <div className="absolute inset-0 overflow-hidden">
               {devicePreview === "mobile" ? (
                 /* Mobile: centered iframe scaled */
-                <div className="flex h-full justify-center py-4 overflow-auto">
-                  <div className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" style={{ width: '280px', height: 'fit-content' }}>
+                <div className="flex h-full justify-center items-start py-4 overflow-auto">
+                  <div 
+                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
+                    style={{ 
+                      width: '280px', 
+                      height: '498px'
+                    }}
+                  >
                     <iframe 
                       srcDoc={proxyHtml} 
                       className="border-0 bg-white" 
@@ -301,20 +307,32 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : (
-                /* Desktop: scaled down with internal scroll */
-                <div className="h-full w-full overflow-auto">
-                  <iframe 
-                    srcDoc={proxyHtml} 
-                    className="border-0 bg-white" 
-                    title="Website preview" 
-                    sandbox="allow-same-origin"
-                    style={{ 
-                      width: '1920px', 
-                      height: '3000px',
-                      transform: 'scale(0.5625)',
-                      transformOrigin: 'top left'
-                    }}
-                  />
+                /* Desktop: scaled down, contained properly */
+                <div 
+                  className="overflow-auto" 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%'
+                  }}
+                >
+                  <div style={{ 
+                    width: '1080px', 
+                    height: '1687px',
+                    overflow: 'hidden'
+                  }}>
+                    <iframe 
+                      srcDoc={proxyHtml} 
+                      className="border-0 bg-white" 
+                      title="Website preview" 
+                      sandbox="allow-same-origin"
+                      style={{ 
+                        width: '1920px', 
+                        height: '3000px',
+                        transform: 'scale(0.5625)',
+                        transformOrigin: 'top left'
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
