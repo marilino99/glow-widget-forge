@@ -421,32 +421,18 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : (
-                /* Desktop: scaled down, contained properly */
-                <div 
-                  className="overflow-auto" 
-                  style={{ 
-                    width: '100%', 
-                    height: '100%'
-                  }}
-                >
-                  <div style={{ 
-                    width: '1080px', 
-                    height: '1687px',
-                    overflow: 'hidden'
-                  }}>
-                    <iframe 
-                      srcDoc={proxyHtml} 
-                      className="border-0 bg-white" 
-                      title="Website preview" 
-                      sandbox="allow-same-origin"
-                      style={{ 
-                        width: '1920px', 
-                        height: '3000px',
-                        transform: 'scale(0.5625)',
-                        transformOrigin: 'top left'
-                      }}
-                    />
-                  </div>
+                /* Desktop: responsive iframe that scales with container */
+                <div className="relative h-full w-full">
+                  <iframe 
+                    srcDoc={proxyHtml} 
+                    className="absolute inset-0 border-0 bg-white" 
+                    title="Website preview" 
+                    sandbox="allow-same-origin"
+                    style={{ 
+                      width: '100%', 
+                      height: '100%'
+                    }}
+                  />
                 </div>
               )}
             </div>
