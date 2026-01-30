@@ -62,16 +62,22 @@ export const useInstagramPosts = () => {
     loadPosts();
   }, [user]);
 
-  const addInstagramPost = useCallback(async (url: string) => {
+  const addInstagramPost = useCallback(async (url: string, thumbnailUrl?: string) => {
     if (!user) return;
 
     const maxSortOrder = instagramPosts.length > 0 
       ? Math.max(...instagramPosts.map(p => p.sortOrder)) 
       : -1;
 
+    // Extract post ID for author name placeholder
+    const postIdMatch = url.match(/instagram\.com\/(p|reel)\/([A-Za-z0-9_-]+)/);
+    const postId = postIdMatch ? postIdMatch[2] : null;
+
     const newPost: InstagramPostData = {
       id: crypto.randomUUID(),
       url,
+      thumbnailUrl,
+      authorName: postId ? `Post ${postId.substring(0, 8)}...` : undefined,
       createdAt: new Date().toISOString(),
       sortOrder: maxSortOrder + 1,
     };
@@ -80,17 +86,6 @@ export const useInstagramPosts = () => {
     setInstagramPosts(prev => [...prev, newPost]);
 
     try {
-      // Fetch oEmbed data via edge function
-      const { data: oembedData, error: oembedError } = await supabase.functions.invoke('instagram-oembed', {
-        body: { url }
-      });
-
-      if (!oembedError && oembedData) {
-        newPost.thumbnailUrl = oembedData.thumbnail_url;
-        newPost.caption = oembedData.title;
-        newPost.authorName = oembedData.author_name;
-      }
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase
         .from("instagram_posts") as any)
@@ -98,18 +93,13 @@ export const useInstagramPosts = () => {
           id: newPost.id,
           user_id: user.id,
           url: newPost.url,
-          thumbnail_url: newPost.thumbnailUrl,
-          caption: newPost.caption,
-          author_name: newPost.authorName,
+          thumbnail_url: newPost.thumbnailUrl || null,
+          caption: newPost.caption || null,
+          author_name: newPost.authorName || null,
           sort_order: newPost.sortOrder,
         });
 
       if (error) throw error;
-
-      // Update with fetched data
-      setInstagramPosts(prev => 
-        prev.map(p => p.id === newPost.id ? newPost : p)
-      );
 
       toast({
         title: "Post added",
@@ -122,6 +112,49 @@ export const useInstagramPosts = () => {
       toast({
         title: "Error",
         description: "Failed to add Instagram post. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [user, instagramPosts, toast]);
+
+  const updateInstagramPost = useCallback(async (postId: string, updates: Partial<InstagramPostData>) => {
+    if (!user) return;
+
+    const postToUpdate = instagramPosts.find(p => p.id === postId);
+    if (!postToUpdate) return;
+
+    // Optimistic update
+    setInstagramPosts(prev => 
+      prev.map(p => p.id === postId ? { ...p, ...updates } : p)
+    );
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase
+        .from("instagram_posts") as any)
+        .update({
+          thumbnail_url: updates.thumbnailUrl ?? postToUpdate.thumbnailUrl ?? null,
+          caption: updates.caption ?? postToUpdate.caption ?? null,
+          author_name: updates.authorName ?? postToUpdate.authorName ?? null,
+        })
+        .eq("id", postId)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Updated",
+        description: "Post updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error updating Instagram post:", error);
+      // Revert optimistic update
+      setInstagramPosts(prev => 
+        prev.map(p => p.id === postId ? postToUpdate : p)
+      );
+      toast({
+        title: "Error",
+        description: "Failed to update post. Please try again.",
         variant: "destructive",
       });
     }
@@ -204,6 +237,7 @@ export const useInstagramPosts = () => {
     instagramPosts,
     isLoading,
     addInstagramPost,
+    updateInstagramPost,
     deleteInstagramPost,
     reorderInstagramPosts,
   };

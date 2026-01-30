@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Instagram, Plus, Trash2, GripVertical, ExternalLink, Loader2, ArrowLeft } from "lucide-react";
+import { Instagram, Plus, Trash2, GripVertical, ExternalLink, Loader2, ArrowLeft, ImageIcon } from "lucide-react";
 import { InstagramPostData } from "@/types/instagramPost";
 
 interface InstagramPanelProps {
@@ -11,9 +11,10 @@ interface InstagramPanelProps {
   instagramEnabled: boolean;
   onInstagramToggle: (enabled: boolean) => void;
   instagramPosts: InstagramPostData[];
-  onAddPost: (url: string) => Promise<void>;
+  onAddPost: (url: string, thumbnailUrl?: string) => Promise<void>;
   onDeletePost: (postId: string) => void;
   onReorderPosts: (fromIndex: number, toIndex: number) => void;
+  onUpdatePost: (postId: string, updates: Partial<InstagramPostData>) => void;
 }
 
 const InstagramPanel = ({
@@ -24,11 +25,15 @@ const InstagramPanel = ({
   onAddPost,
   onDeletePost,
   onReorderPosts,
+  onUpdatePost,
 }: InstagramPanelProps) => {
   const [newUrl, setNewUrl] = useState("");
+  const [newThumbnail, setNewThumbnail] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [editingThumbnail, setEditingThumbnail] = useState<string | null>(null);
+  const [thumbnailInput, setThumbnailInput] = useState("");
 
   const handleAddPost = async () => {
     if (!newUrl.trim()) return;
@@ -40,8 +45,9 @@ const InstagramPanel = ({
     }
 
     setIsAdding(true);
-    await onAddPost(newUrl.trim());
+    await onAddPost(newUrl.trim(), newThumbnail.trim() || undefined);
     setNewUrl("");
+    setNewThumbnail("");
     setIsAdding(false);
   };
 
@@ -70,6 +76,12 @@ const InstagramPanel = ({
     return match ? match[2] : null;
   };
 
+  const handleSaveThumbnail = (postId: string) => {
+    onUpdatePost(postId, { thumbnailUrl: thumbnailInput.trim() || undefined });
+    setEditingThumbnail(null);
+    setThumbnailInput("");
+  };
+
   return (
     <div className="h-full overflow-y-auto bg-background p-6">
       {/* Back button and header */}
@@ -95,32 +107,36 @@ const InstagramPanel = ({
       {instagramEnabled && (
         <>
           {/* Add new post */}
-          <div className="space-y-3">
+          <div className="space-y-3 mb-6">
             <Label className="text-sm text-muted-foreground">
-              Add Instagram post URL
+              Add Instagram post
             </Label>
-            <div className="flex gap-2">
-              <Input
-                placeholder="https://instagram.com/p/..."
-                value={newUrl}
-                onChange={(e) => setNewUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddPost()}
-                className="flex-1"
-              />
-              <Button 
-                onClick={handleAddPost} 
-                size="icon"
-                disabled={isAdding || !newUrl.trim()}
-              >
-                {isAdding ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Plus className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
+            <Input
+              placeholder="https://instagram.com/p/..."
+              value={newUrl}
+              onChange={(e) => setNewUrl(e.target.value)}
+              className="w-full"
+            />
+            <Input
+              placeholder="Thumbnail image URL (optional)"
+              value={newThumbnail}
+              onChange={(e) => setNewThumbnail(e.target.value)}
+              className="w-full"
+            />
+            <Button 
+              onClick={handleAddPost} 
+              disabled={isAdding || !newUrl.trim()}
+              className="w-full"
+            >
+              {isAdding ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Plus className="h-4 w-4 mr-2" />
+              )}
+              Add Post
+            </Button>
             <p className="text-xs text-muted-foreground">
-              Paste links to Instagram posts or reels to display them in your widget
+              Paste Instagram post/reel URLs. Add a thumbnail image URL for preview (right-click post image → Copy image address).
             </p>
           </div>
 
@@ -146,7 +162,7 @@ const InstagramPanel = ({
                     onDragStart={(e) => handleDragStart(e, index)}
                     onDragOver={(e) => handleDragOver(e, index)}
                     onDragEnd={handleDragEnd}
-                    className={`flex items-center gap-3 rounded-lg border bg-card p-3 transition-all ${
+                    className={`rounded-lg border bg-card p-3 transition-all ${
                       draggedIndex === index
                         ? "opacity-50 border-primary"
                         : dragOverIndex === index
@@ -154,56 +170,88 @@ const InstagramPanel = ({
                         : "border-border"
                     }`}
                   >
-                    <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
-                      <GripVertical className="h-4 w-4" />
-                    </div>
-                    
-                    {/* Thumbnail */}
-                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-                      {post.thumbnailUrl ? (
-                        <img 
-                          src={post.thumbnailUrl} 
-                          alt="Post thumbnail"
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center">
-                          <Instagram className="h-5 w-5 text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+                        <GripVertical className="h-4 w-4" />
+                      </div>
+                      
+                      {/* Thumbnail */}
+                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
+                        {post.thumbnailUrl ? (
+                          <img 
+                            src={post.thumbnailUrl} 
+                            alt="Post thumbnail"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center">
+                            <Instagram className="h-5 w-5 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
 
-                    {/* Post info */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {post.authorName || extractPostId(post.url) || "Instagram Post"}
-                      </p>
-                      {post.caption && (
-                        <p className="text-xs text-muted-foreground truncate">
-                          {post.caption}
+                      {/* Post info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {post.authorName || extractPostId(post.url) || "Instagram Post"}
                         </p>
-                      )}
+                        <p className="text-xs text-muted-foreground truncate">
+                          {post.url}
+                        </p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => {
+                            setEditingThumbnail(post.id);
+                            setThumbnailInput(post.thumbnailUrl || "");
+                          }}
+                          title="Edit thumbnail"
+                        >
+                          <ImageIcon className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => window.open(post.url, "_blank")}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => onDeletePost(post.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => window.open(post.url, "_blank")}
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => onDeletePost(post.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    {/* Thumbnail edit mode */}
+                    {editingThumbnail === post.id && (
+                      <div className="mt-3 pt-3 border-t border-border space-y-2">
+                        <Input
+                          placeholder="Paste thumbnail image URL..."
+                          value={thumbnailInput}
+                          onChange={(e) => setThumbnailInput(e.target.value)}
+                          className="w-full text-sm"
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => handleSaveThumbnail(post.id)}>
+                            Save
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => setEditingThumbnail(null)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

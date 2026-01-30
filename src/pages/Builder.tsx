@@ -41,6 +41,7 @@ const Builder = () => {
     instagramPosts,
     isLoading: isLoadingInstagram,
     addInstagramPost,
+    updateInstagramPost,
     deleteInstagramPost,
     reorderInstagramPosts,
   } = useInstagramPosts();
@@ -227,6 +228,7 @@ const Builder = () => {
             onInstagramToggle={(enabled) => saveConfig({ instagramEnabled: enabled })}
             instagramPosts={instagramPosts}
             onAddInstagramPost={addInstagramPost}
+            onUpdateInstagramPost={updateInstagramPost}
             onDeleteInstagramPost={deleteInstagramPost}
             onReorderInstagramPosts={reorderInstagramPosts}
           />

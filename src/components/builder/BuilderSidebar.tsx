@@ -68,7 +68,8 @@ interface BuilderSidebarProps {
   instagramEnabled: boolean;
   onInstagramToggle: (enabled: boolean) => void;
   instagramPosts: InstagramPostData[];
-  onAddInstagramPost: (url: string) => Promise<void>;
+  onAddInstagramPost: (url: string, thumbnailUrl?: string) => Promise<void>;
+  onUpdateInstagramPost: (postId: string, updates: Partial<InstagramPostData>) => void;
   onDeleteInstagramPost: (postId: string) => void;
   onReorderInstagramPosts: (fromIndex: number, toIndex: number) => void;
 }
@@ -116,6 +117,7 @@ const BuilderSidebar = ({
   onInstagramToggle,
   instagramPosts,
   onAddInstagramPost,
+  onUpdateInstagramPost,
   onDeleteInstagramPost,
   onReorderInstagramPosts,
 }: BuilderSidebarProps) => {
@@ -199,6 +201,7 @@ const BuilderSidebar = ({
         onInstagramToggle={onInstagramToggle}
         instagramPosts={instagramPosts}
         onAddPost={onAddInstagramPost}
+        onUpdatePost={onUpdateInstagramPost}
         onDeletePost={onDeleteInstagramPost}
         onReorderPosts={onReorderInstagramPosts}
       />
