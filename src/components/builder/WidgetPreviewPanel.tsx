@@ -347,7 +347,7 @@ const WidgetPreviewPanel = ({
               </div>
             </div>
           ) : useScreenshotFallback ? (/* Screenshot fallback mode */
-            <div className="absolute inset-0 overflow-auto">
+            <div className="absolute inset-0 overflow-hidden">
               {isLoadingScreenshot ? (
                 <div className="flex h-full items-center justify-center">
                   <div className="flex flex-col items-center gap-3">
@@ -356,26 +356,23 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : screenshotUrl ? (
-                <div className="flex h-full justify-center p-4">
-                  <div className="relative">
-                    <img 
-                      src={screenshotUrl} 
-                      alt="Website screenshot" 
-                      className="max-w-full h-auto rounded-lg shadow-lg"
-                      style={{ maxHeight: '100%' }}
-                    />
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="absolute top-2 right-2"
-                      onClick={() => {
-                        setUseScreenshotFallback(false);
-                        setScreenshotUrl(null);
-                      }}
-                    >
-                      Back to iframe
-                    </Button>
-                  </div>
+                <div className="relative h-full w-full">
+                  <img 
+                    src={screenshotUrl} 
+                    alt="Website screenshot" 
+                    className="h-full w-full object-cover object-top"
+                  />
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="absolute top-2 right-2 z-10"
+                    onClick={() => {
+                      setUseScreenshotFallback(false);
+                      setScreenshotUrl(null);
+                    }}
+                  >
+                    Back to iframe
+                  </Button>
                 </div>
               ) : (
                 <div className="flex h-full items-center justify-center">
