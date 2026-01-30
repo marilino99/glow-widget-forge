@@ -26,6 +26,30 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   } : null;
 }
 
+// Calculate relative luminance (0 = black, 1 = white)
+function getLuminance(hex: string): number {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return 1; // Default to light if can't parse
+  
+  // Convert to sRGB
+  const r = rgb.r / 255;
+  const g = rgb.g / 255;
+  const b = rgb.b / 255;
+  
+  // Apply gamma correction
+  const rLin = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+  const gLin = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+  const bLin = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+  
+  // Calculate luminance
+  return 0.2126 * rLin + 0.7152 * gLin + 0.0722 * bLin;
+}
+
+// Determine if a color is dark (luminance < 0.5)
+function isDarkColor(hex: string): boolean {
+  return getLuminance(hex) < 0.5;
+}
+
 function colorDistance(hex1: string, hex2: string): number {
   const rgb1 = hexToRgb(hex1);
   const rgb2 = hexToRgb(hex2);
@@ -51,6 +75,43 @@ function findClosestWidgetColor(primaryColor: string): string {
   }
   
   return closestColor;
+}
+
+// Determine widget theme based on multiple factors
+function determineWidgetTheme(branding: Record<string, unknown>): 'light' | 'dark' {
+  // Check colorScheme first
+  const colorScheme = branding.colorScheme as string | undefined;
+  
+  // Check background color luminance
+  const colors = branding.colors as Record<string, string> | undefined;
+  const backgroundColor = colors?.background;
+  
+  // If we have a background color, use luminance to determine theme
+  if (backgroundColor) {
+    const isDark = isDarkColor(backgroundColor);
+    console.log(`Background color: ${backgroundColor}, isDark: ${isDark}, luminance: ${getLuminance(backgroundColor).toFixed(3)}`);
+    if (isDark) {
+      return 'dark';
+    }
+  }
+  
+  // If colorScheme is explicitly dark, use dark
+  if (colorScheme === 'dark') {
+    return 'dark';
+  }
+  
+  // Check if primary text color is light (indicating dark background)
+  const textPrimary = colors?.textPrimary;
+  if (textPrimary) {
+    const textLuminance = getLuminance(textPrimary);
+    // If text is very light (high luminance), background is probably dark
+    if (textLuminance > 0.7) {
+      console.log(`Text color ${textPrimary} is light (luminance: ${textLuminance.toFixed(3)}), suggesting dark theme`);
+      return 'dark';
+    }
+  }
+  
+  return 'light';
 }
 
 Deno.serve(async (req) => {
@@ -136,13 +197,12 @@ Deno.serve(async (req) => {
     const primaryColor = branding.colors?.primary || null;
     const widgetColor = primaryColor ? findClosestWidgetColor(primaryColor) : 'blue';
 
-    // Extract theme based on colorScheme
-    const colorScheme = branding.colorScheme || 'light';
-    const widgetTheme = colorScheme === 'dark' ? 'dark' : 'light';
+    // Determine theme based on multiple factors (colorScheme, background, text colors)
+    const widgetTheme = determineWidgetTheme(branding);
 
     console.log('Extracted logo:', logo);
     console.log('Primary color:', primaryColor, '-> Widget color:', widgetColor);
-    console.log('Color scheme:', colorScheme, '-> Widget theme:', widgetTheme);
+    console.log('Determined widget theme:', widgetTheme);
 
     return new Response(
       JSON.stringify({
