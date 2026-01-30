@@ -99,7 +99,14 @@ const Onboarding = () => {
             </div>
 
             <div className="space-y-3">
-              <Button type="submit" className="w-full gap-2" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full gap-2 disabled:opacity-100" 
+                disabled={loading || !websiteUrl.trim()}
+                style={{ 
+                  backgroundColor: !websiteUrl.trim() ? '#3f3f3f' : undefined 
+                }}
+              >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
