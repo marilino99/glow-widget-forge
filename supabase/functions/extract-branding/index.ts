@@ -82,35 +82,68 @@ function determineWidgetTheme(branding: Record<string, unknown>): 'light' | 'dar
   // Check colorScheme first
   const colorScheme = branding.colorScheme as string | undefined;
   
-  // Check background color luminance
-  const colors = branding.colors as Record<string, string> | undefined;
-  const backgroundColor = colors?.background;
+  // If colorScheme is explicitly dark, use dark
+  if (colorScheme === 'dark') {
+    console.log('colorScheme is dark, using dark theme');
+    return 'dark';
+  }
   
-  // If we have a background color, use luminance to determine theme
-  if (backgroundColor) {
-    const isDark = isDarkColor(backgroundColor);
-    console.log(`Background color: ${backgroundColor}, isDark: ${isDark}, luminance: ${getLuminance(backgroundColor).toFixed(3)}`);
-    if (isDark) {
+  const colors = branding.colors as Record<string, string> | undefined;
+  const components = branding.components as Record<string, Record<string, string>> | undefined;
+  
+  // Check input component textColor - if it's white/light, the site is probably dark
+  const inputTextColor = components?.input?.textColor;
+  if (inputTextColor) {
+    const inputTextLuminance = getLuminance(inputTextColor);
+    console.log(`Input text color: ${inputTextColor}, luminance: ${inputTextLuminance.toFixed(3)}`);
+    // If input text is very light (white), the background is probably dark
+    if (inputTextLuminance > 0.8) {
+      console.log('Input text is white/light, suggesting dark theme');
       return 'dark';
     }
   }
   
-  // If colorScheme is explicitly dark, use dark
-  if (colorScheme === 'dark') {
-    return 'dark';
+  // Check background color luminance
+  const backgroundColor = colors?.background;
+  if (backgroundColor) {
+    const bgLuminance = getLuminance(backgroundColor);
+    console.log(`Background color: ${backgroundColor}, luminance: ${bgLuminance.toFixed(3)}`);
+    if (bgLuminance < 0.3) {
+      console.log('Background is dark, using dark theme');
+      return 'dark';
+    }
   }
   
   // Check if primary text color is light (indicating dark background)
   const textPrimary = colors?.textPrimary;
   if (textPrimary) {
     const textLuminance = getLuminance(textPrimary);
+    console.log(`Text primary color: ${textPrimary}, luminance: ${textLuminance.toFixed(3)}`);
     // If text is very light (high luminance), background is probably dark
-    if (textLuminance > 0.7) {
-      console.log(`Text color ${textPrimary} is light (luminance: ${textLuminance.toFixed(3)}), suggesting dark theme`);
+    if (textLuminance > 0.8) {
+      console.log('Text primary is very light, suggesting dark theme');
       return 'dark';
     }
   }
   
+  // Check if accent color would work better on dark or light
+  // If accent is bright/saturated, it might be designed for dark backgrounds
+  const accent = colors?.accent;
+  if (accent && backgroundColor === '#FFFFFF') {
+    // If Firecrawl says background is white but we have an orange/bright accent,
+    // it might be a dark site with sections
+    const accentRgb = hexToRgb(accent);
+    if (accentRgb) {
+      // Check if accent is a warm, bright color (orange, red, yellow)
+      const isWarmBright = accentRgb.r > 200 && accentRgb.g < 180 && accentRgb.b < 100;
+      if (isWarmBright) {
+        console.log(`Accent ${accent} is warm/bright, might indicate dark theme design`);
+        // Don't return dark here, just log it - not strong enough signal alone
+      }
+    }
+  }
+  
+  console.log('Defaulting to light theme');
   return 'light';
 }
 
