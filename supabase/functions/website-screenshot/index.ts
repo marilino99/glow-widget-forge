@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json();
+    const { url, viewport = 'desktop' } = await req.json();
 
     if (!url) {
       return new Response(
@@ -34,7 +34,12 @@ Deno.serve(async (req) => {
       formattedUrl = `https://${formattedUrl}`;
     }
 
-    console.log('Taking screenshot of URL:', formattedUrl);
+    // Set viewport dimensions based on device type
+    const isMobile = viewport === 'mobile';
+    const viewportWidth = isMobile ? 375 : 1920;
+    const viewportHeight = isMobile ? 667 : 1080;
+
+    console.log(`Taking ${viewport} screenshot of URL:`, formattedUrl, `(${viewportWidth}x${viewportHeight})`);
 
     const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
@@ -44,8 +49,9 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         url: formattedUrl,
-        formats: ['screenshot'],
-        waitFor: 3000, // Wait 3 seconds for JS to render
+        formats: ['screenshot@fullPage'],
+        waitFor: 3000,
+        mobile: isMobile,
       }),
     });
 
