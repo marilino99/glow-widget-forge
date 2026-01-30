@@ -281,47 +281,42 @@ const WidgetPreviewPanel = ({
               </div>
             </div>
           ) : proxyHtml ? (/* Iframe with proxied website content */
-            <div className="relative h-full w-full overflow-hidden">
-              {/* Scrollable container */}
-              <div className="h-full w-full overflow-auto">
-                {devicePreview === "mobile" ? (
-                  /* Mobile: centered iframe scaled to show more content */
-                  <div className="flex justify-center py-4" style={{ minHeight: '100%' }}>
-                    <div className="shadow-xl rounded-lg overflow-hidden" style={{ width: '280px' }}>
-                      <div className="origin-top-left" style={{
-                        width: '375px',
-                        height: '2000px',
-                        transform: 'scale(0.7467)',
-                        transformOrigin: 'top left'
-                      }}>
-                        <iframe 
-                          srcDoc={proxyHtml} 
-                          className="border-0 bg-white" 
-                          title="Website preview" 
-                          sandbox="allow-same-origin"
-                          style={{ width: '375px', height: '2680px' }} 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  /* Desktop: scaled down full width with tall height for scrolling */
-                  <div style={{
-                    width: '1920px',
-                    height: '5000px',
-                    transform: 'scale(0.5625)',
-                    transformOrigin: 'top left'
-                  }}>
+            <div className="relative h-full w-full">
+              {devicePreview === "mobile" ? (
+                /* Mobile: centered iframe scaled */
+                <div className="flex h-full justify-center py-4 overflow-auto">
+                  <div className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" style={{ width: '280px', height: 'fit-content' }}>
                     <iframe 
                       srcDoc={proxyHtml} 
                       className="border-0 bg-white" 
                       title="Website preview" 
                       sandbox="allow-same-origin"
-                      style={{ width: '1920px', height: '8889px' }}
+                      style={{ 
+                        width: '375px', 
+                        height: '667px',
+                        transform: 'scale(0.7467)',
+                        transformOrigin: 'top left'
+                      }} 
                     />
                   </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                /* Desktop: scaled down with internal scroll */
+                <div className="h-full w-full overflow-auto">
+                  <iframe 
+                    srcDoc={proxyHtml} 
+                    className="border-0 bg-white" 
+                    title="Website preview" 
+                    sandbox="allow-same-origin"
+                    style={{ 
+                      width: '1920px', 
+                      height: '3000px',
+                      transform: 'scale(0.5625)',
+                      transformOrigin: 'top left'
+                    }}
+                  />
+                </div>
+              )}
             </div>
           ) : (/* Skeleton placeholder for website */
             <div className={`h-full ${devicePreview === "mobile" ? "flex justify-center py-4" : ""}`}>
