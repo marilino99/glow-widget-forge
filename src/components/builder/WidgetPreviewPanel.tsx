@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image, Smartphone, Monitor } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image, Smartphone, Monitor, Instagram } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
+import { InstagramPostData } from "@/types/instagramPost";
 import { getTranslations } from "@/lib/translations";
 
 interface WidgetPreviewPanelProps {
@@ -21,6 +22,8 @@ interface WidgetPreviewPanelProps {
   sayHello?: string;
   language?: string;
   faqItems?: FaqItemData[];
+  instagramEnabled?: boolean;
+  instagramPosts?: InstagramPostData[];
 }
 
 // Color mapping for buttons and gradients
@@ -117,7 +120,9 @@ const WidgetPreviewPanel = ({
   productCards = [],
   sayHello = "Hello, nice to see you here 👋",
   language = "en",
-  faqItems = []
+  faqItems = [],
+  instagramEnabled = false,
+  instagramPosts = []
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -470,6 +475,47 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                   </div>}
+
+                {/* Instagram UGC Section - horizontal carousel */}
+                {instagramEnabled && instagramPosts.length > 0 && (
+                  <div className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
+                    {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
+                      <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
+                    )}
+                    <div className={`relative pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                      <div className="px-4 mb-2">
+                        <div className="flex items-center gap-2">
+                          <Instagram className={`h-4 w-4 ${isLight ? "text-pink-500" : "text-pink-400"}`} />
+                          <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>Follow us on Instagram</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        {instagramPosts.map((post) => (
+                          <a
+                            key={post.id}
+                            href={post.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-shrink-0 rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
+                            style={{ width: '100px', height: '100px' }}
+                          >
+                            {post.thumbnailUrl ? (
+                              <img 
+                                src={post.thumbnailUrl} 
+                                alt={post.caption || "Instagram post"}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className={`w-full h-full flex items-center justify-center ${isLight ? "bg-slate-200" : "bg-slate-700"}`}>
+                                <Instagram className={`h-6 w-6 ${isLight ? "text-slate-400" : "text-slate-500"}`} />
+                              </div>
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Quick answers section */}
                 {faqEnabled && faqItems.length > 0 && <div className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>

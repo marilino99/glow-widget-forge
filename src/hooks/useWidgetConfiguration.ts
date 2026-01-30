@@ -15,6 +15,7 @@ export interface WidgetConfiguration {
   logo: string | null;
   language: string;
   sayHello: string;
+  instagramEnabled: boolean;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -29,6 +30,7 @@ const defaultConfig: WidgetConfiguration = {
   logo: null,
   language: "en",
   sayHello: "Hello, nice to see you here 👋",
+  instagramEnabled: false,
 };
 
 export const useWidgetConfiguration = () => {
@@ -57,7 +59,7 @@ export const useWidgetConfiguration = () => {
         if (error) throw error;
 
         if (data) {
-          const dbData = data as typeof data & { logo?: string; language?: string; say_hello?: string };
+          const dbData = data as typeof data & { logo?: string; language?: string; say_hello?: string; instagram_enabled?: boolean };
           setConfig({
             selectedAvatar: data.selected_avatar,
             faqEnabled: data.faq_enabled,
@@ -70,6 +72,7 @@ export const useWidgetConfiguration = () => {
             logo: dbData.logo || null,
             language: dbData.language || "en",
             sayHello: dbData.say_hello || defaultConfig.sayHello,
+            instagramEnabled: dbData.instagram_enabled ?? false,
           });
         }
       } catch (error) {
@@ -107,6 +110,7 @@ export const useWidgetConfiguration = () => {
           logo: updatedConfig.logo,
           language: updatedConfig.language,
           say_hello: updatedConfig.sayHello,
+          instagram_enabled: updatedConfig.instagramEnabled,
         }, {
           onConflict: "user_id"
         });

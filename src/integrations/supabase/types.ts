@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      instagram_posts: {
+        Row: {
+          author_name: string | null
+          caption: string | null
+          created_at: string
+          id: string
+          sort_order: number
+          thumbnail_url: string | null
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          author_name?: string | null
+          caption?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          author_name?: string | null
+          caption?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_cards: {
         Row: {
           created_at: string

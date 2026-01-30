@@ -4,6 +4,18 @@ import { useAuth } from "./useAuth";
 import { useToast } from "./use-toast";
 import { InstagramPostData } from "@/types/instagramPost";
 
+interface InstagramPostRow {
+  id: string;
+  user_id: string;
+  url: string;
+  thumbnail_url: string | null;
+  caption: string | null;
+  author_name: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useInstagramPosts = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -20,20 +32,21 @@ export const useInstagramPosts = () => {
       }
 
       try {
-        const { data, error } = await supabase
-          .from("instagram_posts")
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data, error } = await (supabase
+          .from("instagram_posts") as any)
           .select("*")
           .eq("user_id", user.id)
           .order("sort_order", { ascending: true });
 
         if (error) throw error;
 
-        const posts: InstagramPostData[] = (data || []).map((post) => ({
+        const posts: InstagramPostData[] = ((data || []) as InstagramPostRow[]).map((post) => ({
           id: post.id,
           url: post.url,
-          thumbnailUrl: post.thumbnail_url,
-          caption: post.caption,
-          authorName: post.author_name,
+          thumbnailUrl: post.thumbnail_url || undefined,
+          caption: post.caption || undefined,
+          authorName: post.author_name || undefined,
           createdAt: post.created_at,
           sortOrder: post.sort_order,
         }));
@@ -78,8 +91,9 @@ export const useInstagramPosts = () => {
         newPost.authorName = oembedData.author_name;
       }
 
-      const { error } = await supabase
-        .from("instagram_posts")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase
+        .from("instagram_posts") as any)
         .insert({
           id: newPost.id,
           user_id: user.id,
@@ -123,8 +137,9 @@ export const useInstagramPosts = () => {
     setInstagramPosts(prev => prev.filter(p => p.id !== postId));
 
     try {
-      const { error } = await supabase
-        .from("instagram_posts")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase
+        .from("instagram_posts") as any)
         .delete()
         .eq("id", postId)
         .eq("user_id", user.id);
@@ -166,8 +181,9 @@ export const useInstagramPosts = () => {
     try {
       await Promise.all(
         updatedPosts.map((post) =>
-          supabase
-            .from("instagram_posts")
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (supabase
+            .from("instagram_posts") as any)
             .update({ sort_order: post.sortOrder })
             .eq("id", post.id)
             .eq("user_id", user.id)

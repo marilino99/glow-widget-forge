@@ -13,6 +13,7 @@ import {
   Type,
   Maximize2,
   Sparkles,
+  Instagram,
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
@@ -20,8 +21,10 @@ import ThemeColorsPanel from "./ThemeColorsPanel";
 import ProductCarouselPanel from "./ProductCarouselPanel";
 import TypographyPanel from "./TypographyPanel";
 import FaqPanel from "./FaqPanel";
+import InstagramPanel from "./InstagramPanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
+import { InstagramPostData } from "@/types/instagramPost";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -62,6 +65,12 @@ interface BuilderSidebarProps {
   onUpdateFaqItem: (itemId: string, updates: Partial<FaqItemData>) => void;
   onDeleteFaqItem: (itemId: string) => void;
   onReorderFaqItems: (fromIndex: number, toIndex: number) => void;
+  instagramEnabled: boolean;
+  onInstagramToggle: (enabled: boolean) => void;
+  instagramPosts: InstagramPostData[];
+  onAddInstagramPost: (url: string) => Promise<void>;
+  onDeleteInstagramPost: (postId: string) => void;
+  onReorderInstagramPosts: (fromIndex: number, toIndex: number) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -102,13 +111,20 @@ const BuilderSidebar = ({
   onAddFaqItem,
   onUpdateFaqItem,
   onDeleteFaqItem,
-  onReorderFaqItems
+  onReorderFaqItems,
+  instagramEnabled,
+  onInstagramToggle,
+  instagramPosts,
+  onAddInstagramPost,
+  onDeleteInstagramPost,
+  onReorderInstagramPosts,
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
   const [showThemeColorsPanel, setShowThemeColorsPanel] = useState(false);
   const [showProductCarouselPanel, setShowProductCarouselPanel] = useState(false);
   const [showTypographyPanel, setShowTypographyPanel] = useState(false);
+  const [showInstagramPanel, setShowInstagramPanel] = useState(false);
   const [showFaqPanel, setShowFaqPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
@@ -122,6 +138,8 @@ const BuilderSidebar = ({
       setShowTypographyPanel(true);
     } else if (widgetType === "faq") {
       setShowFaqPanel(true);
+    } else if (widgetType === "instagram") {
+      setShowInstagramPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -151,6 +169,11 @@ const BuilderSidebar = ({
     onSelectWidget(null as unknown as string);
   };
 
+  const handleBackFromInstagram = () => {
+    setShowInstagramPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
   // Check if typography has unsaved changes
   const hasTypographyUnsavedChanges = 
     logo !== initialLogo || 
@@ -166,6 +189,21 @@ const BuilderSidebar = ({
   const handleTypographySave = (config: Record<string, unknown>) => {
     onSaveConfig(config);
   };
+
+  // Show Instagram panel
+  if (showInstagramPanel) {
+    return (
+      <InstagramPanel
+        onBack={handleBackFromInstagram}
+        instagramEnabled={instagramEnabled}
+        onInstagramToggle={onInstagramToggle}
+        instagramPosts={instagramPosts}
+        onAddPost={onAddInstagramPost}
+        onDeletePost={onDeleteInstagramPost}
+        onReorderPosts={onReorderInstagramPosts}
+      />
+    );
+  }
 
   // Show FAQ panel
   if (showFaqPanel) {
@@ -336,6 +374,15 @@ const BuilderSidebar = ({
             label="Google reviews"
             onClick={() => handleSelectWidget("google-reviews")}
             active={activeWidget === "google-reviews"}
+          />
+          <SidebarItem
+            icon={Instagram}
+            label="Instagram UGC"
+            hasToggle
+            toggleValue={instagramEnabled}
+            onToggle={onInstagramToggle}
+            onClick={() => handleSelectWidget("instagram")}
+            active={activeWidget === "instagram"}
           />
         </div>
       </div>
