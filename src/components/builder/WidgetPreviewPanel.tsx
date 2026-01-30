@@ -356,24 +356,55 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : screenshotUrl ? (
-                <div className="relative h-full w-full">
-                  <img 
-                    src={screenshotUrl} 
-                    alt="Website screenshot" 
-                    className="h-full w-full object-cover object-top"
-                  />
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="absolute top-2 right-2 z-10"
-                    onClick={() => {
-                      setUseScreenshotFallback(false);
-                      setScreenshotUrl(null);
-                    }}
-                  >
-                    Back to iframe
-                  </Button>
-                </div>
+                devicePreview === "mobile" ? (
+                  /* Mobile: centered screenshot in phone-like container */
+                  <div className="flex h-full justify-center items-start py-4 overflow-auto">
+                    <div 
+                      className="relative shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
+                      style={{ 
+                        width: '280px', 
+                        height: '498px'
+                      }}
+                    >
+                      <img 
+                        src={screenshotUrl} 
+                        alt="Website screenshot" 
+                        className="h-full w-full object-cover object-top"
+                      />
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="absolute top-2 right-2 z-10"
+                        onClick={() => {
+                          setUseScreenshotFallback(false);
+                          setScreenshotUrl(null);
+                        }}
+                      >
+                        Back to iframe
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Desktop: full cover screenshot */
+                  <div className="relative h-full w-full">
+                    <img 
+                      src={screenshotUrl} 
+                      alt="Website screenshot" 
+                      className="h-full w-full object-cover object-top"
+                    />
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="absolute top-2 right-2 z-10"
+                      onClick={() => {
+                        setUseScreenshotFallback(false);
+                        setScreenshotUrl(null);
+                      }}
+                    >
+                      Back to iframe
+                    </Button>
+                  </div>
+                )
               ) : (
                 <div className="flex h-full items-center justify-center">
                   <div className="text-center">
