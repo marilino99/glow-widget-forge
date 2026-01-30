@@ -21,54 +21,79 @@ serve(async (req) => {
       );
     }
 
-    // Extract post ID from URL for generating a thumbnail placeholder
+    // Get the access token from environment
+    const accessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
+    
+    if (!accessToken) {
+      console.log('INSTAGRAM_ACCESS_TOKEN not configured, returning without thumbnail');
+      return new Response(
+        JSON.stringify({
+          thumbnail_url: null,
+          title: null,
+          author_name: null,
+          note: 'Instagram access token not configured'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Extract post ID from URL
     const postIdMatch = url.match(/instagram\.com\/(p|reel)\/([A-Za-z0-9_-]+)/);
     const postId = postIdMatch ? postIdMatch[2] : null;
 
-    // Try Instagram's oEmbed API (may not work without authentication)
-    const oembedUrl = `https://api.instagram.com/oembed?url=${encodeURIComponent(url)}`;
+    // Use Instagram oEmbed API with access token
+    const oembedUrl = `https://graph.facebook.com/v18.0/instagram_oembed?url=${encodeURIComponent(url)}&access_token=${accessToken}`;
     
-    try {
-      const response = await fetch(oembedUrl, {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (compatible; Lovable/1.0)'
-        }
-      });
-      
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (response.ok && contentType?.includes('application/json')) {
-        const data = await response.json();
-        return new Response(
-          JSON.stringify({
-            thumbnail_url: data.thumbnail_url,
-            title: data.title,
-            author_name: data.author_name,
-            html: data.html,
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+    console.log('Fetching Instagram oEmbed with token...');
+    
+    const response = await fetch(oembedUrl, {
+      headers: {
+        'Accept': 'application/json',
       }
-      
-      // If not JSON or not OK, return partial data without thumbnail
-      console.log(`Instagram oEmbed unavailable (status: ${response.status}), returning partial data`);
-    } catch (fetchError) {
-      console.log('Instagram oEmbed fetch failed:', fetchError);
+    });
+    
+    const responseText = await response.text();
+    console.log('Instagram API response status:', response.status);
+    
+    if (!response.ok) {
+      console.error('Instagram API error:', responseText);
+      return new Response(
+        JSON.stringify({
+          thumbnail_url: null,
+          title: null,
+          author_name: postId ? `Post ${postId.substring(0, 8)}...` : null,
+          error: `Instagram API error: ${response.status}`,
+          note: 'Could not fetch thumbnail. Check if token has instagram_oembed permission.'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Return partial response - post will be saved but without thumbnail
-    // Instagram's public oEmbed API is deprecated and requires authentication
-    return new Response(
-      JSON.stringify({
-        thumbnail_url: null,
-        title: null,
-        author_name: postId ? `@instagram/${postId}` : null,
-        html: null,
-        note: 'Instagram requires authentication for thumbnails. Post saved without preview.'
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    try {
+      const data = JSON.parse(responseText);
+      console.log('Instagram oEmbed success, thumbnail:', data.thumbnail_url ? 'found' : 'not found');
+      
+      return new Response(
+        JSON.stringify({
+          thumbnail_url: data.thumbnail_url || null,
+          title: data.title || null,
+          author_name: data.author_name || null,
+          html: data.html || null,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (parseError) {
+      console.error('Failed to parse Instagram response:', parseError);
+      return new Response(
+        JSON.stringify({
+          thumbnail_url: null,
+          title: null,
+          author_name: postId ? `Post ${postId.substring(0, 8)}...` : null,
+          note: 'Failed to parse Instagram response'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
   } catch (error) {
     console.error('Error in instagram-oembed:', error);
     return new Response(
