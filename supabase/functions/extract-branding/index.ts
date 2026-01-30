@@ -136,14 +136,20 @@ Deno.serve(async (req) => {
     const primaryColor = branding.colors?.primary || null;
     const widgetColor = primaryColor ? findClosestWidgetColor(primaryColor) : 'blue';
 
+    // Extract theme based on colorScheme
+    const colorScheme = branding.colorScheme || 'light';
+    const widgetTheme = colorScheme === 'dark' ? 'dark' : 'light';
+
     console.log('Extracted logo:', logo);
     console.log('Primary color:', primaryColor, '-> Widget color:', widgetColor);
+    console.log('Color scheme:', colorScheme, '-> Widget theme:', widgetTheme);
 
     return new Response(
       JSON.stringify({
         success: true,
         logo,
         widgetColor,
+        widgetTheme,
         primaryColor,
         branding, // Include full branding for debugging
       }),

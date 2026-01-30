@@ -34,11 +34,12 @@ const Onboarding = () => {
       // Extract branding from website
       let extractedLogo: string | null = null;
       let extractedColor: string = 'blue';
+      let extractedTheme: 'light' | 'dark' = 'dark';
 
       try {
         toast({
           title: "Analyzing your website...",
-          description: "Extracting logo and brand colors",
+          description: "Extracting logo, colors and theme",
         });
 
         const { data: brandingData, error: brandingError } = await supabase.functions.invoke('extract-branding', {
@@ -48,13 +49,14 @@ const Onboarding = () => {
         if (!brandingError && brandingData?.success) {
           extractedLogo = brandingData.logo || null;
           extractedColor = brandingData.widgetColor || 'blue';
+          extractedTheme = brandingData.widgetTheme || 'dark';
           
-          console.log('Branding extracted:', { logo: extractedLogo, color: extractedColor });
+          console.log('Branding extracted:', { logo: extractedLogo, color: extractedColor, theme: extractedTheme });
           
           if (extractedLogo || extractedColor !== 'blue') {
             toast({
               title: "Brand identity detected! ✨",
-              description: `We found your ${extractedLogo ? 'logo and ' : ''}brand colors.`,
+              description: `We found your ${extractedLogo ? 'logo, ' : ''}brand colors and ${extractedTheme} theme.`,
             });
           }
         } else {
@@ -76,6 +78,7 @@ const Onboarding = () => {
           website_url: formattedUrl || null,
           logo: extractedLogo,
           widget_color: extractedColor,
+          widget_theme: extractedTheme,
         }, {
           onConflict: "user_id"
         });
