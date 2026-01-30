@@ -179,28 +179,51 @@ Deno.serve(async (req) => {
 
     console.log('Extracting branding from URL:', formattedUrl);
 
-    const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        url: formattedUrl,
-        formats: ['branding'],
-      }),
-    });
+    let data;
+    try {
+      const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: formattedUrl,
+          formats: ['branding'],
+        }),
+      });
 
-    const data = await response.json();
+      data = await response.json();
 
-    if (!response.ok) {
-      console.error('Firecrawl API error:', data);
+      if (!response.ok) {
+        console.error('Firecrawl API error:', data);
+        // Return defaults instead of error for non-critical failures
+        console.log('Firecrawl failed, returning defaults');
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            logo: null,
+            widgetColor: 'blue',
+            widgetTheme: 'dark',
+            primaryColor: null,
+            message: 'Could not extract branding, using defaults'
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } catch (fetchError) {
+      console.error('Firecrawl fetch error:', fetchError);
+      // Return defaults on network errors
       return new Response(
         JSON.stringify({ 
-          success: false, 
-          error: data.error || `Request failed with status ${response.status}` 
+          success: true, 
+          logo: null,
+          widgetColor: 'blue',
+          widgetTheme: 'dark',
+          primaryColor: null,
+          message: 'Network error, using defaults'
         }),
-        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
