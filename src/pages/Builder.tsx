@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { useProductCards } from "@/hooks/useProductCards";
 import { useFaqItems } from "@/hooks/useFaqItems";
+import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { Button } from "@/components/ui/button";
 import { Boxes, HelpCircle, LogOut, Loader2 } from "lucide-react";
 import {
@@ -36,6 +37,13 @@ const Builder = () => {
     deleteFaqItem,
     reorderFaqItems,
   } = useFaqItems();
+  const {
+    instagramPosts,
+    isLoading: isLoadingInstagram,
+    addInstagramPost,
+    deleteInstagramPost,
+    reorderInstagramPosts,
+  } = useInstagramPosts();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   
   // Live preview state for product card edits
@@ -111,7 +119,7 @@ const Builder = () => {
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
   // Show loading state while fetching configuration
-  if (isLoading || isLoadingCards || isLoadingFaq) {
+  if (isLoading || isLoadingCards || isLoadingFaq || isLoadingInstagram) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -215,6 +223,12 @@ const Builder = () => {
             onUpdateFaqItem={updateFaqItem}
             onDeleteFaqItem={deleteFaqItem}
             onReorderFaqItems={reorderFaqItems}
+            instagramEnabled={config.instagramEnabled}
+            onInstagramToggle={(enabled) => updateConfig({ instagramEnabled: enabled })}
+            instagramPosts={instagramPosts}
+            onAddInstagramPost={addInstagramPost}
+            onDeleteInstagramPost={deleteInstagramPost}
+            onReorderInstagramPosts={reorderInstagramPosts}
           />
         </div>
 
@@ -233,6 +247,8 @@ const Builder = () => {
             sayHello={config.sayHello}
             language={config.language}
             faqItems={faqItems}
+            instagramEnabled={config.instagramEnabled}
+            instagramPosts={instagramPosts}
           />
         </div>
       </div>

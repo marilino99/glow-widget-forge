@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Instagram, Plus, Trash2, GripVertical, ExternalLink, Loader2 } from "lucide-react";
+import { Instagram, Plus, Trash2, GripVertical, ExternalLink, Loader2, ArrowLeft } from "lucide-react";
 import { InstagramPostData } from "@/types/instagramPost";
 
 interface InstagramPanelProps {
+  onBack: () => void;
   instagramEnabled: boolean;
   onInstagramToggle: (enabled: boolean) => void;
   instagramPosts: InstagramPostData[];
@@ -16,6 +17,7 @@ interface InstagramPanelProps {
 }
 
 const InstagramPanel = ({
+  onBack,
   instagramEnabled,
   onInstagramToggle,
   instagramPosts,
@@ -69,12 +71,20 @@ const InstagramPanel = ({
   };
 
   return (
-    <div className="space-y-6 p-4">
-      {/* Header with toggle */}
-      <div className="flex items-center justify-between">
+    <div className="h-full overflow-y-auto bg-background p-6">
+      {/* Back button and header */}
+      <button
+        onClick={onBack}
+        className="mb-6 flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span className="text-sm">Back</span>
+      </button>
+
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Instagram className="h-5 w-5 text-pink-500" />
-          <Label className="text-base font-medium">Instagram Feed</Label>
+          <h2 className="text-lg font-semibold">Instagram UGC</h2>
         </div>
         <Switch
           checked={instagramEnabled}
