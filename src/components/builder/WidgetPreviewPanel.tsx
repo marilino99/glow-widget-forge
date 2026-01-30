@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image, Smartphone, Monitor, Instagram } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -353,7 +353,7 @@ const WidgetPreviewPanel = ({
                 <p className="mt-1 text-xs text-muted-foreground">Try a different URL</p>
               </div>
             </div>
-          ) : useScreenshotFallback ? (/* Screenshot fallback mode */
+          ) : useScreenshotFallback ? (/* Screenshot fallback mode for SPA sites */
             <div className="absolute inset-0 overflow-hidden">
               {isLoadingScreenshot ? (
                 <div className="flex h-full items-center justify-center">
@@ -367,7 +367,7 @@ const WidgetPreviewPanel = ({
                   /* Mobile: centered screenshot in phone-like container */
                   <div className="flex h-full justify-center items-start py-4 overflow-auto">
                     <div 
-                      className="relative shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
+                      className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
                       style={{ 
                         width: '280px', 
                         height: '498px'
@@ -378,70 +378,24 @@ const WidgetPreviewPanel = ({
                         alt="Website screenshot" 
                         className="h-full w-full object-cover object-top"
                       />
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="absolute top-2 right-2 z-10"
-                        onClick={() => {
-                          setUseScreenshotFallback(false);
-                          setScreenshotUrl(null);
-                        }}
-                      >
-                        Back to iframe
-                      </Button>
                     </div>
                   </div>
                 ) : (
                   /* Desktop: full cover screenshot */
-                  <div className="relative h-full w-full">
-                    <img 
-                      src={screenshotUrl} 
-                      alt="Website screenshot" 
-                      className="h-full w-full object-cover object-top"
-                    />
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="absolute top-2 right-2 z-10"
-                      onClick={() => {
-                        setUseScreenshotFallback(false);
-                        setScreenshotUrl(null);
-                      }}
-                    >
-                      Back to iframe
-                    </Button>
-                  </div>
+                  <img 
+                    src={screenshotUrl} 
+                    alt="Website screenshot" 
+                    className="h-full w-full object-cover object-top"
+                  />
                 )
               ) : (
                 <div className="flex h-full items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Screenshot not available</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2"
-                      onClick={() => setUseScreenshotFallback(false)}
-                    >
-                      Back to iframe
-                    </Button>
-                  </div>
+                  <p className="text-sm text-muted-foreground">Screenshot not available</p>
                 </div>
               )}
             </div>
           ) : proxyHtml ? (/* Iframe with proxied website content */
             <div className="absolute inset-0 overflow-hidden">
-              {/* Screenshot fallback button */}
-              <Button
-                variant="secondary"
-                size="sm"
-                className="absolute top-2 right-2 z-10 gap-2"
-                onClick={() => loadScreenshotFallback()}
-                disabled={isLoadingScreenshot}
-              >
-                <Image className="h-4 w-4" />
-                Screenshot
-              </Button>
-              
               {devicePreview === "mobile" ? (
                 /* Mobile: centered iframe scaled */
                 <div className="flex h-full justify-center items-start py-4 overflow-auto">
@@ -625,7 +579,7 @@ const WidgetPreviewPanel = ({
                           {productCards.filter(c => !c.isLoading).map(card => <div key={card.id} className={`flex-shrink-0 rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : isLight ? "bg-white shadow-sm" : "bg-slate-800"}`} style={{ width: 'calc(100% - 48px)' }}>
                               {/* Product Image - tall aspect ratio like reference */}
                               <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
-                                {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <Image className="h-12 w-12 text-slate-400" />}
+                                {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <div className="h-12 w-12 rounded bg-slate-400" />}
                               </div>
                               {/* Product Info */}
                               <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
