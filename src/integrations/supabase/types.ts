@@ -133,6 +133,7 @@ export type Database = {
           created_at: string
           faq_enabled: boolean
           id: string
+          instagram_enabled: boolean
           language: string
           logo: string | null
           offer_help: string
@@ -150,6 +151,7 @@ export type Database = {
           created_at?: string
           faq_enabled?: boolean
           id?: string
+          instagram_enabled?: boolean
           language?: string
           logo?: string | null
           offer_help?: string
@@ -167,6 +169,7 @@ export type Database = {
           created_at?: string
           faq_enabled?: boolean
           id?: string
+          instagram_enabled?: boolean
           language?: string
           logo?: string | null
           offer_help?: string
