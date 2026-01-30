@@ -251,6 +251,7 @@ const Builder = () => {
             faqItems={faqItems}
             instagramEnabled={config.instagramEnabled}
             instagramPosts={instagramPosts}
+            websiteUrl={config.websiteUrl}
           />
         </div>
       </div>

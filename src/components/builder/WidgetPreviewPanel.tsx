@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Image, Smartphone, Monitor, Instagram } from "lucide-react";
@@ -24,6 +24,7 @@ interface WidgetPreviewPanelProps {
   faqItems?: FaqItemData[];
   instagramEnabled?: boolean;
   instagramPosts?: InstagramPostData[];
+  websiteUrl?: string | null;
 }
 
 // Color mapping for buttons and gradients
@@ -122,7 +123,8 @@ const WidgetPreviewPanel = ({
   language = "en",
   faqItems = [],
   instagramEnabled = false,
-  instagramPosts = []
+  instagramPosts = [],
+  websiteUrl = null
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -133,8 +135,11 @@ const WidgetPreviewPanel = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
-  const handleLoadUrl = async () => {
-    if (!previewUrl.trim()) return;
+  const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
+
+  const handleLoadUrl = async (urlToLoad?: string) => {
+    const url = urlToLoad || previewUrl;
+    if (!url.trim()) return;
     setIsLoading(true);
     setLoadError(null);
     setProxyHtml(null);
@@ -144,7 +149,7 @@ const WidgetPreviewPanel = ({
         error
       } = await supabase.functions.invoke('proxy-website', {
         body: {
-          url: previewUrl.trim()
+          url: url.trim()
         }
       });
       if (error) {
@@ -166,6 +171,15 @@ const WidgetPreviewPanel = ({
       setIsLoading(false);
     }
   };
+
+  // Auto-load website URL from config on mount
+  useEffect(() => {
+    if (websiteUrl && !hasAutoLoaded && !proxyHtml) {
+      setPreviewUrl(websiteUrl);
+      setHasAutoLoaded(true);
+      handleLoadUrl(websiteUrl);
+    }
+  }, [websiteUrl, hasAutoLoaded, proxyHtml]);
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleLoadUrl();
@@ -243,7 +257,7 @@ const WidgetPreviewPanel = ({
                 onKeyDown={handleKeyDown} 
                 className="h-8 w-64 bg-background text-sm" 
               />
-              <Button size="icon" className="h-8 w-8" onClick={handleLoadUrl}>
+              <Button size="icon" className="h-8 w-8" onClick={() => handleLoadUrl()}>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
