@@ -27,20 +27,66 @@ Deno.serve(async (req) => {
 
     console.log('Fetching URL:', formattedUrl);
 
-    // Fetch the website content
-    const response = await fetch(formattedUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-      },
-    });
+    // Create an AbortController with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    let response: Response;
+    try {
+      // Fetch the website content
+      response = await fetch(formattedUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+        },
+        signal: controller.signal,
+      });
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      console.error('Fetch failed:', fetchError);
+      // Return a friendly fallback HTML instead of error
+      const fallbackHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head><title>Preview unavailable</title></head>
+        <body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f5;font-family:system-ui;">
+          <div style="text-align:center;padding:20px;">
+            <h2 style="color:#666;margin-bottom:10px;">Preview Unavailable</h2>
+            <p style="color:#999;">Unable to load website preview. The site may be blocking external requests.</p>
+          </div>
+        </body>
+        </html>
+      `;
+      return new Response(fallbackHtml, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'text/html; charset=utf-8',
+        },
+      });
+    }
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
-      return new Response(
-        JSON.stringify({ error: `Failed to fetch: ${response.status}` }),
-        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      // Return fallback HTML for failed responses
+      const fallbackHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head><title>Preview unavailable</title></head>
+        <body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f5;font-family:system-ui;">
+          <div style="text-align:center;padding:20px;">
+            <h2 style="color:#666;margin-bottom:10px;">Preview Unavailable</h2>
+            <p style="color:#999;">Unable to load website (status: ${response.status})</p>
+          </div>
+        </body>
+        </html>
+      `;
+      return new Response(fallbackHtml, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'text/html; charset=utf-8',
+        },
+      });
     }
 
     let html = await response.text();
