@@ -141,6 +141,9 @@ const WidgetPreviewPanel = ({
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
   const [chatMessages, setChatMessages] = useState<string[]>([]);
   const [chatInputValue, setChatInputValue] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  const commonEmojis = ['😀', '😂', '😊', '🥰', '😍', '🤔', '😢', '😭', '😡', '🥳', '👍', '👎', '❤️', '🔥', '✨', '🎉', '💯', '🙏', '👋', '🤝'];
 
   // Check if HTML appears to be a JavaScript-heavy SPA with minimal static content
   const isSpaWithNoContent = (html: string): boolean => {
@@ -514,7 +517,26 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Chat input */}
-                <div className={`border-t p-4 ${widgetBorder}`}>
+                <div className={`relative border-t p-4 ${widgetBorder}`}>
+                  {/* Emoji Picker */}
+                  {showEmojiPicker && (
+                    <div className={`absolute bottom-full left-4 right-4 mb-2 p-3 rounded-xl shadow-lg ${isLight ? "bg-white border border-slate-200" : "bg-slate-800 border border-slate-700"}`}>
+                      <div className="grid grid-cols-10 gap-1">
+                        {commonEmojis.map((emoji, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              setChatInputValue(chatInputValue + emoji);
+                              setShowEmojiPicker(false);
+                            }}
+                            className="text-lg hover:bg-slate-100 dark:hover:bg-slate-700 rounded p-1 transition-colors"
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className={`flex items-center gap-2 rounded-full border border-violet-500/50 px-4 py-2 ${isLight ? "bg-white" : "bg-slate-800/50"}`}>
                     <input 
                       type="text" 
@@ -525,11 +547,15 @@ const WidgetPreviewPanel = ({
                         if (e.key === 'Enter' && chatInputValue.trim()) {
                           setChatMessages([...chatMessages, chatInputValue.trim()]);
                           setChatInputValue('');
+                          setShowEmojiPicker(false);
                         }
                       }}
                       className={`flex-1 bg-transparent text-sm focus:outline-none ${isLight ? "placeholder:text-slate-400" : "placeholder:text-white/40"}`} 
                     />
-                    <button className={widgetSubtext}>
+                    <button 
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className={`${widgetSubtext} hover:opacity-80 transition-opacity`}
+                    >
                       <Smile className="h-5 w-5" />
                     </button>
                     <button 
@@ -537,9 +563,16 @@ const WidgetPreviewPanel = ({
                         if (chatInputValue.trim()) {
                           setChatMessages([...chatMessages, chatInputValue.trim()]);
                           setChatInputValue('');
+                          setShowEmojiPicker(false);
                         }
                       }}
-                      className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-100 text-slate-500 hover:bg-slate-200" : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"}`}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+                        chatInputValue.trim() 
+                          ? `${colors.button} text-white` 
+                          : isLight 
+                            ? "bg-slate-100 text-slate-500 hover:bg-slate-200" 
+                            : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"
+                      }`}
                     >
                       <ArrowUp className="h-4 w-4" />
                     </button>
