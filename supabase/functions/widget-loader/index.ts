@@ -113,12 +113,12 @@ Deno.serve(async (req) => {
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px;position:relative;\${solid ? 'padding-bottom:100px;background:'+color.bg+';color:#fff' : ''}}
+      #wj-head{padding:20px 24px;position:relative;\${solid ? 'padding-bottom:140px;background:'+color.bg+';color:#fff' : ''}}
       #wj-hello{font-size:22px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${solid ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:-80px' : ''}}
+      #wj-contact{margin:0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:-120px' : ''}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
@@ -172,12 +172,12 @@ Deno.serve(async (req) => {
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
       #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px;position:relative;\${solid ? 'padding-bottom:100px;background:'+color.bg+';color:#fff' : ''}}
+      #wj-head{padding:20px 24px;position:relative;\${solid ? 'padding-bottom:140px;background:'+color.bg+';color:#fff' : ''}}
       #wj-hello{font-size:24px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${solid ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:-80px' : ''}}
+      #wj-contact{margin:0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:-120px' : ''}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
