@@ -452,17 +452,27 @@ Deno.serve(async (req) => {
 
     // Chat send message functionality
     var chatMsgs = chatView.querySelector('#wj-chat-msgs');
-    var chatInput = chatView.querySelector('#wj-chat-input-box input');
+    var chatInputBox = chatView.querySelector('#wj-chat-input-box');
+    var chatInput = chatInputBox ? chatInputBox.querySelector('input') : null;
     var chatSendBtn = chatView.querySelector('#wj-chat-send');
 
+    console.log('[Widjet] Chat elements:', { chatMsgs: !!chatMsgs, chatInput: !!chatInput, chatSendBtn: !!chatSendBtn });
+
     function sendMessage() {
+      console.log('[Widjet] sendMessage called');
+      if (!chatInput) {
+        console.log('[Widjet] No chatInput');
+        return;
+      }
       var msg = chatInput.value.trim();
+      console.log('[Widjet] Message:', msg);
       if (!msg) return;
       
       // Create user message bubble
       var userBubble = d.createElement('div');
       userBubble.style.cssText = 'display:flex;justify-content:flex-end;margin-top:12px';
-      userBubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg) + '</div>';
+      var bubbleColor = color.bg;
+      userBubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + bubbleColor + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg) + '</div>';
       chatMsgs.appendChild(userBubble);
       
       // Clear input
@@ -470,18 +480,27 @@ Deno.serve(async (req) => {
       
       // Scroll to bottom
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
+      console.log('[Widjet] Message sent');
     }
 
     // Send on button click
-    chatSendBtn.onclick = sendMessage;
+    if (chatSendBtn) {
+      chatSendBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        sendMessage();
+      };
+    }
 
     // Send on Enter key
-    chatInput.onkeypress = function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        sendMessage();
-      }
-    };
+    if (chatInput) {
+      chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
 
     root.appendChild(pop);
     root.appendChild(btn);
