@@ -4,6 +4,7 @@ import { useAuth } from "./useAuth";
 import { useToast } from "./use-toast";
 
 export interface WidgetConfiguration {
+  id: string | null;
   selectedAvatar: string | null;
   faqEnabled: boolean;
   contactName: string;
@@ -20,6 +21,7 @@ export interface WidgetConfiguration {
 }
 
 const defaultConfig: WidgetConfiguration = {
+  id: null,
   selectedAvatar: null,
   faqEnabled: true,
   contactName: "Support",
@@ -63,6 +65,7 @@ export const useWidgetConfiguration = () => {
         if (data) {
           const dbData = data as typeof data & { logo?: string; language?: string; say_hello?: string; instagram_enabled?: boolean; website_url?: string };
           setConfig({
+            id: data.id,
             selectedAvatar: data.selected_avatar,
             faqEnabled: data.faq_enabled,
             contactName: data.contact_name,

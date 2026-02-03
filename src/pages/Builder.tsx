@@ -144,7 +144,7 @@ const Builder = () => {
               <Boxes className="h-5 w-5" />
             </div>
           </button>
-          <AddToWebsiteDialog />
+          <AddToWebsiteDialog widgetId={config.id || undefined} />
         </div>
 
         <div className="flex items-center gap-2">
