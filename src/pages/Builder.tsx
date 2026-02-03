@@ -191,7 +191,7 @@ const Builder = () => {
             selectedAvatar={config.selectedAvatar}
             onSelectAvatar={(avatar) => updateConfig({ selectedAvatar: avatar })}
             faqEnabled={config.faqEnabled}
-            onFaqToggle={(enabled) => updateConfig({ faqEnabled: enabled })}
+            onFaqToggle={(enabled) => saveConfig({ faqEnabled: enabled })}
             contactName={config.contactName}
             onContactNameChange={(name) => updateConfig({ contactName: name })}
             offerHelp={config.offerHelp}
