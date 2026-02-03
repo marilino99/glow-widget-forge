@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { useProductCards } from "@/hooks/useProductCards";
 import { useFaqItems } from "@/hooks/useFaqItems";
 import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { Button } from "@/components/ui/button";
-import { Boxes, HelpCircle, LogOut, Loader2 } from "lucide-react";
+import { Boxes, HelpCircle, LogOut, Loader2, MessageCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import { ProductCardData } from "@/types/productCard";
 
 const Builder = () => {
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
   const { 
@@ -154,6 +156,15 @@ const Builder = () => {
               <span className="text-sm">Saving...</span>
             </div>
           )}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="gap-2 text-muted-foreground hover:text-foreground"
+            onClick={() => navigate("/chats")}
+          >
+            <MessageCircle className="h-5 w-5" />
+            <span className="hidden sm:inline">Chat</span>
+          </Button>
           <Button variant="ghost" size="icon" className="text-muted-foreground">
             <HelpCircle className="h-5 w-5" />
           </Button>
