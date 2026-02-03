@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 
-    // Complete widget loader with all builder elements
+    // Complete widget loader with all builder elements including chat
     const widgetScript = `
 ;(function(w,d,u){
   'use strict';
@@ -80,13 +80,13 @@ Deno.serve(async (req) => {
     var lang = cfg.language || 'en';
 
     var t = {
-      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram' },
-      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram' },
-      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram' },
-      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram' },
-      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram' },
-      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram' },
-      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie' }
+      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...' },
+      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...' },
+      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...' },
+      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...' },
+      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...' },
+      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...' },
+      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...' }
     };
     var tr = t[lang] || t.en;
 
@@ -162,6 +162,32 @@ Deno.serve(async (req) => {
       .wj-nav-item.inactive{color:\${textSub}}
       .wj-nav-item svg{width:20px;height:20px}
       #wj-powered{padding:8px;text-align:center;font-size:11px;color:\${textSub};background:\${bgMain}}
+      #wj-home-view{display:block}
+      #wj-chat-view{display:none;flex-direction:column;height:100%}
+      #wj-chat-view.open{display:flex}
+      #wj-home-view.hidden{display:none}
+      #wj-chat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid \${borderCol}}
+      #wj-chat-back,#wj-chat-more,#wj-chat-close{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${dark ? '#1e293b' : '#e2e8f0'};color:\${textMain}}
+      #wj-chat-back:hover,#wj-chat-more:hover,#wj-chat-close:hover{background:\${dark ? '#334155' : '#cbd5e1'}}
+      #wj-chat-back svg,#wj-chat-more svg,#wj-chat-close svg{width:16px;height:16px}
+      #wj-chat-title{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:20px;background:\${dark ? '#1e293b' : '#fff'}}
+      #wj-chat-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center}
+      #wj-chat-avatar svg{width:12px;height:12px;color:#fff}
+      #wj-chat-name{font-size:14px;font-weight:500;color:\${textMain}}
+      #wj-chat-msgs{flex:1;overflow-y:auto;padding:16px}
+      #wj-chat-bubble{display:flex;align-items:flex-start;gap:12px}
+      #wj-chat-bubble-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      #wj-chat-bubble-avatar svg{width:16px;height:16px;color:#fff}
+      #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;border-top-left-radius:4px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
+      #wj-chat-input{padding:16px;border-top:1px solid \${borderCol}}
+      #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid rgba(139,92,246,0.5);background:\${dark ? 'rgba(30,41,59,0.5)' : '#fff'}}
+      #wj-chat-input-box input{flex:1;border:none;background:transparent;font-size:14px;color:\${textMain};outline:none}
+      #wj-chat-input-box input::placeholder{color:\${textSub}}
+      #wj-chat-emoji,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${textSub}}
+      #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
+      #wj-chat-send:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'}}
+      #wj-chat-emoji svg,#wj-chat-send svg{width:20px;height:20px}
+      #wj-chat-powered{padding:8px;text-align:center;font-size:11px;color:\${textSub};border-top:1px solid \${borderCol}}
     \` : \`
       #wj-root{position:fixed;bottom:20px;right:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden}
@@ -221,6 +247,32 @@ Deno.serve(async (req) => {
       .wj-nav-item.inactive{color:\${textSub}}
       .wj-nav-item svg{width:20px;height:20px}
       #wj-powered{padding:8px;text-align:center;font-size:12px;color:\${textSub};background:\${bgMain}}
+      #wj-home-view{display:block}
+      #wj-chat-view{display:none;flex-direction:column;height:100%}
+      #wj-chat-view.open{display:flex}
+      #wj-home-view.hidden{display:none}
+      #wj-chat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid \${borderCol}}
+      #wj-chat-back,#wj-chat-more,#wj-chat-close{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${dark ? '#1e293b' : '#e2e8f0'};color:\${textMain}}
+      #wj-chat-back:hover,#wj-chat-more:hover,#wj-chat-close:hover{background:\${dark ? '#334155' : '#cbd5e1'}}
+      #wj-chat-back svg,#wj-chat-more svg,#wj-chat-close svg{width:16px;height:16px}
+      #wj-chat-title{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:20px;background:\${dark ? '#1e293b' : '#fff'}}
+      #wj-chat-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center}
+      #wj-chat-avatar svg{width:12px;height:12px;color:#fff}
+      #wj-chat-name{font-size:14px;font-weight:500;color:\${textMain}}
+      #wj-chat-msgs{flex:1;overflow-y:auto;padding:16px}
+      #wj-chat-bubble{display:flex;align-items:flex-start;gap:12px}
+      #wj-chat-bubble-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      #wj-chat-bubble-avatar svg{width:16px;height:16px;color:#fff}
+      #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;border-top-left-radius:4px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
+      #wj-chat-input{padding:16px;border-top:1px solid \${borderCol}}
+      #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid rgba(139,92,246,0.5);background:\${dark ? 'rgba(30,41,59,0.5)' : '#fff'}}
+      #wj-chat-input-box input{flex:1;border:none;background:transparent;font-size:14px;color:\${textMain};outline:none}
+      #wj-chat-input-box input::placeholder{color:\${textSub}}
+      #wj-chat-emoji,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${textSub}}
+      #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
+      #wj-chat-send:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'}}
+      #wj-chat-emoji svg,#wj-chat-send svg{width:20px;height:20px}
+      #wj-chat-powered{padding:8px;text-align:center;font-size:12px;color:\${textSub};border-top:1px solid \${borderCol}}
     \`;
     d.head.appendChild(style);
 
@@ -229,6 +281,10 @@ Deno.serve(async (req) => {
 
     var pop = d.createElement('div');
     pop.id = 'wj-pop';
+
+    // HOME VIEW
+    var homeView = d.createElement('div');
+    homeView.id = 'wj-home-view';
 
     var scroll = d.createElement('div');
     scroll.id = 'wj-scroll';
@@ -326,19 +382,27 @@ Deno.serve(async (req) => {
       scroll.appendChild(faqCont);
     }
 
-    pop.appendChild(scroll);
+    homeView.appendChild(scroll);
 
     // Footer nav
     var footer = d.createElement('div');
     footer.id = 'wj-footer';
     footer.innerHTML = '<div id="wj-nav"><button class="wj-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>' + esc(tr.home) + '</span></button><button class="wj-nav-item inactive"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>' + esc(tr.contact) + '</span></button></div>';
-    pop.appendChild(footer);
+    homeView.appendChild(footer);
 
     // Powered by
     var powered = d.createElement('div');
     powered.id = 'wj-powered';
     powered.innerHTML = 'Powered by <span style="font-weight:500">Widjet</span>';
-    pop.appendChild(powered);
+    homeView.appendChild(powered);
+
+    // CHAT VIEW
+    var chatView = d.createElement('div');
+    chatView.id = 'wj-chat-view';
+    chatView.innerHTML = '<div id="wj-chat-header"><div style="display:flex;gap:8px"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></div><div id="wj-chat-title"><div id="wj-chat-avatar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><span id="wj-chat-name">' + esc(name) + '</span></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/></svg></button></div><div id="wj-chat-msgs"><div id="wj-chat-bubble"><div id="wj-chat-bubble-avatar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div></div><div id="wj-chat-input"><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div><div id="wj-chat-powered">Powered by <span style="font-weight:500">Widjet</span></div>';
+
+    pop.appendChild(homeView);
+    pop.appendChild(chatView);
 
     // Button
     var btn = d.createElement('button');
@@ -351,11 +415,40 @@ Deno.serve(async (req) => {
       if (inIframe) btn.classList.toggle('hidden', pop.classList.contains('open'));
     };
 
-    // Close button handler
+    // Close button handler (minimize)
     pop.querySelector('#wj-close').onclick = function() {
       pop.classList.remove('open');
       if (inIframe) btn.classList.remove('hidden');
     };
+
+    // Contact Us button - opens chat
+    pop.querySelector('#wj-cbtn').onclick = function() {
+      homeView.classList.add('hidden');
+      chatView.classList.add('open');
+    };
+
+    // Chat back button - returns to home
+    chatView.querySelector('#wj-chat-back').onclick = function() {
+      chatView.classList.remove('open');
+      homeView.classList.remove('hidden');
+    };
+
+    // Chat close button - minimizes widget
+    chatView.querySelector('#wj-chat-close').onclick = function() {
+      pop.classList.remove('open');
+      chatView.classList.remove('open');
+      homeView.classList.remove('hidden');
+      if (inIframe) btn.classList.remove('hidden');
+    };
+
+    // Footer contact nav button - opens chat
+    var navBtns = footer.querySelectorAll('.wj-nav-item');
+    if (navBtns[1]) {
+      navBtns[1].onclick = function() {
+        homeView.classList.add('hidden');
+        chatView.classList.add('open');
+      };
+    }
 
     root.appendChild(pop);
     root.appendChild(btn);
