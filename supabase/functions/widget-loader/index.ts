@@ -437,12 +437,14 @@ Deno.serve(async (req) => {
     pop.querySelector('#wj-cbtn').onclick = function() {
       homeView.classList.add('hidden');
       chatView.classList.add('open');
+      startPolling();
     };
 
     // Chat back button - returns to home
     chatView.querySelector('#wj-chat-back').onclick = function() {
       chatView.classList.remove('open');
       homeView.classList.remove('hidden');
+      stopPolling();
     };
 
     // Chat close button - minimizes widget
@@ -451,6 +453,7 @@ Deno.serve(async (req) => {
       chatView.classList.remove('open');
       homeView.classList.remove('hidden');
       if (inIframe) btn.classList.remove('hidden');
+      stopPolling();
     };
 
     // Footer contact nav button - opens chat
@@ -459,6 +462,7 @@ Deno.serve(async (req) => {
       navBtns[1].onclick = function() {
         homeView.classList.add('hidden');
         chatView.classList.add('open');
+        startPolling();
       };
     }
 
@@ -477,6 +481,11 @@ Deno.serve(async (req) => {
       localStorage.setItem('wj_visitor_id', visitorId);
     }
 
+    // Track last message ID for polling
+    var lastMessageId = null;
+    var pollInterval = null;
+    var renderedMessageIds = {};
+
     // Update send button style based on input
     function updateSendButton() {
       if (chatInput && chatSendBtn) {
@@ -488,30 +497,98 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Render a message bubble
+    function renderMessage(msg) {
+      if (renderedMessageIds[msg.id]) return;
+      renderedMessageIds[msg.id] = true;
+      
+      var bubble = d.createElement('div');
+      bubble.style.cssText = msg.sender_type === 'visitor' 
+        ? 'display:flex;justify-content:flex-end;margin-top:12px'
+        : 'display:flex;align-items:flex-start;gap:12px;margin-top:12px';
+      
+      if (msg.sender_type === 'visitor') {
+        bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
+      } else {
+        bubble.innerHTML = '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" style="width:16px;height:16px"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><div style="padding:12px 16px;border-radius:16px;border-top-left-radius:4px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px;max-width:70%">' + esc(msg.content) + '</div>';
+      }
+      chatMsgs.appendChild(bubble);
+      lastMessageId = msg.id;
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
+
+    // Poll for new messages
+    function pollMessages() {
+      var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id);
+      if (lastMessageId) {
+        pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
+      }
+      
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', pollUrl, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4 || xhr.status !== 200) return;
+        try {
+          var res = JSON.parse(xhr.responseText);
+          if (res.messages && res.messages.length > 0) {
+            res.messages.forEach(function(msg) {
+              renderMessage(msg);
+            });
+          }
+        } catch(e) {
+          console.error('[Widjet] Poll error');
+        }
+      };
+      xhr.send();
+    }
+
+    // Start polling when chat view opens
+    function startPolling() {
+      if (pollInterval) return;
+      pollMessages(); // Initial fetch
+      pollInterval = setInterval(pollMessages, 3000); // Poll every 3 seconds
+    }
+
+    // Stop polling when chat view closes
+    function stopPolling() {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
+    }
+
     function sendMessage() {
       if (!chatInput) return;
       var msg = chatInput.value.trim();
       if (!msg) return;
       
-      // Create user message bubble
-      var userBubble = d.createElement('div');
-      userBubble.style.cssText = 'display:flex;justify-content:flex-end;margin-top:12px';
-      var bubbleColor = color.bg;
-      userBubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + bubbleColor + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg) + '</div>';
-      chatMsgs.appendChild(userBubble);
+      // Create temporary message object
+      var tempId = 'temp_' + Date.now();
+      var tempMsg = { id: tempId, sender_type: 'visitor', content: msg };
+      renderMessage(tempMsg);
       
       // Clear input and update button
       chatInput.value = '';
       updateSendButton();
       if (emojiPicker) emojiPicker.classList.remove('open');
-      
-      // Scroll to bottom
-      chatMsgs.scrollTop = chatMsgs.scrollHeight;
 
       // Send message to backend
       var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+          try {
+            var res = JSON.parse(xhr.responseText);
+            if (res.messageId) {
+              // Update the temp message ID with real one
+              renderedMessageIds[res.messageId] = true;
+              lastMessageId = res.messageId;
+            }
+          } catch(e) {}
+        }
+      };
       xhr.send(JSON.stringify({
         widgetId: id,
         visitorId: visitorId,
