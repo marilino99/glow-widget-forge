@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_configurations ALTER COLUMN faq_enabled SET DEFAULT false;
