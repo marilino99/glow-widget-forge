@@ -1,7 +1,64 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
+
+// Block private IP ranges and localhost to prevent SSRF
+function isPrivateOrLocalUrl(urlString: string): boolean {
+  try {
+    const url = new URL(urlString);
+    const hostname = url.hostname.toLowerCase();
+    
+    // Block localhost variations
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+      return true;
+    }
+    
+    // Block .local domains
+    if (hostname.endsWith('.local') || hostname.endsWith('.internal')) {
+      return true;
+    }
+    
+    // Block private IP ranges
+    const ipMatch = hostname.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+    if (ipMatch) {
+      const [, a, b, c] = ipMatch.map(Number);
+      // 10.0.0.0/8
+      if (a === 10) return true;
+      // 172.16.0.0/12
+      if (a === 172 && b >= 16 && b <= 31) return true;
+      // 192.168.0.0/16
+      if (a === 192 && b === 168) return true;
+      // 169.254.0.0/16 (link-local / AWS metadata)
+      if (a === 169 && b === 254) return true;
+      // 127.0.0.0/8 (loopback)
+      if (a === 127) return true;
+      // 0.0.0.0
+      if (a === 0) return true;
+    }
+    
+    // Block cloud metadata endpoints
+    if (hostname === '169.254.169.254' || hostname === 'metadata.google.internal') {
+      return true;
+    }
+    
+    return false;
+  } catch {
+    return true; // Block if URL parsing fails
+  }
+}
+
+// Validate URL scheme
+function isValidScheme(urlString: string): boolean {
+  try {
+    const url = new URL(urlString);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -10,6 +67,29 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { url } = await req.json();
 
     if (!url) {
@@ -25,7 +105,23 @@ Deno.serve(async (req) => {
       formattedUrl = `https://${formattedUrl}`;
     }
 
-    console.log('Fetching URL:', formattedUrl);
+    // SSRF Protection: Validate URL scheme
+    if (!isValidScheme(formattedUrl)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid URL scheme. Only http and https are allowed.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // SSRF Protection: Block private/internal URLs
+    if (isPrivateOrLocalUrl(formattedUrl)) {
+      return new Response(
+        JSON.stringify({ error: 'Access to internal/private URLs is not allowed' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Fetching URL for user:', user.id, 'URL:', formattedUrl);
 
     // Create an AbortController with timeout
     const controller = new AbortController();
@@ -113,8 +209,6 @@ Deno.serve(async (req) => {
       headers: {
         ...corsHeaders,
         'Content-Type': 'text/html; charset=utf-8',
-        // Remove X-Frame-Options by not setting it
-        // This allows the content to be embedded in an iframe
       },
     });
   } catch (error) {

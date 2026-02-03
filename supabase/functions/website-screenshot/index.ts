@@ -1,3 +1,5 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
@@ -10,6 +12,29 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { url, viewport = 'desktop' } = await req.json();
 
     if (!url) {
@@ -39,7 +64,7 @@ Deno.serve(async (req) => {
     const viewportWidth = isMobile ? 375 : 1920;
     const viewportHeight = isMobile ? 667 : 1080;
 
-    console.log(`Taking ${viewport} screenshot of URL:`, formattedUrl, `(${viewportWidth}x${viewportHeight})`);
+    console.log(`Taking ${viewport} screenshot for user:`, user.id, 'URL:', formattedUrl, `(${viewportWidth}x${viewportHeight})`);
 
     const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
