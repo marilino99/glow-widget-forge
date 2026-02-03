@@ -1,71 +1,176 @@
 
-# Add Wix Integration Button to "Add to Website" Dialog
+
+# Wix App Market Integration Plan
 
 ## Overview
-Add a dedicated Wix button with the Wix logo to the installation help section. When clicked, it will open a dialog/panel with Wix-specific installation instructions using the "Embed code" tool.
+Build a native Wix App that enables one-click installation of your widget from the Wix App Market. When users install the app, it automatically injects your widget script into their Wix site - no manual code copying needed.
 
-## Implementation Details
-
-### 1. Create Wix Logo SVG Component
-Create a new component for the Wix logo to maintain clean code:
-- File: `src/components/icons/WixLogo.tsx`
-- Official Wix brand colors (black/white)
-
-### 2. Update AddToWebsiteDialog Component
-Modify `src/components/builder/AddToWebsiteDialog.tsx`:
-
-**Changes to the integration section (lines 119-128):**
-- Replace the plain text list with clickable platform buttons
-- Add Wix button with logo that triggers a Wix-specific guide
-- Style buttons consistently with the existing design
-
-**Add new state and UI:**
-- Add `showWixGuide` state to toggle Wix instructions panel
-- When Wix button is clicked, show inline step-by-step instructions:
-  1. Open Wix Editor
-  2. Click "Add Elements" (+)
-  3. Select "Embed code"
-  4. Click the code box → "Enter Code"
-  5. Paste the widget code
-  6. Position and publish
-
-### 3. UI Structure
+## How It Works
 
 ```text
-+------------------------------------------+
-| Need help with the installation?         |
-| [Send instructions] [Write to us]        |
-+------------------------------------------+
-| Try seamless integration with:           |
-| [Wix logo] [WordPress] [Shopify] [...]   |
-+------------------------------------------+
-           ↓ (when Wix clicked)
-+------------------------------------------+
-| Install on Wix                     [X]   |
-| 1. Open Wix Editor                       |
-| 2. Click "Add Elements" (+)              |
-| 3. Select "Embed code"                   |
-| 4. Click box → "Enter Code"              |
-| 5. Paste code below                      |
-| [Copy Wix Code]                          |
-| 6. Position & Publish                    |
-+------------------------------------------+
+User installs from Wix App Market
+           │
+           ▼
+┌──────────────────────────────┐
+│  Wix redirects to your      │
+│  OAuth endpoint             │
+└──────────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────┐
+│  User authorizes permissions │
+│  (Manage Scripts, Read Site) │
+└──────────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────┐
+│  Exchange code for tokens    │
+│  Store in database          │
+└──────────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────┐
+│  Auto-inject widget script   │
+│  via Wix Embedded Scripts API│
+└──────────────────────────────┘
 ```
 
-## Technical Details
+## Prerequisites (Manual Steps Required)
 
-### Files to Create
-1. `src/components/icons/WixLogo.tsx` - SVG component
+Before implementation, you need to:
 
-### Files to Modify
-1. `src/components/builder/AddToWebsiteDialog.tsx`:
-   - Add state for `showWixGuide`
-   - Import WixLogo component
-   - Replace text platform list with button grid
-   - Add collapsible Wix guide section with numbered steps
+1. **Create Wix Developer Account** at https://dev.wix.com
+2. **Create a new Wix App** in the Dev Center:
+   - Choose "Website App" type
+   - Add "Embedded Scripts" extension
+   - Configure OAuth redirect URL to your edge function
+3. **Obtain credentials**: App ID and App Secret Key
+4. **Prepare legal pages**: Privacy Policy and Terms of Service URLs
 
-### No API Key Required
-This implementation uses a guided manual approach - the user still copies the embed code but gets Wix-specific instructions. No Wix API credentials needed.
+## Technical Implementation
 
-### Future Enhancement (Optional)
-The native Wix App integration (requiring OAuth) can be added later following the documented plan in `.lovable/wix-app-integration-plan.md`.
+### 1. Database Schema
+
+Create a `wix_installations` table to track connected Wix sites:
+
+```sql
+CREATE TABLE wix_installations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  wix_instance_id TEXT UNIQUE NOT NULL,
+  wix_site_id TEXT,
+  wix_refresh_token TEXT NOT NULL,
+  widget_config_id UUID REFERENCES widget_configurations(id),
+  script_injected BOOLEAN DEFAULT false,
+  installed_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- RLS policies for security
+ALTER TABLE wix_installations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own installations"
+  ON wix_installations FOR SELECT
+  TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own installations"
+  ON wix_installations FOR UPDATE
+  TO authenticated
+  USING (auth.uid() = user_id);
+```
+
+### 2. Edge Functions
+
+#### `wix-oauth/index.ts`
+Handles the OAuth callback from Wix:
+- Receives authorization code from Wix redirect
+- Exchanges code for access and refresh tokens
+- Stores tokens in `wix_installations` table
+- Redirects user to Widjet dashboard to link their widget
+
+#### `wix-install-webhook/index.ts`
+Listens for `APP_INSTALLED` webhook:
+- Verifies webhook signature
+- Calls Wix Embedded Scripts API to inject the widget loader script
+- Updates `script_injected` status in database
+
+#### `wix-uninstall-webhook/index.ts`
+Listens for `APP_REMOVED` webhook:
+- Cleans up the installation record from database
+- (Script is automatically removed by Wix when app is uninstalled)
+
+### 3. Wix API Integration
+
+The Embedded Scripts API endpoint:
+```
+POST https://www.wixapis.com/apps/v1/scripts
+Authorization: Bearer {access_token}
+
+{
+  "script": {
+    "content": "<script>window.__wj={widgetId:'{{WIDGET_ID}}'};...</script>",
+    "placement": "BODY_END",
+    "enabled": true
+  }
+}
+```
+
+### 4. Configuration Updates
+
+Add to `supabase/config.toml`:
+```toml
+[functions.wix-oauth]
+verify_jwt = false
+
+[functions.wix-install-webhook]
+verify_jwt = false
+
+[functions.wix-uninstall-webhook]
+verify_jwt = false
+```
+
+### 5. Secrets Required
+
+The following secrets need to be added:
+- `WIX_APP_ID` - Your Wix App ID from Dev Center
+- `WIX_APP_SECRET` - Your Wix App Secret Key
+
+### 6. UI Updates
+
+Update `AddToWebsiteDialog.tsx` to:
+- Show "Connect with Wix" button when Wix integration is available
+- Link to the Wix OAuth flow for new installations
+- Display connected Wix sites for existing users
+
+## Files to Create
+
+| File | Purpose |
+|------|---------|
+| `supabase/functions/wix-oauth/index.ts` | OAuth callback handler |
+| `supabase/functions/wix-install-webhook/index.ts` | APP_INSTALLED webhook |
+| `supabase/functions/wix-uninstall-webhook/index.ts` | APP_REMOVED webhook |
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `supabase/config.toml` | Add function configs |
+| `src/components/builder/AddToWebsiteDialog.tsx` | Add "Connect with Wix" button |
+
+## Implementation Timeline
+
+1. **Phase 1**: Create Wix App in Dev Center and configure OAuth (manual)
+2. **Phase 2**: Database migration for `wix_installations` table
+3. **Phase 3**: Implement OAuth edge function
+4. **Phase 4**: Implement webhook edge functions
+5. **Phase 5**: Update UI with "Connect with Wix" flow
+6. **Phase 6**: Test end-to-end and submit app for review
+
+## Next Steps
+
+To proceed, you'll need to:
+1. Create a Wix Developer account
+2. Create the Wix App and get your App ID and Secret
+3. Share those credentials so I can implement the edge functions
+
