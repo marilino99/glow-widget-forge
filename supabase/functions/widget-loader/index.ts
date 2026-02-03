@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:-120px' : ''}}
+      #wj-contact{margin:\${solid ? '-120px' : '0'} 16px 0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
@@ -177,7 +177,7 @@ Deno.serve(async (req) => {
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:-120px' : ''}}
+      #wj-contact{margin:\${solid ? '-120px' : '0'} 16px 0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
