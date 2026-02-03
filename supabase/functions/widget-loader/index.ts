@@ -470,6 +470,13 @@ Deno.serve(async (req) => {
     var chatEmojiBtn = chatView.querySelector('#wj-chat-emoji');
     var emojiPicker = chatView.querySelector('#wj-emoji-picker');
 
+    // Generate or retrieve visitor ID
+    var visitorId = localStorage.getItem('wj_visitor_id');
+    if (!visitorId) {
+      visitorId = 'v_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+      localStorage.setItem('wj_visitor_id', visitorId);
+    }
+
     // Update send button style based on input
     function updateSendButton() {
       if (chatInput && chatSendBtn) {
@@ -500,6 +507,17 @@ Deno.serve(async (req) => {
       
       // Scroll to bottom
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+      // Send message to backend
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', u + '/functions/v1/send-chat-message', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({
+        widgetId: id,
+        visitorId: visitorId,
+        message: msg,
+        visitorName: 'Visitor'
+      }));
     }
 
     // Send on button click

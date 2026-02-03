@@ -14,6 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          sender_type: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          sender_type: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_message: string | null
+          last_message_at: string | null
+          unread_count: number | null
+          updated_at: string | null
+          visitor_id: string
+          visitor_name: string | null
+          widget_owner_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          unread_count?: number | null
+          updated_at?: string | null
+          visitor_id: string
+          visitor_name?: string | null
+          widget_owner_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          unread_count?: number | null
+          updated_at?: string | null
+          visitor_id?: string
+          visitor_name?: string | null
+          widget_owner_id?: string
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
