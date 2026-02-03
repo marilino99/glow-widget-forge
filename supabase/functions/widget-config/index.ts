@@ -28,33 +28,72 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { data, error } = await supabase
+    // Fetch widget configuration
+    const { data: config, error: configError } = await supabase
       .from("widget_configurations")
       .select("*")
       .eq("id", widgetId)
       .single();
 
-    if (error) {
-      console.error("Database error:", error);
+    if (configError) {
+      console.error("Database error:", configError);
       return new Response(
         JSON.stringify({ error: "Widget not found" }),
         { headers: corsHeaders, status: 404 }
       );
     }
 
-    // Return the widget configuration (without sensitive data)
+    // Fetch product cards for this user
+    const { data: productCards, error: cardsError } = await supabase
+      .from("product_cards")
+      .select("*")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
+
+    if (cardsError) {
+      console.error("Product cards error:", cardsError);
+    }
+
+    // Fetch FAQ items for this user
+    const { data: faqItems, error: faqError } = await supabase
+      .from("faq_items")
+      .select("*")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
+
+    if (faqError) {
+      console.error("FAQ items error:", faqError);
+    }
+
+    // Fetch Instagram posts for this user
+    const { data: instagramPosts, error: instagramError } = await supabase
+      .from("instagram_posts")
+      .select("*")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
+
+    if (instagramError) {
+      console.error("Instagram posts error:", instagramError);
+    }
+
+    // Return the complete widget configuration
     return new Response(
       JSON.stringify({
-        widget_color: data.widget_color,
-        widget_theme: data.widget_theme,
-        contact_name: data.contact_name,
-        offer_help: data.offer_help,
-        say_hello: data.say_hello,
-        selected_avatar: data.selected_avatar,
-        faq_enabled: data.faq_enabled,
-        background_type: data.background_type,
-        logo: data.logo,
-        button_logo: data.button_logo,
+        widget_color: config.widget_color,
+        widget_theme: config.widget_theme,
+        contact_name: config.contact_name,
+        offer_help: config.offer_help,
+        say_hello: config.say_hello,
+        selected_avatar: config.selected_avatar,
+        faq_enabled: config.faq_enabled,
+        instagram_enabled: config.instagram_enabled,
+        background_type: config.background_type,
+        logo: config.logo,
+        button_logo: config.button_logo,
+        language: config.language,
+        product_cards: productCards || [],
+        faq_items: faqItems || [],
+        instagram_posts: instagramPosts || [],
       }),
       { headers: corsHeaders }
     );
