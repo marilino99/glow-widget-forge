@@ -5,3 +5,12 @@ verify_jwt = false
 
 [functions.widget-config]
 verify_jwt = false
+
+[functions.wix-oauth]
+verify_jwt = false
+
+[functions.wix-install-webhook]
+verify_jwt = false
+
+[functions.wix-uninstall-webhook]
+verify_jwt = false
