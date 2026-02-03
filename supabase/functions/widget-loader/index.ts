@@ -32,10 +32,10 @@ Deno.serve(async (req) => {
     return;
   }
 
-  // Create widget container
+  // Create widget container - hidden until widget loads
   var container = document.createElement('div');
   container.id = 'widjet-container';
-  container.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:999999;';
+  container.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:999999;display:none;';
   document.body.appendChild(container);
 
   // Fetch widget configuration
@@ -44,12 +44,15 @@ Deno.serve(async (req) => {
     .then(function(data) {
       if (data.error) {
         console.error('[Widjet] Error loading configuration:', data.error);
+        container.remove();
         return;
       }
       renderWidget(data);
+      container.style.display = 'block';
     })
     .catch(function(error) {
       console.error('[Widjet] Failed to load widget:', error);
+      container.remove();
     });
 
   function renderWidget(config) {
