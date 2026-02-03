@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
       #wj-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
       #wj-btn svg{width:24px;height:24px}
       #wj-btn img{width:100%;height:100%;object-fit:cover}
-      #wj-pop{display:none;position:absolute;bottom:70px;right:0;width:320px;max-height:500px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain}}
+      #wj-pop{display:none;position:fixed;bottom:90px;right:20px;width:320px;max-height:500px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647}
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
       #wj-scroll{flex:1;overflow-y:auto}
