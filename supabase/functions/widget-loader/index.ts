@@ -450,6 +450,39 @@ Deno.serve(async (req) => {
       };
     }
 
+    // Chat send message functionality
+    var chatMsgs = chatView.querySelector('#wj-chat-msgs');
+    var chatInput = chatView.querySelector('#wj-chat-input-box input');
+    var chatSendBtn = chatView.querySelector('#wj-chat-send');
+
+    function sendMessage() {
+      var msg = chatInput.value.trim();
+      if (!msg) return;
+      
+      // Create user message bubble
+      var userBubble = d.createElement('div');
+      userBubble.style.cssText = 'display:flex;justify-content:flex-end;margin-top:12px';
+      userBubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg) + '</div>';
+      chatMsgs.appendChild(userBubble);
+      
+      // Clear input
+      chatInput.value = '';
+      
+      // Scroll to bottom
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
+
+    // Send on button click
+    chatSendBtn.onclick = sendMessage;
+
+    // Send on Enter key
+    chatInput.onkeypress = function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
+    };
+
     root.appendChild(pop);
     root.appendChild(btn);
     d.body.appendChild(root);
