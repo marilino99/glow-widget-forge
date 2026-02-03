@@ -97,8 +97,72 @@ Deno.serve(async (req) => {
     var textSub = dark ? 'rgba(255,255,255,0.6)' : '#64748b';
     var borderCol = dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0';
 
+    // Detect if running inside an iframe (Wix Embed element)
+    var inIframe = false;
+    try { inIframe = w.self !== w.top; } catch(e) { inIframe = true; }
+
     var style = d.createElement('style');
-    style.textContent = \`
+    style.textContent = inIframe ? \`
+      #wj-root{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center}
+      #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden;position:absolute;bottom:20px;right:20px}
+      #wj-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+      #wj-btn.hidden{display:none}
+      #wj-btn svg{width:24px;height:24px}
+      #wj-btn img{width:100%;height:100%;object-fit:cover}
+      #wj-pop{display:none;width:calc(100% - 24px);max-width:360px;max-height:calc(100% - 24px);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647}
+      #wj-pop.open{display:flex;flex-direction:column}
+      @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+      #wj-scroll{flex:1;overflow-y:auto}
+      #wj-head{padding:20px 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : ''}}
+      #wj-hello{font-size:22px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${solid ? '#fff' : textMain}}
+      #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
+      #wj-close:hover{opacity:1}
+      #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
+      #wj-contact{margin:0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
+      #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
+      #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
+      #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
+      #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer}
+      #wj-cbtn:hover{background:\${color.hover}}
+      #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+      #wj-products::-webkit-scrollbar{display:none}
+      .wj-prod{flex-shrink:0;width:calc(100% - 48px);border-radius:16px;overflow:hidden;background:\${dark ? '#1e293b' : '#fff'}}
+      .wj-prod-img{aspect-ratio:4/3;background:\${dark ? '#cbd5e1' : '#e2e8f0'};display:flex;align-items:center;justify-content:center}
+      .wj-prod-img img{width:100%;height:100%;object-fit:cover}
+      .wj-prod-info{padding:16px}
+      .wj-prod-price{font-size:16px;color:\${textMain}}
+      .wj-prod-old{font-size:14px;color:\${textSub};text-decoration:line-through;margin-left:8px}
+      .wj-prod-title{font-weight:700;font-size:16px;color:\${textMain}}
+      .wj-prod-sub{font-size:14px;color:\${textSub};margin-top:2px;margin-bottom:12px}
+      .wj-prod-btn{width:100%;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
+      .wj-prod-btn:hover{background:\${color.hover}}
+      #wj-ig{padding:0 16px 16px}
+      #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+      #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
+      #wj-ig-head span{font-size:14px;font-weight:500;color:\${textMain}}
+      #wj-ig-list{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+      #wj-ig-list::-webkit-scrollbar{display:none}
+      .wj-ig-item{width:80px;height:80px;flex-shrink:0;border-radius:8px;overflow:hidden;background:\${dark ? '#374151' : '#e2e8f0'}}
+      .wj-ig-item img{width:100%;height:100%;object-fit:cover}
+      #wj-faq{padding:0 16px 16px}
+      #wj-faq-box{border-radius:16px;padding:16px;background:\${bgFaq}}
+      #wj-faq-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+      #wj-faq-head svg{width:16px;height:16px;color:\${textSub}}
+      #wj-faq-head span{font-size:14px;font-weight:500;color:\${textMain}}
+      .wj-faq-item{border-radius:8px}
+      .wj-faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:none;background:transparent;cursor:pointer;text-align:left;font-size:14px;font-weight:500;color:\${textMain}}
+      .wj-faq-q:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
+      .wj-faq-q svg{width:16px;height:16px;color:\${textSub};transition:transform .2s}
+      .wj-faq-q.open svg{transform:rotate(180deg)}
+      .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
+      .wj-faq-a.open{display:block}
+      #wj-footer{padding:12px 16px 4px;background:\${bgMain}}
+      #wj-nav{display:flex;border-radius:16px;background:\${dark ? 'rgba(51,65,85,0.7)' : 'rgba(255,255,255,0.7)'};backdrop-filter:blur(8px)}
+      .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
+      .wj-nav-item.inactive{color:\${textSub}}
+      .wj-nav-item svg{width:20px;height:20px}
+      #wj-powered{padding:8px;text-align:center;font-size:11px;color:\${textSub};background:\${bgMain}}
+    \` : \`
       #wj-root{position:fixed;bottom:20px;right:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden}
       #wj-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
@@ -277,11 +341,13 @@ Deno.serve(async (req) => {
       : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>';
     btn.onclick = function() {
       pop.classList.toggle('open');
+      if (inIframe) btn.classList.toggle('hidden', pop.classList.contains('open'));
     };
 
     // Close button handler
     pop.querySelector('#wj-close').onclick = function() {
       pop.classList.remove('open');
+      if (inIframe) btn.classList.remove('hidden');
     };
 
     root.appendChild(pop);
