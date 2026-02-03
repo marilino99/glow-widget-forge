@@ -456,16 +456,9 @@ Deno.serve(async (req) => {
     var chatInput = chatInputBox ? chatInputBox.querySelector('input') : null;
     var chatSendBtn = chatView.querySelector('#wj-chat-send');
 
-    console.log('[Widjet] Chat elements:', { chatMsgs: !!chatMsgs, chatInput: !!chatInput, chatSendBtn: !!chatSendBtn });
-
     function sendMessage() {
-      console.log('[Widjet] sendMessage called');
-      if (!chatInput) {
-        console.log('[Widjet] No chatInput');
-        return;
-      }
+      if (!chatInput) return;
       var msg = chatInput.value.trim();
-      console.log('[Widjet] Message:', msg);
       if (!msg) return;
       
       // Create user message bubble
@@ -480,7 +473,6 @@ Deno.serve(async (req) => {
       
       // Scroll to bottom
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
-      console.log('[Widjet] Message sent');
     }
 
     // Send on button click

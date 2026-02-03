@@ -139,6 +139,8 @@ const WidgetPreviewPanel = ({
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
+  const [chatMessages, setChatMessages] = useState<string[]>([]);
+  const [chatInputValue, setChatInputValue] = useState("");
 
   // Check if HTML appears to be a JavaScript-heavy SPA with minimal static content
   const isSpaWithNoContent = (html: string): boolean => {
@@ -492,6 +494,7 @@ const WidgetPreviewPanel = ({
 
                 {/* Chat messages */}
                 <div className="flex-1 overflow-y-auto px-4 py-4">
+                  {/* Welcome message */}
                   <div className="flex items-start gap-3">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
                       <Sparkles className="h-4 w-4 text-white" />
@@ -500,16 +503,44 @@ const WidgetPreviewPanel = ({
                       <p className="text-sm">{t.welcomeMessage}</p>
                     </div>
                   </div>
+                  {/* User messages */}
+                  {chatMessages.map((msg, index) => (
+                    <div key={index} className="flex justify-end mt-3">
+                      <div className={`rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%] ${colors.button} text-white`}>
+                        <p className="text-sm">{msg}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Chat input */}
                 <div className={`border-t p-4 ${widgetBorder}`}>
                   <div className={`flex items-center gap-2 rounded-full border border-violet-500/50 px-4 py-2 ${isLight ? "bg-white" : "bg-slate-800/50"}`}>
-                    <input type="text" placeholder={t.writeMessage} className={`flex-1 bg-transparent text-sm focus:outline-none ${isLight ? "placeholder:text-slate-400" : "placeholder:text-white/40"}`} />
+                    <input 
+                      type="text" 
+                      placeholder={t.writeMessage} 
+                      value={chatInputValue}
+                      onChange={(e) => setChatInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && chatInputValue.trim()) {
+                          setChatMessages([...chatMessages, chatInputValue.trim()]);
+                          setChatInputValue('');
+                        }
+                      }}
+                      className={`flex-1 bg-transparent text-sm focus:outline-none ${isLight ? "placeholder:text-slate-400" : "placeholder:text-white/40"}`} 
+                    />
                     <button className={widgetSubtext}>
                       <Smile className="h-5 w-5" />
                     </button>
-                    <button className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-100 text-slate-500 hover:bg-slate-200" : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"}`}>
+                    <button 
+                      onClick={() => {
+                        if (chatInputValue.trim()) {
+                          setChatMessages([...chatMessages, chatInputValue.trim()]);
+                          setChatInputValue('');
+                        }
+                      }}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-100 text-slate-500 hover:bg-slate-200" : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"}`}
+                    >
                       <ArrowUp className="h-4 w-4" />
                     </button>
                   </div>
