@@ -5,6 +5,7 @@ import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { useProductCards } from "@/hooks/useProductCards";
 import { useFaqItems } from "@/hooks/useFaqItems";
 import { useInstagramPosts } from "@/hooks/useInstagramPosts";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Button } from "@/components/ui/button";
 import { Boxes, HelpCircle, LogOut, Loader2, MessageCircle } from "lucide-react";
 import {
@@ -24,6 +25,7 @@ const Builder = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
+  const { hasUnread } = useUnreadMessages();
   const { 
     productCards, 
     isLoading: isLoadingCards, 
@@ -159,10 +161,13 @@ const Builder = () => {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="gap-2 text-muted-foreground hover:text-foreground"
+            className="relative gap-2 text-muted-foreground hover:text-foreground"
             onClick={() => navigate("/chats")}
           >
             <MessageCircle className="h-5 w-5" />
+            {hasUnread && (
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
+            )}
             <span className="hidden sm:inline">Chat</span>
           </Button>
           <Button variant="ghost" size="icon" className="text-muted-foreground">
