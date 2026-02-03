@@ -9,12 +9,38 @@ import {
 } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AlertTriangle, Copy, Check, ExternalLink, Send, X } from "lucide-react";
-import WixLogo from "@/components/icons/WixLogo";
 import { useToast } from "@/hooks/use-toast";
+import {
+  WixLogo,
+  WordPressLogo,
+  GoogleTagManagerLogo,
+  ShopifyLogo,
+  SquarespaceLogo,
+  WooCommerceLogo,
+  BigCommerceLogo,
+} from "@/components/icons/PlatformLogos";
 
 interface AddToWebsiteDialogProps {
   widgetId?: string;
 }
+
+interface PlatformCardProps {
+  logo: React.ReactNode;
+  name: string;
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
+const PlatformCard = ({ logo, name, onClick, disabled }: PlatformCardProps) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className="flex flex-col items-center justify-center gap-3 rounded-xl bg-muted/50 p-6 transition-colors hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    <div className="h-12 w-12 flex items-center justify-center">{logo}</div>
+    <span className="text-sm font-medium text-foreground">{name}</span>
+  </button>
+);
 
 const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
   const [copied, setCopied] = useState(false);
@@ -50,6 +76,10 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleWixClick = () => {
+    setShowWixGuide(true);
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -57,16 +87,16 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
           Add to website
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Add to website</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Warning banner */}
-          <div className="rounded-lg bg-amber-50 border border-amber-200 p-4">
+          <div className="rounded-lg bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 p-4">
             <div className="flex gap-3">
-              <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-500 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-foreground">Widget not installed</p>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -119,83 +149,107 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
             </div>
           </div>
 
-          {/* Integration section */}
-          <div className="space-y-3">
+          {/* Seamless integration section */}
+          <div className="space-y-4">
             <p className="text-sm text-muted-foreground">Try seamless integration with:</p>
-            <div className="flex flex-wrap gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-2 h-9"
-                onClick={() => setShowWixGuide(!showWixGuide)}
-              >
-                <WixLogo className="h-4 w-auto" />
-                Wix
-              </Button>
-              <Button variant="outline" size="sm" className="h-9 text-muted-foreground" disabled>
-                WordPress
-              </Button>
-              <Button variant="outline" size="sm" className="h-9 text-muted-foreground" disabled>
-                Shopify
-              </Button>
-              <Button variant="outline" size="sm" className="h-9 text-muted-foreground" disabled>
-                Squarespace
-              </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <PlatformCard
+                logo={<WordPressLogo className="h-10 w-10" />}
+                name="WordPress"
+                disabled
+              />
+              <PlatformCard
+                logo={<GoogleTagManagerLogo className="h-10 w-10" />}
+                name="Google Tag Manager"
+                disabled
+              />
+              <PlatformCard
+                logo={<WixLogo className="h-10 w-auto text-foreground" />}
+                name="Wix"
+                onClick={handleWixClick}
+              />
             </div>
+          </div>
 
-            {/* Wix Guide Collapsible */}
-            <Collapsible open={showWixGuide} onOpenChange={setShowWixGuide}>
-              <CollapsibleContent>
-                <div className="mt-3 rounded-lg border border-border bg-muted/30 p-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-foreground flex items-center gap-2">
-                      <WixLogo className="h-4 w-auto" />
-                      Install on Wix
-                    </h4>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6"
-                      onClick={() => setShowWixGuide(false)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  <ol className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">1.</span>
-                      Open your Wix Editor
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">2.</span>
-                      Click <span className="font-medium text-foreground">"Add Elements"</span> (+)
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">3.</span>
-                      Select <span className="font-medium text-foreground">"Embed code"</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">4.</span>
-                      Click the code box → <span className="font-medium text-foreground">"Enter Code"</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">5.</span>
-                      Paste the widget code (copied above)
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="font-semibold text-foreground">6.</span>
-                      Position anywhere & <span className="font-medium text-foreground">Publish</span>
-                    </li>
-                  </ol>
-
-                  <Button onClick={handleCopy} size="sm" className="gap-2">
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    {copied ? "Copied!" : "Copy code for Wix"}
+          {/* Wix Guide Collapsible */}
+          <Collapsible open={showWixGuide} onOpenChange={setShowWixGuide}>
+            <CollapsibleContent>
+              <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold text-foreground flex items-center gap-2">
+                    <WixLogo className="h-5 w-auto text-foreground" />
+                    Install on Wix
+                  </h4>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6"
+                    onClick={() => setShowWixGuide(false)}
+                  >
+                    <X className="h-4 w-4" />
                   </Button>
                 </div>
-              </CollapsibleContent>
-            </Collapsible>
+
+                <ol className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">1.</span>
+                    Open your Wix Editor
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">2.</span>
+                    Click <span className="font-medium text-foreground">"Add Elements"</span> (+)
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">3.</span>
+                    Select <span className="font-medium text-foreground">"Embed code"</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">4.</span>
+                    Click the code box → <span className="font-medium text-foreground">"Enter Code"</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">5.</span>
+                    Paste the widget code (copied above)
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">6.</span>
+                    Position anywhere & <span className="font-medium text-foreground">Publish</span>
+                  </li>
+                </ol>
+
+                <Button onClick={handleCopy} size="sm" className="gap-2">
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? "Copied!" : "Copy code for Wix"}
+                </Button>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* See how to install section */}
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">See how to install Widjet with:</p>
+            <div className="grid grid-cols-2 gap-3">
+              <PlatformCard
+                logo={<WooCommerceLogo className="h-10 w-10" />}
+                name="Woocommerce"
+                disabled
+              />
+              <PlatformCard
+                logo={<ShopifyLogo className="h-10 w-10" />}
+                name="Shopify"
+                disabled
+              />
+              <PlatformCard
+                logo={<SquarespaceLogo className="h-8 w-8" />}
+                name="Squarespace"
+                disabled
+              />
+              <PlatformCard
+                logo={<BigCommerceLogo className="h-10 w-10" />}
+                name="BigCommerce"
+                disabled
+              />
+            </div>
           </div>
         </div>
       </DialogContent>
