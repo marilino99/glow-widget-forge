@@ -1,87 +1,69 @@
 
+# Plan: Production-Ready Widget Embed Code
 
-## Plan: Dynamic Color & Background Sync for Widget Preview
+## Overview
+Transform the "Add to website" dialog from a placeholder to a working, production-ready embed system like OpenWidget. Users will get their unique widget ID automatically, and the code will actually work when pasted into their website.
 
-### Summary
-When you select a color in the Theme & Colors panel, the widget preview will update in real-time to reflect:
-1. **Button colors** - All buttons ("Contact us", "Show") will use the selected color
-2. **Background** - When "Gradient" is selected, the widget background will show a subtle gradient based on the selected color
+## What Changes
 
----
+### 1. Update AddToWebsiteDialog Component
+- Pass the user's actual widget configuration ID to the dialog
+- Generate real embed code with the user's unique widget ID
+- Include proper async loading and initialization
+- Add noscript fallback for accessibility
 
-### Changes Overview
+### 2. Create Widget Loader Edge Function
+- New edge function `widget-loader` that serves the widget JavaScript
+- Accepts widget ID parameter to load the correct configuration
+- Returns the widget code that renders on external websites
 
-#### 1. Add Background Type to Configuration
-- Add `backgroundType` to the widget configuration so it syncs between the panel and preview
-- Update the configuration hook and database (if needed) to persist this setting
+### 3. Update Builder Page
+- Pass widget configuration ID to AddToWebsiteDialog
+- Ensure the ID is available when the dialog opens
 
-#### 2. Create Color Mapping System
-Define how each color name translates to:
-- Button background color (e.g., "blue" → `bg-blue-500`)
-- Gradient background (e.g., "blue" → gradient from blue to a complementary shade)
+## Embed Code Structure (What Users Will Copy)
 
-| Color | Button | Gradient (Light Theme) | Gradient (Dark Theme) |
-|-------|--------|------------------------|----------------------|
-| blue | `bg-blue-500` | Violet → White → Cyan | Blue → Slate-900 |
-| purple | `bg-purple-500` | Purple → White → Pink | Purple → Slate-900 |
-| cyan | `bg-cyan-500` | Cyan → White → Emerald | Cyan → Slate-900 |
-| green | `bg-green-500` | Green → White → Lime | Green → Slate-900 |
-| etc. | ... | ... | ... |
-
-#### 3. Update Widget Preview Panel
-Apply the selected color dynamically to:
-- "Contact us" button
-- "Show" button (product cards)
-- Chat send button accent
-- Widget background (when gradient mode is active)
-
-#### 4. Update Theme Colors Panel
-- Pass `backgroundType` up to parent when changed
-- Show the current color in the preview thumbnails (solid/gradient options)
-
----
-
-### Technical Details
-
-**Files to modify:**
-
-1. **`src/hooks/useWidgetConfiguration.ts`**
-   - Add `backgroundType: "solid" | "gradient" | "image"` to the configuration interface
-   - Update default value and database mapping
-
-2. **`src/components/builder/ThemeColorsPanel.tsx`**
-   - Lift `backgroundType` state to props (receive from parent, notify on change)
-   - Update preview thumbnails to reflect current selected color
-
-3. **`src/components/builder/BuilderSidebar.tsx`**
-   - Pass `backgroundType` and handler through to ThemeColorsPanel
-
-4. **`src/pages/Builder.tsx`**
-   - Add `backgroundType` to the config state passed to WidgetPreviewPanel
-
-5. **`src/components/builder/WidgetPreviewPanel.tsx`**
-   - Create color mapping object for button and gradient colors
-   - Replace hardcoded colors (`bg-blue-500`, `bg-cyan-500`) with dynamic values
-   - Apply gradient background based on `backgroundType` and `widgetColor`
-
----
-
-### Example Color Application
-
-```text
-Selected: purple + gradient + light theme
-┌──────────────────────────────┐
-│  Background: gradient from   │
-│  violet-100 → white → pink-50│
-├──────────────────────────────┤
-│  [Contact us] → bg-purple-500│
-│  [Show]       → bg-purple-500│
-└──────────────────────────────┘
+```html
+<!-- Start of Widjet (widjet.com) code -->
+<script>
+  window.__wj = window.__wj || {};
+  window.__wj.widgetId = "abc123-user-unique-id";
+  window.__wj.product_name = "widjet";
+  ;(function(w,d,s){
+    var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s);
+    j.async=true;
+    j.src="https://your-project.supabase.co/functions/v1/widget-loader";
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script');
+</script>
+<noscript>Enable JavaScript to use the widget powered by Widjet</noscript>
+<!-- End of Widjet code -->
 ```
 
----
+## Technical Details
 
-### Database Migration (if persisting)
-If you want `backgroundType` to persist, we'll add it to the `widget_configurations` table:
-- Column: `background_type` (text, default: 'gradient')
+### Files to Modify
+1. **src/components/builder/AddToWebsiteDialog.tsx**
+   - Add `widgetId` prop
+   - Update embed code template with real ID and CDN URL
+   - Add noscript fallback
 
+2. **src/pages/Builder.tsx**
+   - Query widget configuration ID
+   - Pass ID to AddToWebsiteDialog
+
+### New Files to Create
+1. **supabase/functions/widget-loader/index.ts**
+   - Edge function that serves the embeddable widget script
+   - Fetches configuration by widget ID
+   - Returns JavaScript that renders the widget
+
+### Database
+- No changes needed - the existing `widget_configurations.id` serves as the widget ID
+
+## User Experience
+1. User clicks "Add to website"
+2. Dialog shows their unique embed code (no "YOUR_WIDGET_ID" placeholder)
+3. User copies code and pastes into their website
+4. Widget loads and displays with their configuration
