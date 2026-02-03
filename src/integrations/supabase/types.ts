@@ -185,6 +185,50 @@ export type Database = {
         }
         Relationships: []
       }
+      wix_installations: {
+        Row: {
+          id: string
+          installed_at: string | null
+          script_injected: boolean | null
+          updated_at: string | null
+          user_id: string | null
+          widget_config_id: string | null
+          wix_instance_id: string
+          wix_refresh_token: string
+          wix_site_id: string | null
+        }
+        Insert: {
+          id?: string
+          installed_at?: string | null
+          script_injected?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+          widget_config_id?: string | null
+          wix_instance_id: string
+          wix_refresh_token: string
+          wix_site_id?: string | null
+        }
+        Update: {
+          id?: string
+          installed_at?: string | null
+          script_injected?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+          widget_config_id?: string | null
+          wix_instance_id?: string
+          wix_refresh_token?: string
+          wix_site_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wix_installations_widget_config_id_fkey"
+            columns: ["widget_config_id"]
+            isOneToOne: false
+            referencedRelation: "widget_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
