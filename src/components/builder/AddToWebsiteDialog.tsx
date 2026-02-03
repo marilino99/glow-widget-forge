@@ -7,7 +7,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { AlertTriangle, Copy, Check, ExternalLink, Send } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AlertTriangle, Copy, Check, ExternalLink, Send, X } from "lucide-react";
+import WixLogo from "@/components/icons/WixLogo";
 import { useToast } from "@/hooks/use-toast";
 
 interface AddToWebsiteDialogProps {
@@ -16,6 +18,7 @@ interface AddToWebsiteDialogProps {
 
 const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
   const [copied, setCopied] = useState(false);
+  const [showWixGuide, setShowWixGuide] = useState(false);
   const { toast } = useToast();
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -117,14 +120,82 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
           </div>
 
           {/* Integration section */}
-          <div>
+          <div className="space-y-3">
             <p className="text-sm text-muted-foreground">Try seamless integration with:</p>
-            <div className="flex gap-4 mt-2 text-muted-foreground">
-              <span className="text-xs">WordPress</span>
-              <span className="text-xs">Shopify</span>
-              <span className="text-xs">Wix</span>
-              <span className="text-xs">Squarespace</span>
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 h-9"
+                onClick={() => setShowWixGuide(!showWixGuide)}
+              >
+                <WixLogo className="h-4 w-auto" />
+                Wix
+              </Button>
+              <Button variant="outline" size="sm" className="h-9 text-muted-foreground" disabled>
+                WordPress
+              </Button>
+              <Button variant="outline" size="sm" className="h-9 text-muted-foreground" disabled>
+                Shopify
+              </Button>
+              <Button variant="outline" size="sm" className="h-9 text-muted-foreground" disabled>
+                Squarespace
+              </Button>
             </div>
+
+            {/* Wix Guide Collapsible */}
+            <Collapsible open={showWixGuide} onOpenChange={setShowWixGuide}>
+              <CollapsibleContent>
+                <div className="mt-3 rounded-lg border border-border bg-muted/30 p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-foreground flex items-center gap-2">
+                      <WixLogo className="h-4 w-auto" />
+                      Install on Wix
+                    </h4>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6"
+                      onClick={() => setShowWixGuide(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <ol className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-foreground">1.</span>
+                      Open your Wix Editor
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-foreground">2.</span>
+                      Click <span className="font-medium text-foreground">"Add Elements"</span> (+)
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-foreground">3.</span>
+                      Select <span className="font-medium text-foreground">"Embed code"</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-foreground">4.</span>
+                      Click the code box → <span className="font-medium text-foreground">"Enter Code"</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-foreground">5.</span>
+                      Paste the widget code (copied above)
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-foreground">6.</span>
+                      Position anywhere & <span className="font-medium text-foreground">Publish</span>
+                    </li>
+                  </ol>
+
+                  <Button onClick={handleCopy} size="sm" className="gap-2">
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {copied ? "Copied!" : "Copy code for Wix"}
+                  </Button>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         </div>
       </DialogContent>
