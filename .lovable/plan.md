@@ -1,69 +1,71 @@
 
-# Plan: Production-Ready Widget Embed Code
+# Add Wix Integration Button to "Add to Website" Dialog
 
 ## Overview
-Transform the "Add to website" dialog from a placeholder to a working, production-ready embed system like OpenWidget. Users will get their unique widget ID automatically, and the code will actually work when pasted into their website.
+Add a dedicated Wix button with the Wix logo to the installation help section. When clicked, it will open a dialog/panel with Wix-specific installation instructions using the "Embed code" tool.
 
-## What Changes
+## Implementation Details
 
-### 1. Update AddToWebsiteDialog Component
-- Pass the user's actual widget configuration ID to the dialog
-- Generate real embed code with the user's unique widget ID
-- Include proper async loading and initialization
-- Add noscript fallback for accessibility
+### 1. Create Wix Logo SVG Component
+Create a new component for the Wix logo to maintain clean code:
+- File: `src/components/icons/WixLogo.tsx`
+- Official Wix brand colors (black/white)
 
-### 2. Create Widget Loader Edge Function
-- New edge function `widget-loader` that serves the widget JavaScript
-- Accepts widget ID parameter to load the correct configuration
-- Returns the widget code that renders on external websites
+### 2. Update AddToWebsiteDialog Component
+Modify `src/components/builder/AddToWebsiteDialog.tsx`:
 
-### 3. Update Builder Page
-- Pass widget configuration ID to AddToWebsiteDialog
-- Ensure the ID is available when the dialog opens
+**Changes to the integration section (lines 119-128):**
+- Replace the plain text list with clickable platform buttons
+- Add Wix button with logo that triggers a Wix-specific guide
+- Style buttons consistently with the existing design
 
-## Embed Code Structure (What Users Will Copy)
+**Add new state and UI:**
+- Add `showWixGuide` state to toggle Wix instructions panel
+- When Wix button is clicked, show inline step-by-step instructions:
+  1. Open Wix Editor
+  2. Click "Add Elements" (+)
+  3. Select "Embed code"
+  4. Click the code box → "Enter Code"
+  5. Paste the widget code
+  6. Position and publish
 
-```html
-<!-- Start of Widjet (widjet.com) code -->
-<script>
-  window.__wj = window.__wj || {};
-  window.__wj.widgetId = "abc123-user-unique-id";
-  window.__wj.product_name = "widjet";
-  ;(function(w,d,s){
-    var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s);
-    j.async=true;
-    j.src="https://your-project.supabase.co/functions/v1/widget-loader";
-    f.parentNode.insertBefore(j,f);
-  })(window,document,'script');
-</script>
-<noscript>Enable JavaScript to use the widget powered by Widjet</noscript>
-<!-- End of Widjet code -->
+### 3. UI Structure
+
+```text
++------------------------------------------+
+| Need help with the installation?         |
+| [Send instructions] [Write to us]        |
++------------------------------------------+
+| Try seamless integration with:           |
+| [Wix logo] [WordPress] [Shopify] [...]   |
++------------------------------------------+
+           ↓ (when Wix clicked)
++------------------------------------------+
+| Install on Wix                     [X]   |
+| 1. Open Wix Editor                       |
+| 2. Click "Add Elements" (+)              |
+| 3. Select "Embed code"                   |
+| 4. Click box → "Enter Code"              |
+| 5. Paste code below                      |
+| [Copy Wix Code]                          |
+| 6. Position & Publish                    |
++------------------------------------------+
 ```
 
 ## Technical Details
 
+### Files to Create
+1. `src/components/icons/WixLogo.tsx` - SVG component
+
 ### Files to Modify
-1. **src/components/builder/AddToWebsiteDialog.tsx**
-   - Add `widgetId` prop
-   - Update embed code template with real ID and CDN URL
-   - Add noscript fallback
+1. `src/components/builder/AddToWebsiteDialog.tsx`:
+   - Add state for `showWixGuide`
+   - Import WixLogo component
+   - Replace text platform list with button grid
+   - Add collapsible Wix guide section with numbered steps
 
-2. **src/pages/Builder.tsx**
-   - Query widget configuration ID
-   - Pass ID to AddToWebsiteDialog
+### No API Key Required
+This implementation uses a guided manual approach - the user still copies the embed code but gets Wix-specific instructions. No Wix API credentials needed.
 
-### New Files to Create
-1. **supabase/functions/widget-loader/index.ts**
-   - Edge function that serves the embeddable widget script
-   - Fetches configuration by widget ID
-   - Returns JavaScript that renders the widget
-
-### Database
-- No changes needed - the existing `widget_configurations.id` serves as the widget ID
-
-## User Experience
-1. User clicks "Add to website"
-2. Dialog shows their unique embed code (no "YOUR_WIDGET_ID" placeholder)
-3. User copies code and pastes into their website
-4. Widget loads and displays with their configuration
+### Future Enhancement (Optional)
+The native Wix App integration (requiring OAuth) can be added later following the documented plan in `.lovable/wix-app-integration-plan.md`.
