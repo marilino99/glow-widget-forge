@@ -1,1 +1,7 @@
 project_id = "jqvcafbrccpmygiihyry"
+
+[functions.widget-loader]
+verify_jwt = false
+
+[functions.widget-config]
+verify_jwt = false

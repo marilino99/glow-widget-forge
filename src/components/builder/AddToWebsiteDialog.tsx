@@ -10,20 +10,32 @@ import {
 import { AlertTriangle, Copy, Check, ExternalLink, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const AddToWebsiteDialog = () => {
+interface AddToWebsiteDialogProps {
+  widgetId?: string;
+}
+
+const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  const embedCode = `<!-- Start of Widjet (widjet.com) code -->
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
+
+  const embedCode = widgetId ? `<!-- Start of Widjet (widjet.com) code -->
 <script>
   window.__wj = window.__wj || {};
-  window.__wj.widgetId = "YOUR_WIDGET_ID";
+  window.__wj.widgetId = "${widgetId}";
+  window.__wj.product_name = "widjet";
+  ;(function(w,d,s){
+    var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s);
+    j.async=true;
+    j.src="${widgetLoaderUrl}";
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script');
 </script>
-<script 
-  async 
-  src="https://cdn.widjet.com/widget.js">
-</script>
-<!-- End of Widjet code -->`;
+<noscript>Enable JavaScript to use the widget powered by Widjet</noscript>
+<!-- End of Widjet code -->` : `<!-- Widget ID not yet available. Save your configuration first. -->`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(embedCode);
