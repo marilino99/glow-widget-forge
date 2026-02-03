@@ -113,12 +113,12 @@ Deno.serve(async (req) => {
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px;position:relative;\${solid ? 'padding-bottom:140px;background:'+color.bg+';color:#fff' : ''}}
+      #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : ''}}
       #wj-hello{font-size:22px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${solid ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:\${solid ? '-120px' : '0'} 16px 0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
+      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
@@ -172,12 +172,12 @@ Deno.serve(async (req) => {
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
       #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px;position:relative;\${solid ? 'padding-bottom:140px;background:'+color.bg+';color:#fff' : ''}}
+      #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : ''}}
       #wj-hello{font-size:24px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${solid ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:\${solid ? '-120px' : '0'} 16px 0 16px;padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
+      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
@@ -237,7 +237,6 @@ Deno.serve(async (req) => {
     var header = d.createElement('div');
     header.id = 'wj-head';
     header.innerHTML = '<div id="wj-hello">' + esc(hello) + '</div><button id="wj-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/></svg></button>';
-    scroll.appendChild(header);
 
     // Contact card
     var contact = d.createElement('div');
@@ -246,7 +245,15 @@ Deno.serve(async (req) => {
       ? '<img src="' + esc(avatar) + '" id="wj-avatar" alt=""/>' 
       : '<div id="wj-avatar">C</div>';
     contact.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' + avatarHtml + '<div style="flex:1"><div id="wj-cname">' + esc(name) + '</div><div id="wj-chelp">' + esc(help) + '</div></div></div><button id="wj-cbtn">' + esc(tr.contactUs) + '</button>';
-    scroll.appendChild(contact);
+
+    // In solid mode, contact card goes inside header; otherwise after header
+    if (solid) {
+      header.appendChild(contact);
+      scroll.appendChild(header);
+    } else {
+      scroll.appendChild(header);
+      scroll.appendChild(contact);
+    }
 
     // Product cards
     if (products.length > 0) {
