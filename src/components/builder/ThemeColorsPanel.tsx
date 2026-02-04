@@ -238,20 +238,22 @@ const ThemeColorsPanel = ({
               return (
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button 
-                      className={`relative h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 transition-all ${
-                        isCustomSelected ? "ring-2 ring-primary ring-offset-2" : "hover:scale-110"
-                      }`}
-                    >
-                      <div 
-                        className="absolute inset-1 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: isCustomSelected ? widgetColor : 'var(--background)' }}
+                    {isCustomSelected ? (
+                      <button 
+                        className="relative h-12 w-12 rounded-full ring-2 ring-primary ring-offset-2 transition-all"
+                        style={{ backgroundColor: widgetColor }}
                       >
-                        {isCustomSelected && (
+                        <div className="absolute inset-0 flex items-center justify-center">
                           <Check className="h-5 w-5 text-white drop-shadow-md" />
-                        )}
-                      </div>
-                    </button>
+                        </div>
+                      </button>
+                    ) : (
+                      <button 
+                        className="relative h-12 w-12 overflow-hidden rounded-full bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 transition-all hover:scale-110"
+                      >
+                        <div className="absolute inset-[3px] rounded-full bg-background" />
+                      </button>
+                    )}
                   </PopoverTrigger>
                   <PopoverContent className="w-52 overflow-hidden rounded-xl p-3" align="center">
                     <ColorPicker
