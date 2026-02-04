@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { Pipette } from "lucide-react";
 
 interface ColorPickerProps {
   color: string;
@@ -204,6 +205,25 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
           maxLength={7}
           placeholder="#000000"
         />
+        <button
+          type="button"
+          onClick={async () => {
+            if ('EyeDropper' in window) {
+              try {
+                // @ts-expect-error EyeDropper API not yet in TypeScript types
+                const eyeDropper = new window.EyeDropper();
+                const result = await eyeDropper.open();
+                onChange(result.sRGBHex);
+              } catch {
+                // User cancelled or error
+              }
+            }
+          }}
+          className="shrink-0 flex items-center justify-center h-7 w-7 rounded-md border border-border bg-background hover:bg-accent transition-colors"
+          title="Seleziona colore dallo schermo"
+        >
+          <Pipette className="h-4 w-4 text-foreground" />
+        </button>
       </div>
     </div>
   );
