@@ -34,6 +34,16 @@ const themeColors = [
   { color: "#EC4899", name: "pink" },
 ];
 
+// Check if a color is a hex value (custom) or a preset name
+const isHexColor = (color: string) => color.startsWith('#');
+
+// Get display color for the current selection
+const getDisplayColor = (color: string) => {
+  if (isHexColor(color)) return color;
+  const preset = themeColors.find(c => c.name === color);
+  return preset?.color || '#3B82F6';
+};
+
 const backgroundImages = [
   "https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=100&h=100&fit=crop",
   "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=100&h=100&fit=crop",
@@ -195,24 +205,38 @@ const ThemeColorsPanel = ({
 
           {/* Color palette */}
           <div className="flex flex-wrap gap-3">
-            {themeColors.map((item) => (
+            {/* Show custom color if it's a hex and not in presets */}
+            {isHexColor(widgetColor) && !themeColors.some(c => c.color.toLowerCase() === widgetColor.toLowerCase()) && (
               <button
-                key={item.name}
-                onClick={() => onWidgetColorChange(item.name)}
-                className={`relative h-12 w-12 rounded-full transition-all ${
-                  widgetColor === item.name
-                    ? "ring-2 ring-primary ring-offset-2"
-                    : "hover:scale-110"
-                }`}
-                style={{ backgroundColor: item.color }}
+                className="relative h-12 w-12 rounded-full ring-2 ring-primary ring-offset-2"
+                style={{ backgroundColor: widgetColor }}
               >
-                {widgetColor === item.name && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Check className="h-5 w-5 text-white drop-shadow-md" />
-                  </div>
-                )}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Check className="h-5 w-5 text-white drop-shadow-md" />
+                </div>
               </button>
-            ))}
+            )}
+            {themeColors.map((item) => {
+              const isSelected = widgetColor === item.name || widgetColor.toLowerCase() === item.color.toLowerCase();
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => onWidgetColorChange(item.color)}
+                  className={`relative h-12 w-12 rounded-full transition-all ${
+                    isSelected
+                      ? "ring-2 ring-primary ring-offset-2"
+                      : "hover:scale-110"
+                  }`}
+                  style={{ backgroundColor: item.color }}
+                >
+                  {isSelected && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Check className="h-5 w-5 text-white drop-shadow-md" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
             {/* Custom color picker */}
             <button className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500">
               <div className="absolute inset-1 rounded-full bg-white" />

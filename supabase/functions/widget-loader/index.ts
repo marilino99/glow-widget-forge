@@ -64,7 +64,25 @@ Deno.serve(async (req) => {
       red: { bg: '#ef4444', hover: '#dc2626' },
       pink: { bg: '#ec4899', hover: '#db2777' }
     };
-    var color = colors[cfg.widget_color] || colors.blue;
+    
+    // Support both preset names and custom hex colors
+    var wc = cfg.widget_color || 'blue';
+    var color;
+    if (wc.startsWith('#')) {
+      // Custom hex color - darken it for hover
+      var hex = wc.replace('#', '');
+      var r = parseInt(hex.substr(0,2), 16);
+      var g = parseInt(hex.substr(2,2), 16);
+      var b = parseInt(hex.substr(4,2), 16);
+      // Darken by 15%
+      r = Math.max(0, Math.floor(r * 0.85));
+      g = Math.max(0, Math.floor(g * 0.85));
+      b = Math.max(0, Math.floor(b * 0.85));
+      var hover = '#' + r.toString(16).padStart(2,'0') + g.toString(16).padStart(2,'0') + b.toString(16).padStart(2,'0');
+      color = { bg: wc, hover: hover };
+    } else {
+      color = colors[wc] || colors.blue;
+    }
     var dark = cfg.widget_theme === 'dark';
     var solid = cfg.background_type === 'solid';
     var name = cfg.contact_name || 'Support';

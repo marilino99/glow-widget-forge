@@ -79,6 +79,35 @@ function findClosestWidgetColor(primaryColor: string): string {
   return closestColor;
 }
 
+// Extract CTA button color from branding data
+function extractCtaButtonColor(branding: Record<string, unknown>): string | null {
+  const components = branding.components as Record<string, Record<string, string>> | undefined;
+  
+  // Try to get button primary background color first (most reliable for CTA)
+  const buttonPrimaryBg = components?.buttonPrimary?.background;
+  if (buttonPrimaryBg && buttonPrimaryBg.startsWith('#')) {
+    console.log('Found CTA button color:', buttonPrimaryBg);
+    return buttonPrimaryBg;
+  }
+  
+  // Fall back to accent color which is often used for CTAs
+  const colors = branding.colors as Record<string, string> | undefined;
+  const accentColor = colors?.accent;
+  if (accentColor && accentColor.startsWith('#')) {
+    console.log('Using accent color as CTA:', accentColor);
+    return accentColor;
+  }
+  
+  // Last resort: primary color
+  const primaryColor = colors?.primary;
+  if (primaryColor && primaryColor.startsWith('#')) {
+    console.log('Using primary color:', primaryColor);
+    return primaryColor;
+  }
+  
+  return null;
+}
+
 // Determine widget theme based on multiple factors
 function determineWidgetTheme(branding: Record<string, unknown>): 'light' | 'dark' {
   // Check colorScheme first
@@ -274,15 +303,18 @@ Deno.serve(async (req) => {
     // Extract logo
     const logo = branding.images?.logo || branding.logo || null;
     
-    // Extract primary color and find closest widget color
+    // Extract CTA button color (exact hex) - prioritize this over primary color
+    const ctaColor = extractCtaButtonColor(branding);
     const primaryColor = branding.colors?.primary || null;
-    const widgetColor = primaryColor ? findClosestWidgetColor(primaryColor) : 'blue';
+    
+    // Use exact hex color for widget (ctaColor takes priority)
+    const widgetColor = ctaColor || primaryColor || '#3B82F6'; // Default to blue hex
 
     // Determine theme based on multiple factors (colorScheme, background, text colors)
     const widgetTheme = determineWidgetTheme(branding);
 
     console.log('Extracted logo:', logo);
-    console.log('Primary color:', primaryColor, '-> Widget color:', widgetColor);
+    console.log('CTA color:', ctaColor, '| Primary color:', primaryColor, '-> Widget color:', widgetColor);
     console.log('Determined widget theme:', widgetTheme);
 
     return new Response(
