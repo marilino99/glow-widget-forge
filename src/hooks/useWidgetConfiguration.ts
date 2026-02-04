@@ -101,7 +101,7 @@ export const useWidgetConfiguration = () => {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase
+      const { data, error } = await (supabase
         .from("widget_configurations") as any)
         .upsert({
           user_id: user.id,
@@ -120,9 +120,16 @@ export const useWidgetConfiguration = () => {
           website_url: updatedConfig.websiteUrl,
         }, {
           onConflict: "user_id"
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
+
+      // Update config with the returned ID (important for new users)
+      if (data?.id && !updatedConfig.id) {
+        setConfig(prev => ({ ...prev, id: data.id }));
+      }
 
       toast({
         title: "Saved",
