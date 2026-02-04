@@ -138,11 +138,11 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-3 p-1">
+    <div className="flex flex-col gap-3">
       {/* Saturation/Value gradient square */}
       <div
         ref={satValRef}
-        className="relative h-40 w-full cursor-crosshair rounded-lg"
+        className="relative h-36 w-full cursor-crosshair rounded-lg"
         style={{
           background: `linear-gradient(to bottom, transparent, black), linear-gradient(to right, white, ${hueColor})`
         }}
@@ -163,10 +163,10 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
       </div>
 
       {/* Bottom controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {/* Color preview */}
         <div
-          className="h-10 w-10 shrink-0 rounded-full border border-border shadow-sm"
+          className="h-8 w-8 shrink-0 rounded-full border border-border shadow-sm"
           style={{ backgroundColor: selectedColor }}
         />
 
@@ -194,13 +194,13 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
       </div>
 
       {/* HEX input */}
-      <div className="flex items-center gap-2 pt-1">
-        <span className="text-xs font-medium text-muted-foreground">HEX</span>
+      <div className="flex items-center gap-2">
+        <span className="shrink-0 text-xs font-medium text-muted-foreground">HEX</span>
         <input
           type="text"
           value={hexInput}
           onChange={(e) => handleHexChange(e.target.value)}
-          className="flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-sm font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          className="min-w-0 flex-1 rounded-md border border-border bg-background px-2 py-1 text-sm font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
           maxLength={7}
           placeholder="#000000"
         />
