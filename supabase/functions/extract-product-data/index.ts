@@ -44,9 +44,9 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         url: formattedUrl,
-        formats: ['markdown', 'html'],
-        onlyMainContent: true,
-        waitFor: 2000,
+        formats: ['html'],
+        onlyMainContent: false,  // Get full HTML with meta tags
+        waitFor: 5000,  // Wait longer for JS rendering
       }),
     });
 
@@ -77,6 +77,7 @@ Deno.serve(async (req) => {
     const metadata = data.data?.metadata || data.metadata || {};
     
     console.log('Page title:', metadata.title);
+    console.log('Metadata ogImage:', metadata.ogImage);
 
     // Parse product data from HTML and metadata
     const productData = {
@@ -84,7 +85,7 @@ Deno.serve(async (req) => {
       subtitle: extractDescription(html, metadata),
       price: extractPrice(html),
       oldPrice: extractOldPrice(html),
-      imageUrl: extractImageUrl(html, formattedUrl),
+      imageUrl: extractImageUrl(html, formattedUrl, metadata),
     };
 
     console.log('Extracted product data:', JSON.stringify(productData));
@@ -189,34 +190,85 @@ function extractOldPrice(html: string): string | undefined {
   return undefined;
 }
 
-function extractImageUrl(html: string, pageUrl: string): string | undefined {
-  // Try og:image first
-  const ogImageMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i) ||
-                       html.match(/content="([^"]+)"[^>]*property="og:image"/i);
-  if (ogImageMatch) {
-    return makeAbsoluteUrl(ogImageMatch[1], pageUrl);
+function extractImageUrl(html: string, pageUrl: string, metadata: Record<string, unknown> = {}): string | undefined {
+  // First check metadata from Firecrawl (most reliable)
+  if (metadata.ogImage && typeof metadata.ogImage === 'string') {
+    console.log('Found ogImage from metadata:', metadata.ogImage);
+    return metadata.ogImage;
   }
   
-  // Try structured data image
-  const structuredImageMatch = html.match(/"image"\s*:\s*"([^"]+)"/);
-  if (structuredImageMatch) {
-    return makeAbsoluteUrl(structuredImageMatch[1], pageUrl);
-  }
-  
-  // Try product image patterns
-  const imagePatterns = [
-    /<img[^>]*class="[^"]*product[^"]*image[^"]*"[^>]*src="([^"]+)"/i,
-    /<img[^>]*src="([^"]+)"[^>]*class="[^"]*product[^"]*image[^"]*"/i,
-    /class="[^"]*woocommerce-product-gallery[^"]*"[^>]*[^]*?<img[^>]*src="([^"]+)"/i,
+  // Try og:image with multiple patterns (handles different attribute orders)
+  const ogPatterns = [
+    /<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i,
+    /<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i,
+    /<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/i,
   ];
   
-  for (const pattern of imagePatterns) {
+  for (const pattern of ogPatterns) {
     const match = html.match(pattern);
-    if (match) {
+    if (match && match[1] && !match[1].includes('{')) {
+      console.log('Found og:image:', match[1]);
       return makeAbsoluteUrl(match[1], pageUrl);
     }
   }
   
+  // Try twitter:image
+  const twitterImageMatch = html.match(/<meta[^>]*(?:name|property)=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
+                            html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*(?:name|property)=["']twitter:image["']/i);
+  if (twitterImageMatch && twitterImageMatch[1] && !twitterImageMatch[1].includes('{')) {
+    console.log('Found twitter:image:', twitterImageMatch[1]);
+    return makeAbsoluteUrl(twitterImageMatch[1], pageUrl);
+  }
+  
+  // Try structured data image (JSON-LD)
+  const structuredPatterns = [
+    /"image"\s*:\s*\[\s*"([^"]+)"/,  // Array format
+    /"image"\s*:\s*"([^"]+)"/,        // String format
+    /"image"\s*:\s*\{\s*"url"\s*:\s*"([^"]+)"/,  // Object format
+  ];
+  
+  for (const pattern of structuredPatterns) {
+    const match = html.match(pattern);
+    if (match && match[1] && match[1].startsWith('http')) {
+      console.log('Found structured data image:', match[1]);
+      return match[1];
+    }
+  }
+  
+  // Shopify specific patterns
+  const shopifyPatterns = [
+    /cdn\.shopify\.com[^"'\s]+\.(jpg|jpeg|png|webp)/i,
+    /"featured_image"\s*:\s*"([^"]+)"/,
+    /"src"\s*:\s*"(\/\/cdn\.shopify[^"]+)"/,
+  ];
+  
+  for (const pattern of shopifyPatterns) {
+    const match = html.match(pattern);
+    if (match) {
+      const imageUrl = match[1] || match[0];
+      console.log('Found Shopify image:', imageUrl);
+      return makeAbsoluteUrl(imageUrl.startsWith('//') ? `https:${imageUrl}` : imageUrl, pageUrl);
+    }
+  }
+  
+  // Try product image patterns (WooCommerce, generic)
+  const imagePatterns = [
+    /<img[^>]*class="[^"]*product[^"]*image[^"]*"[^>]*src=["']([^"']+)["']/i,
+    /<img[^>]*src=["']([^"']+)["'][^>]*class="[^"]*product[^"]*image[^"]*"/i,
+    /class="[^"]*woocommerce-product-gallery[^"]*"[^>]*[^]*?<img[^>]*src=["']([^"']+)["']/i,
+    /<img[^>]*data-src=["']([^"']+)["'][^>]*class="[^"]*product/i,
+    /<img[^>]*srcset=["']([^\s"']+)/i,  // First image in srcset
+  ];
+  
+  for (const pattern of imagePatterns) {
+    const match = html.match(pattern);
+    if (match && match[1]) {
+      console.log('Found product image:', match[1]);
+      return makeAbsoluteUrl(match[1], pageUrl);
+    }
+  }
+  
+  console.log('No image found in HTML');
   return undefined;
 }
 
