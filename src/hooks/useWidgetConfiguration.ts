@@ -23,7 +23,7 @@ export interface WidgetConfiguration {
 const defaultConfig: WidgetConfiguration = {
   id: null,
   selectedAvatar: null,
-  faqEnabled: false,
+  faqEnabled: true,
   contactName: "Support",
   offerHelp: "Write to us",
   widgetTheme: "dark",
