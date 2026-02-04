@@ -211,17 +211,6 @@ const ThemeColorsPanel = ({
 
           {/* Color palette */}
           <div className="flex flex-wrap gap-3">
-            {/* Show custom color if it's a hex and not in presets */}
-            {isHexColor(widgetColor) && !themeColors.some(c => c.color.toLowerCase() === widgetColor.toLowerCase()) && (
-              <button
-                className="relative h-12 w-12 rounded-full ring-2 ring-primary ring-offset-2"
-                style={{ backgroundColor: widgetColor }}
-              >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Check className="h-5 w-5 text-white drop-shadow-md" />
-                </div>
-              </button>
-            )}
             {themeColors.map((item) => {
               const isSelected = widgetColor === item.name || widgetColor.toLowerCase() === item.color.toLowerCase();
               return (
@@ -244,19 +233,35 @@ const ThemeColorsPanel = ({
               );
             })}
             {/* Custom color picker */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 hover:scale-110 transition-all">
-                  <div className="absolute inset-1 rounded-full bg-background" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-52 overflow-hidden rounded-xl p-3" align="center">
-                <ColorPicker
-                  color={isHexColor(widgetColor) ? widgetColor : '#3B82F6'}
-                  onChange={onWidgetColorChange}
-                />
-              </PopoverContent>
-            </Popover>
+            {(() => {
+              const isCustomSelected = isHexColor(widgetColor) && !themeColors.some(c => c.color.toLowerCase() === widgetColor.toLowerCase());
+              return (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button 
+                      className={`relative h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 transition-all ${
+                        isCustomSelected ? "ring-2 ring-primary ring-offset-2" : "hover:scale-110"
+                      }`}
+                    >
+                      <div 
+                        className="absolute inset-1 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: isCustomSelected ? widgetColor : 'var(--background)' }}
+                      >
+                        {isCustomSelected && (
+                          <Check className="h-5 w-5 text-white drop-shadow-md" />
+                        )}
+                      </div>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-52 overflow-hidden rounded-xl p-3" align="center">
+                    <ColorPicker
+                      color={isHexColor(widgetColor) ? widgetColor : '#3B82F6'}
+                      onChange={onWidgetColorChange}
+                    />
+                  </PopoverContent>
+                </Popover>
+              );
+            })()}
           </div>
         </div>
 
