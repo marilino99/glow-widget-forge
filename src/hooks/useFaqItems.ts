@@ -28,7 +28,7 @@ export const useFaqItems = () => {
 
         if (error) throw error;
 
-        if (data) {
+        if (data && data.length > 0) {
           setFaqItems(
             data.map((item) => ({
               id: item.id,
@@ -37,6 +37,27 @@ export const useFaqItems = () => {
               sortOrder: item.sort_order,
             }))
           );
+        } else {
+          // Create 2 default FAQ items for new users
+          const defaultItems: FaqItemData[] = [
+            { id: crypto.randomUUID(), question: "", answer: "", sortOrder: 0 },
+            { id: crypto.randomUUID(), question: "", answer: "", sortOrder: 1 },
+          ];
+          
+          setFaqItems(defaultItems);
+          
+          // Persist to database
+          const insertPromises = defaultItems.map((item) =>
+            supabase.from("faq_items").insert({
+              id: item.id,
+              user_id: user.id,
+              question: item.question,
+              answer: item.answer,
+              sort_order: item.sortOrder,
+            })
+          );
+          
+          await Promise.all(insertPromises);
         }
       } catch (error) {
         console.error("Error loading FAQ items:", error);
