@@ -1,6 +1,6 @@
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 Deno.serve(async (req) => {
@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
 
     console.log('Extracting product data from:', formattedUrl);
 
-    // Use Firecrawl to scrape the product page with JSON extraction
+    // Use Firecrawl to scrape the product page
     const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
       headers: {
@@ -44,66 +44,50 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         url: formattedUrl,
-        formats: [
-          'markdown',
-          {
-            type: 'json',
-            schema: {
-              type: 'object',
-              properties: {
-                title: { type: 'string', description: 'Product name or title' },
-                price: { type: 'string', description: 'Current price with currency symbol' },
-                oldPrice: { type: 'string', description: 'Original/old price if on sale, with currency symbol' },
-                description: { type: 'string', description: 'Short product description or subtitle' },
-                imageUrl: { type: 'string', description: 'Main product image URL (full URL starting with http)' },
-              },
-              required: ['title'],
-            },
-          },
-        ],
+        formats: ['markdown', 'html'],
         onlyMainContent: true,
         waitFor: 2000,
       }),
     });
 
-    const data = await response.json();
+    const responseText = await response.text();
+    console.log('Firecrawl response status:', response.status);
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      console.error('Non-JSON response from Firecrawl:', responseText.slice(0, 500));
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid response from Firecrawl' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     if (!response.ok) {
-      console.error('Firecrawl API error:', data);
+      console.error('Firecrawl API error:', JSON.stringify(data));
       return new Response(
-        JSON.stringify({ success: false, error: data.error || 'Failed to scrape product page' }),
+        JSON.stringify({ success: false, error: data.error || `Firecrawl error: ${response.status}` }),
         { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Extract the JSON data from response
-    const extractedData = data.data?.json || data.json || {};
+    // Extract data from response
+    const html = data.data?.html || data.html || '';
+    const metadata = data.data?.metadata || data.metadata || {};
     
-    console.log('Extracted product data:', extractedData);
+    console.log('Page title:', metadata.title);
 
-    // Clean up and validate the extracted data
+    // Parse product data from HTML and metadata
     const productData = {
-      title: extractedData.title || 'Untitled Product',
-      subtitle: extractedData.description || undefined,
-      price: extractedData.price || undefined,
-      oldPrice: extractedData.oldPrice || undefined,
-      imageUrl: extractedData.imageUrl || undefined,
+      title: extractTitle(html, metadata),
+      subtitle: extractDescription(html, metadata),
+      price: extractPrice(html),
+      oldPrice: extractOldPrice(html),
+      imageUrl: extractImageUrl(html, formattedUrl),
     };
 
-    // Validate image URL
-    if (productData.imageUrl && !productData.imageUrl.startsWith('http')) {
-      // Try to make it absolute
-      try {
-        const urlObj = new URL(formattedUrl);
-        if (productData.imageUrl.startsWith('/')) {
-          productData.imageUrl = `${urlObj.origin}${productData.imageUrl}`;
-        } else {
-          productData.imageUrl = `${urlObj.origin}/${productData.imageUrl}`;
-        }
-      } catch {
-        productData.imageUrl = undefined;
-      }
-    }
+    console.log('Extracted product data:', JSON.stringify(productData));
 
     return new Response(
       JSON.stringify({ success: true, data: productData }),
@@ -118,3 +102,137 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+// Helper functions to extract product data from HTML
+
+function extractTitle(html: string, metadata: Record<string, unknown>): string {
+  // Try og:title first, then page title, then h1
+  if (metadata.ogTitle) return String(metadata.ogTitle);
+  if (metadata.title) {
+    // Remove site name from title
+    const title = String(metadata.title);
+    const parts = title.split(/[|\-–—]/);
+    return parts[0].trim();
+  }
+  
+  // Try product name from structured data
+  const productNameMatch = html.match(/"name"\s*:\s*"([^"]+)"/);
+  if (productNameMatch) return productNameMatch[1];
+  
+  // Try h1
+  const h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  if (h1Match) return h1Match[1].trim();
+  
+  return 'Product';
+}
+
+function extractDescription(html: string, metadata: Record<string, unknown>): string | undefined {
+  // Try og:description or meta description
+  if (metadata.ogDescription) return String(metadata.ogDescription).slice(0, 200);
+  if (metadata.description) return String(metadata.description).slice(0, 200);
+  
+  // Try product description from structured data
+  const descMatch = html.match(/"description"\s*:\s*"([^"]+)"/);
+  if (descMatch) return descMatch[1].slice(0, 200);
+  
+  return undefined;
+}
+
+function extractPrice(html: string): string | undefined {
+  // Try structured data price first
+  const priceMatch = html.match(/"price"\s*:\s*"?([0-9.,]+)"?/);
+  const currencyMatch = html.match(/"priceCurrency"\s*:\s*"([^"]+)"/);
+  
+  if (priceMatch) {
+    const currency = currencyMatch ? currencyMatch[1] : '€';
+    return `${priceMatch[1]} ${currency}`;
+  }
+  
+  // Try common price patterns in HTML
+  const pricePatterns = [
+    /<span[^>]*class="[^"]*price[^"]*"[^>]*>([^<]*[0-9.,]+[^<]*)<\/span>/i,
+    /<p[^>]*class="[^"]*price[^"]*"[^>]*>([^<]*[0-9.,]+[^<]*)<\/p>/i,
+    /<ins[^>]*>[^<]*<span[^>]*>([^<]*[0-9.,]+[^<]*)<\/span>/i,
+    /class="[^"]*current-price[^"]*"[^>]*>([^<]*[0-9.,]+[^<]*)</i,
+  ];
+  
+  for (const pattern of pricePatterns) {
+    const match = html.match(pattern);
+    if (match) {
+      // Clean up price text
+      const price = match[1].replace(/<[^>]+>/g, '').trim();
+      if (price.match(/[0-9]/)) return price;
+    }
+  }
+  
+  return undefined;
+}
+
+function extractOldPrice(html: string): string | undefined {
+  // Try to find crossed-out or original price
+  const oldPricePatterns = [
+    /<del[^>]*>([^<]*[0-9.,]+[^<]*)<\/del>/i,
+    /<s>([^<]*[0-9.,]+[^<]*)<\/s>/i,
+    /class="[^"]*regular-price[^"]*"[^>]*>([^<]*[0-9.,]+[^<]*)</i,
+    /class="[^"]*was-price[^"]*"[^>]*>([^<]*[0-9.,]+[^<]*)</i,
+    /class="[^"]*original-price[^"]*"[^>]*>([^<]*[0-9.,]+[^<]*)</i,
+  ];
+  
+  for (const pattern of oldPricePatterns) {
+    const match = html.match(pattern);
+    if (match) {
+      const price = match[1].replace(/<[^>]+>/g, '').trim();
+      if (price.match(/[0-9]/)) return price;
+    }
+  }
+  
+  return undefined;
+}
+
+function extractImageUrl(html: string, pageUrl: string): string | undefined {
+  // Try og:image first
+  const ogImageMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i) ||
+                       html.match(/content="([^"]+)"[^>]*property="og:image"/i);
+  if (ogImageMatch) {
+    return makeAbsoluteUrl(ogImageMatch[1], pageUrl);
+  }
+  
+  // Try structured data image
+  const structuredImageMatch = html.match(/"image"\s*:\s*"([^"]+)"/);
+  if (structuredImageMatch) {
+    return makeAbsoluteUrl(structuredImageMatch[1], pageUrl);
+  }
+  
+  // Try product image patterns
+  const imagePatterns = [
+    /<img[^>]*class="[^"]*product[^"]*image[^"]*"[^>]*src="([^"]+)"/i,
+    /<img[^>]*src="([^"]+)"[^>]*class="[^"]*product[^"]*image[^"]*"/i,
+    /class="[^"]*woocommerce-product-gallery[^"]*"[^>]*[^]*?<img[^>]*src="([^"]+)"/i,
+  ];
+  
+  for (const pattern of imagePatterns) {
+    const match = html.match(pattern);
+    if (match) {
+      return makeAbsoluteUrl(match[1], pageUrl);
+    }
+  }
+  
+  return undefined;
+}
+
+function makeAbsoluteUrl(url: string, baseUrl: string): string {
+  if (url.startsWith('http')) return url;
+  
+  try {
+    const base = new URL(baseUrl);
+    if (url.startsWith('//')) {
+      return `${base.protocol}${url}`;
+    }
+    if (url.startsWith('/')) {
+      return `${base.origin}${url}`;
+    }
+    return `${base.origin}/${url}`;
+  } catch {
+    return url;
+  }
+}
