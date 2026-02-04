@@ -123,6 +123,20 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
   const hueColor = rgbToHex(...hsvToRgb(hsv[0], 1, 1));
   const selectedColor = rgbToHex(...currentRgb);
 
+  const [hexInput, setHexInput] = useState(selectedColor);
+
+  // Keep hex input in sync with selected color
+  useEffect(() => {
+    setHexInput(selectedColor.toUpperCase());
+  }, [selectedColor]);
+
+  const handleHexChange = (value: string) => {
+    setHexInput(value.toUpperCase());
+    if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+      onChange(value);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-3 p-1">
       {/* Saturation/Value gradient square */}
@@ -177,6 +191,19 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
             }}
           />
         </div>
+      </div>
+
+      {/* HEX input */}
+      <div className="flex items-center gap-2 pt-1">
+        <span className="text-xs font-medium text-muted-foreground">HEX</span>
+        <input
+          type="text"
+          value={hexInput}
+          onChange={(e) => handleHexChange(e.target.value)}
+          className="flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-sm font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          maxLength={7}
+          placeholder="#000000"
+        />
       </div>
     </div>
   );
