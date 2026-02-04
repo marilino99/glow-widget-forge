@@ -49,7 +49,7 @@ const Builder = () => {
     deleteInstagramPost,
     reorderInstagramPosts,
   } = useInstagramPosts();
-  const [activeWidget, setActiveWidget] = useState<string | null>("faq");
+  const [activeWidget, setActiveWidget] = useState<string | null>(null);
   
   // Live preview state for product card edits
   const [previewCardOverride, setPreviewCardOverride] = useState<{
