@@ -87,7 +87,7 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
           Add to website
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto overflow-x-hidden">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Add to website</DialogTitle>
         </DialogHeader>
@@ -129,8 +129,8 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
             </p>
 
             {/* Code preview */}
-            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-x-auto">
-              <pre className="whitespace-pre-wrap">{embedCode}</pre>
+            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
             </div>
           </div>
 
