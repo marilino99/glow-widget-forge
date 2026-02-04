@@ -2,6 +2,7 @@ import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -86,7 +87,7 @@ const ProductCarouselPanel = ({
     // Add loading card with productUrl
     onAddCard({ 
       id: newCardId, 
-      title: "Loading...", 
+      title: "", 
       productUrl: urlToScrape,
       isLoading: true 
     });
@@ -418,9 +419,15 @@ const ProductCarouselPanel = ({
                   className="rounded-2xl p-4 shadow-sm transition-shadow hover:shadow-md"
                   style={{ backgroundColor: '#ffffff' }}
                 >
-                  {card.isLoading ? (
-                    <div className="flex items-center justify-center py-6">
-                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                {card.isLoading ? (
+                    <div className="space-y-3 animate-pulse">
+                      {/* Skeleton image */}
+                      <Skeleton className="w-full h-24 rounded-lg" />
+                      {/* Skeleton text lines */}
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                      </div>
                     </div>
                   ) : (
                     <div>
