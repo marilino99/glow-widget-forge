@@ -16,6 +16,8 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { ProductCardData } from "@/types/productCard";
 
 interface ProductCard {
@@ -43,6 +45,7 @@ const ProductCarouselPanel = ({
   onDeleteCard,
   onPreviewUpdate
 }: ProductCarouselPanelProps) => {
+  const { toast } = useToast();
   const [productUrl, setProductUrl] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
@@ -74,26 +77,73 @@ const ProductCarouselPanel = ({
     },
   ]);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!productUrl.trim()) return;
     
     const newCardId = crypto.randomUUID();
+    const urlToScrape = productUrl.trim();
     
     // Add loading card with productUrl
     onAddCard({ 
       id: newCardId, 
-      title: "New product", 
-      productUrl: productUrl.trim(),
+      title: "Loading...", 
+      productUrl: urlToScrape,
       isLoading: true 
     });
     setIsCreating(true);
     setProductUrl("");
     
-    // Simulate loading (TODO: implement actual URL parsing)
-    setTimeout(() => {
-      onUpdateCard(newCardId, { isLoading: false });
+    try {
+      // Call the edge function to extract product data
+      const { data, error } = await supabase.functions.invoke('extract-product-data', {
+        body: { url: urlToScrape },
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.success && data?.data) {
+        // Update card with extracted data
+        onUpdateCard(newCardId, {
+          title: data.data.title || 'Product',
+          subtitle: data.data.subtitle,
+          imageUrl: data.data.imageUrl,
+          price: data.data.price,
+          oldPrice: data.data.oldPrice,
+          isLoading: false,
+        });
+        toast({
+          title: "Product added",
+          description: "Product data extracted successfully",
+        });
+      } else {
+        // Extraction failed, set default values
+        onUpdateCard(newCardId, {
+          title: 'New product',
+          isLoading: false,
+        });
+        toast({
+          title: "Partial extraction",
+          description: "Could not extract all product details. Please edit manually.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error extracting product data:', error);
+      // Set default values on error
+      onUpdateCard(newCardId, {
+        title: 'New product',
+        isLoading: false,
+      });
+      toast({
+        title: "Extraction failed",
+        description: "Could not extract product data. Please edit manually.",
+        variant: "destructive",
+      });
+    } finally {
       setIsCreating(false);
-    }, 2000);
+    }
   };
 
   const handleDeleteCard = (cardId: string) => {
