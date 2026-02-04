@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronLeft, ChevronDown, Check, Upload, ImagePlus } from "lucide-react";
+import { ChevronLeft, ChevronDown, Check, Upload, ImagePlus, Pipette } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -251,7 +251,9 @@ const ThemeColorsPanel = ({
                       <button 
                         className="relative h-12 w-12 overflow-hidden rounded-full bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 transition-all hover:scale-110"
                       >
-                        <div className="absolute inset-[3px] rounded-full bg-background" />
+                        <div className="absolute inset-[3px] rounded-full bg-background flex items-center justify-center">
+                          <Pipette className="h-5 w-5 text-foreground" />
+                        </div>
                       </button>
                     )}
                   </PopoverTrigger>
