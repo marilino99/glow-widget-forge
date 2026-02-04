@@ -7,6 +7,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import UnsavedChangesDialog from "./UnsavedChangesDialog";
 
 interface ThemeColorsPanelProps {
@@ -238,9 +243,39 @@ const ThemeColorsPanel = ({
               );
             })}
             {/* Custom color picker */}
-            <button className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500">
-              <div className="absolute inset-1 rounded-full bg-white" />
-            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 hover:scale-110 transition-all">
+                  <div className="absolute inset-1 rounded-full bg-background" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="center">
+                <div className="flex flex-col gap-3">
+                  <Label className="text-sm font-medium">Custom color</Label>
+                  <input
+                    type="color"
+                    value={isHexColor(widgetColor) ? widgetColor : '#3B82F6'}
+                    onChange={(e) => onWidgetColorChange(e.target.value)}
+                    className="h-32 w-32 cursor-pointer rounded-lg border-0 bg-transparent p-0"
+                  />
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">HEX:</span>
+                    <input
+                      type="text"
+                      value={isHexColor(widgetColor) ? widgetColor.toUpperCase() : '#3B82F6'}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                          onWidgetColorChange(val);
+                        }
+                      }}
+                      className="w-24 rounded border border-border bg-background px-2 py-1 text-sm font-mono"
+                      maxLength={7}
+                    />
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
