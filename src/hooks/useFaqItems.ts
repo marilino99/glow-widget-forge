@@ -28,6 +28,8 @@ export const useFaqItems = () => {
 
         if (error) throw error;
 
+        console.log("FAQ items loaded:", data?.length || 0, "items for user", user.id);
+
         if (data && data.length > 0) {
           setFaqItems(
             data.map((item) => ({
@@ -38,6 +40,7 @@ export const useFaqItems = () => {
             }))
           );
         } else {
+          console.log("No FAQ items found, creating 2 default items...");
           // Create 2 default FAQ items for new users
           const defaultItems: FaqItemData[] = [
             { id: crypto.randomUUID(), question: "", answer: "", sortOrder: 0 },
@@ -47,17 +50,24 @@ export const useFaqItems = () => {
           setFaqItems(defaultItems);
           
           // Persist to database
-          const insertPromises = defaultItems.map((item) =>
-            supabase.from("faq_items").insert({
-              id: item.id,
-              user_id: user.id,
-              question: item.question,
-              answer: item.answer,
-              sort_order: item.sortOrder,
-            })
+          const insertResults = await Promise.all(
+            defaultItems.map((item) =>
+              supabase.from("faq_items").insert({
+                id: item.id,
+                user_id: user.id,
+                question: item.question,
+                answer: item.answer,
+                sort_order: item.sortOrder,
+              })
+            )
           );
           
-          await Promise.all(insertPromises);
+          const insertErrors = insertResults.filter(r => r.error);
+          if (insertErrors.length > 0) {
+            console.error("Error creating default FAQ items:", insertErrors.map(r => r.error));
+          } else {
+            console.log("Successfully created 2 default FAQ items");
+          }
         }
       } catch (error) {
         console.error("Error loading FAQ items:", error);
