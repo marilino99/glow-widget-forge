@@ -351,52 +351,32 @@ const WidgetPreviewPanel = ({
                 <span className="text-sm text-muted-foreground">Loading website...</span>
               </div>
             </div>
-          ) : loadError ? (/* Error state */
-            <div className="flex h-full items-center justify-center">
-              <div className="text-center">
-                <p className="text-sm text-destructive">{loadError}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Try a different URL</p>
-              </div>
-            </div>
-          ) : useScreenshotFallback ? (/* Screenshot fallback mode for SPA sites */
+          ) : useScreenshotFallback && screenshotUrl ? (/* Screenshot fallback mode for SPA sites */
             <div className="absolute inset-0 overflow-hidden">
-              {isLoadingScreenshot ? (
-                <div className="flex h-full items-center justify-center">
-                  <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Capturing screenshot...</span>
+              {devicePreview === "mobile" ? (
+                /* Mobile: centered screenshot in phone-like container */
+                <div className="flex h-full justify-center items-start py-4 overflow-auto">
+                  <div 
+                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
+                    style={{ 
+                      width: '280px', 
+                      height: '498px'
+                    }}
+                  >
+                    <img 
+                      src={screenshotUrl} 
+                      alt="Website screenshot" 
+                      className="h-full w-full object-cover object-top"
+                    />
                   </div>
                 </div>
-              ) : screenshotUrl ? (
-                devicePreview === "mobile" ? (
-                  /* Mobile: centered screenshot in phone-like container */
-                  <div className="flex h-full justify-center items-start py-4 overflow-auto">
-                    <div 
-                      className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
-                      style={{ 
-                        width: '280px', 
-                        height: '498px'
-                      }}
-                    >
-                      <img 
-                        src={screenshotUrl} 
-                        alt="Website screenshot" 
-                        className="h-full w-full object-cover object-top"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  /* Desktop: full cover screenshot */
-                  <img 
-                    src={screenshotUrl} 
-                    alt="Website screenshot" 
-                    className="h-full w-full object-cover object-top"
-                  />
-                )
               ) : (
-                <div className="flex h-full items-center justify-center">
-                  <p className="text-sm text-muted-foreground">Screenshot not available</p>
-                </div>
+                /* Desktop: full cover screenshot */
+                <img 
+                  src={screenshotUrl} 
+                  alt="Website screenshot" 
+                  className="h-full w-full object-cover object-top"
+                />
               )}
             </div>
           ) : proxyHtml ? (/* Iframe with proxied website content */
@@ -441,19 +421,24 @@ const WidgetPreviewPanel = ({
                 </div>
               )}
             </div>
-          ) : (/* Skeleton placeholder for website */
-            <div className={`h-full ${devicePreview === "mobile" ? "flex justify-center py-4" : ""}`}>
-              <div className={`space-y-4 p-8 ${devicePreview === "mobile" ? "w-[320px] bg-background shadow-xl rounded-lg" : ""}`}>
-                <div className="h-8 w-48 rounded bg-muted" />
-                <div className="h-4 w-full max-w-md rounded bg-muted" />
-                <div className="h-4 w-3/4 max-w-sm rounded bg-muted" />
-                <div className="mt-8 h-32 w-full max-w-lg rounded bg-muted" />
-                <div className="h-4 w-full max-w-md rounded bg-muted" />
-                <div className="h-4 w-2/3 max-w-sm rounded bg-muted" />
-                <div className="mt-8 grid grid-cols-3 gap-4 max-w-xl">
-                  <div className="h-24 rounded bg-muted" />
-                  <div className="h-24 rounded bg-muted" />
-                  <div className="h-24 rounded bg-muted" />
+          ) : (/* Skeleton placeholder for website - shown as default or when loading fails */
+            <div className={`h-full bg-slate-50 ${devicePreview === "mobile" ? "flex justify-center py-4" : ""}`}>
+              <div className={`space-y-5 p-10 ${devicePreview === "mobile" ? "w-[320px] bg-slate-50 shadow-xl rounded-lg h-[560px]" : ""}`}>
+                {/* Header placeholder */}
+                <div className="h-12 w-56 rounded-lg bg-slate-200/80" />
+                {/* Text lines */}
+                <div className="h-4 w-full max-w-lg rounded-md bg-slate-200/80" />
+                <div className="h-4 w-3/4 max-w-md rounded-md bg-slate-200/80" />
+                {/* Main content block */}
+                <div className="mt-6 h-44 w-full max-w-2xl rounded-xl bg-slate-200/80" />
+                {/* More text lines */}
+                <div className="h-4 w-full max-w-lg rounded-md bg-slate-200/80" />
+                <div className="h-4 w-2/3 max-w-sm rounded-md bg-slate-200/80" />
+                {/* Card grid */}
+                <div className="mt-6 grid grid-cols-3 gap-4 max-w-2xl">
+                  <div className="h-28 rounded-xl bg-slate-200/80" />
+                  <div className="h-28 rounded-xl bg-slate-200/80" />
+                  <div className="h-28 rounded-xl bg-slate-200/80" />
                 </div>
               </div>
             </div>
