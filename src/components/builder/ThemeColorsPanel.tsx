@@ -249,7 +249,10 @@ const ThemeColorsPanel = ({
                       </button>
                     ) : (
                       <button 
-                        className="relative h-12 w-12 overflow-hidden rounded-full bg-gradient-conic from-red-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 transition-all hover:scale-110"
+                        className="relative h-12 w-12 overflow-hidden rounded-full transition-all hover:scale-110"
+                        style={{
+                          background: 'conic-gradient(from 0deg, #ef4444, #f97316, #eab308, #22c55e, #06b6d4, #3b82f6, #8b5cf6, #ec4899, #ef4444)'
+                        }}
                       >
                         <div className="absolute inset-[3px] rounded-full bg-background flex items-center justify-center">
                           <Pipette className="h-5 w-5 text-foreground" />
