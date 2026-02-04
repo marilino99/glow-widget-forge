@@ -142,7 +142,7 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
       {/* Saturation/Value gradient square */}
       <div
         ref={satValRef}
-        className="relative h-36 w-full cursor-crosshair rounded-lg"
+        className="relative -mx-3 -mt-3 h-36 cursor-crosshair"
         style={{
           background: `linear-gradient(to bottom, transparent, black), linear-gradient(to right, white, ${hueColor})`
         }}

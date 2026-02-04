@@ -250,7 +250,7 @@ const ThemeColorsPanel = ({
                   <div className="absolute inset-1 rounded-full bg-background" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-52 overflow-hidden p-3" align="center">
+              <PopoverContent className="w-52 overflow-hidden rounded-xl p-3" align="center">
                 <ColorPicker
                   color={isHexColor(widgetColor) ? widgetColor : '#3B82F6'}
                   onChange={onWidgetColorChange}
