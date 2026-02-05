@@ -33,7 +33,7 @@ const inspirationItems = [
 const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps) => {
   const [url, setUrl] = useState("");
   const [localLinks, setLocalLinks] = useState<LocalLink[]>([]);
-  const { links: savedLinks, addLink, isLoading } = useCustomLinks();
+  const { links: savedLinks, addLink, updateLink, deleteLink, isLoading } = useCustomLinks();
 
   // Notify parent of local links changes for live preview
   useEffect(() => {
@@ -70,6 +70,15 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
     setLocalLinks(localLinks.filter(link => link.id !== id));
   };
 
+  // Handlers for saved links
+  const handleUpdateSavedLink = async (id: string, field: "name" | "url", value: string) => {
+    await updateLink(id, { [field]: value });
+  };
+
+  const handleDeleteSavedLink = async (id: string) => {
+    await deleteLink(id);
+  };
+
   const handleCancel = () => {
     setLocalLinks([]);
   };
@@ -84,6 +93,7 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
   };
 
   const hasUnsavedLinks = localLinks.length > 0;
+  const hasAnyLinks = savedLinks.length > 0 || localLinks.length > 0;
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -126,14 +136,58 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
         </div>
       </div>
 
-      {/* Created links list (unsaved) */}
-      {hasUnsavedLinks ? (
+      {/* Links list (saved + unsaved) */}
+      {hasAnyLinks ? (
         <ScrollArea className="flex-1 px-6">
           <div className="space-y-4 pb-4">
-            {localLinks.map((link) => (
+            {/* Saved links */}
+            {savedLinks.map((link) => (
               <div
                 key={link.id}
                 className="flex items-start gap-2 rounded-xl border border-border bg-card p-4"
+              >
+                {/* Drag handle */}
+                <div className="pt-1">
+                  <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
+                </div>
+                
+                {/* Content */}
+                <div className="flex-1 space-y-3">
+                  <div>
+                    <label className="text-sm font-semibold text-foreground">Name your link</label>
+                    <Input
+                      placeholder='e.g. "Schedule a call"'
+                      value={link.name}
+                      onChange={(e) => handleUpdateSavedLink(link.id, "name", e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold text-foreground">URL</label>
+                    <Input
+                      placeholder="https://example.com"
+                      value={link.url}
+                      onChange={(e) => handleUpdateSavedLink(link.id, "url", e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+                
+                {/* Delete button */}
+                <button
+                  onClick={() => handleDeleteSavedLink(link.id)}
+                  className="p-1 hover:bg-destructive/10 rounded transition-colors"
+                >
+                  <Trash2 className="h-5 w-5 text-muted-foreground hover:text-destructive" />
+                </button>
+              </div>
+            ))}
+
+            {/* Unsaved local links */}
+            {localLinks.map((link) => (
+              <div
+                key={link.id}
+                className="flex items-start gap-2 rounded-xl border border-primary/30 bg-card p-4"
               >
                 {/* Drag handle */}
                 <div className="pt-1">
