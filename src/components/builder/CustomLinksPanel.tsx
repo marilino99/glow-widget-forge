@@ -84,7 +84,12 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
   };
 
   const handleDeleteLink = (id: string) => {
-    setLocalLinks(localLinks.filter(link => link.id !== id));
+    const newLocalLinks = localLinks.filter(link => link.id !== id);
+    setLocalLinks(newLocalLinks);
+    // Explicitly notify parent immediately for edge cases
+    if (newLocalLinks.length === 0) {
+      onLocalLinksChange?.([]);
+    }
   };
 
   // Handlers for saved links
@@ -98,6 +103,8 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
 
   const handleCancel = () => {
     setLocalLinks([]);
+    // Explicitly notify parent immediately
+    onLocalLinksChange?.([]);
   };
 
   const handleSave = async () => {
