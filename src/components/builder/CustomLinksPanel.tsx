@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, FileText, Calendar, Clapperboard, Link2, Globe, Video, ShoppingBag, HelpCircle, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -7,17 +7,16 @@ interface CustomLinksPanelProps {
   onBack: () => void;
 }
 
-// Icons for the scrolling inspiration carousel
-const inspirationIcons = [
-  { Icon: FileText, label: "Docs" },
-  { Icon: Calendar, label: "Calendar" },
-  { Icon: Clapperboard, label: "Video" },
-  { Icon: Link2, label: "Links" },
-  { Icon: Globe, label: "Website" },
-  { Icon: Video, label: "YouTube" },
-  { Icon: ShoppingBag, label: "Shop" },
-  { Icon: HelpCircle, label: "Support" },
-  { Icon: BookOpen, label: "Guide" },
+// Inspiration items with emojis - matches the screenshot style
+const inspirationItems = [
+  { emoji: "🍿", label: "Watch video guide" },
+  { emoji: "𝕏", label: "Follow us on X" },
+  { emoji: "📄", label: "Terms & Conditions" },
+  { emoji: "📅", label: "Schedule a call" },
+  { emoji: "🛒", label: "Visit our shop" },
+  { emoji: "📚", label: "Read our guide" },
+  { emoji: "💬", label: "Join Discord" },
+  { emoji: "📧", label: "Contact support" },
 ];
 
 const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
@@ -47,33 +46,8 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
         </p>
       </div>
 
-      {/* Scrolling icons inspiration */}
-      <div className="border-b border-border py-6 overflow-hidden">
-        <div className="relative">
-          {/* Gradient fade on edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-          
-          {/* Scrolling container */}
-          <div className="flex animate-scroll-left">
-            {/* Double the icons for seamless loop */}
-            {[...inspirationIcons, ...inspirationIcons].map((item, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center justify-center mx-4 min-w-[60px]"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50">
-                  <item.Icon className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <span className="mt-2 text-xs text-muted-foreground">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Create link section */}
-      <div className="p-6">
+      <div className="border-b border-border p-6">
         <h3 className="mb-3 text-sm font-semibold text-foreground">Create link</h3>
         <div className="flex gap-2">
           <Input
@@ -93,6 +67,34 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
           >
             Create
           </Button>
+        </div>
+      </div>
+
+      {/* Scrolling inspiration cards */}
+      <div className="py-6 overflow-hidden">
+        <div className="relative">
+          {/* Gradient fade on edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          
+          {/* Scrolling container */}
+          <div className="flex animate-scroll-left">
+            {/* Double the items for seamless loop */}
+            {[...inspirationItems, ...inspirationItems].map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 mx-2 min-w-[200px] rounded-full bg-muted/50 px-4 py-3"
+              >
+                <span className="text-lg">{item.emoji}</span>
+                <span className="text-sm font-medium text-muted-foreground flex-1 whitespace-nowrap">
+                  {item.label}
+                </span>
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background">
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
