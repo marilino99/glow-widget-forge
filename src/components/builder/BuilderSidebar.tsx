@@ -22,6 +22,7 @@ import ProductCarouselPanel from "./ProductCarouselPanel";
 import TypographyPanel from "./TypographyPanel";
 import FaqPanel from "./FaqPanel";
 import InstagramPanel from "./InstagramPanel";
+import WhatsAppPanel from "./WhatsAppPanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -72,6 +73,12 @@ interface BuilderSidebarProps {
   onUpdateInstagramPost: (postId: string, updates: Partial<InstagramPostData>) => void;
   onDeleteInstagramPost: (postId: string) => void;
   onReorderInstagramPosts: (fromIndex: number, toIndex: number) => void;
+  whatsappEnabled: boolean;
+  onWhatsappToggle: (enabled: boolean) => void;
+  whatsappCountryCode: string;
+  onWhatsappCountryCodeChange: (code: string) => void;
+  whatsappNumber: string;
+  onWhatsappNumberChange: (number: string) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -120,6 +127,12 @@ const BuilderSidebar = ({
   onUpdateInstagramPost,
   onDeleteInstagramPost,
   onReorderInstagramPosts,
+  whatsappEnabled,
+  onWhatsappToggle,
+  whatsappCountryCode,
+  onWhatsappCountryCodeChange,
+  whatsappNumber,
+  onWhatsappNumberChange,
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -128,6 +141,7 @@ const BuilderSidebar = ({
   const [showTypographyPanel, setShowTypographyPanel] = useState(false);
   const [showInstagramPanel, setShowInstagramPanel] = useState(false);
   const [showFaqPanel, setShowFaqPanel] = useState(false);
+  const [showWhatsAppPanel, setShowWhatsAppPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
@@ -142,6 +156,8 @@ const BuilderSidebar = ({
       setShowFaqPanel(true);
     } else if (widgetType === "instagram") {
       setShowInstagramPanel(true);
+    } else if (widgetType === "whatsapp") {
+      setShowWhatsAppPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -176,6 +192,11 @@ const BuilderSidebar = ({
     onSelectWidget(null as unknown as string);
   };
 
+  const handleBackFromWhatsApp = () => {
+    setShowWhatsAppPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
   // Check if typography has unsaved changes
   const hasTypographyUnsavedChanges = 
     logo !== initialLogo || 
@@ -204,6 +225,22 @@ const BuilderSidebar = ({
         onUpdatePost={onUpdateInstagramPost}
         onDeletePost={onDeleteInstagramPost}
         onReorderPosts={onReorderInstagramPosts}
+      />
+    );
+  }
+
+  // Show WhatsApp panel
+  if (showWhatsAppPanel) {
+    return (
+      <WhatsAppPanel
+        onBack={handleBackFromWhatsApp}
+        whatsappEnabled={whatsappEnabled}
+        onWhatsappToggle={onWhatsappToggle}
+        whatsappCountryCode={whatsappCountryCode}
+        onWhatsappCountryCodeChange={onWhatsappCountryCodeChange}
+        whatsappNumber={whatsappNumber}
+        onWhatsappNumberChange={onWhatsappNumberChange}
+        onSaveConfig={onSaveConfig}
       />
     );
   }

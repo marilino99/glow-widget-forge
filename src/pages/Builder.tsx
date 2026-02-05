@@ -247,6 +247,12 @@ const Builder = () => {
             onUpdateInstagramPost={updateInstagramPost}
             onDeleteInstagramPost={deleteInstagramPost}
             onReorderInstagramPosts={reorderInstagramPosts}
+            whatsappEnabled={config.whatsappEnabled}
+            onWhatsappToggle={(enabled) => saveConfig({ whatsappEnabled: enabled })}
+            whatsappCountryCode={config.whatsappCountryCode}
+            onWhatsappCountryCodeChange={(code) => updateConfig({ whatsappCountryCode: code })}
+            whatsappNumber={config.whatsappNumber}
+            onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
           />
         </div>
 

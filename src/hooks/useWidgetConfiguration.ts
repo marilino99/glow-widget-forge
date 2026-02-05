@@ -18,6 +18,9 @@ export interface WidgetConfiguration {
   sayHello: string;
   instagramEnabled: boolean;
   websiteUrl: string | null;
+  whatsappEnabled: boolean;
+  whatsappCountryCode: string;
+  whatsappNumber: string;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -35,6 +38,9 @@ const defaultConfig: WidgetConfiguration = {
   sayHello: "Hello, nice to see you here 👋",
   instagramEnabled: false,
   websiteUrl: null,
+  whatsappEnabled: false,
+  whatsappCountryCode: "+39",
+  whatsappNumber: "",
 };
 
 export const useWidgetConfiguration = () => {
@@ -63,7 +69,7 @@ export const useWidgetConfiguration = () => {
         if (error) throw error;
 
         if (data) {
-          const dbData = data as typeof data & { logo?: string; language?: string; say_hello?: string; instagram_enabled?: boolean; website_url?: string };
+          const dbData = data as typeof data & { logo?: string; language?: string; say_hello?: string; instagram_enabled?: boolean; website_url?: string; whatsapp_enabled?: boolean; whatsapp_country_code?: string; whatsapp_number?: string };
           setConfig({
             id: data.id,
             selectedAvatar: data.selected_avatar,
@@ -79,6 +85,9 @@ export const useWidgetConfiguration = () => {
             sayHello: dbData.say_hello || defaultConfig.sayHello,
             instagramEnabled: dbData.instagram_enabled ?? false,
             websiteUrl: dbData.website_url || null,
+            whatsappEnabled: dbData.whatsapp_enabled ?? false,
+            whatsappCountryCode: dbData.whatsapp_country_code || "+39",
+            whatsappNumber: dbData.whatsapp_number || "",
           });
         }
       } catch (error) {
@@ -118,6 +127,9 @@ export const useWidgetConfiguration = () => {
           say_hello: updatedConfig.sayHello,
           instagram_enabled: updatedConfig.instagramEnabled,
           website_url: updatedConfig.websiteUrl,
+          whatsapp_enabled: updatedConfig.whatsappEnabled,
+          whatsapp_country_code: updatedConfig.whatsappCountryCode,
+          whatsapp_number: updatedConfig.whatsappNumber,
         }, {
           onConflict: "user_id"
         })
