@@ -105,16 +105,16 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  @keyframes scroll-left {
+  @keyframes scroll-up {
     0% {
-      transform: translateX(0);
+      transform: translateY(0);
     }
     100% {
-      transform: translateX(-50%);
+      transform: translateY(-50%);
     }
   }
 
-  .animate-scroll-left {
-    animation: scroll-left 15s linear infinite;
+  .animate-scroll-up {
+    animation: scroll-up 12s linear infinite;
   }
 }
