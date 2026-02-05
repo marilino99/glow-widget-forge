@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
+import { CustomLinkData } from "@/types/customLink";
 import { getTranslations } from "@/lib/translations";
 
 interface WidgetPreviewPanelProps {
@@ -28,6 +29,7 @@ interface WidgetPreviewPanelProps {
   whatsappEnabled?: boolean;
   whatsappCountryCode?: string;
   whatsappNumber?: string;
+  customLinks?: CustomLinkData[];
 }
 
 // Check if a color is a hex value
@@ -176,7 +178,8 @@ const WidgetPreviewPanel = ({
   websiteUrl = null,
   whatsappEnabled = false,
   whatsappCountryCode = "+39",
-  whatsappNumber = ""
+  whatsappNumber = "",
+  customLinks = []
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -898,6 +901,38 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                   </div>}
+
+                {/* Custom Links section */}
+                {customLinks.length > 0 && (
+                  <div className={`px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                    {customLinks.map((link) => (
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(link.url, '_blank', 'noopener,noreferrer');
+                        }}
+                        className={`flex items-center justify-between rounded-xl px-4 py-3 mb-2 last:mb-0 transition-colors ${
+                          isLight 
+                            ? "bg-white hover:bg-slate-50" 
+                            : "bg-slate-800 hover:bg-slate-700"
+                        }`}
+                      >
+                        <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>
+                          {link.name || "Untitled"}
+                        </span>
+                        <div className={`flex h-7 w-7 items-center justify-center rounded-full ${
+                          isLight ? "bg-slate-100" : "bg-slate-700"
+                        }`}>
+                          <ChevronRight className={`h-4 w-4 ${isLight ? "text-slate-500" : "text-slate-400"}`} />
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                )}
                 </div>
 
                 {/* Footer nav - box with backdrop blur */}
