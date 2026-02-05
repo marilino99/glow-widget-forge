@@ -696,11 +696,12 @@ const WidgetPreviewPanel = ({
                       {t.contactUs}
                     </Button>
                     {/* WhatsApp Button */}
-                    {whatsappEnabled && whatsappNumber && (
+                    {whatsappEnabled && (
                       <a 
-                        href={`https://wa.me/${whatsappCountryCode.replace('+', '')}${whatsappNumber}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={whatsappNumber ? `https://wa.me/${whatsappCountryCode.replace('+', '')}${whatsappNumber}` : "#"}
+                        target={whatsappNumber ? "_blank" : undefined}
+                        rel={whatsappNumber ? "noopener noreferrer" : undefined}
+                        onClick={whatsappNumber ? undefined : (e) => e.preventDefault()}
                         className={`mt-2 w-full flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
                           isLight 
                             ? "bg-slate-100 hover:bg-slate-200 text-slate-900" 
