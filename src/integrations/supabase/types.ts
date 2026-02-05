@@ -210,6 +210,9 @@ export type Database = {
           updated_at: string
           user_id: string
           website_url: string | null
+          whatsapp_country_code: string | null
+          whatsapp_enabled: boolean | null
+          whatsapp_number: string | null
           widget_color: string
           widget_theme: string
         }
@@ -229,6 +232,9 @@ export type Database = {
           updated_at?: string
           user_id: string
           website_url?: string | null
+          whatsapp_country_code?: string | null
+          whatsapp_enabled?: boolean | null
+          whatsapp_number?: string | null
           widget_color?: string
           widget_theme?: string
         }
@@ -248,6 +254,9 @@ export type Database = {
           updated_at?: string
           user_id?: string
           website_url?: string | null
+          whatsapp_country_code?: string | null
+          whatsapp_enabled?: boolean | null
+          whatsapp_number?: string | null
           widget_color?: string
           widget_theme?: string
         }
