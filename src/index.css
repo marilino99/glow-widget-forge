@@ -115,6 +115,6 @@ All colors MUST be HSL.
   }
 
   .animate-scroll-up {
-    animation: scroll-up 12s linear infinite;
+    animation: scroll-up 20s linear infinite;
   }
 }
