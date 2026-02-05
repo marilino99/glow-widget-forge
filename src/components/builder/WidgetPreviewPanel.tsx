@@ -448,7 +448,7 @@ const WidgetPreviewPanel = ({
               ) : (
                 /* Desktop: responsive screenshot that fills container */
           <div className="absolute inset-0">
-                  <div className="relative h-full w-full shadow-xl rounded-lg overflow-hidden bg-white">
+                  <div className="relative h-full w-full overflow-hidden bg-white">
                     <img 
                       src={screenshotUrl} 
                       alt="Website screenshot" 
@@ -486,8 +486,8 @@ const WidgetPreviewPanel = ({
                 </div>
               ) : (
                 /* Desktop: responsive iframe that fills container with scaling */
-                <div className="absolute inset-0 p-3">
-                  <div className="relative h-full w-full shadow-xl rounded-lg overflow-hidden">
+                <div className="absolute inset-0">
+                  <div className="relative h-full w-full overflow-hidden">
                     <iframe 
                       srcDoc={proxyHtml} 
                       className="absolute border-0 bg-white" 
@@ -527,8 +527,8 @@ const WidgetPreviewPanel = ({
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 p-3 bg-slate-50">
-                <div className="h-full w-full bg-white shadow-xl rounded-lg p-8 space-y-5">
+              <div className="absolute inset-0 bg-slate-50">
+                <div className="h-full w-full bg-white p-8 space-y-5">
                   {/* Header placeholder */}
                   <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
                   {/* Text lines */}
