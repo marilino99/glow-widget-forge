@@ -494,9 +494,9 @@ const WidgetPreviewPanel = ({
                       title="Website preview" 
                       sandbox="allow-same-origin"
                       style={{ 
-                        width: '200%', 
-                        height: '200%',
-                        transform: 'scale(0.5)',
+                        width: '166.67%', 
+                        height: '166.67%',
+                        transform: 'scale(0.6)',
                         transformOrigin: 'top left'
                       }}
                     />
