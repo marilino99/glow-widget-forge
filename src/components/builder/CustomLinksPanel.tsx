@@ -71,7 +71,7 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
       </div>
 
       {/* Vertical scrolling inspiration cards */}
-      <div className="flex-1 flex items-start justify-center px-6 pt-4 pb-8">
+      <div className="flex-1 flex items-start justify-center px-6 pt-6 pb-8">
         <div className="relative h-[280px] w-full overflow-hidden">
           {/* Gradient fade on top and bottom - larger for 2 faded items */}
           <div className="absolute left-0 right-0 top-0 h-16 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
