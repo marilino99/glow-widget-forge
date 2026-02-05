@@ -3,15 +3,18 @@ import { ArrowLeft, GripVertical, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface CustomLink {
-  id: string;
-  name: string;
-  url: string;
-}
+import { useCustomLinks } from "@/hooks/useCustomLinks";
 
 interface CustomLinksPanelProps {
   onBack: () => void;
+}
+
+// Local state for unsaved links being edited
+interface LocalLink {
+  id: string;
+  name: string;
+  url: string;
+  isNew?: boolean;
 }
 
 // Inspiration items with emojis - matches the screenshot style
@@ -28,43 +31,47 @@ const inspirationItems = [
 
 const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
   const [url, setUrl] = useState("");
-  const [links, setLinks] = useState<CustomLink[]>([]);
+  const [localLinks, setLocalLinks] = useState<LocalLink[]>([]);
+  const { links: savedLinks, addLink, isLoading } = useCustomLinks();
 
   const handleCreateLink = () => {
     if (!url.trim()) return;
     
-    const newLink: CustomLink = {
-      id: Date.now().toString(),
+    const newLink: LocalLink = {
+      id: `temp-${Date.now()}`,
       name: "",
       url: url.trim(),
+      isNew: true,
     };
     
-    setLinks([...links, newLink]);
+    setLocalLinks([...localLinks, newLink]);
     setUrl("");
   };
 
   const handleUpdateLinkName = (id: string, name: string) => {
-    setLinks(links.map(link => 
+    setLocalLinks(localLinks.map(link => 
       link.id === id ? { ...link, name } : link
     ));
   };
 
   const handleDeleteLink = (id: string) => {
-    setLinks(links.filter(link => link.id !== id));
+    setLocalLinks(localLinks.filter(link => link.id !== id));
   };
 
   const handleCancel = () => {
-    setLinks([]);
+    setLocalLinks([]);
   };
 
-  const handleSave = () => {
-    // TODO: Save links to database
-    console.log("Saving links:", links);
-    // For now, just clear the links after "saving"
-    setLinks([]);
+  const handleSave = async () => {
+    for (const link of localLinks) {
+      if (link.isNew) {
+        await addLink(link.name || "Untitled link", link.url);
+      }
+    }
+    setLocalLinks([]);
   };
 
-  const hasLinks = links.length > 0;
+  const hasUnsavedLinks = localLinks.length > 0;
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -107,11 +114,11 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
         </div>
       </div>
 
-      {/* Created links list */}
-      {hasLinks ? (
+      {/* Created links list (unsaved) */}
+      {hasUnsavedLinks ? (
         <ScrollArea className="flex-1 px-6">
           <div className="space-y-4 pb-4">
-            {links.map((link) => (
+            {localLinks.map((link) => (
               <div
                 key={link.id}
                 className="flex items-start gap-2 rounded-xl border border-border bg-card p-4"
@@ -179,7 +186,7 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
       )}
 
       {/* Footer with Cancel/Save buttons */}
-      {hasLinks && (
+      {hasUnsavedLinks && (
         <div className="flex justify-end gap-3 border-t border-border p-4">
           <Button variant="secondary" onClick={handleCancel}>
             Cancel

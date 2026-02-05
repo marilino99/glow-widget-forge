@@ -6,6 +6,7 @@ import { useProductCards } from "@/hooks/useProductCards";
 import { useFaqItems } from "@/hooks/useFaqItems";
 import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { Button } from "@/components/ui/button";
 import { Boxes, HelpCircle, LogOut, Loader2, MessageCircle } from "lucide-react";
 import {
@@ -49,6 +50,10 @@ const Builder = () => {
     deleteInstagramPost,
     reorderInstagramPosts,
   } = useInstagramPosts();
+  const {
+    links: customLinks,
+    isLoading: isLoadingCustomLinks,
+  } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   
   // Live preview state for product card edits
@@ -124,7 +129,7 @@ const Builder = () => {
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
   // Show loading state while fetching configuration
-  if (isLoading || isLoadingCards || isLoadingFaq || isLoadingInstagram) {
+  if (isLoading || isLoadingCards || isLoadingFaq || isLoadingInstagram || isLoadingCustomLinks) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -277,6 +282,7 @@ const Builder = () => {
             whatsappEnabled={config.whatsappEnabled}
             whatsappCountryCode={config.whatsappCountryCode}
             whatsappNumber={config.whatsappNumber}
+            customLinks={customLinks}
           />
         </div>
       </div>

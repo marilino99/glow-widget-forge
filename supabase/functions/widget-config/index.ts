@@ -76,6 +76,17 @@ Deno.serve(async (req) => {
       console.error("Instagram posts error:", instagramError);
     }
 
+    // Fetch custom links for this user
+    const { data: customLinks, error: customLinksError } = await supabase
+      .from("custom_links")
+      .select("*")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
+
+    if (customLinksError) {
+      console.error("Custom links error:", customLinksError);
+    }
+
     // Return the complete widget configuration
     return new Response(
       JSON.stringify({
@@ -94,6 +105,7 @@ Deno.serve(async (req) => {
         product_cards: productCards || [],
         faq_items: faqItems || [],
         instagram_posts: instagramPosts || [],
+        custom_links: customLinks || [],
       }),
       { headers: corsHeaders }
     );

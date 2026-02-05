@@ -93,6 +93,7 @@ Deno.serve(async (req) => {
     var products = cfg.product_cards || [];
     var faqs = cfg.faq_items || [];
     var igPosts = cfg.instagram_posts || [];
+    var customLinks = cfg.custom_links || [];
     var faqEnabled = cfg.faq_enabled;
     var igEnabled = cfg.instagram_enabled;
     var lang = cfg.language || 'en';
@@ -174,6 +175,13 @@ Deno.serve(async (req) => {
       .wj-faq-q.open svg{transform:rotate(180deg)}
       .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
       .wj-faq-a.open{display:block}
+      #wj-links{padding:0 16px 16px}
+      .wj-link-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;transition:background .15s}
+      .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
+      .wj-link-item:last-child{margin-bottom:0}
+      .wj-link-name{font-size:14px;font-weight:500;color:\${textMain}}
+      .wj-link-arrow{width:28px;height:28px;border-radius:50%;background:\${dark ? '#374151' : '#e2e8f0'};display:flex;align-items:center;justify-content:center}
+      .wj-link-arrow svg{width:14px;height:14px;color:\${textSub}}
       #wj-footer{padding:12px 16px 4px;background:\${bgMain}}
       #wj-nav{display:flex;border-radius:16px;background:\${dark ? 'rgba(51,65,85,0.7)' : 'rgba(255,255,255,0.7)'};backdrop-filter:blur(8px)}
       .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
@@ -264,6 +272,13 @@ Deno.serve(async (req) => {
       .wj-faq-q.open svg{transform:rotate(180deg)}
       .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
       .wj-faq-a.open{display:block}
+      #wj-links{padding:0 16px 16px}
+      .wj-link-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;transition:background .15s}
+      .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
+      .wj-link-item:last-child{margin-bottom:0}
+      .wj-link-name{font-size:14px;font-weight:500;color:\${textMain}}
+      .wj-link-arrow{width:28px;height:28px;border-radius:50%;background:\${dark ? '#374151' : '#e2e8f0'};display:flex;align-items:center;justify-content:center}
+      .wj-link-arrow svg{width:14px;height:14px;color:\${textSub}}
       #wj-footer{padding:12px 16px 4px;background:\${bgMain}}
       #wj-nav{display:flex;border-radius:16px;background:\${dark ? 'rgba(51,65,85,0.7)' : 'rgba(255,255,255,0.7)'};backdrop-filter:blur(8px)}
       .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
@@ -408,6 +423,22 @@ Deno.serve(async (req) => {
         faqItems.appendChild(item);
       });
       scroll.appendChild(faqCont);
+    }
+
+    // Custom Links
+    if (customLinks.length > 0) {
+      var linksCont = d.createElement('div');
+      linksCont.id = 'wj-links';
+      customLinks.forEach(function(link) {
+        var item = d.createElement('a');
+        item.className = 'wj-link-item';
+        item.href = link.url;
+        item.target = '_blank';
+        item.rel = 'noopener';
+        item.innerHTML = '<span class="wj-link-name">' + esc(link.name || 'Untitled') + '</span><div class="wj-link-arrow"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>';
+        linksCont.appendChild(item);
+      });
+      scroll.appendChild(linksCont);
     }
 
     homeView.appendChild(scroll);
