@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
+import UnsavedChangesDialog from "./UnsavedChangesDialog";
 
 // Local state for unsaved links being edited
 export interface LocalLink {
@@ -33,12 +34,28 @@ const inspirationItems = [
 const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps) => {
   const [url, setUrl] = useState("");
   const [localLinks, setLocalLinks] = useState<LocalLink[]>([]);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const { links: savedLinks, addLink, updateLink, deleteLink, isLoading } = useCustomLinks();
 
   // Notify parent of local links changes for live preview
   useEffect(() => {
     onLocalLinksChange?.(localLinks);
   }, [localLinks, onLocalLinksChange]);
+
+  const handleBackClick = () => {
+    if (localLinks.length > 0) {
+      setShowUnsavedDialog(true);
+    } else {
+      onBack();
+    }
+  };
+
+  const handleDiscardAndGoBack = () => {
+    setLocalLinks([]);
+    onLocalLinksChange?.([]);
+    setShowUnsavedDialog(false);
+    onBack();
+  };
 
   const handleCreateLink = () => {
     if (!url.trim()) return;
@@ -100,7 +117,7 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
       {/* Header */}
       <div className="p-6 pb-4">
         <button
-          onClick={onBack}
+          onClick={handleBackClick}
           className="mb-4 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -265,6 +282,14 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
           </Button>
         </div>
       )}
+
+      <UnsavedChangesDialog
+        open={showUnsavedDialog}
+        onOpenChange={setShowUnsavedDialog}
+        onStayHere={() => setShowUnsavedDialog(false)}
+        onDiscardChanges={handleDiscardAndGoBack}
+        sectionName="Custom Links"
+      />
     </div>
   );
 };
