@@ -32,7 +32,7 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
   return (
     <div className="flex h-full flex-col bg-background">
       {/* Header */}
-      <div className="border-b border-border p-6 pb-4">
+      <div className="p-6 pb-4">
         <button
           onClick={onBack}
           className="mb-4 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -47,7 +47,7 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
       </div>
 
       {/* Create link section */}
-      <div className="border-b border-border p-6">
+      <div className="px-6 pb-4">
         <h3 className="mb-3 text-sm font-semibold text-foreground">Create link</h3>
         <div className="flex gap-2">
           <Input
