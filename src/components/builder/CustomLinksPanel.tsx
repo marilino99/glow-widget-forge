@@ -60,6 +60,12 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
     ));
   };
 
+  const handleUpdateLinkUrl = (id: string, url: string) => {
+    setLocalLinks(localLinks.map(link => 
+      link.id === id ? { ...link, url } : link
+    ));
+  };
+
   const handleDeleteLink = (id: string) => {
     setLocalLinks(localLinks.filter(link => link.id !== id));
   };
@@ -147,9 +153,12 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
                   </div>
                   <div>
                     <label className="text-sm font-semibold text-foreground">URL</label>
-                    <div className="mt-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground truncate">
-                      {link.url}
-                    </div>
+                    <Input
+                      placeholder="https://example.com"
+                      value={link.url}
+                      onChange={(e) => handleUpdateLinkUrl(link.id, e.target.value)}
+                      className="mt-2"
+                    />
                   </div>
                 </div>
                 
