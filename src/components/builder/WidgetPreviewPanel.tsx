@@ -521,7 +521,11 @@ const WidgetPreviewPanel = ({
 
           {/* Widget preview - interactive */}
           <div 
-            className={`absolute z-20 transition-all duration-300 ${devicePreview === "mobile" ? "w-72 scale-[0.55] origin-bottom-right" : "bottom-6 right-6 w-80"}`} 
+            className={`absolute z-20 transition-all duration-300 ${
+              devicePreview === "mobile" 
+                ? "w-72 scale-[0.55] origin-bottom-right" 
+                : "bottom-4 right-4 w-80 max-w-[calc(100%-2rem)] max-h-[calc(100%-2rem)]"
+            }`} 
             style={devicePreview === "mobile" ? { 
               bottom: '48px',
               right: 'calc(50% - 100px)'
@@ -539,7 +543,7 @@ const WidgetPreviewPanel = ({
                   {buttonLogo ? <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" /> : <HelpCircle className="h-7 w-7 text-white" />}
                 </button>
               </div>) : showChat ? (/* Chat View */
-          <div className={`flex h-[500px] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`} style={customGradientStyle}>
+          <div className={`flex h-[500px] max-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`} style={customGradientStyle}>
                 {/* Chat header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -656,7 +660,7 @@ const WidgetPreviewPanel = ({
                   </span>
                 </div>
               </div>) : (/* Home View */
-          <div className={`flex flex-col max-h-[500px] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`} style={!isSolidMode ? customGradientStyle : {}}>
+          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`} style={!isSolidMode ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                 {/* Main content area - colored for solid mode (header + contact + extra space) */}
