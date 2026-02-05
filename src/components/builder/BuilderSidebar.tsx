@@ -23,6 +23,7 @@ import TypographyPanel from "./TypographyPanel";
 import FaqPanel from "./FaqPanel";
 import InstagramPanel from "./InstagramPanel";
 import WhatsAppPanel from "./WhatsAppPanel";
+import CustomLinksPanel from "./CustomLinksPanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -142,6 +143,7 @@ const BuilderSidebar = ({
   const [showInstagramPanel, setShowInstagramPanel] = useState(false);
   const [showFaqPanel, setShowFaqPanel] = useState(false);
   const [showWhatsAppPanel, setShowWhatsAppPanel] = useState(false);
+  const [showCustomLinksPanel, setShowCustomLinksPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
@@ -158,6 +160,8 @@ const BuilderSidebar = ({
       setShowInstagramPanel(true);
     } else if (widgetType === "whatsapp") {
       setShowWhatsAppPanel(true);
+    } else if (widgetType === "custom-links") {
+      setShowCustomLinksPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -197,6 +201,11 @@ const BuilderSidebar = ({
     onSelectWidget(null as unknown as string);
   };
 
+  const handleBackFromCustomLinks = () => {
+    setShowCustomLinksPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
   // Check if typography has unsaved changes
   const hasTypographyUnsavedChanges = 
     logo !== initialLogo || 
@@ -212,6 +221,15 @@ const BuilderSidebar = ({
   const handleTypographySave = (config: Record<string, unknown>) => {
     onSaveConfig(config);
   };
+
+  // Show Custom Links panel
+  if (showCustomLinksPanel) {
+    return (
+      <CustomLinksPanel
+        onBack={handleBackFromCustomLinks}
+      />
+    );
+  }
 
   // Show Instagram panel
   if (showInstagramPanel) {
