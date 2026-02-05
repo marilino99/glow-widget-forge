@@ -70,20 +70,20 @@ const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
         </div>
       </div>
 
-      {/* Scrolling inspiration cards */}
-      <div className="py-6 overflow-hidden">
-        <div className="relative">
-          {/* Gradient fade on edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+      {/* Vertical scrolling inspiration cards */}
+      <div className="flex-1 overflow-hidden px-6">
+        <div className="relative h-full">
+          {/* Gradient fade on top and bottom */}
+          <div className="absolute left-0 right-0 top-0 h-8 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 right-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none" />
           
           {/* Scrolling container */}
-          <div className="flex animate-scroll-left">
+          <div className="flex flex-col animate-scroll-up">
             {/* Double the items for seamless loop */}
             {[...inspirationItems, ...inspirationItems].map((item, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 mx-2 min-w-[200px] rounded-full bg-muted/50 px-4 py-3"
+                className="flex items-center gap-3 my-1.5 rounded-full bg-muted/50 px-4 py-3"
               >
                 <span className="text-lg">{item.emoji}</span>
                 <span className="text-sm font-medium text-muted-foreground flex-1 whitespace-nowrap">
