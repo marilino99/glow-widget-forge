@@ -917,7 +917,13 @@ const WidgetPreviewPanel = ({
 
                 {/* Custom Links section */}
                 {allLinksForPreview.length > 0 && (
-                  <div className={`px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                  <div className={`px-4 pb-4 ${isLight ? "" : "bg-black"} ${
+                    productCards.filter(c => !c.isLoading).length === 0 && 
+                    !instagramEnabled && 
+                    !(faqEnabled && faqItems.length > 0) 
+                      ? "mt-4" 
+                      : ""
+                  }`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                     {allLinksForPreview.map((link) => (
                       <a
                         key={link.id}
