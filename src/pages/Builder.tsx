@@ -274,6 +274,9 @@ const Builder = () => {
             instagramEnabled={config.instagramEnabled}
             instagramPosts={instagramPosts}
             websiteUrl={config.websiteUrl}
+            whatsappEnabled={config.whatsappEnabled}
+            whatsappCountryCode={config.whatsappCountryCode}
+            whatsappNumber={config.whatsappNumber}
           />
         </div>
       </div>

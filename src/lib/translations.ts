@@ -10,6 +10,7 @@ export interface WidgetTranslations {
   welcomeMessage: string;
   deliveryTime: string;
   shipInternationally: string;
+  contactWhatsApp: string;
 }
 
 const translations: Record<SupportedLanguage, WidgetTranslations> = {
@@ -23,6 +24,7 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     welcomeMessage: "Welcome! How can I help you?",
     deliveryTime: "What is the delivery time?",
     shipInternationally: "Do you ship internationally?",
+    contactWhatsApp: "Contact us on WhatsApp",
   },
   it: {
     contactUs: "Contattaci",
@@ -34,6 +36,7 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     welcomeMessage: "Benvenuto/a! In che modo posso esserti utile?",
     deliveryTime: "Quali sono i tempi di consegna?",
     shipInternationally: "Spedite all'estero?",
+    contactWhatsApp: "Contattaci su WhatsApp",
   },
   es: {
     contactUs: "Contáctanos",
@@ -45,6 +48,7 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     welcomeMessage: "¡Bienvenido/a! ¿Cómo puedo ayudarte?",
     deliveryTime: "¿Cuál es el tiempo de entrega?",
     shipInternationally: "¿Hacen envíos internacionales?",
+    contactWhatsApp: "Contáctanos por WhatsApp",
   },
   fr: {
     contactUs: "Contactez-nous",
@@ -56,6 +60,7 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     welcomeMessage: "Bienvenue ! Comment puis-je vous aider ?",
     deliveryTime: "Quel est le délai de livraison ?",
     shipInternationally: "Livrez-vous à l'international ?",
+    contactWhatsApp: "Contactez-nous sur WhatsApp",
   },
   de: {
     contactUs: "Kontaktieren Sie uns",
@@ -67,6 +72,7 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     welcomeMessage: "Willkommen! Wie kann ich Ihnen helfen?",
     deliveryTime: "Wie lange dauert die Lieferung?",
     shipInternationally: "Liefern Sie international?",
+    contactWhatsApp: "Kontaktieren Sie uns auf WhatsApp",
   },
   pt: {
     contactUs: "Entre em contato",
@@ -78,6 +84,7 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     welcomeMessage: "Bem-vindo/a! Como posso ajudar?",
     deliveryTime: "Qual é o prazo de entrega?",
     shipInternationally: "Vocês fazem envio internacional?",
+    contactWhatsApp: "Fale conosco no WhatsApp",
   },
 };
 
