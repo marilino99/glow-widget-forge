@@ -447,7 +447,7 @@ const WidgetPreviewPanel = ({
                 </div>
               ) : (
                 /* Desktop: responsive screenshot that fills container */
-                <div className="absolute inset-0 p-3">
+          <div className="absolute inset-0">
                   <div className="relative h-full w-full shadow-xl rounded-lg overflow-hidden bg-white">
                     <img 
                       src={screenshotUrl} 
