@@ -35,7 +35,7 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
   const [url, setUrl] = useState("");
   const [localLinks, setLocalLinks] = useState<LocalLink[]>([]);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
-  const { links: savedLinks, addLink, updateLink, deleteLink, isLoading } = useCustomLinks();
+  const { links: savedLinks, addLink, updateLink, deleteLink, refetch, isLoading } = useCustomLinks();
 
   // Notify parent of local links changes for live preview
   useEffect(() => {
@@ -106,6 +106,8 @@ const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps)
         await addLink(link.name || "Untitled link", link.url);
       }
     }
+    // Refetch to ensure parent has updated links before clearing local state
+    await refetch();
     setLocalLinks([]);
   };
 
