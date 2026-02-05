@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import UnsavedChangesDialog from "./UnsavedChangesDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface WhatsAppPanelProps {
   onBack: () => void;
@@ -56,7 +57,9 @@ const WhatsAppPanel = ({
   onWhatsappNumberChange,
   onSaveConfig,
 }: WhatsAppPanelProps) => {
+  const { toast } = useToast();
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const [showPhoneError, setShowPhoneError] = useState(false);
   
   // Store original values to detect changes
   const [originalEnabled] = useState(whatsappEnabled);
@@ -69,6 +72,18 @@ const WhatsAppPanel = ({
     whatsappNumber !== originalNumber;
 
   const handleSave = () => {
+    // Validate: if WhatsApp is enabled, phone number is required
+    if (whatsappEnabled && !whatsappNumber.trim()) {
+      setShowPhoneError(true);
+      toast({
+        title: "Phone number required",
+        description: "Please enter a phone number to enable WhatsApp.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setShowPhoneError(false);
     onSaveConfig({
       whatsappEnabled,
       whatsappCountryCode,
@@ -166,10 +181,16 @@ const WhatsAppPanel = ({
               type="tel"
               placeholder="3472176893"
               value={whatsappNumber}
-              onChange={(e) => onWhatsappNumberChange(e.target.value.replace(/\D/g, ''))}
-              className="flex-1 bg-muted/50"
+              onChange={(e) => {
+                onWhatsappNumberChange(e.target.value.replace(/\D/g, ''));
+                if (showPhoneError) setShowPhoneError(false);
+              }}
+              className={`flex-1 bg-muted/50 ${showPhoneError ? "border-destructive focus-visible:ring-destructive" : ""}`}
             />
           </div>
+          {showPhoneError && (
+            <p className="mt-2 text-sm text-destructive">Phone number is required</p>
+          )}
         </div>
       </div>
 
