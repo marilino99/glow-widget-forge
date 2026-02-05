@@ -27,6 +27,7 @@ import CustomLinksPanel from "./CustomLinksPanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
+import { LocalLink } from "./CustomLinksPanel";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -80,6 +81,7 @@ interface BuilderSidebarProps {
   onWhatsappCountryCodeChange: (code: string) => void;
   whatsappNumber: string;
   onWhatsappNumberChange: (number: string) => void;
+  onLocalLinksChange?: (links: LocalLink[]) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -134,6 +136,7 @@ const BuilderSidebar = ({
   onWhatsappCountryCodeChange,
   whatsappNumber,
   onWhatsappNumberChange,
+  onLocalLinksChange,
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -227,6 +230,7 @@ const BuilderSidebar = ({
     return (
       <CustomLinksPanel
         onBack={handleBackFromCustomLinks}
+        onLocalLinksChange={onLocalLinksChange}
       />
     );
   }
