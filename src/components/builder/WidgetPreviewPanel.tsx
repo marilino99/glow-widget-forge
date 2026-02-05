@@ -446,12 +446,22 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : (
-                /* Desktop: full cover screenshot */
-                <img 
-                  src={screenshotUrl} 
-                  alt="Website screenshot" 
-                  className="h-full w-full object-cover object-top"
-                />
+                /* Desktop: scaled screenshot in centered container */
+                <div className="flex h-full justify-center items-center p-4 overflow-auto">
+                  <div 
+                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0 bg-white" 
+                    style={{ 
+                      width: '720px', 
+                      height: '450px'
+                    }}
+                  >
+                    <img 
+                      src={screenshotUrl} 
+                      alt="Website screenshot" 
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                </div>
               )}
             </div>
           ) : proxyHtml ? (/* Iframe with proxied website content */
@@ -481,39 +491,49 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : (
-                /* Desktop: responsive iframe that scales with container */
-                <div className="relative h-full w-full">
-                  <iframe 
-                    srcDoc={proxyHtml} 
-                    className="absolute inset-0 border-0 bg-white" 
-                    title="Website preview" 
-                    sandbox="allow-same-origin"
+                /* Desktop: scaled iframe in centered container */
+                <div className="flex h-full justify-center items-center p-4 overflow-auto">
+                  <div 
+                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
                     style={{ 
-                      width: '100%', 
-                      height: '100%'
+                      width: '720px', 
+                      height: '450px'
                     }}
-                  />
+                  >
+                    <iframe 
+                      srcDoc={proxyHtml} 
+                      className="border-0 bg-white" 
+                      title="Website preview" 
+                      sandbox="allow-same-origin"
+                      style={{ 
+                        width: '1440px', 
+                        height: '900px',
+                        transform: 'scale(0.5)',
+                        transformOrigin: 'top left'
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
           ) : (/* Skeleton placeholder for website - shown as default or when loading fails */
-            <div className={`h-full bg-slate-50 ${devicePreview === "mobile" ? "flex justify-center py-4" : ""}`}>
-              <div className={`space-y-5 p-10 ${devicePreview === "mobile" ? "w-[320px] bg-slate-50 shadow-xl rounded-lg h-[560px]" : ""}`}>
+            <div className={`h-full bg-slate-50 flex justify-center ${devicePreview === "mobile" ? "items-start py-4" : "items-center p-4"}`}>
+              <div className={`space-y-5 p-8 bg-white shadow-xl rounded-lg ${devicePreview === "mobile" ? "w-[320px] h-[560px]" : "w-[720px] h-[450px]"}`}>
                 {/* Header placeholder */}
-                <div className="h-12 w-56 rounded-lg bg-slate-200/80" />
+                <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
                 {/* Text lines */}
-                <div className="h-4 w-full max-w-lg rounded-md bg-slate-200/80" />
-                <div className="h-4 w-3/4 max-w-md rounded-md bg-slate-200/80" />
+                <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
+                <div className="h-3 w-3/4 max-w-sm rounded-md bg-slate-200/80" />
                 {/* Main content block */}
-                <div className="mt-6 h-44 w-full max-w-2xl rounded-xl bg-slate-200/80" />
+                <div className="mt-4 h-32 w-full max-w-xl rounded-xl bg-slate-200/80" />
                 {/* More text lines */}
-                <div className="h-4 w-full max-w-lg rounded-md bg-slate-200/80" />
-                <div className="h-4 w-2/3 max-w-sm rounded-md bg-slate-200/80" />
+                <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
+                <div className="h-3 w-2/3 max-w-xs rounded-md bg-slate-200/80" />
                 {/* Card grid */}
-                <div className="mt-6 grid grid-cols-3 gap-4 max-w-2xl">
-                  <div className="h-28 rounded-xl bg-slate-200/80" />
-                  <div className="h-28 rounded-xl bg-slate-200/80" />
-                  <div className="h-28 rounded-xl bg-slate-200/80" />
+                <div className="mt-4 grid grid-cols-3 gap-3 max-w-xl">
+                  <div className="h-20 rounded-xl bg-slate-200/80" />
+                  <div className="h-20 rounded-xl bg-slate-200/80" />
+                  <div className="h-20 rounded-xl bg-slate-200/80" />
                 </div>
               </div>
             </div>
@@ -524,7 +544,7 @@ const WidgetPreviewPanel = ({
             className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
                 ? "w-72 scale-[0.55] origin-bottom-right" 
-                : "bottom-4 right-4 w-80 max-w-[calc(100%-2rem)] max-h-[calc(100%-2rem)]"
+                : "w-72 scale-[0.75] origin-bottom-right bottom-2 right-2"
             }`} 
             style={devicePreview === "mobile" ? { 
               bottom: '48px',
