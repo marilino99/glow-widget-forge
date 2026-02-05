@@ -446,15 +446,9 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : (
-                /* Desktop: scaled screenshot in centered container */
-                <div className="flex h-full justify-center items-center p-4 overflow-auto">
-                  <div 
-                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0 bg-white" 
-                    style={{ 
-                      width: '720px', 
-                      height: '450px'
-                    }}
-                  >
+                /* Desktop: responsive screenshot that fills container */
+                <div className="absolute inset-0 p-3">
+                  <div className="relative h-full w-full shadow-xl rounded-lg overflow-hidden bg-white">
                     <img 
                       src={screenshotUrl} 
                       alt="Website screenshot" 
@@ -491,23 +485,17 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
               ) : (
-                /* Desktop: scaled iframe in centered container */
-                <div className="flex h-full justify-center items-center p-4 overflow-auto">
-                  <div 
-                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
-                    style={{ 
-                      width: '720px', 
-                      height: '450px'
-                    }}
-                  >
+                /* Desktop: responsive iframe that fills container with scaling */
+                <div className="absolute inset-0 p-3">
+                  <div className="relative h-full w-full shadow-xl rounded-lg overflow-hidden">
                     <iframe 
                       srcDoc={proxyHtml} 
-                      className="border-0 bg-white" 
+                      className="absolute border-0 bg-white" 
                       title="Website preview" 
                       sandbox="allow-same-origin"
                       style={{ 
-                        width: '1440px', 
-                        height: '900px',
+                        width: '200%', 
+                        height: '200%',
                         transform: 'scale(0.5)',
                         transformOrigin: 'top left'
                       }}
@@ -517,26 +505,49 @@ const WidgetPreviewPanel = ({
               )}
             </div>
           ) : (/* Skeleton placeholder for website - shown as default or when loading fails */
-            <div className={`h-full bg-slate-50 flex justify-center ${devicePreview === "mobile" ? "items-start py-4" : "items-center p-4"}`}>
-              <div className={`space-y-5 p-8 bg-white shadow-xl rounded-lg ${devicePreview === "mobile" ? "w-[320px] h-[560px]" : "w-[720px] h-[450px]"}`}>
-                {/* Header placeholder */}
-                <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
-                {/* Text lines */}
-                <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
-                <div className="h-3 w-3/4 max-w-sm rounded-md bg-slate-200/80" />
-                {/* Main content block */}
-                <div className="mt-4 h-32 w-full max-w-xl rounded-xl bg-slate-200/80" />
-                {/* More text lines */}
-                <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
-                <div className="h-3 w-2/3 max-w-xs rounded-md bg-slate-200/80" />
-                {/* Card grid */}
-                <div className="mt-4 grid grid-cols-3 gap-3 max-w-xl">
-                  <div className="h-20 rounded-xl bg-slate-200/80" />
-                  <div className="h-20 rounded-xl bg-slate-200/80" />
-                  <div className="h-20 rounded-xl bg-slate-200/80" />
+            devicePreview === "mobile" ? (
+              <div className="h-full bg-slate-50 flex justify-center items-start py-4">
+                <div className="space-y-5 p-8 bg-white shadow-xl rounded-lg w-[320px] h-[560px]">
+                  {/* Header placeholder */}
+                  <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
+                  {/* Text lines */}
+                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
+                  <div className="h-3 w-3/4 max-w-sm rounded-md bg-slate-200/80" />
+                  {/* Main content block */}
+                  <div className="mt-4 h-32 w-full max-w-xl rounded-xl bg-slate-200/80" />
+                  {/* More text lines */}
+                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
+                  <div className="h-3 w-2/3 max-w-xs rounded-md bg-slate-200/80" />
+                  {/* Card grid */}
+                  <div className="mt-4 grid grid-cols-3 gap-3 max-w-xl">
+                    <div className="h-20 rounded-xl bg-slate-200/80" />
+                    <div className="h-20 rounded-xl bg-slate-200/80" />
+                    <div className="h-20 rounded-xl bg-slate-200/80" />
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="absolute inset-0 p-3 bg-slate-50">
+                <div className="h-full w-full bg-white shadow-xl rounded-lg p-8 space-y-5">
+                  {/* Header placeholder */}
+                  <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
+                  {/* Text lines */}
+                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
+                  <div className="h-3 w-3/4 max-w-sm rounded-md bg-slate-200/80" />
+                  {/* Main content block */}
+                  <div className="mt-4 h-32 w-full max-w-xl rounded-xl bg-slate-200/80" />
+                  {/* More text lines */}
+                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
+                  <div className="h-3 w-2/3 max-w-xs rounded-md bg-slate-200/80" />
+                  {/* Card grid */}
+                  <div className="mt-4 grid grid-cols-3 gap-3 max-w-xl">
+                    <div className="h-20 rounded-xl bg-slate-200/80" />
+                    <div className="h-20 rounded-xl bg-slate-200/80" />
+                    <div className="h-20 rounded-xl bg-slate-200/80" />
+                  </div>
+                </div>
+              </div>
+            )
           )}
 
           {/* Widget preview - interactive */}
@@ -544,7 +555,7 @@ const WidgetPreviewPanel = ({
             className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
                 ? "w-72 scale-[0.55] origin-bottom-right" 
-                : "w-72 scale-[0.75] origin-bottom-right bottom-2 right-2"
+                : "w-80 bottom-5 right-5"
             }`} 
             style={devicePreview === "mobile" ? { 
               bottom: '48px',
