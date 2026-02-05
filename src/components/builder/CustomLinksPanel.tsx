@@ -1,20 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, GripVertical, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 
-interface CustomLinksPanelProps {
-  onBack: () => void;
-}
-
 // Local state for unsaved links being edited
-interface LocalLink {
+export interface LocalLink {
   id: string;
   name: string;
   url: string;
   isNew?: boolean;
+}
+
+interface CustomLinksPanelProps {
+  onBack: () => void;
+  onLocalLinksChange?: (links: LocalLink[]) => void;
 }
 
 // Inspiration items with emojis - matches the screenshot style
@@ -29,10 +30,15 @@ const inspirationItems = [
   { emoji: "📧", label: "Contact support" },
 ];
 
-const CustomLinksPanel = ({ onBack }: CustomLinksPanelProps) => {
+const CustomLinksPanel = ({ onBack, onLocalLinksChange }: CustomLinksPanelProps) => {
   const [url, setUrl] = useState("");
   const [localLinks, setLocalLinks] = useState<LocalLink[]>([]);
   const { links: savedLinks, addLink, isLoading } = useCustomLinks();
+
+  // Notify parent of local links changes for live preview
+  useEffect(() => {
+    onLocalLinksChange?.(localLinks);
+  }, [localLinks, onLocalLinksChange]);
 
   const handleCreateLink = () => {
     if (!url.trim()) return;

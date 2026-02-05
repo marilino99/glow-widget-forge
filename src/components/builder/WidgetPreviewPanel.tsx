@@ -30,6 +30,7 @@ interface WidgetPreviewPanelProps {
   whatsappCountryCode?: string;
   whatsappNumber?: string;
   customLinks?: CustomLinkData[];
+  localPreviewLinks?: { id: string; name: string; url: string }[];
 }
 
 // Check if a color is a hex value
@@ -179,7 +180,8 @@ const WidgetPreviewPanel = ({
   whatsappEnabled = false,
   whatsappCountryCode = "+39",
   whatsappNumber = "",
-  customLinks = []
+  customLinks = [],
+  localPreviewLinks = []
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -197,6 +199,17 @@ const WidgetPreviewPanel = ({
   const [chatMessages, setChatMessages] = useState<string[]>([]);
   const [chatInputValue, setChatInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  // Merge saved links with local preview links for display
+  const allLinksForPreview = [
+    ...customLinks,
+    ...localPreviewLinks.map(link => ({
+      id: link.id,
+      name: link.name,
+      url: link.url,
+      sort_order: customLinks.length + localPreviewLinks.indexOf(link)
+    }))
+  ];
 
   const commonEmojis = ['😀', '😂', '😊', '🥰', '😍', '🤔', '😢', '😭', '😡', '🥳', '👍', '👎', '❤️', '🔥', '✨', '🎉', '💯', '🙏', '👋', '🤝'];
 
@@ -903,9 +916,9 @@ const WidgetPreviewPanel = ({
                   </div>}
 
                 {/* Custom Links section */}
-                {customLinks.length > 0 && (
+                {allLinksForPreview.length > 0 && (
                   <div className={`px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                    {customLinks.map((link) => (
+                    {allLinksForPreview.map((link) => (
                       <a
                         key={link.id}
                         href={link.url}
@@ -913,21 +926,23 @@ const WidgetPreviewPanel = ({
                         rel="noopener noreferrer"
                         onClick={(e) => {
                           e.preventDefault();
-                          window.open(link.url, '_blank', 'noopener,noreferrer');
+                          if (link.url) {
+                            window.open(link.url, '_blank', 'noopener,noreferrer');
+                          }
                         }}
-                        className={`flex items-center justify-between rounded-xl px-4 py-3 mb-2 last:mb-0 transition-colors ${
+                        className={`flex items-center justify-between rounded-xl px-4 py-3.5 mb-2 last:mb-0 transition-colors shadow-sm ${
                           isLight 
                             ? "bg-white hover:bg-slate-50" 
                             : "bg-slate-800 hover:bg-slate-700"
                         }`}
                       >
                         <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>
-                          {link.name || "Untitled"}
+                          {link.name || ""}
                         </span>
                         <div className={`flex h-7 w-7 items-center justify-center rounded-full ${
-                          isLight ? "bg-slate-100" : "bg-slate-700"
+                          isLight ? "bg-slate-500" : "bg-slate-600"
                         }`}>
-                          <ChevronRight className={`h-4 w-4 ${isLight ? "text-slate-500" : "text-slate-400"}`} />
+                          <ArrowRight className="h-4 w-4 text-white" />
                         </div>
                       </a>
                     ))}

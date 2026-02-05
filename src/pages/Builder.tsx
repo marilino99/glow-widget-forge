@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
@@ -21,6 +21,7 @@ import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import { ProductCardData } from "@/types/productCard";
+import { LocalLink } from "@/components/builder/CustomLinksPanel";
 
 const Builder = () => {
   const navigate = useNavigate();
@@ -61,6 +62,10 @@ const Builder = () => {
     cardId: string;
     updates: Partial<ProductCardData>;
   } | null>(null);
+  
+  // Live preview state for local (unsaved) custom links
+  const [localPreviewLinks, setLocalPreviewLinks] = useState<LocalLink[]>([]);
+  
   // Track initial typography values for cancel functionality
   const initialTypographyRef = useRef({
     logo: config.logo,
@@ -125,6 +130,11 @@ const Builder = () => {
     }
     return card;
   });
+
+  // Handle local links change for live preview
+  const handleLocalLinksChange = useCallback((links: LocalLink[]) => {
+    setLocalPreviewLinks(links);
+  }, []);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
 
@@ -258,6 +268,7 @@ const Builder = () => {
             onWhatsappCountryCodeChange={(code) => updateConfig({ whatsappCountryCode: code })}
             whatsappNumber={config.whatsappNumber}
             onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
+            onLocalLinksChange={handleLocalLinksChange}
           />
         </div>
 
@@ -283,6 +294,7 @@ const Builder = () => {
             whatsappCountryCode={config.whatsappCountryCode}
             whatsappNumber={config.whatsappNumber}
             customLinks={customLinks}
+            localPreviewLinks={localPreviewLinks}
           />
         </div>
       </div>
