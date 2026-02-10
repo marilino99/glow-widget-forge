@@ -53,7 +53,17 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      try {
+        const endTimestamp = subscription.current_period_end;
+        if (endTimestamp) {
+          const endDate = new Date(typeof endTimestamp === "number" ? endTimestamp * 1000 : endTimestamp);
+          if (!isNaN(endDate.getTime())) {
+            subscriptionEnd = endDate.toISOString();
+          }
+        }
+      } catch {
+        // Ignore date parsing errors
+      }
     }
 
     return new Response(JSON.stringify({
