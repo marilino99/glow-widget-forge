@@ -58,6 +58,7 @@ const Builder = () => {
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
+  const [forwardEmail, setForwardEmail] = useState("");
   
   // Live preview state for product card edits
   const [previewCardOverride, setPreviewCardOverride] = useState<{
@@ -275,6 +276,8 @@ const Builder = () => {
             onReportBugsChange={setReportBugsEnabled}
             shareFeedbackEnabled={shareFeedbackEnabled}
             onShareFeedbackChange={setShareFeedbackEnabled}
+            forwardEmail={forwardEmail}
+            onForwardEmailChange={setForwardEmail}
           />
         </div>
 

@@ -86,6 +86,8 @@ interface BuilderSidebarProps {
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
   onShareFeedbackChange: (enabled: boolean) => void;
+  forwardEmail: string;
+  onForwardEmailChange: (email: string) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -145,6 +147,8 @@ const BuilderSidebar = ({
   onReportBugsChange,
   shareFeedbackEnabled,
   onShareFeedbackChange,
+  forwardEmail,
+  onForwardEmailChange,
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -357,6 +361,8 @@ const BuilderSidebar = ({
         onReportBugsChange={onReportBugsChange}
         shareFeedbackEnabled={shareFeedbackEnabled}
         onShareFeedbackChange={onShareFeedbackChange}
+        forwardEmail={forwardEmail}
+        onForwardEmailChange={onForwardEmailChange}
       />
     );
   }
