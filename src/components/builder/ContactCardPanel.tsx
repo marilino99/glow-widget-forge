@@ -23,6 +23,8 @@ interface ContactCardPanelProps {
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
   onShareFeedbackChange: (enabled: boolean) => void;
+  forwardEmail: string;
+  onForwardEmailChange: (email: string) => void;
 }
 
 const avatars = [
@@ -47,25 +49,33 @@ const ContactCardPanel = ({
   onReportBugsChange,
   shareFeedbackEnabled,
   onShareFeedbackChange,
+  forwardEmail,
+  onForwardEmailChange,
 }: ContactCardPanelProps) => {
-  const [email, setEmail] = useState("");
   const [avatarTab, setAvatarTab] = useState("gallery");
   const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
   const [responseTime, setResponseTime] = useState("minutes");
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   // Store original values to detect changes and allow cancel
   const [originalName] = useState(contactName);
   const [originalOfferHelp] = useState(offerHelp);
   const [originalAvatar] = useState(selectedAvatar);
+  const [originalForwardEmail] = useState(forwardEmail);
 
   // Check if any changes have been made from original values
   const hasChanges = 
     contactName !== originalName || 
     offerHelp !== originalOfferHelp || 
-    selectedAvatar !== originalAvatar;
+    selectedAvatar !== originalAvatar ||
+    forwardEmail !== originalForwardEmail;
 
   const handleSave = () => {
+    if (!forwardEmail.trim()) {
+      setEmailError(true);
+      return;
+    }
     onSaveConfig({
       selectedAvatar,
       contactName,
@@ -79,6 +89,7 @@ const ContactCardPanel = ({
     onContactNameChange(originalName);
     onOfferHelpChange(originalOfferHelp);
     onSelectAvatar(originalAvatar);
+    onForwardEmailChange(originalForwardEmail);
     onBack();
   };
 
@@ -166,10 +177,13 @@ const ContactCardPanel = ({
             id="forward-email"
             type="email"
             placeholder="your@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="bg-muted/50"
+            value={forwardEmail}
+            onChange={(e) => { onForwardEmailChange(e.target.value); setEmailError(false); }}
+            className={`bg-muted/50 ${emailError ? "border-destructive" : ""}`}
           />
+          {emailError && (
+            <p className="mt-1 text-sm text-destructive">Email is required.</p>
+          )}
         </div>
 
         {/* Pick avatar */}
