@@ -842,11 +842,9 @@ const WidgetPreviewPanel = ({
                       placeholder=""
                     />
                   </div>
-                </div>
 
-                {/* Footer with attach and next */}
-                <div className={`px-6 pb-4 pt-2 shrink-0`}>
-                  <div className={`flex items-center justify-between rounded-2xl px-4 py-3 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
+                  {/* Attach and next inside scrollable area */}
+                  <div className={`flex items-center justify-between rounded-2xl px-4 py-3 mb-4 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
                     <button className={`flex items-center gap-2 ${isLight ? "text-slate-400" : "text-white/40"}`}>
                       <div className={`flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed ${isLight ? "border-slate-300" : "border-slate-600"}`}>
                         <Plus className="h-4 w-4" />
@@ -864,6 +862,32 @@ const WidgetPreviewPanel = ({
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>
+                </div>
+
+                {/* Footer nav */}
+                <div className={`px-4 pb-1 pt-3 shrink-0`}>
+                  <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
+                    <button 
+                      className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`}
+                      onClick={() => { setShowReportBug(false); setShowContactPage(false); }}
+                    >
+                      <Home className="h-5 w-5" />
+                      <span className="text-xs">{t.home}</span>
+                    </button>
+                    <button 
+                      className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}
+                      onClick={() => { setShowReportBug(false); setShowContactPage(true); }}
+                    >
+                      <MessageCircle className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
+                      <span className="text-xs">{t.contact}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className={`py-2 text-center shrink-0`}>
+                  <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
+                    Powered by <span className="font-medium">Widjet</span>
+                  </span>
                 </div>
               </div>) : (/* Home View */
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`} style={!isSolidMode ? customGradientStyle : {}}>
