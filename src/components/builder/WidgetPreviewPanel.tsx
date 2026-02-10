@@ -733,7 +733,7 @@ const WidgetPreviewPanel = ({
                   {/* Report a bug card */}
                   {reportBugsEnabled && (
                     <button 
-                      onClick={() => setShowReportBug(true)}
+                      onClick={() => { setShowReportBug(true); setShowContactPage(false); }}
                       className={`flex w-full items-center justify-between rounded-2xl px-5 py-4 mb-3 transition-colors ${
                         isLight ? "bg-white shadow-sm hover:bg-slate-50" : "bg-slate-800 hover:bg-slate-700"
                       }`}
@@ -795,7 +795,7 @@ const WidgetPreviewPanel = ({
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3">
-                  <button onClick={() => setShowReportBug(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button onClick={() => { setShowReportBug(false); setShowContactPage(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <ArrowLeft className="h-4 w-4" />
                   </button>
                   <button onClick={() => { setShowReportBug(false); setIsCollapsed(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
