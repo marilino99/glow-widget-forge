@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus } from "lucide-react";
@@ -206,6 +206,8 @@ const WidgetPreviewPanel = ({
   const [showContactPage, setShowContactPage] = useState(false);
   const [showReportBug, setShowReportBug] = useState(false);
   const [reportBugDetails, setReportBugDetails] = useState("");
+  const [reportBugFiles, setReportBugFiles] = useState<File[]>([]);
+  const reportBugFileInputRef = useRef<HTMLInputElement>(null);
   // Merge saved links with local preview links for display
   const allLinksForPreview = [
     ...customLinks,
@@ -845,11 +847,28 @@ const WidgetPreviewPanel = ({
 
                   {/* Attach and next */}
                   <div className={`flex items-center justify-between rounded-2xl px-3 py-2.5 mb-3 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
-                    <button className={`flex items-center gap-2 ${isLight ? "text-slate-400" : "text-white/40"}`}>
+                    <input
+                      type="file"
+                      ref={reportBugFileInputRef}
+                      className="hidden"
+                      multiple
+                      accept="image/*,.pdf,.doc,.docx,.txt,.log"
+                      onChange={(e) => {
+                        if (e.target.files) {
+                          const newFiles = Array.from(e.target.files);
+                          setReportBugFiles(prev => [...prev, ...newFiles].slice(0, 3));
+                        }
+                        e.target.value = '';
+                      }}
+                    />
+                    <button 
+                      onClick={() => reportBugFileInputRef.current?.click()}
+                      className={`flex items-center gap-2 ${isLight ? "text-slate-400 hover:text-slate-600" : "text-white/40 hover:text-white/60"} transition-colors`}
+                    >
                       <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-dashed ${isLight ? "border-slate-300" : "border-slate-600"}`}>
                         <Plus className="h-3 w-3" />
                       </div>
-                      <span className="text-xs">Attach files</span>
+                      <span className="text-xs">{reportBugFiles.length > 0 ? `${reportBugFiles.length}/3 files` : "Attach files"}</span>
                     </button>
                     <button 
                       className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
