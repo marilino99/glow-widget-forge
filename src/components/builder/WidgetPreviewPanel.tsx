@@ -211,6 +211,7 @@ const WidgetPreviewPanel = ({
   const [reportBugStep, setReportBugStep] = useState(1);
   const [reportBugName, setReportBugName] = useState("");
   const [reportBugEmail, setReportBugEmail] = useState("");
+  const [reportBugDetailsError, setReportBugDetailsError] = useState(false);
   // Merge saved links with local preview links for display
   const allLinksForPreview = [
     ...customLinks,
@@ -854,16 +855,20 @@ const WidgetPreviewPanel = ({
                         </label>
                         <textarea
                           value={reportBugDetails}
-                          onChange={(e) => setReportBugDetails(e.target.value)}
+                          onChange={(e) => { setReportBugDetails(e.target.value); setReportBugDetailsError(false); }}
                           className={`w-full min-h-[100px] rounded-xl border-2 border-dashed p-2.5 text-xs resize-none focus:outline-none ${
-                            isLight 
-                              ? "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-400" 
-                              : "border-slate-600 bg-slate-800 text-white placeholder:text-white/40 focus:border-slate-500"
-                          }`}
+                            reportBugDetailsError
+                              ? "border-red-500"
+                              : isLight 
+                                ? "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-400" 
+                                : "border-slate-600 bg-slate-800 text-white placeholder:text-white/40 focus:border-slate-500"
+                          } ${!reportBugDetailsError && isLight ? "bg-white text-slate-900" : ""} ${!reportBugDetailsError && !isLight ? "bg-slate-800 text-white" : ""}`}
                           placeholder=""
                         />
+                        {reportBugDetailsError && (
+                          <p className="text-red-500 text-xs mt-1">This field cannot be empty.</p>
+                        )}
                       </div>
-
                       {/* Attach and next */}
                       <div className={`flex items-center justify-between rounded-2xl px-3 py-2.5 mb-3 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
                         <input
@@ -890,7 +895,7 @@ const WidgetPreviewPanel = ({
                           <span className="text-xs">{reportBugFiles.length > 0 ? `${reportBugFiles.length}/3 files` : "Attach files"}</span>
                         </button>
                         <button 
-                          onClick={() => setReportBugStep(2)}
+                          onClick={() => { if (!reportBugDetails.trim()) { setReportBugDetailsError(true); return; } setReportBugStep(2); }}
                           className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
                             isLight 
                               ? "bg-slate-100 text-slate-900 hover:bg-slate-200" 
