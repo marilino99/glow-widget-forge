@@ -295,7 +295,7 @@ const ContactCardPanel = ({
                   <img
                     src={selectedAvatar}
                     alt="Custom avatar"
-                    className="h-16 w-16 rounded-full object-cover flex-shrink-0 ring-2 ring-primary ring-offset-2"
+                    className="h-16 w-16 rounded-full object-cover flex-shrink-0 ring-1 ring-primary/50 ring-offset-2"
                   />
                   <Button
                     variant="outline"
