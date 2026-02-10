@@ -804,37 +804,37 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Step indicator */}
-                <div className="flex-1 overflow-y-auto px-6">
-                  <div className="flex items-center justify-between mb-6">
+                <div className="flex-1 overflow-y-auto px-5">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex flex-col items-center">
                       <div className="relative">
                         <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
-                        <div className={`flex h-9 w-9 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-500" : "border-slate-600 text-slate-400"}`}>
-                          <span className="text-sm font-medium">1</span>
+                        <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-500" : "border-slate-600 text-slate-400"}`}>
+                          <span className="text-xs font-medium">1</span>
                         </div>
                       </div>
                     </div>
                     <div className={`flex-1 border-t border-dashed mx-2 ${isLight ? "border-slate-300" : "border-slate-600"}`} />
                     <div className="flex flex-col items-center">
-                      <div className={`flex h-9 w-9 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-400" : "border-slate-600 text-slate-500"}`}>
-                        <span className="text-sm font-medium">2</span>
+                      <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-400" : "border-slate-600 text-slate-500"}`}>
+                        <span className="text-xs font-medium">2</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Form content */}
-                  <h3 className={`text-lg font-bold mb-4 leading-snug ${isLight ? "text-slate-900" : "text-white"}`}>
+                  <h3 className={`text-sm font-bold mb-3 leading-snug ${isLight ? "text-slate-900" : "text-white"}`}>
                     Describe the problem you have encountered. Please be as specific as possible.
                   </h3>
 
-                  <div className="mb-4">
-                    <label className={`text-sm mb-2 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                  <div className="mb-3">
+                    <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
                       Share details <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       value={reportBugDetails}
                       onChange={(e) => setReportBugDetails(e.target.value)}
-                      className={`w-full min-h-[140px] rounded-xl border-2 border-dashed p-3 text-sm resize-none focus:outline-none ${
+                      className={`w-full min-h-[100px] rounded-xl border-2 border-dashed p-2.5 text-xs resize-none focus:outline-none ${
                         isLight 
                           ? "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-400" 
                           : "border-slate-600 bg-slate-800 text-white placeholder:text-white/40 focus:border-slate-500"
@@ -843,23 +843,23 @@ const WidgetPreviewPanel = ({
                     />
                   </div>
 
-                  {/* Attach and next inside scrollable area */}
-                  <div className={`flex items-center justify-between rounded-2xl px-4 py-3 mb-4 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
+                  {/* Attach and next */}
+                  <div className={`flex items-center justify-between rounded-2xl px-3 py-2.5 mb-3 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
                     <button className={`flex items-center gap-2 ${isLight ? "text-slate-400" : "text-white/40"}`}>
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed ${isLight ? "border-slate-300" : "border-slate-600"}`}>
-                        <Plus className="h-4 w-4" />
+                      <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-dashed ${isLight ? "border-slate-300" : "border-slate-600"}`}>
+                        <Plus className="h-3 w-3" />
                       </div>
-                      <span className="text-sm">Attach files</span>
+                      <span className="text-xs">Attach files</span>
                     </button>
                     <button 
-                      className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-colors ${
+                      className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
                         isLight 
                           ? "bg-slate-100 text-slate-900 hover:bg-slate-200" 
                           : "bg-slate-700 text-white hover:bg-slate-600"
                       }`}
                     >
                       Next
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
