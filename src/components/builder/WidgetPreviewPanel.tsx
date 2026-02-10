@@ -851,8 +851,8 @@ const WidgetPreviewPanel = ({
                       {selectedAvatar ? (
                         <img src={selectedAvatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover -ml-3 border-2 border-white" />
                       ) : (
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900 -ml-3 border-2 border-white">
-                          C
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black text-sm font-bold text-white -ml-3 border-2 border-white">
+                          {contactName?.charAt(0)?.toUpperCase() || "?"}
                         </div>
                       )}
                     </div>
@@ -1095,8 +1095,8 @@ const WidgetPreviewPanel = ({
                   {/* Contact section */}
                   <div className={`mx-4 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
                     <div className="flex items-center gap-3">
-                      {selectedAvatar ? <img src={selectedAvatar} alt="Avatar" className="h-10 w-10 rounded-full object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900">
-                          C
+                      {selectedAvatar ? <img src={selectedAvatar} alt="Avatar" className="h-10 w-10 rounded-full object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+                          {contactName?.charAt(0)?.toUpperCase() || "?"}
                         </div>}
                     <div className="flex-1">
                       <p className={`text-xs ${isSolidMode ? "text-white/60" : widgetSubtext}`}>{contactName}</p>
