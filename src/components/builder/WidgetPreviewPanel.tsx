@@ -33,6 +33,7 @@ interface WidgetPreviewPanelProps {
   localPreviewLinks?: { id: string; name: string; url: string }[];
   reportBugsEnabled?: boolean;
   shareFeedbackEnabled?: boolean;
+  widgetId?: string;
 }
 
 // Check if a color is a hex value
@@ -186,6 +187,7 @@ const WidgetPreviewPanel = ({
   localPreviewLinks = [],
   reportBugsEnabled = false,
   shareFeedbackEnabled = false,
+  widgetId,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -212,6 +214,32 @@ const WidgetPreviewPanel = ({
   const [reportBugName, setReportBugName] = useState("");
   const [reportBugEmail, setReportBugEmail] = useState("");
   const [reportBugDetailsError, setReportBugDetailsError] = useState(false);
+  const [isSendingBugReport, setIsSendingBugReport] = useState(false);
+
+  const handleSendBugReport = async () => {
+    if (!widgetId) return;
+    setIsSendingBugReport(true);
+    try {
+      const formData = new FormData();
+      formData.append("widget_id", widgetId);
+      formData.append("details", reportBugDetails);
+      formData.append("sender_name", reportBugName || "Anonymous");
+      formData.append("sender_email", reportBugEmail);
+      reportBugFiles.forEach((file, i) => formData.append(`file_${i}`, file));
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      await fetch(`${supabaseUrl}/functions/v1/send-bug-report`, {
+        method: "POST",
+        body: formData,
+      });
+
+      setReportBugStep(3);
+    } catch (error) {
+      console.error("Error sending bug report:", error);
+    } finally {
+      setIsSendingBugReport(false);
+    }
+  };
   // Merge saved links with local preview links for display
   const allLinksForPreview = [
     ...customLinks,
@@ -1005,7 +1033,8 @@ const WidgetPreviewPanel = ({
                           Previous
                         </button>
                         <button 
-                          onClick={() => setReportBugStep(3)}
+                          onClick={handleSendBugReport}
+                          disabled={isSendingBugReport}
                           className={`flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-medium text-white transition-colors ${useInlineStyles ? "" : "bg-blue-600 hover:bg-blue-700"}`}
                           style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
                         >

@@ -80,6 +80,7 @@ const ContactCardPanel = ({
       selectedAvatar,
       contactName,
       offerHelp,
+      forwardEmail,
     });
     // Update originals so hasChanges becomes false
     setOriginalName(contactName);
