@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { ChevronLeft, Paperclip, Monitor, Star, MessageSquare, Sparkles } from "lucide-react";
+import { useState, useRef } from "react";
+import { ChevronLeft, Paperclip, Monitor, Star, MessageSquare, Sparkles, Upload, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,6 +76,39 @@ const ContactCardPanel = ({
   const [responseTime, setResponseTime] = useState("minutes");
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("custom-avatars")
+        .upload(fileName, file, { contentType: file.type, upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("custom-avatars")
+        .getPublicUrl(fileName);
+
+      onSelectAvatar(urlData.publicUrl);
+    } catch (err) {
+      console.error("Avatar upload failed:", err);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   // Store original values to detect changes and allow cancel
   const [originalName, setOriginalName] = useState(contactName);
@@ -248,10 +282,29 @@ const ContactCardPanel = ({
           )}
 
           {avatarTab === "upload" && (
-            <div className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                Drag & drop an image or click to upload
-              </p>
+            <div
+              className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarUpload}
+              />
+              {isUploading ? (
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Uploading...</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2">
+                  <Upload className="h-6 w-6 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Click to upload an image</p>
+                  <p className="text-xs text-muted-foreground/60">JPG, PNG, SVG • Max 5MB</p>
+                </div>
+              )}
             </div>
           )}
         </div>
