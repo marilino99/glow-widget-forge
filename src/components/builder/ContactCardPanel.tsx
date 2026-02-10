@@ -225,12 +225,12 @@ const ContactCardPanel = ({
 
           {avatarTab === "gallery" && (
             <div className="rounded-xl bg-muted/30 p-4">
-              <div className="flex flex-wrap gap-3">
+              <div className="max-h-[152px] overflow-y-auto flex flex-wrap gap-3 pr-1">
                 {avatars.map((avatar, index) => (
                   <button
                     key={index}
                     onClick={() => onSelectAvatar(avatar)}
-                    className={`relative h-16 w-16 overflow-hidden rounded-full transition-all ${
+                    className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-full transition-all ${
                       selectedAvatar === avatar
                         ? "ring-2 ring-primary ring-offset-2"
                         : "hover:ring-2 hover:ring-muted-foreground/30 hover:ring-offset-2"
