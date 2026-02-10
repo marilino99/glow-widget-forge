@@ -208,6 +208,9 @@ const WidgetPreviewPanel = ({
   const [reportBugDetails, setReportBugDetails] = useState("");
   const [reportBugFiles, setReportBugFiles] = useState<File[]>([]);
   const reportBugFileInputRef = useRef<HTMLInputElement>(null);
+  const [reportBugStep, setReportBugStep] = useState(1);
+  const [reportBugName, setReportBugName] = useState("");
+  const [reportBugEmail, setReportBugEmail] = useState("");
   // Merge saved links with local preview links for display
   const allLinksForPreview = [
     ...customLinks,
@@ -797,90 +800,170 @@ const WidgetPreviewPanel = ({
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3">
-                  <button onClick={() => { setShowReportBug(false); setShowContactPage(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button onClick={() => { 
+                    if (reportBugStep === 2) { setReportBugStep(1); } 
+                    else { setShowReportBug(false); setShowContactPage(true); setReportBugStep(1); }
+                  }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <ArrowLeft className="h-4 w-4" />
                   </button>
-                  <button onClick={() => { setShowReportBug(false); setIsCollapsed(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button onClick={() => { setShowReportBug(false); setReportBugStep(1); setIsCollapsed(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
                   </button>
                 </div>
 
-                {/* Step indicator */}
                 <div className="flex-1 overflow-y-auto px-5">
+                  {/* Step indicator */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex flex-col items-center">
-                      <div className="relative">
-                        <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
-                        <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-500" : "border-slate-600 text-slate-400"}`}>
-                          <span className="text-xs font-medium">1</span>
+                      {reportBugStep === 1 ? (
+                        <div className="relative">
+                          <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
+                          <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-500" : "border-slate-600 text-slate-400"}`}>
+                            <span className="text-xs font-medium">1</span>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className={`flex h-7 w-7 items-center justify-center rounded-full ${useInlineStyles ? "" : "bg-emerald-600"} text-white`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
+                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                      )}
                     </div>
                     <div className={`flex-1 border-t border-dashed mx-2 ${isLight ? "border-slate-300" : "border-slate-600"}`} />
                     <div className="flex flex-col items-center">
-                      <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-400" : "border-slate-600 text-slate-500"}`}>
-                        <span className="text-xs font-medium">2</span>
+                      <div className="relative">
+                        {reportBugStep === 2 && (
+                          <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
+                        )}
+                        <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-400" : "border-slate-600 text-slate-500"}`}>
+                          <span className="text-xs font-medium">2</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Form content */}
-                  <h3 className={`text-sm font-bold mb-3 leading-snug ${isLight ? "text-slate-900" : "text-white"}`}>
-                    Describe the problem you have encountered. Please be as specific as possible.
-                  </h3>
+                  {reportBugStep === 1 ? (
+                    <>
+                      {/* Step 1: Describe problem */}
+                      <h3 className={`text-sm font-bold mb-3 leading-snug ${isLight ? "text-slate-900" : "text-white"}`}>
+                        Describe the problem you have encountered. Please be as specific as possible.
+                      </h3>
 
-                  <div className="mb-3">
-                    <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
-                      Share details <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      value={reportBugDetails}
-                      onChange={(e) => setReportBugDetails(e.target.value)}
-                      className={`w-full min-h-[100px] rounded-xl border-2 border-dashed p-2.5 text-xs resize-none focus:outline-none ${
-                        isLight 
-                          ? "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-400" 
-                          : "border-slate-600 bg-slate-800 text-white placeholder:text-white/40 focus:border-slate-500"
-                      }`}
-                      placeholder=""
-                    />
-                  </div>
-
-                  {/* Attach and next */}
-                  <div className={`flex items-center justify-between rounded-2xl px-3 py-2.5 mb-3 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
-                    <input
-                      type="file"
-                      ref={reportBugFileInputRef}
-                      className="hidden"
-                      multiple
-                      accept="image/*,.pdf,.doc,.docx,.txt,.log"
-                      onChange={(e) => {
-                        if (e.target.files) {
-                          const newFiles = Array.from(e.target.files);
-                          setReportBugFiles(prev => [...prev, ...newFiles].slice(0, 3));
-                        }
-                        e.target.value = '';
-                      }}
-                    />
-                    <button 
-                      onClick={() => reportBugFileInputRef.current?.click()}
-                      className={`flex items-center gap-2 ${isLight ? "text-slate-400 hover:text-slate-600" : "text-white/40 hover:text-white/60"} transition-colors`}
-                    >
-                      <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-dashed ${isLight ? "border-slate-300" : "border-slate-600"}`}>
-                        <Plus className="h-3 w-3" />
+                      <div className="mb-3">
+                        <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                          Share details <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          value={reportBugDetails}
+                          onChange={(e) => setReportBugDetails(e.target.value)}
+                          className={`w-full min-h-[100px] rounded-xl border-2 border-dashed p-2.5 text-xs resize-none focus:outline-none ${
+                            isLight 
+                              ? "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-400" 
+                              : "border-slate-600 bg-slate-800 text-white placeholder:text-white/40 focus:border-slate-500"
+                          }`}
+                          placeholder=""
+                        />
                       </div>
-                      <span className="text-xs">{reportBugFiles.length > 0 ? `${reportBugFiles.length}/3 files` : "Attach files"}</span>
-                    </button>
-                    <button 
-                      className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
-                        isLight 
-                          ? "bg-slate-100 text-slate-900 hover:bg-slate-200" 
-                          : "bg-slate-700 text-white hover:bg-slate-600"
-                      }`}
-                    >
-                      Next
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
+
+                      {/* Attach and next */}
+                      <div className={`flex items-center justify-between rounded-2xl px-3 py-2.5 mb-3 ${isLight ? "bg-white shadow-sm" : "bg-slate-800"}`}>
+                        <input
+                          type="file"
+                          ref={reportBugFileInputRef}
+                          className="hidden"
+                          multiple
+                          accept="image/*,.pdf,.doc,.docx,.txt,.log"
+                          onChange={(e) => {
+                            if (e.target.files) {
+                              const newFiles = Array.from(e.target.files);
+                              setReportBugFiles(prev => [...prev, ...newFiles].slice(0, 3));
+                            }
+                            e.target.value = '';
+                          }}
+                        />
+                        <button 
+                          onClick={() => reportBugFileInputRef.current?.click()}
+                          className={`flex items-center gap-2 ${isLight ? "text-slate-400 hover:text-slate-600" : "text-white/40 hover:text-white/60"} transition-colors`}
+                        >
+                          <div className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-dashed ${isLight ? "border-slate-300" : "border-slate-600"}`}>
+                            <Plus className="h-3 w-3" />
+                          </div>
+                          <span className="text-xs">{reportBugFiles.length > 0 ? `${reportBugFiles.length}/3 files` : "Attach files"}</span>
+                        </button>
+                        <button 
+                          onClick={() => setReportBugStep(2)}
+                          className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
+                            isLight 
+                              ? "bg-slate-100 text-slate-900 hover:bg-slate-200" 
+                              : "bg-slate-700 text-white hover:bg-slate-600"
+                          }`}
+                        >
+                          Next
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Step 2: Name & Email */}
+                      <h3 className={`text-sm font-bold mb-4 leading-snug ${isLight ? "text-slate-900" : "text-white"}`}>
+                        We will get back to you on provided email.
+                      </h3>
+
+                      <div className="mb-3">
+                        <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                          What's your name?
+                        </label>
+                        <input
+                          type="text"
+                          value={reportBugName}
+                          onChange={(e) => setReportBugName(e.target.value)}
+                          className={`w-full rounded-xl p-2.5 text-xs focus:outline-none ${
+                            isLight 
+                              ? "bg-white border border-slate-200 text-slate-900 focus:border-slate-400" 
+                              : "bg-slate-800 border border-slate-600 text-white focus:border-slate-500"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                          What's your email? <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={reportBugEmail}
+                          onChange={(e) => setReportBugEmail(e.target.value)}
+                          className={`w-full rounded-xl p-2.5 text-xs focus:outline-none ${
+                            isLight 
+                              ? "bg-white border border-slate-200 text-slate-900 focus:border-slate-400" 
+                              : "bg-slate-800 border border-slate-600 text-white focus:border-slate-500"
+                          }`}
+                        />
+                      </div>
+
+                      {/* Previous and Send */}
+                      <div className="flex items-center justify-between mb-3">
+                        <button 
+                          onClick={() => setReportBugStep(1)}
+                          className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-medium transition-colors ${
+                            isLight 
+                              ? "bg-white shadow-sm text-slate-900 hover:bg-slate-50" 
+                              : "bg-slate-800 text-white hover:bg-slate-700"
+                          }`}
+                        >
+                          <ArrowLeft className="h-3.5 w-3.5" />
+                          Previous
+                        </button>
+                        <button 
+                          className={`flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-medium text-white transition-colors ${useInlineStyles ? "" : "bg-blue-600 hover:bg-blue-700"}`}
+                          style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
+                        >
+                          Send
+                          <ArrowUp className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Footer nav */}
