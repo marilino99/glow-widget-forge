@@ -230,6 +230,7 @@ export type Database = {
           contact_name: string
           created_at: string
           faq_enabled: boolean
+          forward_email: string | null
           id: string
           instagram_enabled: boolean
           language: string
@@ -252,6 +253,7 @@ export type Database = {
           contact_name?: string
           created_at?: string
           faq_enabled?: boolean
+          forward_email?: string | null
           id?: string
           instagram_enabled?: boolean
           language?: string
@@ -274,6 +276,7 @@ export type Database = {
           contact_name?: string
           created_at?: string
           faq_enabled?: boolean
+          forward_email?: string | null
           id?: string
           instagram_enabled?: boolean
           language?: string
