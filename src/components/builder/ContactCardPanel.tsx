@@ -19,6 +19,10 @@ interface ContactCardPanelProps {
   offerHelp: string;
   onOfferHelpChange: (help: string) => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
+  reportBugsEnabled: boolean;
+  onReportBugsChange: (enabled: boolean) => void;
+  shareFeedbackEnabled: boolean;
+  onShareFeedbackChange: (enabled: boolean) => void;
 }
 
 const avatars = [
@@ -38,10 +42,12 @@ const ContactCardPanel = ({
   onContactNameChange,
   offerHelp,
   onOfferHelpChange,
-  onSaveConfig
+  onSaveConfig,
+  reportBugsEnabled,
+  onReportBugsChange,
+  shareFeedbackEnabled,
+  onShareFeedbackChange,
 }: ContactCardPanelProps) => {
-  const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
-  const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   const [email, setEmail] = useState("");
   const [avatarTab, setAvatarTab] = useState("gallery");
   const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
@@ -115,7 +121,7 @@ const ContactCardPanel = ({
             <h3 className="text-base font-semibold text-foreground">Report bugs</h3>
             <Switch
               checked={reportBugsEnabled}
-              onCheckedChange={setReportBugsEnabled}
+              onCheckedChange={onReportBugsChange}
             />
           </div>
           <div className="space-y-3">
@@ -136,7 +142,7 @@ const ContactCardPanel = ({
             <h3 className="text-base font-semibold text-foreground">Share feedback</h3>
             <Switch
               checked={shareFeedbackEnabled}
-              onCheckedChange={setShareFeedbackEnabled}
+              onCheckedChange={onShareFeedbackChange}
             />
           </div>
           <div className="space-y-3">

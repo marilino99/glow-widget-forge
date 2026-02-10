@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -31,6 +31,8 @@ interface WidgetPreviewPanelProps {
   whatsappNumber?: string;
   customLinks?: CustomLinkData[];
   localPreviewLinks?: { id: string; name: string; url: string }[];
+  reportBugsEnabled?: boolean;
+  shareFeedbackEnabled?: boolean;
 }
 
 // Check if a color is a hex value
@@ -181,7 +183,9 @@ const WidgetPreviewPanel = ({
   whatsappCountryCode = "+39",
   whatsappNumber = "",
   customLinks = [],
-  localPreviewLinks = []
+  localPreviewLinks = [],
+  reportBugsEnabled = false,
+  shareFeedbackEnabled = false,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -199,7 +203,7 @@ const WidgetPreviewPanel = ({
   const [chatMessages, setChatMessages] = useState<string[]>([]);
   const [chatInputValue, setChatInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
+  const [showContactPage, setShowContactPage] = useState(false);
   // Merge saved links with local preview links for display
   const allLinksForPreview = [
     ...customLinks,
@@ -706,6 +710,84 @@ const WidgetPreviewPanel = ({
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
+              </div>) : showContactPage ? (/* Contact Page View */
+          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : ""} ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
+                {/* Contact page header */}
+                <div className="flex items-center justify-between px-4 py-3">
+                  <button onClick={() => setShowContactPage(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                    <ArrowLeft className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => setIsCollapsed(true)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                    <Minus className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Contact page content */}
+                <div className="flex-1 overflow-y-auto px-6">
+                  <h3 className={`text-2xl font-bold mb-6 ${isLight ? "text-slate-900" : "text-white"}`}>{t.contact || "Contact us"}</h3>
+                  
+                  <p className={`text-sm mb-4 ${isLight ? "text-slate-400" : "text-white/40"}`}>Email</p>
+
+                  {/* Report a bug card */}
+                  {reportBugsEnabled && (
+                    <button 
+                      className={`flex w-full items-center justify-between rounded-2xl px-5 py-4 mb-3 transition-colors ${
+                        isLight ? "bg-white shadow-sm hover:bg-slate-50" : "bg-slate-800 hover:bg-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <svg viewBox="0 0 24 24" className={`h-6 w-6 ${isLight ? "text-slate-700" : "text-white"}`} fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                          <path d="M12 9V3M12 15v6M9 12H3M15 12h6M7.5 7.5 4 4M16.5 16.5 20 20M7.5 16.5 4 20M16.5 7.5 20 4" />
+                        </svg>
+                        <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>Report a bug</span>
+                      </div>
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-200" : "bg-slate-600"}`}>
+                        <ArrowRight className={`h-4 w-4 ${isLight ? "text-slate-600" : "text-white"}`} />
+                      </div>
+                    </button>
+                  )}
+
+                  {/* Share feedback card */}
+                  {shareFeedbackEnabled && (
+                    <button 
+                      className={`flex w-full items-center justify-between rounded-2xl px-5 py-4 mb-3 transition-colors ${
+                        isLight ? "bg-white shadow-sm hover:bg-slate-50" : "bg-slate-800 hover:bg-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <Star className={`h-6 w-6 ${isLight ? "text-slate-700" : "text-white"}`} />
+                        <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>Share feedback</span>
+                      </div>
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-200" : "bg-slate-600"}`}>
+                        <ArrowRight className={`h-4 w-4 ${isLight ? "text-slate-600" : "text-white"}`} />
+                      </div>
+                    </button>
+                  )}
+                </div>
+
+                {/* Footer nav */}
+                <div className={`px-4 pb-1 pt-3 shrink-0`}>
+                  <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
+                    <button 
+                      className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`}
+                      onClick={() => setShowContactPage(false)}
+                    >
+                      <Home className="h-5 w-5" />
+                      <span className="text-xs">{t.home}</span>
+                    </button>
+                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
+                      <MessageCircle className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
+                      <span className="text-xs">{t.contact}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className={`py-2 text-center shrink-0`}>
+                  <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
+                    Powered by <span className="font-medium">Widjet</span>
+                  </span>
+                </div>
               </div>) : (/* Home View */
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`} style={!isSolidMode ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
@@ -963,7 +1045,7 @@ const WidgetPreviewPanel = ({
                       <Home className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
                       <span className="text-xs">{t.home}</span>
                     </button>
-                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`} onClick={() => setShowChat(true)}>
+                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`} onClick={() => { setShowContactPage(true); setShowChat(false); }}>
                       <MessageCircle className="h-5 w-5" />
                       <span className="text-xs">{t.contact}</span>
                     </button>
