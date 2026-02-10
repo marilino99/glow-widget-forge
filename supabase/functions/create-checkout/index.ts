@@ -24,6 +24,10 @@ serve(async (req) => {
     const user = data.user;
     if (!user?.email) throw new Error("User not authenticated");
 
+    // Get return URL from request body, fallback to origin header
+    const body = await req.json().catch(() => ({}));
+    const returnUrl = body.returnUrl || req.headers.get("origin") || "";
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
@@ -39,8 +43,8 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: "price_1SzPakDOR91WarWn08F7PbJI", quantity: 1 }],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/checkout-success`,
-      cancel_url: `${req.headers.get("origin")}/builder`,
+      success_url: `${returnUrl}/checkout-success`,
+      cancel_url: `${returnUrl}/builder`,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

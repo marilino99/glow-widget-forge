@@ -46,7 +46,9 @@ export const useSubscription = () => {
 
   const startCheckout = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout");
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { returnUrl: window.location.origin },
+      });
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, "_blank");
