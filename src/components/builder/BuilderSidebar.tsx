@@ -82,6 +82,10 @@ interface BuilderSidebarProps {
   whatsappNumber: string;
   onWhatsappNumberChange: (number: string) => void;
   onLocalLinksChange?: (links: LocalLink[]) => void;
+  reportBugsEnabled: boolean;
+  onReportBugsChange: (enabled: boolean) => void;
+  shareFeedbackEnabled: boolean;
+  onShareFeedbackChange: (enabled: boolean) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -137,6 +141,10 @@ const BuilderSidebar = ({
   whatsappNumber,
   onWhatsappNumberChange,
   onLocalLinksChange,
+  reportBugsEnabled,
+  onReportBugsChange,
+  shareFeedbackEnabled,
+  onShareFeedbackChange,
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -345,6 +353,10 @@ const BuilderSidebar = ({
         offerHelp={offerHelp}
         onOfferHelpChange={onOfferHelpChange}
         onSaveConfig={onSaveConfig}
+        reportBugsEnabled={reportBugsEnabled}
+        onReportBugsChange={onReportBugsChange}
+        shareFeedbackEnabled={shareFeedbackEnabled}
+        onShareFeedbackChange={onShareFeedbackChange}
       />
     );
   }

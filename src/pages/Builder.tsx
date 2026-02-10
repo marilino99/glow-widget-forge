@@ -56,6 +56,8 @@ const Builder = () => {
     isLoading: isLoadingCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
+  const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
+  const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   
   // Live preview state for product card edits
   const [previewCardOverride, setPreviewCardOverride] = useState<{
@@ -269,6 +271,10 @@ const Builder = () => {
             whatsappNumber={config.whatsappNumber}
             onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
             onLocalLinksChange={handleLocalLinksChange}
+            reportBugsEnabled={reportBugsEnabled}
+            onReportBugsChange={setReportBugsEnabled}
+            shareFeedbackEnabled={shareFeedbackEnabled}
+            onShareFeedbackChange={setShareFeedbackEnabled}
           />
         </div>
 
@@ -295,6 +301,8 @@ const Builder = () => {
             whatsappNumber={config.whatsappNumber}
             customLinks={customLinks}
             localPreviewLinks={localPreviewLinks}
+            reportBugsEnabled={reportBugsEnabled}
+            shareFeedbackEnabled={shareFeedbackEnabled}
           />
         </div>
       </div>
