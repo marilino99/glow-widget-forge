@@ -471,9 +471,29 @@ Deno.serve(async (req) => {
     btn.innerHTML = buttonLogo 
       ? '<img src="' + esc(buttonLogo) + '" alt=""/>' 
       : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>';
+    // Analytics tracking helper
+    function trackEvent(eventType) {
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', u + '/functions/v1/track-widget-event', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+          widget_id: id,
+          event_type: eventType,
+          visitor_id: visitorId,
+          page_url: w.location.href
+        }));
+      } catch(e) {}
+    }
+
+    // Track impression on load
+    trackEvent('impression');
+
     btn.onclick = function() {
+      var wasOpen = pop.classList.contains('open');
       pop.classList.toggle('open');
       if (inIframe) btn.classList.toggle('hidden', pop.classList.contains('open'));
+      if (!wasOpen) trackEvent('click');
     };
 
     // Close button handler (minimize)

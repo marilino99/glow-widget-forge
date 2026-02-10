@@ -295,6 +295,41 @@ export type Database = {
         }
         Relationships: []
       }
+      widget_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          page_url: string | null
+          visitor_id: string | null
+          widget_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          page_url?: string | null
+          visitor_id?: string | null
+          widget_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          page_url?: string | null
+          visitor_id?: string | null
+          widget_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "widget_events_widget_id_fkey"
+            columns: ["widget_id"]
+            isOneToOne: false
+            referencedRelation: "widget_configurations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
