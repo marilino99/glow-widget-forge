@@ -81,16 +81,13 @@ const ContactCardPanel = ({
       contactName,
       offerHelp,
     });
-    onBack();
   };
 
   const handleCancel = () => {
-    // Revert to original values
     onContactNameChange(originalName);
     onOfferHelpChange(originalOfferHelp);
     onSelectAvatar(originalAvatar);
     onForwardEmailChange(originalForwardEmail);
-    onBack();
   };
 
   const handleBackClick = () => {
