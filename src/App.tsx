@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import Onboarding from "./pages/Onboarding";
 import Builder from "./pages/Builder";
 import Chats from "./pages/Chats";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/checkout-success" element={<CheckoutSuccess />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
