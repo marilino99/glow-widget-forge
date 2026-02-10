@@ -14,6 +14,7 @@ import {
   Maximize2,
   Sparkles,
   Instagram,
+  BarChart3,
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
@@ -24,6 +25,7 @@ import FaqPanel from "./FaqPanel";
 import InstagramPanel from "./InstagramPanel";
 import WhatsAppPanel from "./WhatsAppPanel";
 import CustomLinksPanel from "./CustomLinksPanel";
+import MetricsPanel from "./MetricsPanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -159,6 +161,7 @@ const BuilderSidebar = ({
   const [showFaqPanel, setShowFaqPanel] = useState(false);
   const [showWhatsAppPanel, setShowWhatsAppPanel] = useState(false);
   const [showCustomLinksPanel, setShowCustomLinksPanel] = useState(false);
+  const [showMetricsPanel, setShowMetricsPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
@@ -177,6 +180,8 @@ const BuilderSidebar = ({
       setShowWhatsAppPanel(true);
     } else if (widgetType === "custom-links") {
       setShowCustomLinksPanel(true);
+    } else if (widgetType === "metrics") {
+      setShowMetricsPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -221,6 +226,11 @@ const BuilderSidebar = ({
     onSelectWidget(null as unknown as string);
   };
 
+  const handleBackFromMetrics = () => {
+    setShowMetricsPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
   // Check if typography has unsaved changes
   const hasTypographyUnsavedChanges = 
     logo !== initialLogo || 
@@ -236,6 +246,13 @@ const BuilderSidebar = ({
   const handleTypographySave = (config: Record<string, unknown>) => {
     onSaveConfig(config);
   };
+
+  // Show Metrics panel
+  if (showMetricsPanel) {
+    return (
+      <MetricsPanel onBack={handleBackFromMetrics} />
+    );
+  }
 
   // Show Custom Links panel
   if (showCustomLinksPanel) {
@@ -430,6 +447,12 @@ const BuilderSidebar = ({
             label="Product recommendations"
             onClick={() => handleSelectWidget("product-recommendations")}
             active={activeWidget === "product-recommendations"}
+          />
+          <SidebarItem
+            icon={BarChart3}
+            label="Metrics"
+            onClick={() => handleSelectWidget("metrics")}
+            active={activeWidget === "metrics"}
           />
         </div>
       </div>
