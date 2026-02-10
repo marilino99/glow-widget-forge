@@ -291,16 +291,16 @@ const ContactCardPanel = ({
                 onChange={handleAvatarUpload}
               />
               {selectedAvatar && !avatars.includes(selectedAvatar) ? (
-                <div className="rounded-xl bg-muted/60 p-4 flex items-center gap-4">
+                <div className="flex items-center gap-4">
                   <img
                     src={selectedAvatar}
                     alt="Custom avatar"
-                    className="h-14 w-14 rounded-full object-cover flex-shrink-0"
+                    className="h-16 w-16 rounded-full object-cover flex-shrink-0"
                   />
                   <Button
                     variant="outline"
                     size="sm"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="border-foreground text-foreground hover:bg-foreground hover:text-background"
                     onClick={() => onSelectAvatar(null)}
                   >
                     Remove
