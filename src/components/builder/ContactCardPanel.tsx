@@ -282,10 +282,7 @@ const ContactCardPanel = ({
           )}
 
           {avatarTab === "upload" && (
-            <div
-              className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => fileInputRef.current?.click()}
-            >
+            <>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -293,19 +290,42 @@ const ContactCardPanel = ({
                 className="hidden"
                 onChange={handleAvatarUpload}
               />
-              {isUploading ? (
-                <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">Uploading...</p>
+              {selectedAvatar && !avatars.includes(selectedAvatar) ? (
+                <div className="rounded-xl bg-muted/60 p-4 flex items-center gap-4">
+                  <img
+                    src={selectedAvatar}
+                    alt="Custom avatar"
+                    className="h-14 w-14 rounded-full object-cover flex-shrink-0"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => onSelectAvatar(null)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ) : isUploading ? (
+                <div className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">Uploading...</p>
+                  </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-2">
-                  <Upload className="h-6 w-6 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">Click to upload an image</p>
-                  <p className="text-xs text-muted-foreground/60">JPG, PNG, SVG • Max 5MB</p>
+                <div
+                  className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Upload className="h-6 w-6 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">Click to upload an image</p>
+                    <p className="text-xs text-muted-foreground/60">JPG, PNG, SVG • Max 5MB</p>
+                  </div>
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
 
