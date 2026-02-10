@@ -59,10 +59,10 @@ const ContactCardPanel = ({
   const [emailError, setEmailError] = useState(false);
 
   // Store original values to detect changes and allow cancel
-  const [originalName] = useState(contactName);
-  const [originalOfferHelp] = useState(offerHelp);
-  const [originalAvatar] = useState(selectedAvatar);
-  const [originalForwardEmail] = useState(forwardEmail);
+  const [originalName, setOriginalName] = useState(contactName);
+  const [originalOfferHelp, setOriginalOfferHelp] = useState(offerHelp);
+  const [originalAvatar, setOriginalAvatar] = useState(selectedAvatar);
+  const [originalForwardEmail, setOriginalForwardEmail] = useState(forwardEmail);
 
   // Check if any changes have been made from original values
   const hasChanges = 
@@ -81,6 +81,11 @@ const ContactCardPanel = ({
       contactName,
       offerHelp,
     });
+    // Update originals so hasChanges becomes false
+    setOriginalName(contactName);
+    setOriginalOfferHelp(offerHelp);
+    setOriginalAvatar(selectedAvatar);
+    setOriginalForwardEmail(forwardEmail);
   };
 
   const handleCancel = () => {
