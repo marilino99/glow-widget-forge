@@ -101,7 +101,7 @@ const MetricsPanel = ({ onBack }: MetricsPanelProps) => {
               key={metric.label}
               className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform group-hover:animate-bounce">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <metric.icon className="h-5 w-5" />
               </div>
               <div className="flex-1">
