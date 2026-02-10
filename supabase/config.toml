@@ -14,3 +14,9 @@ verify_jwt = false
 
 [functions.track-widget-event]
 verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.check-subscription]
+verify_jwt = true

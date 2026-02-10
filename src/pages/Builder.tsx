@@ -7,6 +7,7 @@ import { useFaqItems } from "@/hooks/useFaqItems";
 import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { Boxes, HelpCircle, LogOut, Loader2, MessageCircle } from "lucide-react";
 import {
@@ -28,6 +29,7 @@ const Builder = () => {
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
   const { hasUnread } = useUnreadMessages();
+  const { plan, startCheckout } = useSubscription();
   const { 
     productCards, 
     isLoading: isLoadingCards, 
@@ -278,6 +280,8 @@ const Builder = () => {
             onShareFeedbackChange={setShareFeedbackEnabled}
             forwardEmail={config.forwardEmail}
             onForwardEmailChange={(email: string) => updateConfig({ forwardEmail: email })}
+            isPro={plan === "pro"}
+            onUpgrade={startCheckout}
           />
         </div>
 

@@ -90,6 +90,8 @@ interface BuilderSidebarProps {
   onShareFeedbackChange: (enabled: boolean) => void;
   forwardEmail: string;
   onForwardEmailChange: (email: string) => void;
+  isPro: boolean;
+  onUpgrade: () => void;
 }
 
 const BuilderSidebar = ({ 
@@ -151,6 +153,8 @@ const BuilderSidebar = ({
   onShareFeedbackChange,
   forwardEmail,
   onForwardEmailChange,
+  isPro,
+  onUpgrade,
 }: BuilderSidebarProps) => {
   const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -250,7 +254,7 @@ const BuilderSidebar = ({
   // Show Metrics panel
   if (showMetricsPanel) {
     return (
-      <MetricsPanel onBack={handleBackFromMetrics} />
+      <MetricsPanel onBack={handleBackFromMetrics} isPro={isPro} onUpgrade={onUpgrade} />
     );
   }
 
