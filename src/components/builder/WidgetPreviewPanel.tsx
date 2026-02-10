@@ -801,12 +801,14 @@ const WidgetPreviewPanel = ({
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3">
-                  <button onClick={() => { 
-                    if (reportBugStep === 2) { setReportBugStep(1); } 
-                    else { setShowReportBug(false); setShowContactPage(true); setReportBugStep(1); }
-                  }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
-                    <ArrowLeft className="h-4 w-4" />
-                  </button>
+                  {reportBugStep !== 3 ? (
+                    <button onClick={() => { 
+                      if (reportBugStep === 2) { setReportBugStep(1); } 
+                      else { setShowReportBug(false); setShowContactPage(true); setReportBugStep(1); }
+                    }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
+                  ) : <div />}
                   <button onClick={() => { setShowReportBug(false); setReportBugStep(1); setIsCollapsed(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
                   </button>
@@ -814,6 +816,7 @@ const WidgetPreviewPanel = ({
 
                 <div className="flex-1 overflow-y-auto px-5">
                   {/* Step indicator */}
+                  {reportBugStep !== 3 && (
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex flex-col items-center">
                       {reportBugStep === 1 ? (
@@ -841,6 +844,7 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                   </div>
+                  )}
 
                   {reportBugStep === 1 ? (
                     <>
@@ -960,6 +964,7 @@ const WidgetPreviewPanel = ({
                           Previous
                         </button>
                         <button 
+                          onClick={() => setReportBugStep(3)}
                           className={`flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-medium text-white transition-colors ${useInlineStyles ? "" : "bg-blue-600 hover:bg-blue-700"}`}
                           style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
                         >
@@ -968,6 +973,55 @@ const WidgetPreviewPanel = ({
                         </button>
                       </div>
                     </>
+                  )}
+
+                  {reportBugStep === 3 && (
+                    <div className="flex flex-col items-center justify-center flex-1 py-8">
+                      {/* Checkmark + Avatar */}
+                      <div className="flex items-center justify-center mb-5">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-white z-10">
+                          <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        {selectedAvatar ? (
+                          <img src={selectedAvatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover -ml-3 border-2 border-white" />
+                        ) : (
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 text-sm font-bold text-slate-900 -ml-3 border-2 border-white">
+                            C
+                          </div>
+                        )}
+                      </div>
+
+                      <h3 className={`text-lg font-bold mb-3 ${isLight ? "text-slate-900" : "text-white"}`}>
+                        Message sent!
+                      </h3>
+
+                      <p className={`text-sm text-center leading-relaxed mb-2 ${isLight ? "text-slate-600" : "text-white/70"}`}>
+                        We typically respond within a few <span className="font-bold">minutes</span>.<br />
+                        Stay tuned, we will send you a response to:
+                      </p>
+
+                      <p className="text-sm font-medium text-blue-600">
+                        {reportBugEmail || "your@email.com"}
+                      </p>
+
+                      <div className="mt-auto pt-8">
+                        <button
+                          onClick={() => {
+                            setShowReportBug(false);
+                            setShowContactPage(false);
+                            setReportBugStep(1);
+                            setReportBugDetails("");
+                            setReportBugName("");
+                            setReportBugEmail("");
+                            setReportBugFiles([]);
+                          }}
+                          className={`rounded-xl px-10 py-3 text-sm font-medium text-white transition-colors ${useInlineStyles ? "" : "bg-blue-600 hover:bg-blue-700"}`}
+                          style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
+                        >
+                          Done
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
 
