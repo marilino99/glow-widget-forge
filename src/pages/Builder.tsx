@@ -303,6 +303,7 @@ const Builder = () => {
             buttonLogo={config.buttonLogo}
             backgroundType={config.backgroundType}
             backgroundImage={config.backgroundImage}
+            logo={config.logo}
             productCards={previewProductCards}
             sayHello={config.sayHello}
             language={config.language}
