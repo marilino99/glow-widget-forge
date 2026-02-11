@@ -215,6 +215,13 @@ const WidgetPreviewPanel = ({
   const [reportBugEmail, setReportBugEmail] = useState("");
   const [reportBugDetailsError, setReportBugDetailsError] = useState(false);
   const [isSendingBugReport, setIsSendingBugReport] = useState(false);
+  const [showShareFeedback, setShowShareFeedback] = useState(false);
+  const [feedbackStep, setFeedbackStep] = useState(1);
+  const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
+  const [feedbackRatingError, setFeedbackRatingError] = useState(false);
+  const [feedbackDetails, setFeedbackDetails] = useState("");
+  const [feedbackName, setFeedbackName] = useState("");
+  const [feedbackEmail, setFeedbackEmail] = useState("");
 
   const handleSendBugReport = async () => {
     if (!widgetId) return;
@@ -790,6 +797,7 @@ const WidgetPreviewPanel = ({
                   {/* Share feedback card */}
                   {shareFeedbackEnabled && (
                     <button 
+                      onClick={() => { setShowShareFeedback(true); setShowContactPage(false); }}
                       className={`flex w-full items-center justify-between rounded-2xl px-5 py-4 mb-3 transition-colors ${
                         isLight ? "bg-white shadow-sm hover:bg-slate-50" : "bg-slate-800 hover:bg-slate-700"
                       }`}
@@ -816,6 +824,260 @@ const WidgetPreviewPanel = ({
                       <span className="text-xs">{t.home}</span>
                     </button>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
+                      <MessageCircle className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
+                      <span className="text-xs">{t.contact}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className={`py-2 text-center shrink-0`}>
+                  <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
+                    Powered by <span className="font-medium">Widjet</span>
+                  </span>
+                </div>
+              </div>) : showShareFeedback ? (/* Share Feedback Form View */
+          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 py-3">
+                  {feedbackStep !== 3 ? (
+                    <button onClick={() => { 
+                      if (feedbackStep === 2) { setFeedbackStep(1); } 
+                      else { setShowShareFeedback(false); setShowContactPage(true); setFeedbackStep(1); }
+                    }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
+                  ) : <div />}
+                  <button onClick={() => { setShowShareFeedback(false); setFeedbackStep(1); setIsCollapsed(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                    <Minus className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {feedbackStep === 3 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center px-5">
+                    <div className="flex items-center justify-center mb-5">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-white z-10">
+                        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
+                      </div>
+                      {selectedAvatar ? (
+                        <img src={selectedAvatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover -ml-3 border-2 border-white" />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black text-sm font-bold text-white -ml-3 border-2 border-white">
+                          {contactName?.charAt(0)?.toUpperCase() || "?"}
+                        </div>
+                      )}
+                    </div>
+
+                    <h3 className={`text-lg font-bold mb-3 ${isLight ? "text-slate-900" : "text-white"}`}>
+                      Feedback sent!
+                    </h3>
+
+                    <p className={`text-sm text-center leading-relaxed mb-2 ${isLight ? "text-slate-600" : "text-white/70"}`}>
+                      Thank you for your feedback!<br />
+                      We will send you a response to:
+                    </p>
+
+                    <p className="text-sm font-medium text-blue-600">
+                      {feedbackEmail || "your@email.com"}
+                    </p>
+
+                    <div className="mt-auto pb-6">
+                      <button
+                        onClick={() => {
+                          setShowShareFeedback(false);
+                          setShowContactPage(false);
+                          setFeedbackStep(1);
+                          setFeedbackRating(null);
+                          setFeedbackDetails("");
+                          setFeedbackName("");
+                          setFeedbackEmail("");
+                        }}
+                        className={`rounded-xl px-10 py-3 text-sm font-medium text-white transition-colors ${useInlineStyles ? "" : "bg-blue-600 hover:bg-blue-700"}`}
+                        style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                <div className="flex-1 overflow-y-auto px-5">
+                  {/* Step indicator */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-col items-center">
+                      {feedbackStep === 1 ? (
+                        <div className="relative">
+                          <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
+                          <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-500" : "border-slate-600 text-slate-400"}`}>
+                            <span className="text-xs font-medium">1</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className={`flex h-7 w-7 items-center justify-center rounded-full ${useInlineStyles ? "" : "bg-emerald-600"} text-white`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
+                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                      )}
+                    </div>
+                    <div className={`flex-1 border-t border-dashed mx-2 ${isLight ? "border-slate-300" : "border-slate-600"}`} />
+                    <div className="flex flex-col items-center">
+                      <div className="relative">
+                        {feedbackStep === 2 && (
+                          <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
+                        )}
+                        <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-400" : "border-slate-600 text-slate-500"}`}>
+                          <span className="text-xs font-medium">2</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {feedbackStep === 1 ? (
+                    <>
+                      <h3 className={`text-sm font-bold mb-3 leading-snug ${isLight ? "text-slate-900" : "text-white"}`}>
+                        How would you rate us?
+                      </h3>
+
+                      <div className="mb-4">
+                        <label className={`text-xs mb-2 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                          Pick a rate <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex items-center justify-between mb-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              onClick={() => { setFeedbackRating(star); setFeedbackRatingError(false); }}
+                              className="p-1 transition-transform hover:scale-110"
+                            >
+                              <svg viewBox="0 0 24 24" className={`h-10 w-10 transition-colors ${
+                                feedbackRating && star <= feedbackRating 
+                                  ? "text-emerald-600 fill-emerald-600" 
+                                  : feedbackRatingError
+                                    ? "text-red-400"
+                                    : isLight ? "text-emerald-700" : "text-emerald-600"
+                              }`} fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                              </svg>
+                            </button>
+                          ))}
+                        </div>
+                        <div className="flex justify-between">
+                          <span className={`text-xs ${isLight ? "text-slate-400" : "text-white/40"}`}>Poor</span>
+                          <span className={`text-xs ${isLight ? "text-slate-400" : "text-white/40"}`}>Excellent</span>
+                        </div>
+                        {feedbackRatingError && (
+                          <p className="text-red-500 text-xs mt-1">Please select a rating.</p>
+                        )}
+                      </div>
+
+                      <div className="mb-3">
+                        <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                          Tell us more
+                        </label>
+                        <textarea
+                          value={feedbackDetails}
+                          onChange={(e) => setFeedbackDetails(e.target.value)}
+                          className={`w-full min-h-[100px] rounded-xl border p-2.5 text-xs resize-none focus:outline-none ${
+                            isLight 
+                              ? "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-400" 
+                              : "border-slate-600 bg-slate-800 text-white placeholder:text-white/40 focus:border-slate-500"
+                          }`}
+                          placeholder=""
+                        />
+                      </div>
+
+                      <div className="flex justify-end mb-3">
+                        <button 
+                          onClick={() => { 
+                            if (!feedbackRating) { setFeedbackRatingError(true); return; } 
+                            setFeedbackStep(2); 
+                          }}
+                          className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
+                            isLight 
+                              ? "bg-slate-100 text-slate-900 hover:bg-slate-200" 
+                              : "bg-slate-700 text-white hover:bg-slate-600"
+                          }`}
+                        >
+                          Next
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className={`text-sm font-bold mb-4 leading-snug ${isLight ? "text-slate-900" : "text-white"}`}>
+                        We will get back to you on provided email.
+                      </h3>
+
+                      <div className="mb-3">
+                        <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                          What's your name?
+                        </label>
+                        <input
+                          type="text"
+                          value={feedbackName}
+                          onChange={(e) => setFeedbackName(e.target.value)}
+                          className={`w-full rounded-xl p-2.5 text-xs focus:outline-none ${
+                            isLight 
+                              ? "bg-white border border-slate-200 text-slate-900 focus:border-slate-400" 
+                              : "bg-slate-800 border border-slate-600 text-white focus:border-slate-500"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label className={`text-xs mb-1.5 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
+                          What's your email? <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={feedbackEmail}
+                          onChange={(e) => setFeedbackEmail(e.target.value)}
+                          className={`w-full rounded-xl p-2.5 text-xs focus:outline-none ${
+                            isLight 
+                              ? "bg-white border border-slate-200 text-slate-900 focus:border-slate-400" 
+                              : "bg-slate-800 border border-slate-600 text-white focus:border-slate-500"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between mb-3">
+                        <button 
+                          onClick={() => setFeedbackStep(1)}
+                          className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-medium transition-colors ${
+                            isLight 
+                              ? "bg-white shadow-sm text-slate-900 hover:bg-slate-50" 
+                              : "bg-slate-800 text-white hover:bg-slate-700"
+                          }`}
+                        >
+                          <ArrowLeft className="h-3.5 w-3.5" />
+                          Previous
+                        </button>
+                        <button 
+                          onClick={() => setFeedbackStep(3)}
+                          className={`flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-medium text-white transition-colors ${useInlineStyles ? "" : "bg-blue-600 hover:bg-blue-700"}`}
+                          style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
+                        >
+                          Send
+                          <ArrowUp className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+                )}
+
+                {/* Footer nav */}
+                <div className={`px-4 pb-1 pt-3 shrink-0`}>
+                  <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
+                    <button 
+                      className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`}
+                      onClick={() => { setShowShareFeedback(false); setShowContactPage(false); }}
+                    >
+                      <Home className="h-5 w-5" />
+                      <span className="text-xs">{t.home}</span>
+                    </button>
+                    <button 
+                      className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}
+                      onClick={() => { setShowShareFeedback(false); setShowContactPage(true); }}
+                    >
                       <MessageCircle className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
                       <span className="text-xs">{t.contact}</span>
                     </button>
