@@ -291,6 +291,7 @@ const Builder = () => {
         {/* Right panel - preview */}
         <div className="flex-1">
           <WidgetPreviewPanel 
+            activeWidget={activeWidget}
             selectedAvatar={config.selectedAvatar} 
             faqEnabled={config.faqEnabled}
             contactName={config.contactName}
