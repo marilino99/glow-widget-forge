@@ -1,26 +1,37 @@
 
-## Gradient visibile nell'header del widget (tema dark)
 
-### Problema attuale
-Quando selezioni il tema **dark** con sfondo **gradient**, il gradiente viene applicato al contenitore esterno del widget, ma il contenuto scrollabile interno ha `bg-black` che copre completamente il gradiente. Il risultato e' che l'area dell'header con "Hello, nice to see you here" appare nera invece di mostrare il colore selezionato.
+# Automazione Welcome Email con Brevo
 
-### Soluzione
-Spostare il gradiente dal contenitore esterno all'area dell'header, in modo che sia visibile nella parte superiore del widget (dove c'e' il "sayHello") e sfumi verso il nero/scuro nel resto del contenuto.
+## Panoramica
+Modificheremo la edge function `send-welcome-email` per aggiungere il nuovo utente a una lista contatti su Brevo (ex Sendinblue) al momento della registrazione. Brevo si occuperà di inviare l'email di benvenuto tramite un'automazione configurata sulla piattaforma.
 
-### Cosa vedrai
-- In tema **dark + gradient**: l'header mostrera' un gradiente che parte dal colore selezionato in alto e sfuma verso il nero
-- Il gradiente sara' dinamico e seguira' il colore scelto (preset o custom hex)
-- Il decorative blur blob nell'header verra' mantenuto per un effetto ancora piu' ricco
-- In tema **light + gradient** e **solid**: nessun cambiamento, tutto resta com'e'
+## Come funziona
 
-### Dettagli tecnici
+```text
+Utente si registra --> Edge Function aggiunge contatto a Brevo --> Automazione Brevo invia email di benvenuto
+```
 
-Modifiche in `src/components/builder/WidgetPreviewPanel.tsx`:
+## Cosa serve da te (su Brevo)
 
-1. **Header gradient per dark mode**: Quando `backgroundType === "gradient"` e `widgetTheme === "dark"`, applicare un gradiente inline all'area dell'header (`px-6 py-5`) che va dal colore selezionato (con opacita') verso trasparente
-2. **Preset colors**: Per i colori preset, usare il valore `hex` dal `colorMap` per generare il gradiente
-3. **Custom hex**: Per i colori custom, usare direttamente `actualHexColor`
-4. **Struttura**: Il gradiente header sara' applicato come sfondo inline sulla div dell'header, sfumando verso il basso cosi' che il contenuto sottostante (contact card, product cards) resti su sfondo scuro
+1. **API Key Brevo** - La trovi in Impostazioni > SMTP & API > Chiavi API
+2. **ID Lista** - Crea o seleziona una lista in Contatti > Liste, e prendi l'ID numerico
+3. **Welcome Automation** - Crea un'automazione su Brevo che si attiva quando un contatto viene aggiunto alla lista
 
-File coinvolto:
-- `src/components/builder/WidgetPreviewPanel.tsx`
+## Modifiche tecniche
+
+### 1. Nuovo segreto da configurare
+- `BREVO_API_KEY` - chiave API v3 di Brevo
+
+### 2. Modifica edge function `send-welcome-email/index.ts`
+- Rimuovere tutta la logica Resend
+- Chiamare l'API Brevo `POST https://api.brevo.com/v3/contacts` per creare/aggiornare il contatto
+- Header di autenticazione: `api-key: {BREVO_API_KEY}`
+- Body con `email`, `listIds` e `updateEnabled: true`
+- Il contatto viene aggiunto alla lista specificata, facendo scattare l'automazione
+
+### 3. Nessuna modifica al frontend
+- `Signup.tsx` resta invariato: continua a chiamare la stessa edge function con l'email dell'utente
+
+## Risultato finale
+Ogni nuovo utente registrato viene aggiunto automaticamente alla tua lista Brevo, e l'automazione di benvenuto si occupa di inviare l'email e qualsiasi follow-up futuro.
+
