@@ -1426,7 +1426,7 @@ const WidgetPreviewPanel = ({
                   <div 
                     className="pointer-events-none absolute inset-x-0 top-0 h-64 z-0"
                     style={{ 
-                      background: `linear-gradient(180deg, ${actualHexColor}40 0%, ${actualHexColor}20 40%, transparent 100%)` 
+                      background: `linear-gradient(180deg, ${actualHexColor}88 0%, ${actualHexColor}44 45%, transparent 100%)` 
                     }}
                   />
                 )}
