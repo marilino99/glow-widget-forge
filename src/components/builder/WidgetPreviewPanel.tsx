@@ -688,7 +688,7 @@ const WidgetPreviewPanel = ({
                 : "w-80 bottom-5 right-5"
             }`}
             style={devicePreview === "mobile" ? {
-              bottom: 'calc(50% - 280px)',
+              bottom: 'calc(50% - 250px)',
               right: 'calc(50% - 130px)'
             } : undefined}
           >
