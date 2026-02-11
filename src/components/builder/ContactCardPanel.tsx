@@ -259,7 +259,7 @@ const ContactCardPanel = ({
 
           {avatarTab === "gallery" && (
             <div className="rounded-xl bg-muted/60 p-2">
-              <div className="max-h-[160px] overflow-y-auto grid grid-cols-5 gap-2 p-2">
+              <div className="max-h-[148px] overflow-y-auto grid grid-cols-5 gap-2 p-2">
                 {avatars.map((avatar, index) => (
                   <button
                     key={index}
