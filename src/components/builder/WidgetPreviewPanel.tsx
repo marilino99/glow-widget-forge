@@ -1426,8 +1426,15 @@ const WidgetPreviewPanel = ({
                   className={`${isSolidMode ? `${useInlineStyles ? "" : colors.solidHeader} ${headerText} pb-12` : ""}`}
                   style={isSolidMode && useInlineStyles ? { backgroundColor: actualHexColor } : {}}
                 >
-                  {/* Widget header */}
-                  <div className="relative overflow-hidden px-6 py-5">
+                {/* Widget header */}
+                  <div 
+                    className="relative overflow-hidden px-6 py-5"
+                    style={
+                      !isSolidMode && !isLight && backgroundType === "gradient"
+                        ? { background: `linear-gradient(to bottom, ${actualHexColor}55, transparent)` }
+                        : {}
+                    }
+                  >
                     {!isSolidMode && !isLight && <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />}
                     <button onClick={() => handleCollapse()} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
                       <Minus className="h-4 w-4" />
