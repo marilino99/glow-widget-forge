@@ -1431,34 +1431,34 @@ const WidgetPreviewPanel = ({
                       style={{ 
                         height: '360px',
                         background: isLight
-                          ? `linear-gradient(180deg, ${actualHexColor}28 0%, ${actualHexColor}12 50%, transparent 100%)`
-                          : `linear-gradient(180deg, ${actualHexColor}66 0%, ${actualHexColor}22 55%, transparent 100%)` 
+                          ? `linear-gradient(180deg, ${actualHexColor}38 0%, ${actualHexColor}18 50%, transparent 100%)`
+                          : `linear-gradient(180deg, ${actualHexColor}77 0%, ${actualHexColor}30 55%, transparent 100%)` 
                       }}
                     />
                     {/* Secondary accent blob — animated drift */}
                     <div 
                       className="pointer-events-none absolute z-0 rounded-full blur-3xl animate-[blob-drift-1_8s_ease-in-out_infinite]"
                       style={{ 
-                        width: '200px',
-                        height: '200px',
-                        top: '-40px',
-                        left: '-60px',
+                        width: '220px',
+                        height: '220px',
+                        top: '-30px',
+                        left: '-50px',
                         background: isLight
-                          ? `radial-gradient(circle, ${actualHexColor}20, transparent 70%)`
-                          : `radial-gradient(circle, ${actualHexColor}55, transparent 70%)`
+                          ? `radial-gradient(circle, ${actualHexColor}35, transparent 70%)`
+                          : `radial-gradient(circle, ${actualHexColor}66, transparent 70%)`
                       }}
                     />
                     {/* Tertiary glow — animated drift opposite */}
                     <div 
                       className="pointer-events-none absolute z-0 rounded-full blur-3xl animate-[blob-drift-2_10s_ease-in-out_infinite]"
                       style={{ 
-                        width: '160px',
-                        height: '160px',
-                        top: '80px',
-                        right: '-40px',
+                        width: '180px',
+                        height: '180px',
+                        top: '60px',
+                        right: '-30px',
                         background: isLight
-                          ? `radial-gradient(circle, ${actualHexColor}18, transparent 70%)`
-                          : `radial-gradient(circle, ${actualHexColor}40, transparent 70%)`
+                          ? `radial-gradient(circle, ${actualHexColor}28, transparent 70%)`
+                          : `radial-gradient(circle, ${actualHexColor}55, transparent 70%)`
                       }}
                     />
                   </>
