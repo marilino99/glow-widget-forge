@@ -322,6 +322,8 @@ const Builder = () => {
             shareFeedbackEnabled={shareFeedbackEnabled}
             widgetId={config.id || undefined}
             googleBusiness={googleBusiness}
+            customCss={config.customCss}
+            customJs={config.customJs}
           />
         </div>
       </div>

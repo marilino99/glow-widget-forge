@@ -106,6 +106,8 @@ Deno.serve(async (req) => {
         faq_items: faqItems || [],
         instagram_posts: instagramPosts || [],
         custom_links: customLinks || [],
+        custom_css: config.custom_css || null,
+        custom_js: config.custom_js || null,
       }),
       { headers: corsHeaders }
     );

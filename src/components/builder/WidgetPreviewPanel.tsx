@@ -39,6 +39,8 @@ interface WidgetPreviewPanelProps {
   shareFeedbackEnabled?: boolean;
   widgetId?: string;
   googleBusiness?: GoogleBusinessData | null;
+  customCss?: string;
+  customJs?: string;
 }
 
 // Check if a color is a hex value
@@ -197,6 +199,8 @@ const WidgetPreviewPanel = ({
   widgetId,
   googleBusiness,
   activeWidget,
+  customCss = "",
+  customJs = "",
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -254,6 +258,30 @@ const WidgetPreviewPanel = ({
   const [feedbackName, setFeedbackName] = useState("");
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
+
+  // Inject custom CSS into document
+  useEffect(() => {
+    const id = 'wj-preview-custom-css';
+    let el = document.getElementById(id) as HTMLStyleElement | null;
+    if (customCss) {
+      if (!el) {
+        el = document.createElement('style');
+        el.id = id;
+        document.head.appendChild(el);
+      }
+      el.textContent = customCss;
+    } else if (el) {
+      el.remove();
+    }
+    return () => { document.getElementById(id)?.remove(); };
+  }, [customCss]);
+
+  // Execute custom JS when it changes
+  useEffect(() => {
+    if (customJs) {
+      try { new Function(customJs)(); } catch(e) { console.error('[Widget Preview] Custom JS error:', e); }
+    }
+  }, [customJs]);
 
   // Reset dismissed state when business changes
   useEffect(() => {
