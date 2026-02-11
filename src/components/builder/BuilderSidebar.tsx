@@ -446,6 +446,7 @@ const BuilderSidebar = ({
           <SidebarItem
             icon={BarChart3}
             label="Metrics"
+            badge="PRO"
             onClick={() => handleSelectWidget("metrics")}
             active={activeWidget === "metrics"}
           />
