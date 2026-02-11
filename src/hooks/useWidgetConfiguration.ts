@@ -13,6 +13,7 @@ export interface WidgetConfiguration {
   widgetColor: string;
   buttonLogo: string | null;
   backgroundType: "solid" | "gradient" | "image";
+  backgroundImage: string | null;
   logo: string | null;
   language: string;
   sayHello: string;
@@ -34,6 +35,7 @@ const defaultConfig: WidgetConfiguration = {
   widgetColor: "blue",
   buttonLogo: null,
   backgroundType: "gradient",
+  backgroundImage: null,
   logo: null,
   language: "en",
   sayHello: "Hello, nice to see you here 👋",
@@ -82,6 +84,7 @@ export const useWidgetConfiguration = () => {
             widgetColor: data.widget_color,
             buttonLogo: data.button_logo,
             backgroundType: (data as { background_type?: string }).background_type as "solid" | "gradient" | "image" || "gradient",
+            backgroundImage: (data as any).background_image || null,
             logo: dbData.logo || null,
             language: dbData.language || "en",
             sayHello: dbData.say_hello || defaultConfig.sayHello,
@@ -125,6 +128,7 @@ export const useWidgetConfiguration = () => {
           widget_color: updatedConfig.widgetColor,
           button_logo: updatedConfig.buttonLogo,
           background_type: updatedConfig.backgroundType,
+          background_image: updatedConfig.backgroundImage,
           logo: updatedConfig.logo,
           language: updatedConfig.language,
           say_hello: updatedConfig.sayHello,

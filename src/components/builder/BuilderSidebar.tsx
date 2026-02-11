@@ -52,6 +52,8 @@ interface BuilderSidebarProps {
   onButtonLogoChange: (logo: string | null) => void;
   backgroundType: "solid" | "gradient" | "image";
   onBackgroundTypeChange: (type: "solid" | "gradient" | "image") => void;
+  backgroundImage: string | null;
+  onBackgroundImageChange: (image: string | null) => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
   productCards: ProductCardData[];
   onAddProductCard: (card: ProductCardData) => void;
@@ -116,6 +118,8 @@ const BuilderSidebar = ({
   onButtonLogoChange,
   backgroundType,
   onBackgroundTypeChange,
+  backgroundImage,
+  onBackgroundImageChange,
   onSaveConfig,
   productCards,
   onAddProductCard,
@@ -388,6 +392,8 @@ const BuilderSidebar = ({
         onButtonLogoChange={onButtonLogoChange}
         backgroundType={backgroundType}
         onBackgroundTypeChange={onBackgroundTypeChange}
+        backgroundImage={backgroundImage}
+        onBackgroundImageChange={onBackgroundImageChange}
         onSaveConfig={onSaveConfig}
       />
     );

@@ -25,6 +25,8 @@ interface ThemeColorsPanelProps {
   onButtonLogoChange: (logo: string | null) => void;
   backgroundType: "solid" | "gradient" | "image";
   onBackgroundTypeChange: (type: "solid" | "gradient" | "image") => void;
+  backgroundImage: string | null;
+  onBackgroundImageChange: (image: string | null) => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
 }
 
@@ -67,9 +69,12 @@ const ThemeColorsPanel = ({
   onButtonLogoChange,
   backgroundType,
   onBackgroundTypeChange,
+  backgroundImage,
+  onBackgroundImageChange,
   onSaveConfig
 }: ThemeColorsPanelProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const bgImageInputRef = useRef<HTMLInputElement>(null);
   const [moreColorsOpen, setMoreColorsOpen] = useState(true);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
@@ -78,9 +83,10 @@ const ThemeColorsPanel = ({
   const [originalColor] = useState(widgetColor);
   const [originalLogo] = useState(buttonLogo);
   const [originalBackgroundType] = useState(backgroundType);
+  const [originalBackgroundImage] = useState(backgroundImage);
 
   // Check if changes were made
-  const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor || buttonLogo !== originalLogo || backgroundType !== originalBackgroundType;
+  const hasChanges = widgetTheme !== originalTheme || widgetColor !== originalColor || buttonLogo !== originalLogo || backgroundType !== originalBackgroundType || backgroundImage !== originalBackgroundImage;
 
   const handleSave = () => {
     onSaveConfig({
@@ -88,6 +94,7 @@ const ThemeColorsPanel = ({
       widgetColor,
       buttonLogo,
       backgroundType,
+      backgroundImage,
     });
     onBack();
   };
@@ -97,6 +104,7 @@ const ThemeColorsPanel = ({
     onWidgetColorChange(originalColor);
     onButtonLogoChange(originalLogo);
     onBackgroundTypeChange(originalBackgroundType);
+    onBackgroundImageChange(originalBackgroundImage);
     onBack();
   };
 
@@ -113,6 +121,15 @@ const ThemeColorsPanel = ({
     if (file) {
       const url = URL.createObjectURL(file);
       onButtonLogoChange(url);
+    }
+  };
+
+  const handleBgImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      onBackgroundImageChange(url);
+      onBackgroundTypeChange("image");
     }
   };
 
@@ -416,12 +433,21 @@ const ThemeColorsPanel = ({
                 </p>
               </button>
               
+              <input
+                ref={bgImageInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleBgImageUpload}
+                className="hidden"
+              />
               <div className="mt-4 flex items-center gap-3">
                 {backgroundImages.map((img, index) => (
                   <button
                     key={index}
-                    onClick={() => onBackgroundTypeChange("image")}
-                    className="h-12 w-12 overflow-hidden rounded-lg transition-all hover:scale-110"
+                    onClick={() => { onBackgroundImageChange(img); onBackgroundTypeChange("image"); }}
+                    className={`h-12 w-12 overflow-hidden rounded-lg transition-all hover:scale-110 ${
+                      backgroundType === "image" && backgroundImage === img ? "ring-2 ring-primary ring-offset-2" : ""
+                    }`}
                   >
                     <img
                       src={img}
@@ -430,7 +456,7 @@ const ThemeColorsPanel = ({
                     />
                   </button>
                 ))}
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2" onClick={() => bgImageInputRef.current?.click()}>
                   <Upload className="h-4 w-4" />
                   Upload
                 </Button>

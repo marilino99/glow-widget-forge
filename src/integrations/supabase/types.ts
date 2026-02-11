@@ -225,6 +225,7 @@ export type Database = {
       }
       widget_configurations: {
         Row: {
+          background_image: string | null
           background_type: string
           button_logo: string | null
           contact_name: string
@@ -248,6 +249,7 @@ export type Database = {
           widget_theme: string
         }
         Insert: {
+          background_image?: string | null
           background_type?: string
           button_logo?: string | null
           contact_name?: string
@@ -271,6 +273,7 @@ export type Database = {
           widget_theme?: string
         }
         Update: {
+          background_image?: string | null
           background_type?: string
           button_logo?: string | null
           contact_name?: string
