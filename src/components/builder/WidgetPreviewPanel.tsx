@@ -565,15 +565,9 @@ const WidgetPreviewPanel = ({
           ) : useScreenshotFallback && screenshotUrl ? (/* Screenshot fallback mode for SPA sites */
             <div className="absolute inset-0 overflow-hidden">
               {devicePreview === "mobile" ? (
-                /* Mobile: centered screenshot in phone-like container */
-                <div className="flex h-full justify-center items-start py-4 overflow-auto">
-                  <div 
-                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
-                    style={{ 
-                      width: '280px', 
-                      height: '498px'
-                    }}
-                  >
+                /* Mobile: full-area screenshot scaled to simulate mobile viewport */
+                <div className="absolute inset-0">
+                  <div className="relative h-full w-full overflow-hidden bg-white">
                     <img 
                       src={screenshotUrl} 
                       alt="Website screenshot" 
@@ -597,25 +591,20 @@ const WidgetPreviewPanel = ({
           ) : proxyHtml ? (/* Iframe with proxied website content */
             <div className="absolute inset-0 overflow-hidden">
               {devicePreview === "mobile" ? (
-                /* Mobile: centered iframe scaled */
-                <div className="flex h-full justify-center items-start py-4 overflow-auto">
-                  <div 
-                    className="shadow-xl rounded-lg overflow-hidden flex-shrink-0" 
-                    style={{ 
-                      width: '280px', 
-                      height: '498px'
-                    }}
-                  >
+                /* Mobile: full-area iframe scaled to simulate 375px mobile viewport */
+                <div className="absolute inset-0">
+                  <div className="relative h-full w-full overflow-hidden">
                     <iframe 
                       srcDoc={proxyHtml} 
-                      className="border-0 bg-white" 
+                      className="absolute border-0 bg-white" 
                       title="Website preview" 
                       sandbox="allow-same-origin"
                       style={{ 
                         width: '375px', 
-                        height: '667px',
-                        transform: 'scale(0.7467)',
-                        transformOrigin: 'top left'
+                        height: '100%',
+                        transform: 'scale(1)',
+                        transformOrigin: 'top left',
+                        maxWidth: '100%'
                       }} 
                     />
                   </div>
@@ -642,8 +631,8 @@ const WidgetPreviewPanel = ({
             </div>
           ) : (/* Skeleton placeholder for website - shown as default or when loading fails */
             devicePreview === "mobile" ? (
-              <div className="h-full bg-slate-50 flex justify-center items-start py-4">
-                <div className="space-y-5 p-8 bg-white shadow-xl rounded-lg w-[320px] h-[560px]">
+              <div className="absolute inset-0 bg-slate-50">
+                <div className="h-full w-full bg-white p-8 space-y-5">
                   {/* Header placeholder */}
                   <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
                   {/* Text lines */}
@@ -690,13 +679,9 @@ const WidgetPreviewPanel = ({
           <div 
             className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
-                ? "w-72 scale-[0.55] origin-bottom-right" 
+                ? "w-72 scale-[0.55] origin-bottom-right bottom-3 right-3" 
                 : "w-80 bottom-5 right-5"
-            }`} 
-            style={devicePreview === "mobile" ? { 
-              bottom: '48px',
-              right: 'calc(50% - 100px)'
-            } : undefined}
+            }`}
           >
             {/* Google Reviews notification card - always visible */}
             {googleBusiness && !googleReviewDismissed && (
