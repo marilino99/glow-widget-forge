@@ -1,50 +1,29 @@
 
 
-# Tracciamento Analytics del Widget
+## Animazione "cool" per la minimizzazione del widget
 
-## Panoramica
-Per tracciare quante persone cliccano sul widget e interagiscono con esso, serve un sistema di analytics composto da tre parti:
+Quando il widget si chiude (minimizza), aggiungeremo un'animazione fluida che lo fa ridurre con un effetto combinato di scala + dissolvenza + scorrimento verso il basso, dando l'impressione che il widget "scivoli" nel bottone circolare. Quando si riapre, l'animazione inversa lo fa apparire dal basso con un leggero rimbalzo.
 
-1. **Database** - Una tabella per salvare ogni evento (click sul bottone, apertura widget, click su prodotti, ecc.)
-2. **Backend** - Una funzione che riceve gli eventi dal widget sui siti esterni
-3. **Widget** - Aggiornare lo script del widget per inviare gli eventi automaticamente
-4. **Dashboard** - Collegare il pannello Metrics ai dati reali
+### Cosa vedrai
 
----
+- **Chiusura**: il widget si restringe, diventa trasparente e scivola leggermente verso il basso prima di scomparire
+- **Apertura**: il widget appare dal basso con un effetto di scala + dissolvenza fluido
+- **Bottone**: il pulsante circolare ha un piccolo effetto "pop" (scala) quando appare dopo la chiusura
 
-## Cosa verra tracciato
-- **Impressions**: Ogni volta che il widget viene caricato su una pagina
-- **Clicks**: Ogni volta che un visitatore clicca sul bottone per aprire il widget
-- **CTR**: Calcolato automaticamente come Clicks / Impressions
+### Dettagli tecnici
 
----
+1. **Aggiungere keyframes e classi di animazione** in `tailwind.config.ts`:
+   - `widget-collapse`: combinazione di scale(1 -> 0.8), opacity(1 -> 0), translateY(0 -> 20px)
+   - `widget-expand`: inverso del collapse con una leggera curva ease-out
+   - `button-pop`: scala 0.5 -> 1.1 -> 1 con effetto rimbalzo
 
-## Dettagli tecnici
+2. **Gestire lo stato di transizione** in `WidgetPreviewPanel.tsx`:
+   - Introdurre uno stato `isAnimating` per gestire il momento tra "aperto" e "chiuso"
+   - Quando l'utente clicca minimizza: prima esegui l'animazione di chiusura, poi dopo ~300ms imposta `isCollapsed = true`
+   - Quando l'utente clicca il bottone per aprire: imposta `isCollapsed = false` e applica la classe di animazione di apertura
 
-### 1. Nuova tabella `widget_events`
-Campi principali:
-- `id` (uuid)
-- `widget_id` (uuid) - collegato alla configurazione
-- `event_type` (text) - es. "impression", "click", "product_click"
-- `visitor_id` (text) - ID anonimo del visitatore
-- `page_url` (text) - pagina dove si trova il widget
-- `created_at` (timestamp)
+3. **Applicare le classi CSS condizionali** al contenitore del widget popup in base allo stato di animazione
 
-Con policy RLS per permettere a chiunque di inserire eventi (il widget gira su siti esterni senza autenticazione) e ai proprietari di leggere solo i propri dati.
-
-### 2. Nuova Edge Function `track-widget-event`
-- Endpoint pubblico (senza JWT) che riceve gli eventi dal widget
-- Valida i dati e li salva nella tabella `widget_events`
-- Accetta POST con `widget_id`, `event_type`, `visitor_id`
-
-### 3. Aggiornamento del Widget Loader
-Lo script che viene iniettato nei siti esterni inviera automaticamente:
-- Un evento "impression" quando il widget viene caricato
-- Un evento "click" quando il visitatore clicca sul bottone del widget
-
-### 4. Aggiornamento del Pannello Metrics
-Il componente `MetricsPanel` leggera i dati reali dalla tabella `widget_events` invece di mostrare valori statici, con filtro sugli ultimi 30 giorni.
-
-### 5. Configurazione
-- Aggiunta di `track-widget-event` al `config.toml` con `verify_jwt = false`
-
+File coinvolti:
+- `tailwind.config.ts` - nuovi keyframes e animazioni
+- `src/components/builder/WidgetPreviewPanel.tsx` - logica di transizione e classi animate
