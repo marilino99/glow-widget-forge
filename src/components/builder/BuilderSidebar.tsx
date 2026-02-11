@@ -411,12 +411,6 @@ const BuilderSidebar = ({
             active={activeWidget === "whatsapp"}
           />
           <SidebarItem
-            icon={MessageCircle}
-            label="Messenger"
-            onClick={() => handleSelectWidget("messenger")}
-            active={activeWidget === "messenger"}
-          />
-          <SidebarItem
             icon={HelpCircle}
             label="FAQ"
             hasToggle
