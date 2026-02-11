@@ -227,9 +227,12 @@ const WidgetPreviewPanel = ({
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
 
-  // Reset dismissed state when business changes
+  // Reset dismissed state and collapse widget when business changes
   useEffect(() => {
     setGoogleReviewDismissed(false);
+    if (googleBusiness) {
+      setIsCollapsed(true);
+    }
   }, [googleBusiness]);
 
   const handleSendBugReport = async () => {
