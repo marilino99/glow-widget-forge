@@ -95,9 +95,9 @@ const Builder = () => {
     saveConfig(typographyConfig);
     // Update initial values after save using the saved values
     initialTypographyRef.current = {
-      logo: (typographyConfig.logo as string | null) ?? config.logo,
-      language: (typographyConfig.language as string) ?? config.language,
-      sayHello: (typographyConfig.sayHello as string) ?? config.sayHello,
+      logo: "logo" in typographyConfig ? (typographyConfig.logo as string | null) : config.logo,
+      language: "language" in typographyConfig ? (typographyConfig.language as string) : config.language,
+      sayHello: "sayHello" in typographyConfig ? (typographyConfig.sayHello as string) : config.sayHello,
     };
   };
 
