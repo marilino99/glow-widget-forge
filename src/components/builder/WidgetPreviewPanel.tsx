@@ -1421,12 +1421,14 @@ const WidgetPreviewPanel = ({
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                {/* Dark gradient overlay for the top area */}
-                {!isSolidMode && !isLight && backgroundType === "gradient" && (
+                {/* Gradient overlay for the top area */}
+                {!isSolidMode && backgroundType === "gradient" && (
                   <div 
                     className="pointer-events-none absolute inset-x-0 top-0 h-64 z-0"
                     style={{ 
-                      background: `linear-gradient(180deg, ${actualHexColor}88 0%, ${actualHexColor}44 45%, transparent 100%)` 
+                      background: isLight
+                        ? `linear-gradient(180deg, ${actualHexColor}30 0%, ${actualHexColor}15 45%, transparent 100%)`
+                        : `linear-gradient(180deg, ${actualHexColor}88 0%, ${actualHexColor}44 45%, transparent 100%)` 
                     }}
                   />
                 )}
@@ -1437,10 +1439,10 @@ const WidgetPreviewPanel = ({
                 >
                 {/* Widget header */}
                   <div className="relative overflow-hidden px-6 py-5">
-                    {!isSolidMode && !isLight && (
+                    {!isSolidMode && (
                       <div 
                         className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl"
-                        style={{ background: `radial-gradient(circle, ${actualHexColor}50, ${actualHexColor}10)` }}
+                        style={{ background: `radial-gradient(circle, ${actualHexColor}${isLight ? '25' : '50'}, ${actualHexColor}${isLight ? '05' : '10'})` }}
                       />
                     )}
                     <button onClick={() => handleCollapse()} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
