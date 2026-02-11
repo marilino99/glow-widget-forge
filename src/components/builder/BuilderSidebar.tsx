@@ -23,6 +23,7 @@ import ProductCarouselPanel from "./ProductCarouselPanel";
 import TypographyPanel from "./TypographyPanel";
 import FaqPanel from "./FaqPanel";
 import InstagramPanel from "./InstagramPanel";
+import GoogleReviewsPanel from "./GoogleReviewsPanel";
 import WhatsAppPanel from "./WhatsAppPanel";
 import CustomLinksPanel from "./CustomLinksPanel";
 import MetricsPanel from "./MetricsPanel";
@@ -166,6 +167,7 @@ const BuilderSidebar = ({
   const [showWhatsAppPanel, setShowWhatsAppPanel] = useState(false);
   const [showCustomLinksPanel, setShowCustomLinksPanel] = useState(false);
   const [showMetricsPanel, setShowMetricsPanel] = useState(false);
+  const [showGoogleReviewsPanel, setShowGoogleReviewsPanel] = useState(false);
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
@@ -186,6 +188,8 @@ const BuilderSidebar = ({
       setShowCustomLinksPanel(true);
     } else if (widgetType === "metrics") {
       setShowMetricsPanel(true);
+    } else if (widgetType === "google-reviews") {
+      setShowGoogleReviewsPanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -232,6 +236,11 @@ const BuilderSidebar = ({
 
   const handleBackFromMetrics = () => {
     setShowMetricsPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
+  const handleBackFromGoogleReviews = () => {
+    setShowGoogleReviewsPanel(false);
     onSelectWidget(null as unknown as string);
   };
 
@@ -385,6 +394,13 @@ const BuilderSidebar = ({
         forwardEmail={forwardEmail}
         onForwardEmailChange={onForwardEmailChange}
       />
+    );
+  }
+
+  // Show Google Reviews panel
+  if (showGoogleReviewsPanel) {
+    return (
+      <GoogleReviewsPanel onBack={handleBackFromGoogleReviews} />
     );
   }
 
