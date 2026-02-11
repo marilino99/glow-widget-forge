@@ -761,6 +761,7 @@ const WidgetPreviewPanel = ({
                   <button 
                     onClick={() => handleExpand()} 
                     className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden ${showButtonPop ? 'animate-button-pop' : ''}`}
+                    id="wj-btn"
                     style={buttonStyle}
                     onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
                     onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
@@ -1451,7 +1452,7 @@ const WidgetPreviewPanel = ({
                   </span>
                 </div>
               </div>) : (/* Home View */
-          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
+          <div id="wj-pop" className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                 {/* Background image for image mode */}
@@ -1478,7 +1479,7 @@ const WidgetPreviewPanel = ({
                   style={isSolidMode && useInlineStyles ? { backgroundColor: actualHexColor } : {}}
                 >
                 {/* Widget header */}
-                  <div className="relative overflow-hidden px-6 py-5">
+                  <div id="wj-head" className="relative overflow-hidden px-6 py-5">
                     {!isSolidMode && backgroundType !== "image" && (
                       <div 
                         className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl"
@@ -1491,20 +1492,20 @@ const WidgetPreviewPanel = ({
                     {logo && (
                       <img src={logo} alt="Logo" className="relative h-8 w-auto object-contain mb-3" />
                     )}
-                    <h3 className="relative text-2xl font-bold whitespace-pre-line max-w-[70%] break-words">
+                    <h3 id="wj-hello" className="relative text-2xl font-bold whitespace-pre-line max-w-[70%] break-words">
                       {sayHello}
                     </h3>
                   </div>
 
                   {/* Contact section */}
-                  <div className={`mx-4 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
+                  <div id="wj-contact" className={`mx-4 rounded-xl p-4 ${isSolidMode ? "bg-slate-800/90" : widgetCardBg}`}>
                     <div className="flex items-center gap-3">
                       {selectedAvatar ? <img src={selectedAvatar} alt="Avatar" className="h-10 w-10 rounded-full object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
                           {contactName?.charAt(0)?.toUpperCase() || "?"}
                         </div>}
                     <div className="flex-1">
-                      <p className={`text-xs ${isSolidMode ? "text-white/60" : widgetSubtext}`}>{contactName}</p>
-                      <p className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
+                      <p id="wj-cname" className={`text-xs ${isSolidMode ? "text-white/60" : widgetSubtext}`}>{contactName}</p>
+                      <p id="wj-chelp" className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
                     </div>
                     </div>
                     <Button 
@@ -1652,7 +1653,7 @@ const WidgetPreviewPanel = ({
                 )}
 
                 {/* Quick answers section */}
-                {faqEnabled && faqItems.length > 0 && <div className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
+                {faqEnabled && faqItems.length > 0 && <div id="wj-faq" className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
                     {/* Solid mode background band - stops at ~1/4 of FAQ box */}
                     {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
                       <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
@@ -1727,7 +1728,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Footer nav - box with backdrop blur */}
-                <div className={`px-4 pb-1 pt-3 shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                <div id="wj-footer" className={`px-4 pb-1 pt-3 shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                   <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
                     <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
                       <Home className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
