@@ -1422,16 +1422,46 @@ const WidgetPreviewPanel = ({
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                {/* Gradient overlay for the top area */}
+                {/* Gradient mesh overlay — trendy multi-blob effect */}
                 {!isSolidMode && backgroundType === "gradient" && (
-                  <div 
-                    className="pointer-events-none absolute inset-x-0 top-0 h-64 z-0"
-                    style={{ 
-                      background: isLight
-                        ? `linear-gradient(180deg, ${actualHexColor}30 0%, ${actualHexColor}15 45%, transparent 100%)`
-                        : `linear-gradient(180deg, ${actualHexColor}88 0%, ${actualHexColor}44 45%, transparent 100%)` 
-                    }}
-                  />
+                  <>
+                    {/* Primary gradient wash */}
+                    <div 
+                      className="pointer-events-none absolute inset-x-0 top-0 z-0"
+                      style={{ 
+                        height: '360px',
+                        background: isLight
+                          ? `linear-gradient(180deg, ${actualHexColor}28 0%, ${actualHexColor}12 50%, transparent 100%)`
+                          : `linear-gradient(180deg, ${actualHexColor}66 0%, ${actualHexColor}22 55%, transparent 100%)` 
+                      }}
+                    />
+                    {/* Secondary accent blob — offset for mesh feel */}
+                    <div 
+                      className="pointer-events-none absolute z-0 rounded-full blur-3xl"
+                      style={{ 
+                        width: '200px',
+                        height: '200px',
+                        top: '-40px',
+                        left: '-60px',
+                        background: isLight
+                          ? `radial-gradient(circle, ${actualHexColor}20, transparent 70%)`
+                          : `radial-gradient(circle, ${actualHexColor}55, transparent 70%)`
+                      }}
+                    />
+                    {/* Tertiary glow — bottom right for depth */}
+                    <div 
+                      className="pointer-events-none absolute z-0 rounded-full blur-3xl"
+                      style={{ 
+                        width: '160px',
+                        height: '160px',
+                        top: '80px',
+                        right: '-40px',
+                        background: isLight
+                          ? `radial-gradient(circle, ${actualHexColor}18, transparent 70%)`
+                          : `radial-gradient(circle, ${actualHexColor}40, transparent 70%)`
+                      }}
+                    />
+                  </>
                 )}
                 {/* Main content area - colored for solid mode (header + contact + extra space) */}
                 <div 
