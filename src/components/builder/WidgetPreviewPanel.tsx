@@ -666,7 +666,10 @@ const WidgetPreviewPanel = ({
                     </p>
                   </div>
                   <button
-                    onClick={() => setGoogleReviewDismissed(true)}
+                    onClick={() => {
+                      setGoogleReviewDismissed(true);
+                      setIsCollapsed(false);
+                    }}
                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors"
                   >
                     <X className="h-4 w-4" />
