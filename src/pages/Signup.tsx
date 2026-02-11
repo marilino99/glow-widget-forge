@@ -34,6 +34,11 @@ const Signup = () => {
         description: error.message,
       });
     } else {
+      // Send welcome email (fire and forget)
+      supabase.functions.invoke("send-welcome-email", {
+        body: { email },
+      }).catch((err) => console.error("Welcome email error:", err));
+
       toast({
         title: "Account created",
         description: "Welcome to Widjet!",
