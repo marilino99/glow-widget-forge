@@ -172,10 +172,14 @@ const BuilderSidebar = ({
   const [showMetricsPanel, setShowMetricsPanel] = useState(false);
   const [showGoogleReviewsPanel, setShowGoogleReviewsPanel] = useState(false);
   const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(false);
+  const [hasGoogleBusiness, setHasGoogleBusiness] = useState(false);
 
   const handleGoogleBusinessSelect = (business: GoogleBusinessData | null) => {
     onGoogleBusinessSelect?.(business);
-    if (business) setGoogleReviewsEnabled(true);
+    if (business) {
+      setGoogleReviewsEnabled(true);
+      setHasGoogleBusiness(true);
+    }
   };
 
   const handleGoogleReviewsToggle = (enabled: boolean) => {
@@ -492,7 +496,7 @@ const BuilderSidebar = ({
           <SidebarItem
             icon={Star}
             label="Google reviews"
-            hasToggle
+            hasToggle={hasGoogleBusiness}
             toggleValue={googleReviewsEnabled}
             onToggle={handleGoogleReviewsToggle}
             onClick={() => handleSelectWidget("google-reviews")}
