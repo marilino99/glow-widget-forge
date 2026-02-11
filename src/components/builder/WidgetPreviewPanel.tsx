@@ -636,7 +636,13 @@ const WidgetPreviewPanel = ({
           >
             {/* Google Reviews notification card - always visible */}
             {googleBusiness && !googleReviewDismissed && (
-              <div className="mb-3 w-full rounded-2xl bg-white shadow-lg p-4 border border-slate-100">
+              <div
+                className="mb-3 w-full rounded-2xl bg-white shadow-lg p-4 border border-slate-100 cursor-pointer"
+                onClick={() => {
+                  const mapsUrl = googleBusiness.url || googleBusiness.website;
+                  if (mapsUrl) window.open(mapsUrl, "_blank", "noopener,noreferrer");
+                }}
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
