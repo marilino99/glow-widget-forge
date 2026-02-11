@@ -12,6 +12,7 @@ import { GoogleBusinessData } from "./GoogleReviewsPanel";
 import { getTranslations } from "@/lib/translations";
 
 interface WidgetPreviewPanelProps {
+  activeWidget?: string | null;
   selectedAvatar?: string | null;
   faqEnabled?: boolean;
   contactName?: string;
@@ -191,6 +192,7 @@ const WidgetPreviewPanel = ({
   shareFeedbackEnabled = false,
   widgetId,
   googleBusiness,
+  activeWidget,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -227,13 +229,17 @@ const WidgetPreviewPanel = ({
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
 
-  // Reset dismissed state and collapse widget when business changes
+  // Reset dismissed state when business changes
   useEffect(() => {
     setGoogleReviewDismissed(false);
-    if (googleBusiness) {
+  }, [googleBusiness]);
+
+  // Collapse widget when entering Google Reviews section
+  useEffect(() => {
+    if (activeWidget === "google-reviews") {
       setIsCollapsed(true);
     }
-  }, [googleBusiness]);
+  }, [activeWidget]);
 
   const handleSendBugReport = async () => {
     if (!widgetId) return;
