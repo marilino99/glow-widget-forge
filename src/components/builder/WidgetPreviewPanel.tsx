@@ -566,8 +566,8 @@ const WidgetPreviewPanel = ({
             <div className="absolute inset-0 overflow-hidden">
               {devicePreview === "mobile" ? (
                 /* Mobile: iPhone frame centered */
-                <div className="flex h-full items-center justify-center bg-muted/30 p-4">
-                  <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px', maxHeight: 'calc(100% - 2rem)' }}>
+                <div className="flex h-full items-center justify-center bg-muted/30">
+                  <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px', maxHeight: '100%' }}>
                     {/* Dynamic Island */}
                     <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 w-[90px] h-[28px] bg-black rounded-full" />
                     <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] bg-white">
@@ -596,8 +596,8 @@ const WidgetPreviewPanel = ({
             <div className="absolute inset-0 overflow-hidden">
               {devicePreview === "mobile" ? (
                 /* Mobile: iPhone frame centered */
-                <div className="flex h-full items-center justify-center bg-muted/30 p-4">
-                  <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px', maxHeight: 'calc(100% - 2rem)' }}>
+                <div className="flex h-full items-center justify-center bg-muted/30">
+                  <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px', maxHeight: '100%' }}>
                     {/* Dynamic Island */}
                     <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 w-[90px] h-[28px] bg-black rounded-full" />
                     <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] bg-white">
@@ -638,8 +638,8 @@ const WidgetPreviewPanel = ({
             </div>
           ) : (/* Skeleton placeholder for website - shown as default or when loading fails */
             devicePreview === "mobile" ? (
-              <div className="flex h-full items-center justify-center bg-muted/30 p-4">
-                <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px', maxHeight: 'calc(100% - 2rem)' }}>
+              <div className="flex h-full items-center justify-center bg-muted/30">
+                <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px', maxHeight: '100%' }}>
                   {/* Dynamic Island */}
                   <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 w-[90px] h-[28px] bg-black rounded-full" />
                   <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] bg-white p-6 space-y-5">
