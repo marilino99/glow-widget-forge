@@ -8,6 +8,7 @@ interface InjectionCodePanelProps {
   customCss: string;
   customJs: string;
   onSave: (config: Record<string, unknown>) => void;
+  onLivePreviewChange?: (css: string, js: string) => void;
 }
 
 const validateCss = (css: string): string | null => {
@@ -38,7 +39,7 @@ const validateJs = (js: string): string | null => {
   }
 };
 
-const InjectionCodePanel = ({ onBack, customCss, customJs, onSave }: InjectionCodePanelProps) => {
+const InjectionCodePanel = ({ onBack, customCss, customJs, onSave, onLivePreviewChange }: InjectionCodePanelProps) => {
   const [css, setCss] = useState(customCss);
   const [js, setJs] = useState(customJs);
   const [cssError, setCssError] = useState<string | null>(null);
@@ -59,6 +60,11 @@ const InjectionCodePanel = ({ onBack, customCss, customJs, onSave }: InjectionCo
     const t = setTimeout(() => setJsError(validateJs(js)), 300);
     return () => clearTimeout(t);
   }, [js]);
+
+  // Live preview: propagate local CSS/JS changes upward
+  useEffect(() => {
+    onLivePreviewChange?.(css, js);
+  }, [css, js, onLivePreviewChange]);
 
   const hasChanges = css !== customCss || js !== customJs;
   const hasErrors = !!cssError || !!jsError;
