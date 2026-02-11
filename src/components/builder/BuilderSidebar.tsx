@@ -31,6 +31,7 @@ import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
 import { LocalLink } from "./CustomLinksPanel";
+import { GoogleBusinessData } from "./GoogleReviewsPanel";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -93,6 +94,7 @@ interface BuilderSidebarProps {
   onForwardEmailChange: (email: string) => void;
   isPro: boolean;
   onUpgrade: () => void;
+  onGoogleBusinessSelect?: (business: GoogleBusinessData | null) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -156,6 +158,7 @@ const BuilderSidebar = ({
   onForwardEmailChange,
   isPro,
   onUpgrade,
+  onGoogleBusinessSelect,
 }: BuilderSidebarProps) => {
   
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -400,7 +403,7 @@ const BuilderSidebar = ({
   // Show Google Reviews panel
   if (showGoogleReviewsPanel) {
     return (
-      <GoogleReviewsPanel onBack={handleBackFromGoogleReviews} />
+      <GoogleReviewsPanel onBack={handleBackFromGoogleReviews} onBusinessSelect={onGoogleBusinessSelect} />
     );
   }
 
