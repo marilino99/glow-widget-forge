@@ -682,15 +682,7 @@ const WidgetPreviewPanel = ({
 
           {/* Widget preview - interactive */}
           <div 
-            className={`absolute z-20 transition-all duration-300 ${
-              devicePreview === "mobile" 
-                ? "w-72 scale-[0.38] origin-bottom-right" 
-                : "w-80 bottom-5 right-5"
-            }`}
-            style={devicePreview === "mobile" ? {
-              bottom: 'calc(50% - 310px + 36px)',
-              right: 'calc(50% - 145px + 16px)'
-            } : undefined}
+            className="absolute z-20 transition-all duration-300 w-80 bottom-5 right-5"
           >
             {/* Google Reviews notification card - always visible */}
             {googleBusiness && !googleReviewDismissed && (
