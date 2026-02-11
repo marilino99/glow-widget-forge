@@ -634,49 +634,49 @@ const WidgetPreviewPanel = ({
               right: 'calc(50% - 100px)'
             } : undefined}
           >
-            {isCollapsed ? (/* Collapsed Icon */
-          <div className="flex flex-col items-end gap-3">
-                {/* Google Reviews notification card */}
-                {googleBusiness && !googleReviewDismissed && (
-                  <div className="w-full rounded-2xl bg-white shadow-lg p-4 border border-slate-100">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-2xl font-bold text-slate-900">{googleBusiness.rating ?? "–"}</span>
-                          <div className="flex items-center gap-0.5">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <Star
-                                key={star}
-                                className={`h-5 w-5 ${
-                                  googleBusiness.rating && star <= Math.round(googleBusiness.rating)
-                                    ? "text-slate-900 fill-slate-900"
-                                    : "text-slate-300"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <p className="text-sm text-slate-500 truncate">{googleBusiness.name}</p>
-                        <p className="text-sm text-slate-500">
-                          Check <span className="font-bold text-slate-900">{googleBusiness.user_ratings_total ?? 0}</span> reviews on{" "}
-                          <span className="text-[#4285F4]">G</span>
-                          <span className="text-[#EA4335]">o</span>
-                          <span className="text-[#FBBC05]">o</span>
-                          <span className="text-[#4285F4]">g</span>
-                          <span className="text-[#34A853]">l</span>
-                          <span className="text-[#EA4335]">e</span>
-                        </p>
+            {/* Google Reviews notification card - always visible */}
+            {googleBusiness && !googleReviewDismissed && (
+              <div className="mb-3 w-full rounded-2xl bg-white shadow-lg p-4 border border-slate-100">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-2xl font-bold text-slate-900">{googleBusiness.rating ?? "–"}</span>
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`h-5 w-5 ${
+                              googleBusiness.rating && star <= Math.round(googleBusiness.rating)
+                                ? "text-slate-900 fill-slate-900"
+                                : "text-slate-300"
+                            }`}
+                          />
+                        ))}
                       </div>
-                      <button
-                        onClick={() => setGoogleReviewDismissed(true)}
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
                     </div>
+                    <p className="text-sm text-slate-500 truncate">{googleBusiness.name}</p>
+                    <p className="text-sm text-slate-500">
+                      Check <span className="font-bold text-slate-900">{googleBusiness.user_ratings_total ?? 0}</span> reviews on{" "}
+                      <span className="text-[#4285F4]">G</span>
+                      <span className="text-[#EA4335]">o</span>
+                      <span className="text-[#FBBC05]">o</span>
+                      <span className="text-[#4285F4]">g</span>
+                      <span className="text-[#34A853]">l</span>
+                      <span className="text-[#EA4335]">e</span>
+                    </p>
                   </div>
-                )}
+                  <button
+                    onClick={() => setGoogleReviewDismissed(true)}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
 
+            {isCollapsed ? (/* Collapsed Icon */
+          <div className="flex flex-col items-end">
                 <button 
                   onClick={() => setIsCollapsed(false)} 
                   className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}
