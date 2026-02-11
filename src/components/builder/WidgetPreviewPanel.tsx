@@ -203,6 +203,28 @@ const WidgetPreviewPanel = ({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isAnimatingCollapse, setIsAnimatingCollapse] = useState(false);
+  const [isAnimatingExpand, setIsAnimatingExpand] = useState(false);
+  const [showButtonPop, setShowButtonPop] = useState(false);
+
+  // Animated collapse: play animation then hide
+  const handleCollapse = () => {
+    if (isAnimatingCollapse) return;
+    setIsAnimatingCollapse(true);
+    setTimeout(() => {
+      setIsCollapsed(true);
+      setIsAnimatingCollapse(false);
+      setShowButtonPop(true);
+      setTimeout(() => setShowButtonPop(false), 400);
+    }, 280);
+  };
+
+  // Animated expand
+  const handleExpand = () => {
+    setIsCollapsed(false);
+    setIsAnimatingExpand(true);
+    setTimeout(() => setIsAnimatingExpand(false), 350);
+  };
   const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
@@ -237,7 +259,7 @@ const WidgetPreviewPanel = ({
   // Collapse widget when entering Google Reviews section
   useEffect(() => {
     if (activeWidget === "google-reviews") {
-      setIsCollapsed(true);
+      handleCollapse();
     }
   }, [activeWidget]);
 
@@ -690,7 +712,7 @@ const WidgetPreviewPanel = ({
                   <button
                     onClick={() => {
                       setGoogleReviewDismissed(true);
-                      setIsCollapsed(false);
+                      handleExpand();
                     }}
                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors"
                   >
@@ -700,12 +722,12 @@ const WidgetPreviewPanel = ({
               </div>
             )}
 
-            {isCollapsed ? (/* Collapsed Icon */
+            {isCollapsed && !isAnimatingCollapse ? (/* Collapsed Icon */
           <div className="flex flex-col items-end">
                 {!(googleBusiness && !googleReviewDismissed) && (
                   <button 
-                    onClick={() => setIsCollapsed(false)} 
-                    className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}
+                    onClick={() => handleExpand()} 
+                    className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden ${showButtonPop ? 'animate-button-pop' : ''}`}
                     style={buttonStyle}
                     onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
                     onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
@@ -714,7 +736,7 @@ const WidgetPreviewPanel = ({
                   </button>
                 )}
               </div>) : showChat ? (/* Chat View */
-          <div className={`flex h-[500px] max-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`} style={customGradientStyle}>
+          <div className={`flex h-[500px] max-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={customGradientStyle}>
                 {/* Chat header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -731,7 +753,7 @@ const WidgetPreviewPanel = ({
                     </div>
                     <span className="text-sm font-medium">{contactName}</span>
                   </div>
-                  <button onClick={() => setIsCollapsed(true)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button onClick={() => handleCollapse()} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
                   </button>
                 </div>
@@ -837,7 +859,7 @@ const WidgetPreviewPanel = ({
                   <button onClick={() => setShowContactPage(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <ArrowLeft className="h-4 w-4" />
                   </button>
-                  <button onClick={() => setIsCollapsed(true)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button onClick={() => handleCollapse()} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
                   </button>
                 </div>
@@ -913,7 +935,7 @@ const WidgetPreviewPanel = ({
                   </span>
                 </div>
               </div>) : showShareFeedback ? (/* Share Feedback Form View */
-          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
+          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   {feedbackStep !== 3 ? (
@@ -924,7 +946,7 @@ const WidgetPreviewPanel = ({
                       <ArrowLeft className="h-4 w-4" />
                     </button>
                   ) : <div />}
-                  <button onClick={() => { setShowShareFeedback(false); setFeedbackStep(1); setIsCollapsed(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button onClick={() => { setShowShareFeedback(false); setFeedbackStep(1); handleCollapse(); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
                   </button>
                 </div>
@@ -1149,7 +1171,7 @@ const WidgetPreviewPanel = ({
                   </span>
                 </div>
               </div>) : showReportBug ? (/* Report Bug Form View */
-          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
+          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   {reportBugStep !== 3 ? (
@@ -1160,7 +1182,7 @@ const WidgetPreviewPanel = ({
                       <ArrowLeft className="h-4 w-4" />
                     </button>
                   ) : <div />}
-                  <button onClick={() => { setShowReportBug(false); setReportBugStep(1); setIsCollapsed(true); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                  <button onClick={() => { setShowReportBug(false); setReportBugStep(1); handleCollapse(); }} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <Minus className="h-4 w-4" />
                   </button>
                 </div>
@@ -1396,7 +1418,7 @@ const WidgetPreviewPanel = ({
                   </span>
                 </div>
               </div>) : (/* Home View */
-          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText}`} style={!isSolidMode ? customGradientStyle : {}}>
+          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                 {/* Main content area - colored for solid mode (header + contact + extra space) */}
@@ -1407,7 +1429,7 @@ const WidgetPreviewPanel = ({
                   {/* Widget header */}
                   <div className="relative overflow-hidden px-6 py-5">
                     {!isSolidMode && !isLight && <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />}
-                    <button onClick={() => setIsCollapsed(true)} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
+                    <button onClick={() => handleCollapse()} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
                       <Minus className="h-4 w-4" />
                     </button>
                     <h3 className="relative text-2xl font-bold whitespace-pre-line max-w-[70%] break-words">
