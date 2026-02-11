@@ -171,6 +171,17 @@ const BuilderSidebar = ({
   const [showCustomLinksPanel, setShowCustomLinksPanel] = useState(false);
   const [showMetricsPanel, setShowMetricsPanel] = useState(false);
   const [showGoogleReviewsPanel, setShowGoogleReviewsPanel] = useState(false);
+  const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(false);
+
+  const handleGoogleBusinessSelect = (business: GoogleBusinessData | null) => {
+    onGoogleBusinessSelect?.(business);
+    if (business) setGoogleReviewsEnabled(true);
+  };
+
+  const handleGoogleReviewsToggle = (enabled: boolean) => {
+    setGoogleReviewsEnabled(enabled);
+    if (!enabled) onGoogleBusinessSelect?.(null);
+  };
 
   const handleSelectWidget = (widgetType: string) => {
     if (widgetType === "contact-card") {
@@ -403,7 +414,7 @@ const BuilderSidebar = ({
   // Show Google Reviews panel
   if (showGoogleReviewsPanel) {
     return (
-      <GoogleReviewsPanel onBack={handleBackFromGoogleReviews} onBusinessSelect={onGoogleBusinessSelect} />
+      <GoogleReviewsPanel onBack={handleBackFromGoogleReviews} onBusinessSelect={handleGoogleBusinessSelect} />
     );
   }
 
@@ -481,6 +492,9 @@ const BuilderSidebar = ({
           <SidebarItem
             icon={Star}
             label="Google reviews"
+            hasToggle
+            toggleValue={googleReviewsEnabled}
+            onToggle={handleGoogleReviewsToggle}
             onClick={() => handleSelectWidget("google-reviews")}
             active={activeWidget === "google-reviews"}
           />
