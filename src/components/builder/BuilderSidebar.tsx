@@ -444,12 +444,6 @@ const BuilderSidebar = ({
             active={activeWidget === "product-carousel"}
           />
           <SidebarItem
-            icon={Gift}
-            label="Product recommendations"
-            onClick={() => handleSelectWidget("product-recommendations")}
-            active={activeWidget === "product-recommendations"}
-          />
-          <SidebarItem
             icon={BarChart3}
             label="Metrics"
             onClick={() => handleSelectWidget("metrics")}
