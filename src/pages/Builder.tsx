@@ -23,6 +23,7 @@ import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import { ProductCardData } from "@/types/productCard";
 import { LocalLink } from "@/components/builder/CustomLinksPanel";
+import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
 
 const Builder = () => {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ const Builder = () => {
   
   // Live preview state for local (unsaved) custom links
   const [localPreviewLinks, setLocalPreviewLinks] = useState<LocalLink[]>([]);
+  const [googleBusiness, setGoogleBusiness] = useState<GoogleBusinessData | null>(null);
   
   // Track initial typography values for cancel functionality
   const initialTypographyRef = useRef({
@@ -282,6 +284,7 @@ const Builder = () => {
             onForwardEmailChange={(email: string) => updateConfig({ forwardEmail: email })}
             isPro={plan === "pro"}
             onUpgrade={startCheckout}
+            onGoogleBusinessSelect={setGoogleBusiness}
           />
         </div>
 
@@ -311,6 +314,7 @@ const Builder = () => {
             reportBugsEnabled={reportBugsEnabled}
             shareFeedbackEnabled={shareFeedbackEnabled}
             widgetId={config.id || undefined}
+            googleBusiness={googleBusiness}
           />
         </div>
       </div>

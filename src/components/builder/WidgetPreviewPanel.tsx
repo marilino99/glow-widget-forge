@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
 import { CustomLinkData } from "@/types/customLink";
+import { GoogleBusinessData } from "./GoogleReviewsPanel";
 import { getTranslations } from "@/lib/translations";
 
 interface WidgetPreviewPanelProps {
@@ -34,6 +35,7 @@ interface WidgetPreviewPanelProps {
   reportBugsEnabled?: boolean;
   shareFeedbackEnabled?: boolean;
   widgetId?: string;
+  googleBusiness?: GoogleBusinessData | null;
 }
 
 // Check if a color is a hex value
@@ -188,6 +190,7 @@ const WidgetPreviewPanel = ({
   reportBugsEnabled = false,
   shareFeedbackEnabled = false,
   widgetId,
+  googleBusiness,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -222,6 +225,12 @@ const WidgetPreviewPanel = ({
   const [feedbackDetails, setFeedbackDetails] = useState("");
   const [feedbackName, setFeedbackName] = useState("");
   const [feedbackEmail, setFeedbackEmail] = useState("");
+  const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
+
+  // Reset dismissed state when business changes
+  useEffect(() => {
+    setGoogleReviewDismissed(false);
+  }, [googleBusiness]);
 
   const handleSendBugReport = async () => {
     if (!widgetId) return;
@@ -626,7 +635,48 @@ const WidgetPreviewPanel = ({
             } : undefined}
           >
             {isCollapsed ? (/* Collapsed Icon */
-          <div className="flex justify-end">
+          <div className="flex flex-col items-end gap-3">
+                {/* Google Reviews notification card */}
+                {googleBusiness && !googleReviewDismissed && (
+                  <div className="w-full rounded-2xl bg-white shadow-lg p-4 border border-slate-100">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-2xl font-bold text-slate-900">{googleBusiness.rating ?? "–"}</span>
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`h-5 w-5 ${
+                                  googleBusiness.rating && star <= Math.round(googleBusiness.rating)
+                                    ? "text-slate-900 fill-slate-900"
+                                    : "text-slate-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-sm text-slate-500 truncate">{googleBusiness.name}</p>
+                        <p className="text-sm text-slate-500">
+                          Check <span className="font-bold text-slate-900">{googleBusiness.user_ratings_total ?? 0}</span> reviews on{" "}
+                          <span className="text-[#4285F4]">G</span>
+                          <span className="text-[#EA4335]">o</span>
+                          <span className="text-[#FBBC05]">o</span>
+                          <span className="text-[#4285F4]">g</span>
+                          <span className="text-[#34A853]">l</span>
+                          <span className="text-[#EA4335]">e</span>
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setGoogleReviewDismissed(true)}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <button 
                   onClick={() => setIsCollapsed(false)} 
                   className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}

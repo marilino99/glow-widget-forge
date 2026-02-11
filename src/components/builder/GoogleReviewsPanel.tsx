@@ -5,8 +5,19 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
+export interface GoogleBusinessData {
+  name: string;
+  rating?: number;
+  user_ratings_total?: number;
+  formatted_address?: string;
+  website?: string;
+  url?: string;
+  place_id?: string;
+}
+
 interface GoogleReviewsPanelProps {
   onBack: () => void;
+  onBusinessSelect?: (business: GoogleBusinessData | null) => void;
 }
 
 interface PlacePrediction {
@@ -18,22 +29,13 @@ interface PlacePrediction {
   };
 }
 
-interface PlaceDetails {
-  name: string;
-  rating?: number;
-  user_ratings_total?: number;
-  formatted_address?: string;
-  website?: string;
-  url?: string;
-}
-
-const GoogleReviewsPanel = ({ onBack }: GoogleReviewsPanelProps) => {
+const GoogleReviewsPanel = ({ onBack, onBusinessSelect }: GoogleReviewsPanelProps) => {
   const [activeTab, setActiveTab] = useState<"search" | "link">("search");
   const [searchQuery, setSearchQuery] = useState("");
   const [linkValue, setLinkValue] = useState("");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState<PlaceDetails | null>(null);
+  const [selectedBusiness, setSelectedBusiness] = useState<GoogleBusinessData | null>(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -76,7 +78,12 @@ const GoogleReviewsPanel = ({ onBack }: GoogleReviewsPanelProps) => {
         body: { place_id: prediction.place_id },
       });
       if (error) throw error;
-      setSelectedBusiness(data?.result || null);
+      const business: GoogleBusinessData = {
+        ...data?.result,
+        place_id: prediction.place_id,
+      };
+      setSelectedBusiness(business);
+      onBusinessSelect?.(business);
     } catch (err) {
       console.error("Place details error:", err);
     } finally {
@@ -86,7 +93,10 @@ const GoogleReviewsPanel = ({ onBack }: GoogleReviewsPanelProps) => {
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    if (selectedBusiness) setSelectedBusiness(null);
+    if (selectedBusiness) {
+      setSelectedBusiness(null);
+      onBusinessSelect?.(null);
+    }
   };
 
   const truncateUrl = (url: string, maxLen = 40) => {
