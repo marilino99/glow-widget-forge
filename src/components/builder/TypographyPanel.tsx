@@ -89,14 +89,24 @@ const TypographyPanel = ({
                   <ImagePlus className="h-6 w-6 text-muted-foreground" />
                 )}
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleUploadClick}
-                className="bg-foreground text-background hover:bg-foreground/90"
-              >
-                Upload
-              </Button>
+              {logo ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => onLogoChange(null)}
+                >
+                  Remove
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleUploadClick}
+                  className="bg-foreground text-background hover:bg-foreground/90"
+                >
+                  Upload
+                </Button>
+              )}
               <input
                 ref={fileInputRef}
                 type="file"
