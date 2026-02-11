@@ -74,7 +74,7 @@ const Builder = () => {
   const [googleBusiness, setGoogleBusiness] = useState<GoogleBusinessData | null>(null);
   
   // Track initial typography values for cancel functionality
-  const initialTypographyRef = useRef({
+  const [initialTypography, setInitialTypography] = useState({
     logo: config.logo,
     language: config.language,
     sayHello: config.sayHello,
@@ -83,30 +83,30 @@ const Builder = () => {
   // Update initial values when config is loaded from DB
   useEffect(() => {
     if (!isLoading) {
-      initialTypographyRef.current = {
+      setInitialTypography({
         logo: config.logo,
         language: config.language,
         sayHello: config.sayHello,
-      };
+      });
     }
   }, [isLoading]);
 
   const handleTypographySave = (typographyConfig: Record<string, unknown>) => {
     saveConfig(typographyConfig);
     // Update initial values after save using the saved values
-    initialTypographyRef.current = {
+    setInitialTypography({
       logo: "logo" in typographyConfig ? (typographyConfig.logo as string | null) : config.logo,
       language: "language" in typographyConfig ? (typographyConfig.language as string) : config.language,
       sayHello: "sayHello" in typographyConfig ? (typographyConfig.sayHello as string) : config.sayHello,
-    };
+    });
   };
 
   const handleTypographyCancel = () => {
     // Reset to initial values
     updateConfig({
-      logo: initialTypographyRef.current.logo,
-      language: initialTypographyRef.current.language,
-      sayHello: initialTypographyRef.current.sayHello,
+      logo: initialTypography.logo,
+      language: initialTypography.language,
+      sayHello: initialTypography.sayHello,
     });
   };
 
@@ -256,9 +256,9 @@ const Builder = () => {
             onLanguageChange={(language) => updateConfig({ language })}
             sayHello={config.sayHello}
             onSayHelloChange={(sayHello) => updateConfig({ sayHello })}
-            initialLogo={initialTypographyRef.current.logo}
-            initialLanguage={initialTypographyRef.current.language}
-            initialSayHello={initialTypographyRef.current.sayHello}
+            initialLogo={initialTypography.logo}
+            initialLanguage={initialTypography.language}
+            initialSayHello={initialTypography.sayHello}
             faqItems={faqItems}
             onAddFaqItem={addFaqItem}
             onUpdateFaqItem={updateFaqItem}
