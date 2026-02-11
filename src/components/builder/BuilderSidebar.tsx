@@ -7,7 +7,7 @@ import {
   Link2,
   LayoutGrid,
   Gift,
-  Users,
+  
   Star,
   Palette,
   Type,
@@ -156,7 +156,7 @@ const BuilderSidebar = ({
   isPro,
   onUpgrade,
 }: BuilderSidebarProps) => {
-  const [visitorCounterEnabled, setVisitorCounterEnabled] = useState(false);
+  
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
   const [showThemeColorsPanel, setShowThemeColorsPanel] = useState(false);
   const [showProductCarouselPanel, setShowProductCarouselPanel] = useState(false);
@@ -459,15 +459,6 @@ const BuilderSidebar = ({
           Build trust
         </p>
         <div className="space-y-2">
-          <SidebarItem
-            icon={Users}
-            label="Visitor counter"
-            hasToggle
-            toggleValue={visitorCounterEnabled}
-            onToggle={setVisitorCounterEnabled}
-            onClick={() => handleSelectWidget("visitor-counter")}
-            active={activeWidget === "visitor-counter"}
-          />
           <SidebarItem
             icon={Star}
             label="Google reviews"
