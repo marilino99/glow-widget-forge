@@ -899,34 +899,11 @@ const WidgetPreviewPanel = ({
                     </div>
                   </div>
                 ) : (
+                <>
                 <div className="flex-1 overflow-y-auto px-5">
                   {/* Step indicator */}
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex flex-col items-center">
-                      {feedbackStep === 1 ? (
-                        <div className="relative">
-                          <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
-                          <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-500" : "border-slate-600 text-slate-400"}`}>
-                            <span className="text-xs font-medium">1</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className={`flex h-7 w-7 items-center justify-center rounded-full ${useInlineStyles ? "" : "bg-emerald-600"} text-white`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
-                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
-                        </div>
-                      )}
-                    </div>
-                    <div className={`flex-1 border-t border-dashed mx-2 ${isLight ? "border-slate-300" : "border-slate-600"}`} />
-                    <div className="flex flex-col items-center">
-                      <div className="relative">
-                        {feedbackStep === 2 && (
-                          <div className={`absolute -top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full ${useInlineStyles ? "" : "bg-emerald-500"}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}} />
-                        )}
-                        <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${isLight ? "border-slate-200 text-slate-400" : "border-slate-600 text-slate-500"}`}>
-                          <span className="text-xs font-medium">2</span>
-                        </div>
-                      </div>
-                    </div>
+...
                   </div>
 
                   {feedbackStep === 1 ? (
@@ -935,7 +912,7 @@ const WidgetPreviewPanel = ({
                         How would you rate us?
                       </h3>
 
-                      <div className="mb-4">
+                      <div className="mb-3">
                         <label className={`text-xs mb-2 block ${isLight ? "text-slate-700" : "text-white/70"}`}>
                           Pick a rate <span className="text-red-500">*</span>
                         </label>
@@ -974,30 +951,13 @@ const WidgetPreviewPanel = ({
                         <textarea
                           value={feedbackDetails}
                           onChange={(e) => setFeedbackDetails(e.target.value)}
-                          className={`w-full min-h-[100px] rounded-xl border p-2.5 text-xs resize-none focus:outline-none ${
+                          className={`w-full min-h-[70px] rounded-xl border p-2.5 text-xs resize-none focus:outline-none ${
                             isLight 
                               ? "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-slate-400" 
                               : "border-slate-600 bg-slate-800 text-white placeholder:text-white/40 focus:border-slate-500"
                           }`}
                           placeholder=""
                         />
-                      </div>
-
-                      <div className="flex justify-end mb-3">
-                        <button 
-                          onClick={() => { 
-                            if (!feedbackRating) { setFeedbackRatingError(true); return; } 
-                            setFeedbackStep(2); 
-                          }}
-                          className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
-                            isLight 
-                              ? "bg-slate-100 text-slate-900 hover:bg-slate-200" 
-                              : "bg-slate-700 text-white hover:bg-slate-600"
-                          }`}
-                        >
-                          Next
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
                       </div>
                     </>
                   ) : (
@@ -1062,8 +1022,30 @@ const WidgetPreviewPanel = ({
                     </>
                   )}
                 </div>
-                )}
 
+                {/* Fixed Next button for step 1 */}
+                {feedbackStep === 1 && (
+                  <div className="shrink-0 px-5 pb-2 pt-1">
+                    <div className="flex justify-end">
+                      <button 
+                        onClick={() => { 
+                          if (!feedbackRating) { setFeedbackRatingError(true); return; } 
+                          setFeedbackStep(2); 
+                        }}
+                        className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
+                          isLight 
+                            ? "bg-slate-100 text-slate-900 hover:bg-slate-200" 
+                            : "bg-slate-700 text-white hover:bg-slate-600"
+                        }`}
+                      >
+                        Next
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                </>
+                )}
                 {/* Footer nav */}
                 <div className={`px-4 pb-1 pt-3 shrink-0`}>
                   <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
