@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/switch";
 interface SidebarItemProps {
   icon: LucideIcon;
   label: string;
+  badge?: string;
   hasToggle?: boolean;
   toggleValue?: boolean;
   onToggle?: (value: boolean) => void;
@@ -14,6 +15,7 @@ interface SidebarItemProps {
 const SidebarItem = ({
   icon: Icon,
   label,
+  badge,
   hasToggle,
   toggleValue,
   onToggle,
@@ -30,6 +32,11 @@ const SidebarItem = ({
       <div className="flex items-center gap-3">
         <Icon className="h-5 w-5 text-muted-foreground" />
         <span className="text-sm font-medium text-foreground">{label}</span>
+        {badge && (
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+            {badge}
+          </span>
+        )}
       </div>
       <div className="flex items-center gap-2">
         {hasToggle && (
