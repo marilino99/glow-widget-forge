@@ -762,7 +762,9 @@ const WidgetPreviewPanel = ({
                 <div className="flex-1 overflow-y-auto px-6">
                   <h3 className={`text-2xl font-bold mb-6 ${isLight ? "text-slate-900" : "text-white"}`}>{t.contact || "Contact us"}</h3>
                   
-                  <p className={`text-sm mb-4 ${isLight ? "text-slate-400" : "text-white/40"}`}>Email</p>
+                  {(reportBugsEnabled || shareFeedbackEnabled) && (
+                    <p className={`text-sm mb-4 ${isLight ? "text-slate-400" : "text-white/40"}`}>Email</p>
+                  )}
 
                   {/* Report a bug card */}
                   {reportBugsEnabled && (
