@@ -565,14 +565,18 @@ const WidgetPreviewPanel = ({
           ) : useScreenshotFallback && screenshotUrl ? (/* Screenshot fallback mode for SPA sites */
             <div className="absolute inset-0 overflow-hidden">
               {devicePreview === "mobile" ? (
-                /* Mobile: full-area screenshot scaled to simulate mobile viewport */
-                <div className="absolute inset-0">
-                  <div className="relative h-full w-full overflow-hidden bg-white">
-                    <img 
-                      src={screenshotUrl} 
-                      alt="Website screenshot" 
-                      className="h-full w-full object-cover object-top"
-                    />
+                /* Mobile: iPhone frame centered */
+                <div className="flex h-full items-center justify-center bg-muted/30">
+                  <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px' }}>
+                    {/* Dynamic Island */}
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 w-[90px] h-[28px] bg-black rounded-full" />
+                    <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] bg-white">
+                      <img 
+                        src={screenshotUrl} 
+                        alt="Website screenshot" 
+                        className="h-full w-full object-cover object-top"
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -591,22 +595,25 @@ const WidgetPreviewPanel = ({
           ) : proxyHtml ? (/* Iframe with proxied website content */
             <div className="absolute inset-0 overflow-hidden">
               {devicePreview === "mobile" ? (
-                /* Mobile: full-area iframe scaled to simulate 375px mobile viewport */
-                <div className="absolute inset-0">
-                  <div className="relative h-full w-full overflow-hidden">
-                    <iframe 
-                      srcDoc={proxyHtml} 
-                      className="absolute border-0 bg-white" 
-                      title="Website preview" 
-                      sandbox="allow-same-origin"
-                      style={{ 
-                        width: '375px', 
-                        height: '100%',
-                        transform: 'scale(1)',
-                        transformOrigin: 'top left',
-                        maxWidth: '100%'
-                      }} 
-                    />
+                /* Mobile: iPhone frame centered */
+                <div className="flex h-full items-center justify-center bg-muted/30">
+                  <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px' }}>
+                    {/* Dynamic Island */}
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 w-[90px] h-[28px] bg-black rounded-full" />
+                    <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] bg-white">
+                      <iframe 
+                        srcDoc={proxyHtml} 
+                        className="absolute border-0 bg-white" 
+                        title="Website preview" 
+                        sandbox="allow-same-origin"
+                        style={{ 
+                          width: '375px', 
+                          height: '812px',
+                          transform: 'scale(0.747)',
+                          transformOrigin: 'top left'
+                        }} 
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -631,23 +638,21 @@ const WidgetPreviewPanel = ({
             </div>
           ) : (/* Skeleton placeholder for website - shown as default or when loading fails */
             devicePreview === "mobile" ? (
-              <div className="absolute inset-0 bg-slate-50">
-                <div className="h-full w-full bg-white p-8 space-y-5">
-                  {/* Header placeholder */}
-                  <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
-                  {/* Text lines */}
-                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
-                  <div className="h-3 w-3/4 max-w-sm rounded-md bg-slate-200/80" />
-                  {/* Main content block */}
-                  <div className="mt-4 h-32 w-full max-w-xl rounded-xl bg-slate-200/80" />
-                  {/* More text lines */}
-                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
-                  <div className="h-3 w-2/3 max-w-xs rounded-md bg-slate-200/80" />
-                  {/* Card grid */}
-                  <div className="mt-4 grid grid-cols-3 gap-3 max-w-xl">
-                    <div className="h-20 rounded-xl bg-slate-200/80" />
-                    <div className="h-20 rounded-xl bg-slate-200/80" />
-                    <div className="h-20 rounded-xl bg-slate-200/80" />
+              <div className="flex h-full items-center justify-center bg-muted/30">
+                <div className="relative rounded-[3rem] border-[6px] border-zinc-900 bg-zinc-900 shadow-2xl overflow-hidden" style={{ width: '290px', height: '620px' }}>
+                  {/* Dynamic Island */}
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 w-[90px] h-[28px] bg-black rounded-full" />
+                  <div className="relative h-full w-full overflow-hidden rounded-[2.6rem] bg-white p-6 space-y-5">
+                    <div className="h-10 w-40 rounded-lg bg-slate-200/80 mt-8" />
+                    <div className="h-3 w-full rounded-md bg-slate-200/80" />
+                    <div className="h-3 w-3/4 rounded-md bg-slate-200/80" />
+                    <div className="mt-4 h-28 w-full rounded-xl bg-slate-200/80" />
+                    <div className="h-3 w-full rounded-md bg-slate-200/80" />
+                    <div className="h-3 w-2/3 rounded-md bg-slate-200/80" />
+                    <div className="mt-4 grid grid-cols-2 gap-3">
+                      <div className="h-20 rounded-xl bg-slate-200/80" />
+                      <div className="h-20 rounded-xl bg-slate-200/80" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -679,9 +684,13 @@ const WidgetPreviewPanel = ({
           <div 
             className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
-                ? "w-72 scale-[0.55] origin-bottom-right bottom-3 right-3" 
+                ? "w-72 scale-[0.5] origin-bottom-right" 
                 : "w-80 bottom-5 right-5"
             }`}
+            style={devicePreview === "mobile" ? {
+              bottom: 'calc(50% - 310px + 10px)',
+              right: 'calc(50% - 145px + 6px)'
+            } : undefined}
           >
             {/* Google Reviews notification card - always visible */}
             {googleBusiness && !googleReviewDismissed && (
