@@ -677,15 +677,17 @@ const WidgetPreviewPanel = ({
 
             {isCollapsed ? (/* Collapsed Icon */
           <div className="flex flex-col items-end">
-                <button 
-                  onClick={() => setIsCollapsed(false)} 
-                  className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}
-                  style={buttonStyle}
-                  onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
-                  onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
-                >
-                  {buttonLogo ? <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" /> : <HelpCircle className="h-7 w-7 text-white" />}
-                </button>
+                {!(googleBusiness && !googleReviewDismissed) && (
+                  <button 
+                    onClick={() => setIsCollapsed(false)} 
+                    className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden`}
+                    style={buttonStyle}
+                    onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
+                    onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
+                  >
+                    {buttonLogo ? <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" /> : <HelpCircle className="h-7 w-7 text-white" />}
+                  </button>
+                )}
               </div>) : showChat ? (/* Chat View */
           <div className={`flex h-[500px] max-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText}`} style={customGradientStyle}>
                 {/* Chat header */}
