@@ -94,6 +94,8 @@ Deno.serve(async (req) => {
     var faqs = cfg.faq_items || [];
     var igPosts = cfg.instagram_posts || [];
     var customLinks = cfg.custom_links || [];
+    var customCss = cfg.custom_css || '';
+    var customJs = cfg.custom_js || '';
     var faqEnabled = cfg.faq_enabled;
     var igEnabled = cfg.instagram_enabled;
     var lang = cfg.language || 'en';
@@ -318,6 +320,13 @@ Deno.serve(async (req) => {
       #wj-chat-powered{padding:8px;text-align:center;font-size:12px;color:\${textSub};border-top:1px solid \${borderCol}}
     \`;
     d.head.appendChild(style);
+
+    // Inject custom CSS if provided
+    if (customCss) {
+      var customStyle = d.createElement('style');
+      customStyle.textContent = customCss;
+      d.head.appendChild(customStyle);
+    }
 
     var root = d.createElement('div');
     root.id = 'wj-root';
@@ -712,6 +721,11 @@ Deno.serve(async (req) => {
     root.appendChild(pop);
     root.appendChild(btn);
     d.body.appendChild(root);
+
+    // Inject custom JS if provided
+    if (customJs) {
+      try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
+    }
   }
 
   function esc(s) {
