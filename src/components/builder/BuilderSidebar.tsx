@@ -12,7 +12,7 @@ import {
   Palette,
   Type,
   Maximize2,
-  Sparkles,
+  Code,
   Instagram,
   BarChart3,
 } from "lucide-react";
@@ -28,6 +28,7 @@ import WhatsAppPanel from "./WhatsAppPanel";
 import CustomLinksPanel from "./CustomLinksPanel";
 import MetricsPanel from "./MetricsPanel";
 import SizePositionPanel from "./SizePositionPanel";
+import InjectionCodePanel from "./InjectionCodePanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -177,6 +178,7 @@ const BuilderSidebar = ({
   const [showMetricsPanel, setShowMetricsPanel] = useState(false);
   const [showGoogleReviewsPanel, setShowGoogleReviewsPanel] = useState(false);
   const [showSizePositionPanel, setShowSizePositionPanel] = useState(false);
+  const [showInjectionCodePanel, setShowInjectionCodePanel] = useState(false);
   const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(false);
   const [hasGoogleBusiness, setHasGoogleBusiness] = useState(false);
 
@@ -216,6 +218,8 @@ const BuilderSidebar = ({
       setShowGoogleReviewsPanel(true);
     } else if (widgetType === "size-position") {
       setShowSizePositionPanel(true);
+    } else if (widgetType === "injection-code") {
+      setShowInjectionCodePanel(true);
     }
     onSelectWidget(widgetType);
   };
@@ -272,6 +276,11 @@ const BuilderSidebar = ({
 
   const handleBackFromSizePosition = () => {
     setShowSizePositionPanel(false);
+    onSelectWidget(null as unknown as string);
+  };
+
+  const handleBackFromInjectionCode = () => {
+    setShowInjectionCodePanel(false);
     onSelectWidget(null as unknown as string);
   };
 
@@ -437,6 +446,13 @@ const BuilderSidebar = ({
     );
   }
 
+  // Show Injection Code panel
+  if (showInjectionCodePanel) {
+    return (
+      <InjectionCodePanel onBack={handleBackFromInjectionCode} />
+    );
+  }
+
   // Show Google Reviews panel
   if (showGoogleReviewsPanel) {
     return (
@@ -559,6 +575,12 @@ const BuilderSidebar = ({
             label="Size & position"
             onClick={() => handleSelectWidget("size-position")}
             active={activeWidget === "size-position"}
+          />
+          <SidebarItem
+            icon={Code}
+            label="Injection code"
+            onClick={() => handleSelectWidget("injection-code")}
+            active={activeWidget === "injection-code"}
           />
         </div>
       </div>
