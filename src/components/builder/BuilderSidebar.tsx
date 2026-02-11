@@ -560,12 +560,6 @@ const BuilderSidebar = ({
             onClick={() => handleSelectWidget("size-position")}
             active={activeWidget === "size-position"}
           />
-          <SidebarItem
-            icon={Sparkles}
-            label="Animations"
-            onClick={() => handleSelectWidget("animations")}
-            active={activeWidget === "animations"}
-          />
         </div>
       </div>
     </div>
