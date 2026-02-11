@@ -3,6 +3,7 @@ import { ChevronLeft, Eye, Clock, HelpCircle, Search, Loader2, MapPin, ExternalL
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface GoogleBusinessData {
@@ -37,6 +38,9 @@ const GoogleReviewsPanel = ({ onBack, onBusinessSelect }: GoogleReviewsPanelProp
   const [isSearching, setIsSearching] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<GoogleBusinessData | null>(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [savedBusiness, setSavedBusiness] = useState<GoogleBusinessData | null>(null);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [isEnabled, setIsEnabled] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -99,6 +103,32 @@ const GoogleReviewsPanel = ({ onBack, onBusinessSelect }: GoogleReviewsPanelProp
     }
   };
 
+  const handleSaveAndEnable = () => {
+    if (!selectedBusiness) return;
+    setSavedBusiness(selectedBusiness);
+    setSavedAt(new Date());
+    setIsEnabled(true);
+    onBusinessSelect?.(selectedBusiness);
+  };
+
+  const handleRemove = () => {
+    setSavedBusiness(null);
+    setSavedAt(null);
+    setIsEnabled(false);
+    setSelectedBusiness(null);
+    setSearchQuery("");
+    onBusinessSelect?.(null);
+  };
+
+  const handleToggle = (enabled: boolean) => {
+    setIsEnabled(enabled);
+    if (!enabled) {
+      onBusinessSelect?.(null);
+    } else if (savedBusiness) {
+      onBusinessSelect?.(savedBusiness);
+    }
+  };
+
   const truncateUrl = (url: string, maxLen = 40) => {
     try {
       const u = new URL(url);
@@ -109,17 +139,29 @@ const GoogleReviewsPanel = ({ onBack, onBusinessSelect }: GoogleReviewsPanelProp
     }
   };
 
+  const formatTime = (date: Date) => {
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const time = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return isToday ? `Today, ${time}` : `${date.toLocaleDateString()}, ${time}`;
+  };
+
   return (
     <div className="flex h-full flex-col bg-sidebar">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-4">
-        <button
-          onClick={onBack}
-          className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted transition-colors"
-        >
-          <ChevronLeft className="h-5 w-5 text-foreground" />
-        </button>
-        <h2 className="text-lg font-bold text-foreground">Google reviews</h2>
+      <div className="flex items-center justify-between px-4 py-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBack}
+            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted transition-colors"
+          >
+            <ChevronLeft className="h-5 w-5 text-foreground" />
+          </button>
+          <h2 className="text-lg font-bold text-foreground">Google reviews</h2>
+        </div>
+        {savedBusiness && (
+          <Switch checked={isEnabled} onCheckedChange={handleToggle} />
+        )}
       </div>
 
       <div className="border-t border-border" />
@@ -145,122 +187,182 @@ const GoogleReviewsPanel = ({ onBack, onBusinessSelect }: GoogleReviewsPanelProp
           </div>
         </div>
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "search" | "link")} className="mb-6">
-          <TabsList className="w-full bg-muted">
-            <TabsTrigger value="search" className="flex-1 text-sm">Search your business</TabsTrigger>
-            <TabsTrigger value="link" className="flex-1 text-sm">Provide link</TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {activeTab === "search" ? (
-          <div>
-            <h3 className="text-sm font-bold text-foreground mb-3">Search your business</h3>
-            <div className="relative">
-              <Input
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                placeholder="Enter full name or website address"
-                className="bg-muted border-0 pr-9"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {isSearching ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                ) : (
-                  <Search className="h-4 w-4 text-muted-foreground" />
-                )}
-              </div>
-
-              {/* Predictions dropdown */}
-              {predictions.length > 0 && (
-                <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-popover shadow-lg overflow-hidden">
-                  {predictions.map((p) => (
-                    <button
-                      key={p.place_id}
-                      onClick={() => handleSelectBusiness(p)}
-                      className="flex w-full items-start gap-3 px-3 py-2.5 text-left hover:bg-accent transition-colors"
-                    >
-                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">
-                          {p.structured_formatting?.main_text || p.description}
-                        </p>
-                        {p.structured_formatting?.secondary_text && (
-                          <p className="text-xs text-muted-foreground truncate">
-                            {p.structured_formatting.secondary_text}
-                          </p>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
+        {/* Saved state */}
+        {savedBusiness ? (
+          <div className="rounded-xl border border-border bg-background p-4">
+            <div className="flex items-start justify-between gap-2">
+              <h4 className="text-base font-bold text-foreground leading-tight">
+                {savedBusiness.name}
+              </h4>
+              {(savedBusiness.url || savedBusiness.website) && (
+                <button
+                  onClick={() => window.open(savedBusiness.url || savedBusiness.website, "_blank")}
+                  className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                </button>
               )}
             </div>
 
-            {/* Loading details */}
-            {isLoadingDetails && (
-              <div className="mt-4 flex items-center justify-center gap-2 py-6">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Loading business details...</span>
-              </div>
+            {savedBusiness.rating != null && (
+              <p className="mt-1 text-sm">
+                <span className="font-bold text-foreground">{savedBusiness.rating}</span>
+                {savedBusiness.user_ratings_total != null && (
+                  <span className="text-muted-foreground"> ({savedBusiness.user_ratings_total} reviews)</span>
+                )}
+              </p>
             )}
 
-            {/* Selected business details card */}
-            {selectedBusiness && !isLoadingDetails && (
-              <div className="mt-4 space-y-4">
-                <div className="rounded-xl border border-border bg-background p-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-base font-bold text-foreground leading-tight">
-                      {selectedBusiness.name}
-                    </h4>
-                    {(selectedBusiness.url || selectedBusiness.website) && (
-                      <button
-                        onClick={() => window.open(selectedBusiness.url || selectedBusiness.website, "_blank")}
-                        className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
-                      >
-                        <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                      </button>
+            {savedBusiness.formatted_address && (
+              <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                {savedBusiness.formatted_address}
+              </p>
+            )}
+
+            {savedBusiness.website && (
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {truncateUrl(savedBusiness.website)}
+              </p>
+            )}
+
+            <div className="mt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
+                <span className="text-xs text-muted-foreground">
+                  Updated: {savedAt ? formatTime(savedAt) : "–"}
+                </span>
+              </div>
+              <button
+                onClick={handleRemove}
+                className="text-sm font-medium text-destructive hover:text-destructive/80 transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "search" | "link")} className="mb-6">
+              <TabsList className="w-full bg-muted">
+                <TabsTrigger value="search" className="flex-1 text-sm">Search your business</TabsTrigger>
+                <TabsTrigger value="link" className="flex-1 text-sm">Provide link</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            {activeTab === "search" ? (
+              <div>
+                <h3 className="text-sm font-bold text-foreground mb-3">Search your business</h3>
+                <div className="relative">
+                  <Input
+                    value={searchQuery}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    placeholder="Enter full name or website address"
+                    className="bg-muted border-0 pr-9"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {isSearching ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    ) : (
+                      <Search className="h-4 w-4 text-muted-foreground" />
                     )}
                   </div>
 
-                  {selectedBusiness.rating != null && (
-                    <p className="mt-1 text-sm">
-                      <span className="font-bold text-foreground">{selectedBusiness.rating}</span>
-                      {selectedBusiness.user_ratings_total != null && (
-                        <span className="text-muted-foreground"> ({selectedBusiness.user_ratings_total} reviews)</span>
-                      )}
-                    </p>
-                  )}
-
-                  {selectedBusiness.formatted_address && (
-                    <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-                      {selectedBusiness.formatted_address}
-                    </p>
-                  )}
-
-                  {selectedBusiness.website && (
-                    <p className="mt-0.5 text-sm text-muted-foreground">
-                      {truncateUrl(selectedBusiness.website)}
-                    </p>
+                  {/* Predictions dropdown */}
+                  {predictions.length > 0 && (
+                    <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-popover shadow-lg overflow-hidden">
+                      {predictions.map((p) => (
+                        <button
+                          key={p.place_id}
+                          onClick={() => handleSelectBusiness(p)}
+                          className="flex w-full items-start gap-3 px-3 py-2.5 text-left hover:bg-accent transition-colors"
+                        >
+                          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {p.structured_formatting?.main_text || p.description}
+                            </p>
+                            {p.structured_formatting?.secondary_text && (
+                              <p className="text-xs text-muted-foreground truncate">
+                                {p.structured_formatting.secondary_text}
+                              </p>
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </div>
 
-                <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 h-12 text-base font-semibold">
-                  Save and enable
-                </Button>
+                {/* Loading details */}
+                {isLoadingDetails && (
+                  <div className="mt-4 flex items-center justify-center gap-2 py-6">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">Loading business details...</span>
+                  </div>
+                )}
+
+                {/* Selected business details card */}
+                {selectedBusiness && !isLoadingDetails && (
+                  <div className="mt-4 space-y-4">
+                    <div className="rounded-xl border border-border bg-background p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="text-base font-bold text-foreground leading-tight">
+                          {selectedBusiness.name}
+                        </h4>
+                        {(selectedBusiness.url || selectedBusiness.website) && (
+                          <button
+                            onClick={() => window.open(selectedBusiness.url || selectedBusiness.website, "_blank")}
+                            className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
+                          >
+                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                          </button>
+                        )}
+                      </div>
+
+                      {selectedBusiness.rating != null && (
+                        <p className="mt-1 text-sm">
+                          <span className="font-bold text-foreground">{selectedBusiness.rating}</span>
+                          {selectedBusiness.user_ratings_total != null && (
+                            <span className="text-muted-foreground"> ({selectedBusiness.user_ratings_total} reviews)</span>
+                          )}
+                        </p>
+                      )}
+
+                      {selectedBusiness.formatted_address && (
+                        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                          {selectedBusiness.formatted_address}
+                        </p>
+                      )}
+
+                      {selectedBusiness.website && (
+                        <p className="mt-0.5 text-sm text-muted-foreground">
+                          {truncateUrl(selectedBusiness.website)}
+                        </p>
+                      )}
+                    </div>
+
+                    <Button
+                      onClick={handleSaveAndEnable}
+                      className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 h-12 text-base font-semibold"
+                    >
+                      Save and enable
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-sm font-bold text-foreground mb-3">Provide link</h3>
+                <Input
+                  value={linkValue}
+                  onChange={(e) => setLinkValue(e.target.value)}
+                  placeholder="Paste your Google Reviews link"
+                  className="bg-muted border-0"
+                />
               </div>
             )}
-          </div>
-        ) : (
-          <div>
-            <h3 className="text-sm font-bold text-foreground mb-3">Provide link</h3>
-            <Input
-              value={linkValue}
-              onChange={(e) => setLinkValue(e.target.value)}
-              placeholder="Paste your Google Reviews link"
-              className="bg-muted border-0"
-            />
-          </div>
+          </>
         )}
       </div>
     </div>
