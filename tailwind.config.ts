@@ -113,28 +113,6 @@ export default {
             transform: "scale(1)",
           },
         },
-        "blob-drift-1": {
-          "0%, 100%": {
-            transform: "translate(0px, 0px) scale(1)",
-          },
-          "33%": {
-            transform: "translate(20px, 15px) scale(1.05)",
-          },
-          "66%": {
-            transform: "translate(-10px, 5px) scale(0.95)",
-          },
-        },
-        "blob-drift-2": {
-          "0%, 100%": {
-            transform: "translate(0px, 0px) scale(1)",
-          },
-          "33%": {
-            transform: "translate(-15px, 10px) scale(1.08)",
-          },
-          "66%": {
-            transform: "translate(10px, -10px) scale(0.92)",
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

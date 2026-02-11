@@ -1422,46 +1422,16 @@ const WidgetPreviewPanel = ({
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                {/* Gradient mesh overlay — trendy multi-blob effect */}
+                {/* Gradient overlay for the top area */}
                 {!isSolidMode && backgroundType === "gradient" && (
-                  <>
-                    {/* Primary gradient wash */}
-                    <div 
-                      className="pointer-events-none absolute inset-x-0 top-0 z-0"
-                      style={{ 
-                        height: '360px',
-                        background: isLight
-                          ? `linear-gradient(180deg, ${actualHexColor}38 0%, ${actualHexColor}18 50%, transparent 100%)`
-                          : `linear-gradient(180deg, ${actualHexColor}77 0%, ${actualHexColor}30 55%, transparent 100%)` 
-                      }}
-                    />
-                    {/* Secondary accent blob — animated drift */}
-                    <div 
-                      className="pointer-events-none absolute z-0 rounded-full blur-3xl animate-[blob-drift-1_8s_ease-in-out_infinite]"
-                      style={{ 
-                        width: '220px',
-                        height: '220px',
-                        top: '-30px',
-                        left: '-50px',
-                        background: isLight
-                          ? `radial-gradient(circle, ${actualHexColor}35, transparent 70%)`
-                          : `radial-gradient(circle, ${actualHexColor}66, transparent 70%)`
-                      }}
-                    />
-                    {/* Tertiary glow — animated drift opposite */}
-                    <div 
-                      className="pointer-events-none absolute z-0 rounded-full blur-3xl animate-[blob-drift-2_10s_ease-in-out_infinite]"
-                      style={{ 
-                        width: '180px',
-                        height: '180px',
-                        top: '60px',
-                        right: '-30px',
-                        background: isLight
-                          ? `radial-gradient(circle, ${actualHexColor}28, transparent 70%)`
-                          : `radial-gradient(circle, ${actualHexColor}55, transparent 70%)`
-                      }}
-                    />
-                  </>
+                  <div 
+                    className="pointer-events-none absolute inset-x-0 top-0 h-64 z-0"
+                    style={{ 
+                      background: isLight
+                        ? `linear-gradient(180deg, ${actualHexColor}30 0%, ${actualHexColor}15 45%, transparent 100%)`
+                        : `linear-gradient(180deg, ${actualHexColor}88 0%, ${actualHexColor}44 45%, transparent 100%)` 
+                    }}
+                  />
                 )}
                 {/* Main content area - colored for solid mode (header + contact + extra space) */}
                 <div 
