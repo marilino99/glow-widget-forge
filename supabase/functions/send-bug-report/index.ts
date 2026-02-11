@@ -70,13 +70,16 @@ Deno.serve(async (req) => {
         });
 
       if (!uploadError) {
-        const { data: urlData } = supabase.storage
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
           .from("bug-attachments")
-          .getPublicUrl(fileName);
-        attachmentUrls.push(urlData.publicUrl);
-        attachmentHtml.push(
-          `<li><a href="${urlData.publicUrl}" style="color: #2563eb;">${file.name}</a></li>`
-        );
+          .createSignedUrl(fileName, 60 * 60 * 24 * 7); // 7 days
+        const url = signedUrlData?.signedUrl || "";
+        if (!signedUrlError && url) {
+          attachmentUrls.push(url);
+          attachmentHtml.push(
+            `<li><a href="${url}" style="color: #2563eb;">${file.name}</a></li>`
+          );
+        }
       } else {
         console.error("Upload error:", uploadError);
       }

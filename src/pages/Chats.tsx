@@ -144,21 +144,17 @@ const Chats = () => {
     const messageContent = newMessage.trim();
     setNewMessage("");
 
-    // Insert message
-    await supabase.from("chat_messages").insert({
-      conversation_id: selectedConversation.id,
-      sender_type: "owner",
-      content: messageContent,
+    // Send message via edge function (direct inserts are blocked by RLS)
+    const { error } = await supabase.functions.invoke("send-owner-message", {
+      body: {
+        conversationId: selectedConversation.id,
+        message: messageContent,
+      },
     });
 
-    // Update conversation
-    await supabase
-      .from("conversations")
-      .update({
-        last_message: messageContent,
-        last_message_at: new Date().toISOString(),
-      })
-      .eq("id", selectedConversation.id);
+    if (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
   const filteredConversations = conversations.filter(
