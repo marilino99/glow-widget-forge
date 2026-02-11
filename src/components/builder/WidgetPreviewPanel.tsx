@@ -454,7 +454,8 @@ const WidgetPreviewPanel = ({
   const widgetButtonBg = isSolidMode ? "bg-slate-800 hover:bg-slate-700" : isLight ? "bg-slate-200 hover:bg-slate-300" : "bg-slate-800 hover:bg-slate-700";
 
   // Button colors from selected color - use inline styles for custom hex
-  const buttonClass = useInlineStyles ? "text-white" : `${colors.button} ${colors.buttonHover} text-white`;
+  const buttonTextColor = isLightColor(actualHexColor) ? "text-slate-900" : "text-white";
+  const buttonClass = useInlineStyles ? buttonTextColor : `${colors.button} ${colors.buttonHover} ${buttonTextColor}`;
   const buttonStyle = useInlineStyles ? { backgroundColor: actualHexColor } : {};
   const buttonHoverColor = useInlineStyles ? darkenHex(actualHexColor, 15) : "";
 
