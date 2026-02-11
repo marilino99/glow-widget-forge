@@ -99,6 +99,8 @@ interface BuilderSidebarProps {
   isPro: boolean;
   onUpgrade: () => void;
   onGoogleBusinessSelect?: (business: GoogleBusinessData | null) => void;
+  customCss: string;
+  customJs: string;
 }
 
 const BuilderSidebar = ({ 
@@ -165,6 +167,8 @@ const BuilderSidebar = ({
   isPro,
   onUpgrade,
   onGoogleBusinessSelect,
+  customCss,
+  customJs,
 }: BuilderSidebarProps) => {
   
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -449,7 +453,12 @@ const BuilderSidebar = ({
   // Show Injection Code panel
   if (showInjectionCodePanel) {
     return (
-      <InjectionCodePanel onBack={handleBackFromInjectionCode} />
+      <InjectionCodePanel
+        onBack={handleBackFromInjectionCode}
+        customCss={customCss}
+        customJs={customJs}
+        onSave={onSaveConfig}
+      />
     );
   }
 

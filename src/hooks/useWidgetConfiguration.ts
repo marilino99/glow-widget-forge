@@ -23,6 +23,8 @@ export interface WidgetConfiguration {
   whatsappCountryCode: string;
   whatsappNumber: string;
   forwardEmail: string;
+  customCss: string;
+  customJs: string;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -45,6 +47,8 @@ const defaultConfig: WidgetConfiguration = {
   whatsappCountryCode: "+39",
   whatsappNumber: "",
   forwardEmail: "",
+  customCss: "",
+  customJs: "",
 };
 
 export const useWidgetConfiguration = () => {
@@ -94,6 +98,8 @@ export const useWidgetConfiguration = () => {
             whatsappCountryCode: dbData.whatsapp_country_code || "+39",
             whatsappNumber: dbData.whatsapp_number || "",
             forwardEmail: (data as any).forward_email || "",
+            customCss: (data as any).custom_css || "",
+            customJs: (data as any).custom_js || "",
           });
         }
       } catch (error) {
@@ -138,6 +144,8 @@ export const useWidgetConfiguration = () => {
           whatsapp_country_code: updatedConfig.whatsappCountryCode,
           whatsapp_number: updatedConfig.whatsappNumber,
           forward_email: updatedConfig.forwardEmail,
+          custom_css: updatedConfig.customCss,
+          custom_js: updatedConfig.customJs,
         }, {
           onConflict: "user_id"
         })

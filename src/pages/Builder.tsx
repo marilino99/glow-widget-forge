@@ -287,6 +287,8 @@ const Builder = () => {
             isPro={plan === "pro"}
             onUpgrade={startCheckout}
             onGoogleBusinessSelect={setGoogleBusiness}
+            customCss={config.customCss}
+            customJs={config.customJs}
           />
         </div>
 

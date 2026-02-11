@@ -230,6 +230,8 @@ export type Database = {
           button_logo: string | null
           contact_name: string
           created_at: string
+          custom_css: string | null
+          custom_js: string | null
           faq_enabled: boolean
           forward_email: string | null
           id: string
@@ -254,6 +256,8 @@ export type Database = {
           button_logo?: string | null
           contact_name?: string
           created_at?: string
+          custom_css?: string | null
+          custom_js?: string | null
           faq_enabled?: boolean
           forward_email?: string | null
           id?: string
@@ -278,6 +282,8 @@ export type Database = {
           button_logo?: string | null
           contact_name?: string
           created_at?: string
+          custom_css?: string | null
+          custom_js?: string | null
           faq_enabled?: boolean
           forward_email?: string | null
           id?: string
