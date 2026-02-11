@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_configurations ADD COLUMN background_image TEXT;

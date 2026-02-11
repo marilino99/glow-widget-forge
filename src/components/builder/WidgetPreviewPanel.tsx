@@ -21,6 +21,7 @@ interface WidgetPreviewPanelProps {
   widgetColor?: string;
   buttonLogo?: string | null;
   backgroundType?: "solid" | "gradient" | "image";
+  backgroundImage?: string | null;
   productCards?: ProductCardData[];
   sayHello?: string;
   language?: string;
@@ -176,6 +177,7 @@ const WidgetPreviewPanel = ({
   widgetColor = "blue",
   buttonLogo = null,
   backgroundType = "gradient",
+  backgroundImage = null,
   productCards = [],
   sayHello = "Hello, nice to see you here 👋",
   language = "en",
@@ -1419,9 +1421,16 @@ const WidgetPreviewPanel = ({
                   </span>
                 </div>
               </div>) : (/* Home View */
-          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode ? customGradientStyle : {}}>
+          <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                {/* Background image for image mode */}
+                {backgroundType === "image" && backgroundImage && (
+                  <div className="absolute inset-x-0 top-0 h-64 z-0">
+                    <img src={backgroundImage} alt="" className="h-full w-full object-cover" />
+                    <div className="absolute inset-0" style={{ background: isLight ? 'linear-gradient(180deg, transparent 40%, #f8f8f8 100%)' : 'linear-gradient(180deg, transparent 40%, black 100%)' }} />
+                  </div>
+                )}
                 {/* Gradient overlay for the top area */}
                 {!isSolidMode && backgroundType === "gradient" && (
                   <div 
@@ -1440,7 +1449,7 @@ const WidgetPreviewPanel = ({
                 >
                 {/* Widget header */}
                   <div className="relative overflow-hidden px-6 py-5">
-                    {!isSolidMode && (
+                    {!isSolidMode && backgroundType !== "image" && (
                       <div 
                         className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl"
                         style={{ background: `radial-gradient(circle, ${actualHexColor}${isLight ? '25' : '50'}, ${actualHexColor}${isLight ? '05' : '10'})` }}

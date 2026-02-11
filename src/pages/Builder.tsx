@@ -242,6 +242,8 @@ const Builder = () => {
             onButtonLogoChange={(logo) => updateConfig({ buttonLogo: logo })}
             backgroundType={config.backgroundType}
             onBackgroundTypeChange={(type) => updateConfig({ backgroundType: type })}
+            backgroundImage={config.backgroundImage}
+            onBackgroundImageChange={(image) => updateConfig({ backgroundImage: image })}
             onSaveConfig={saveConfig}
             productCards={productCards}
             onAddProductCard={handleAddProductCard}
@@ -300,6 +302,7 @@ const Builder = () => {
             widgetColor={config.widgetColor}
             buttonLogo={config.buttonLogo}
             backgroundType={config.backgroundType}
+            backgroundImage={config.backgroundImage}
             productCards={previewProductCards}
             sayHello={config.sayHello}
             language={config.language}
