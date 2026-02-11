@@ -1435,9 +1435,9 @@ const WidgetPreviewPanel = ({
                           : `linear-gradient(180deg, ${actualHexColor}66 0%, ${actualHexColor}22 55%, transparent 100%)` 
                       }}
                     />
-                    {/* Secondary accent blob — offset for mesh feel */}
+                    {/* Secondary accent blob — animated drift */}
                     <div 
-                      className="pointer-events-none absolute z-0 rounded-full blur-3xl"
+                      className="pointer-events-none absolute z-0 rounded-full blur-3xl animate-[blob-drift-1_8s_ease-in-out_infinite]"
                       style={{ 
                         width: '200px',
                         height: '200px',
@@ -1448,9 +1448,9 @@ const WidgetPreviewPanel = ({
                           : `radial-gradient(circle, ${actualHexColor}55, transparent 70%)`
                       }}
                     />
-                    {/* Tertiary glow — bottom right for depth */}
+                    {/* Tertiary glow — animated drift opposite */}
                     <div 
-                      className="pointer-events-none absolute z-0 rounded-full blur-3xl"
+                      className="pointer-events-none absolute z-0 rounded-full blur-3xl animate-[blob-drift-2_10s_ease-in-out_infinite]"
                       style={{ 
                         width: '160px',
                         height: '160px',
