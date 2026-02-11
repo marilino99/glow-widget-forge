@@ -1,15 +1,34 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface InjectionCodePanelProps {
   onBack: () => void;
+  customCss: string;
+  customJs: string;
+  onSave: (config: Record<string, unknown>) => void;
 }
 
-const InjectionCodePanel = ({ onBack }: InjectionCodePanelProps) => {
-  const [customCSS, setCustomCSS] = useState("");
-  const [customJS, setCustomJS] = useState("");
+const InjectionCodePanel = ({ onBack, customCss, customJs, onSave }: InjectionCodePanelProps) => {
+  const [css, setCss] = useState(customCss);
+  const [js, setJs] = useState(customJs);
+
+  useEffect(() => {
+    setCss(customCss);
+    setJs(customJs);
+  }, [customCss, customJs]);
+
+  const hasChanges = css !== customCss || js !== customJs;
+
+  const handleSave = () => {
+    onSave({ customCss: css, customJs: js });
+  };
+
+  const handleCancel = () => {
+    setCss(customCss);
+    setJs(customJs);
+  };
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -28,32 +47,33 @@ const InjectionCodePanel = ({ onBack }: InjectionCodePanelProps) => {
           Add custom CSS and JavaScript to fully customize the look and behavior of your widget.
         </p>
 
-        {/* Custom CSS */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Custom CSS</label>
           <Textarea
             placeholder={`/* Example */\n.widget-container {\n  border-radius: 16px;\n}`}
-            value={customCSS}
-            onChange={(e) => setCustomCSS(e.target.value)}
+            value={css}
+            onChange={(e) => setCss(e.target.value)}
             className="min-h-[160px] font-mono text-xs"
           />
         </div>
 
-        {/* Custom JS */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Custom JavaScript</label>
           <Textarea
             placeholder={`// Example\nconsole.log('Widget loaded');`}
-            value={customJS}
-            onChange={(e) => setCustomJS(e.target.value)}
+            value={js}
+            onChange={(e) => setJs(e.target.value)}
             className="min-h-[160px] font-mono text-xs"
           />
         </div>
-
-        <Button className="w-full" size="sm" disabled={!customCSS && !customJS}>
-          Save
-        </Button>
       </div>
+
+      {hasChanges && (
+        <div className="flex gap-2 border-t border-border p-4">
+          <Button variant="outline" className="flex-1" onClick={handleCancel}>Cancel</Button>
+          <Button className="flex-1" onClick={handleSave}>Save</Button>
+        </div>
+      )}
     </div>
   );
 };
