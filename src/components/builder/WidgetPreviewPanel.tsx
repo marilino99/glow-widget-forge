@@ -642,16 +642,23 @@ const WidgetPreviewPanel = ({
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-2xl font-bold text-slate-900">{googleBusiness.rating ?? "–"}</span>
                       <div className="flex items-center gap-0.5">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className={`h-5 w-5 ${
-                              googleBusiness.rating && star <= Math.round(googleBusiness.rating)
-                                ? "text-slate-900 fill-slate-900"
-                                : "text-slate-300"
-                            }`}
-                          />
-                        ))}
+                        {[1, 2, 3, 4, 5].map((star) => {
+                          const rating = googleBusiness.rating ?? 0;
+                          const full = star <= Math.floor(rating);
+                          const half = !full && star === Math.ceil(rating) && rating % 1 >= 0.25;
+                          return (
+                            <div key={star} className="relative h-5 w-5">
+                              {/* Empty star background */}
+                              <Star className="absolute inset-0 h-5 w-5 text-slate-300" />
+                              {/* Filled portion */}
+                              {(full || half) && (
+                                <div className="absolute inset-0 overflow-hidden" style={{ width: full ? '100%' : '50%' }}>
+                                  <Star className="h-5 w-5 text-slate-900 fill-slate-900" />
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                     <p className="text-sm text-slate-500 truncate">{googleBusiness.name}</p>
