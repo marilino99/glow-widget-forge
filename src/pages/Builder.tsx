@@ -72,6 +72,8 @@ const Builder = () => {
   // Live preview state for local (unsaved) custom links
   const [localPreviewLinks, setLocalPreviewLinks] = useState<LocalLink[]>([]);
   const [googleBusiness, setGoogleBusiness] = useState<GoogleBusinessData | null>(null);
+  const [livePreviewCss, setLivePreviewCss] = useState<string | null>(null);
+  const [livePreviewJs, setLivePreviewJs] = useState<string | null>(null);
   
   // Track initial typography values for cancel functionality
   const [initialTypography, setInitialTypography] = useState({
@@ -141,6 +143,11 @@ const Builder = () => {
   // Handle local links change for live preview
   const handleLocalLinksChange = useCallback((links: LocalLink[]) => {
     setLocalPreviewLinks(links);
+  }, []);
+
+  const handleInjectionCodeLivePreview = useCallback((css: string, js: string) => {
+    setLivePreviewCss(css);
+    setLivePreviewJs(js);
   }, []);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
@@ -289,6 +296,7 @@ const Builder = () => {
             onGoogleBusinessSelect={setGoogleBusiness}
             customCss={config.customCss}
             customJs={config.customJs}
+            onInjectionCodeLivePreview={handleInjectionCodeLivePreview}
           />
         </div>
 
@@ -322,8 +330,8 @@ const Builder = () => {
             shareFeedbackEnabled={shareFeedbackEnabled}
             widgetId={config.id || undefined}
             googleBusiness={googleBusiness}
-            customCss={config.customCss}
-            customJs={config.customJs}
+            customCss={livePreviewCss ?? config.customCss}
+            customJs={livePreviewJs ?? config.customJs}
           />
         </div>
       </div>

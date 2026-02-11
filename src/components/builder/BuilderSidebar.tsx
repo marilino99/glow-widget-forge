@@ -101,6 +101,7 @@ interface BuilderSidebarProps {
   onGoogleBusinessSelect?: (business: GoogleBusinessData | null) => void;
   customCss: string;
   customJs: string;
+  onInjectionCodeLivePreview?: (css: string, js: string) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -169,6 +170,7 @@ const BuilderSidebar = ({
   onGoogleBusinessSelect,
   customCss,
   customJs,
+  onInjectionCodeLivePreview,
 }: BuilderSidebarProps) => {
   
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -458,6 +460,7 @@ const BuilderSidebar = ({
         customCss={customCss}
         customJs={customJs}
         onSave={onSaveConfig}
+        onLivePreviewChange={onInjectionCodeLivePreview}
       />
     );
   }
