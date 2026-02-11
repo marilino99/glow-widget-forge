@@ -20,6 +20,7 @@ interface WidgetPreviewPanelProps {
   widgetTheme?: "light" | "dark";
   widgetColor?: string;
   buttonLogo?: string | null;
+  logo?: string | null;
   backgroundType?: "solid" | "gradient" | "image";
   backgroundImage?: string | null;
   productCards?: ProductCardData[];
@@ -176,6 +177,7 @@ const WidgetPreviewPanel = ({
   widgetTheme = "dark",
   widgetColor = "blue",
   buttonLogo = null,
+  logo = null,
   backgroundType = "gradient",
   backgroundImage = null,
   productCards = [],
@@ -1458,6 +1460,9 @@ const WidgetPreviewPanel = ({
                     <button onClick={() => handleCollapse()} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
                       <Minus className="h-4 w-4" />
                     </button>
+                    {logo && (
+                      <img src={logo} alt="Logo" className="relative h-8 w-auto object-contain mb-3" />
+                    )}
                     <h3 className="relative text-2xl font-bold whitespace-pre-line max-w-[70%] break-words">
                       {sayHello}
                     </h3>
