@@ -1420,22 +1420,29 @@ const WidgetPreviewPanel = ({
               </div>) : (/* Home View */
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
-                <div className={`flex-1 overflow-y-auto ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                <div className={`flex-1 overflow-y-auto relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                {/* Dark gradient overlay for the top area */}
+                {!isSolidMode && !isLight && backgroundType === "gradient" && (
+                  <div 
+                    className="pointer-events-none absolute inset-x-0 top-0 h-64 z-0"
+                    style={{ 
+                      background: `linear-gradient(180deg, ${actualHexColor}40 0%, ${actualHexColor}20 40%, transparent 100%)` 
+                    }}
+                  />
+                )}
                 {/* Main content area - colored for solid mode (header + contact + extra space) */}
                 <div 
-                  className={`${isSolidMode ? `${useInlineStyles ? "" : colors.solidHeader} ${headerText} pb-12` : ""}`}
+                  className={`relative z-[1] ${isSolidMode ? `${useInlineStyles ? "" : colors.solidHeader} ${headerText} pb-12` : ""}`}
                   style={isSolidMode && useInlineStyles ? { backgroundColor: actualHexColor } : {}}
                 >
                 {/* Widget header */}
-                  <div 
-                    className="relative overflow-hidden px-6 py-5"
-                    style={
-                      !isSolidMode && !isLight && backgroundType === "gradient"
-                        ? { background: `linear-gradient(to bottom, ${actualHexColor}55, transparent)` }
-                        : {}
-                    }
-                  >
-                    {!isSolidMode && !isLight && <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-emerald-400/30 blur-2xl" />}
+                  <div className="relative overflow-hidden px-6 py-5">
+                    {!isSolidMode && !isLight && (
+                      <div 
+                        className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl"
+                        style={{ background: `radial-gradient(circle, ${actualHexColor}50, ${actualHexColor}10)` }}
+                      />
+                    )}
                     <button onClick={() => handleCollapse()} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
                       <Minus className="h-4 w-4" />
                     </button>
