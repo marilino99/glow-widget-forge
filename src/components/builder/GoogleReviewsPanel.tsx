@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, Eye, Clock, HelpCircle, Search, Loader2, MapPin } from "lucide-react";
+import { ChevronLeft, Eye, Clock, HelpCircle, Search, Loader2, MapPin, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 interface GoogleReviewsPanelProps {
@@ -17,13 +18,23 @@ interface PlacePrediction {
   };
 }
 
+interface PlaceDetails {
+  name: string;
+  rating?: number;
+  user_ratings_total?: number;
+  formatted_address?: string;
+  website?: string;
+  url?: string;
+}
+
 const GoogleReviewsPanel = ({ onBack }: GoogleReviewsPanelProps) => {
   const [activeTab, setActiveTab] = useState<"search" | "link">("search");
   const [searchQuery, setSearchQuery] = useState("");
   const [linkValue, setLinkValue] = useState("");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [selectedBusiness, setSelectedBusiness] = useState<PlacePrediction | null>(null);
+  const [selectedBusiness, setSelectedBusiness] = useState<PlaceDetails | null>(null);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -55,15 +66,37 @@ const GoogleReviewsPanel = ({ onBack }: GoogleReviewsPanelProps) => {
     };
   }, [searchQuery, selectedBusiness]);
 
-  const handleSelectBusiness = (prediction: PlacePrediction) => {
-    setSelectedBusiness(prediction);
-    setSearchQuery(prediction.structured_formatting?.main_text || prediction.description);
+  const handleSelectBusiness = async (prediction: PlacePrediction) => {
     setPredictions([]);
+    setSearchQuery(prediction.structured_formatting?.main_text || prediction.description);
+    setIsLoadingDetails(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("google-places-autocomplete", {
+        body: { place_id: prediction.place_id },
+      });
+      if (error) throw error;
+      setSelectedBusiness(data?.result || null);
+    } catch (err) {
+      console.error("Place details error:", err);
+    } finally {
+      setIsLoadingDetails(false);
+    }
   };
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
     if (selectedBusiness) setSelectedBusiness(null);
+  };
+
+  const truncateUrl = (url: string, maxLen = 40) => {
+    try {
+      const u = new URL(url);
+      const display = u.origin + u.pathname;
+      return display.length > maxLen ? display.slice(0, maxLen) + "..." : display;
+    } catch {
+      return url.length > maxLen ? url.slice(0, maxLen) + "..." : url;
+    }
   };
 
   return (
@@ -154,12 +187,57 @@ const GoogleReviewsPanel = ({ onBack }: GoogleReviewsPanelProps) => {
               )}
             </div>
 
-            {selectedBusiness && (
-              <div className="mt-3 flex items-center gap-2 rounded-lg bg-accent/50 px-3 py-2">
-                <MapPin className="h-4 w-4 text-primary shrink-0" />
-                <span className="text-sm text-foreground truncate">
-                  {selectedBusiness.description}
-                </span>
+            {/* Loading details */}
+            {isLoadingDetails && (
+              <div className="mt-4 flex items-center justify-center gap-2 py-6">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Loading business details...</span>
+              </div>
+            )}
+
+            {/* Selected business details card */}
+            {selectedBusiness && !isLoadingDetails && (
+              <div className="mt-4 space-y-4">
+                <div className="rounded-xl border border-border bg-background p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="text-base font-bold text-foreground leading-tight">
+                      {selectedBusiness.name}
+                    </h4>
+                    {(selectedBusiness.url || selectedBusiness.website) && (
+                      <button
+                        onClick={() => window.open(selectedBusiness.url || selectedBusiness.website, "_blank")}
+                        className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
+                      >
+                        <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    )}
+                  </div>
+
+                  {selectedBusiness.rating != null && (
+                    <p className="mt-1 text-sm">
+                      <span className="font-bold text-foreground">{selectedBusiness.rating}</span>
+                      {selectedBusiness.user_ratings_total != null && (
+                        <span className="text-muted-foreground"> ({selectedBusiness.user_ratings_total} reviews)</span>
+                      )}
+                    </p>
+                  )}
+
+                  {selectedBusiness.formatted_address && (
+                    <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                      {selectedBusiness.formatted_address}
+                    </p>
+                  )}
+
+                  {selectedBusiness.website && (
+                    <p className="mt-0.5 text-sm text-muted-foreground">
+                      {truncateUrl(selectedBusiness.website)}
+                    </p>
+                  )}
+                </div>
+
+                <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 h-12 text-base font-semibold">
+                  Save and enable
+                </Button>
               </div>
             )}
           </div>

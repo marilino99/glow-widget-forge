@@ -17,7 +17,29 @@ serve(async (req) => {
       throw new Error("GOOGLE_PLACES_API_KEY is not configured");
     }
 
-    const { query } = await req.json();
+    const { query, place_id } = await req.json();
+
+    // Place Details request
+    if (place_id) {
+      const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
+      url.searchParams.set("place_id", place_id);
+      url.searchParams.set("fields", "name,rating,user_ratings_total,formatted_address,website,url");
+      url.searchParams.set("key", apiKey);
+
+      const response = await fetch(url.toString());
+      const data = await response.json();
+
+      if (data.status !== "OK") {
+        console.error("Place Details error:", data.status, data.error_message);
+        throw new Error(`Google Places API error: ${data.status}`);
+      }
+
+      return new Response(JSON.stringify({ result: data.result }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Autocomplete request
     if (!query || query.length < 2) {
       return new Response(JSON.stringify({ predictions: [] }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
