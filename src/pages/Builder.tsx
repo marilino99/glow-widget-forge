@@ -93,11 +93,11 @@ const Builder = () => {
 
   const handleTypographySave = (typographyConfig: Record<string, unknown>) => {
     saveConfig(typographyConfig);
-    // Update initial values after save
+    // Update initial values after save using the saved values
     initialTypographyRef.current = {
-      logo: config.logo,
-      language: config.language,
-      sayHello: config.sayHello,
+      logo: (typographyConfig.logo as string | null) ?? config.logo,
+      language: (typographyConfig.language as string) ?? config.language,
+      sayHello: (typographyConfig.sayHello as string) ?? config.sayHello,
     };
   };
 
