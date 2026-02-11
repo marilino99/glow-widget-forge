@@ -1,5 +1,6 @@
-import { ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, AlertCircle, CheckCircle2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState, useEffect, lazy, Suspense } from "react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 
@@ -37,6 +38,30 @@ const validateJs = (js: string): string | null => {
   } catch (e: any) {
     return e.message || "Invalid JavaScript syntax";
   }
+};
+
+// Common class/element selectors → correct widget IDs
+const selectorMap: [RegExp, string][] = [
+  [/\.widget[-_]?container\b/gi, '#wj-pop'],
+  [/\.widget[-_]?wrapper\b/gi, '#wj-pop'],
+  [/\.widget\b(?![-_])/gi, '#wj-pop'],
+  [/\.header\b/gi, '#wj-head'],
+  [/\.hello\b/gi, '#wj-hello'],
+  [/\.contact[-_]?card\b/gi, '#wj-contact'],
+  [/\.contact[-_]?name\b/gi, '#wj-cname'],
+  [/\.contact[-_]?help\b/gi, '#wj-chelp'],
+  [/\.faq[-_]?(section|container|wrapper)?\b/gi, '#wj-faq'],
+  [/\.footer\b/gi, '#wj-footer'],
+  [/\.widget[-_]?button\b/gi, '#wj-btn'],
+  [/\.toggle[-_]?button\b/gi, '#wj-btn'],
+];
+
+const rewriteSelectorsToWidgetIds = (css: string): string => {
+  let result = css;
+  for (const [pattern, replacement] of selectorMap) {
+    result = result.replace(pattern, replacement);
+  }
+  return result;
 };
 
 const InjectionCodePanel = ({ onBack, customCss, customJs, onSave, onLivePreviewChange }: InjectionCodePanelProps) => {
@@ -100,17 +125,34 @@ const InjectionCodePanel = ({ onBack, customCss, customJs, onSave, onLivePreview
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-foreground">Custom CSS</label>
-            {css.trim() && (
-              cssError 
-                ? <span className="flex items-center gap-1 text-xs text-destructive"><AlertCircle className="h-3 w-3" />{cssError}</span>
-                : <span className="flex items-center gap-1 text-xs text-green-500"><CheckCircle2 className="h-3 w-3" />Valid</span>
-            )}
+            <div className="flex items-center gap-2">
+              {css.trim() && !cssError && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setCss(rewriteSelectorsToWidgetIds(css))}
+                      className="flex h-6 w-6 items-center justify-center rounded-md bg-muted hover:bg-accent transition-colors"
+                    >
+                      <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                    <p className="text-xs">Fix selectors to use widget IDs</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {css.trim() && (
+                cssError 
+                  ? <span className="flex items-center gap-1 text-xs text-destructive"><AlertCircle className="h-3 w-3" />{cssError}</span>
+                  : <span className="flex items-center gap-1 text-xs text-green-500"><CheckCircle2 className="h-3 w-3" />Valid</span>
+              )}
+            </div>
           </div>
           <div className="overflow-hidden rounded-lg border border-border">
             <CodeEditor
               value={css}
               language="css"
-              placeholder={`/* Example */\n.widget-container {\n  border-radius: 16px;\n}`}
+              placeholder={`/* Example */\n#wj-pop {\n  border-radius: 16px;\n}\n#wj-contact {\n  background: #fff;\n}`}
               onChange={(e) => setCss(e.target.value)}
               padding={12}
               style={{
