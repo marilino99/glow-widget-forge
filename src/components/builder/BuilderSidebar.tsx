@@ -407,6 +407,9 @@ const BuilderSidebar = ({
           <SidebarItem
             icon={Phone}
             label="WhatsApp"
+            hasToggle
+            toggleValue={whatsappEnabled}
+            onToggle={onWhatsappToggle}
             onClick={() => handleSelectWidget("whatsapp")}
             active={activeWidget === "whatsapp"}
           />
