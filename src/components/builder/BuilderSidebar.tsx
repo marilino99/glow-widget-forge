@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -200,6 +201,7 @@ const BuilderSidebar = ({
   onPanelOpenChange,
   onCollapseSidebar,
 }: BuilderSidebarProps) => {
+  const navigate = useNavigate();
   
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
   const [showThemeColorsPanel, setShowThemeColorsPanel] = useState(false);
@@ -699,9 +701,10 @@ const BuilderSidebar = ({
           </DialogHeader>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-2">
             <Button
-              onClick={() => {
+              onClick={async () => {
                 setShowLogoutDialog(false);
-                onSignOut?.();
+                await onSignOut?.();
+                navigate("/");
               }}
               className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 py-6 text-base font-normal"
             >
