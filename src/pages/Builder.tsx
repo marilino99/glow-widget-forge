@@ -8,16 +8,8 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
+import { Boxes, HelpCircle, Loader2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Boxes, HelpCircle, LogOut, Loader2, MessageCircle } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
@@ -150,7 +142,7 @@ const Builder = () => {
     setLivePreviewJs(js);
   }, []);
 
-  const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
+  
 
   // Show loading state while fetching configuration
   if (isLoading || isLoadingCards || isLoadingFaq || isLoadingInstagram || isLoadingCustomLinks) {
@@ -202,27 +194,6 @@ const Builder = () => {
           <Button variant="ghost" size="icon" className="text-muted-foreground">
             <HelpCircle className="h-5 w-5" />
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                    {userInitial}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                {user?.email}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={signOut} className="text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </header>
 
@@ -297,6 +268,8 @@ const Builder = () => {
             customCss={config.customCss}
             customJs={config.customJs}
             onInjectionCodeLivePreview={handleInjectionCodeLivePreview}
+            userEmail={user?.email || ""}
+            onSignOut={signOut}
           />
         </div>
 
