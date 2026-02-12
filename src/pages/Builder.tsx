@@ -169,7 +169,6 @@ const Builder = () => {
               <Boxes className="h-5 w-5" />
             </div>
           </button>
-          <AddToWebsiteDialog widgetId={config.id || undefined} />
         </div>
 
         <div className="flex items-center gap-2">
@@ -191,9 +190,7 @@ const Builder = () => {
             )}
             <span className="hidden sm:inline">Chat</span>
           </Button>
-          <Button variant="ghost" size="icon" className="text-muted-foreground">
-            <HelpCircle className="h-5 w-5" />
-          </Button>
+          <AddToWebsiteDialog widgetId={config.id || undefined} />
         </div>
       </header>
 

@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { AlertTriangle, Copy, Check, ExternalLink, Send, X } from "lucide-react";
+import { AlertTriangle, Copy, Check, ExternalLink, Send, X, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   WixLogo,
@@ -84,7 +84,8 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
     <Dialog>
       <DialogTrigger asChild>
         <Button size="sm" className="gap-2">
-          Add to website
+          <Globe className="h-4 w-4" />
+          Publish
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto overflow-x-hidden">
