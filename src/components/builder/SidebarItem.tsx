@@ -25,7 +25,7 @@ const SidebarItem = ({
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] ${
+      className={`flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] ${
         active ? "text-primary" : ""
       }`}
     >
