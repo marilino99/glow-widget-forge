@@ -642,7 +642,7 @@ const BuilderSidebar = ({
       <div className="shrink-0 px-3 py-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/50">
+            <button className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
                 {userInitial}
               </div>
