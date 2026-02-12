@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Boxes, HelpCircle, Loader2, MessageCircle } from "lucide-react";
+import { Boxes, HelpCircle, Loader2, MessageCircle, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
@@ -67,6 +67,7 @@ const Builder = () => {
   const [livePreviewCss, setLivePreviewCss] = useState<string | null>(null);
   const [livePreviewJs, setLivePreviewJs] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   // Track initial typography values for cancel functionality
   const [initialTypography, setInitialTypography] = useState({
@@ -160,7 +161,7 @@ const Builder = () => {
   return (
     <div className="flex h-screen bg-background">
       {/* Left sidebar - full height */}
-      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 ${isPanelOpen ? 'w-96' : 'w-72'}`}>
+      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
         <div className="flex h-14 shrink-0 items-center px-4" style={{ backgroundColor: '#f9f9f9' }}>
           <button
@@ -244,9 +245,20 @@ const Builder = () => {
             userEmail={user?.email || ""}
             onSignOut={signOut}
             onPanelOpenChange={setIsPanelOpen}
+            onCollapseSidebar={() => setIsSidebarCollapsed(true)}
           />
         </div>
       </div>
+      {/* Reopen sidebar button */}
+      {isSidebarCollapsed && (
+        <button
+          onClick={() => setIsSidebarCollapsed(false)}
+          className="absolute left-2 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
+          title="Apri sidebar"
+        >
+          <ChevronsRight className="h-4 w-4 text-muted-foreground" />
+        </button>
+      )}
 
       {/* Right panel - full height */}
       <div className="flex flex-1 flex-col">

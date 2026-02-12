@@ -19,6 +19,7 @@ import {
   Settings,
   LifeBuoy,
   ChevronRight,
+  ChevronsLeft,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -116,6 +117,7 @@ interface BuilderSidebarProps {
   userEmail?: string;
   onSignOut?: () => void;
   onPanelOpenChange?: (isOpen: boolean) => void;
+  onCollapseSidebar?: () => void;
 }
 
 const BuilderSidebar = ({ 
@@ -188,6 +190,7 @@ const BuilderSidebar = ({
   userEmail,
   onSignOut,
   onPanelOpenChange,
+  onCollapseSidebar,
 }: BuilderSidebarProps) => {
   
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -500,7 +503,16 @@ const BuilderSidebar = ({
   return (
     <div className="flex h-full flex-col" style={{ backgroundColor: '#f9f9f9' }}>
       <div className="flex-1 overflow-hidden px-4 py-3">
-        <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-lg font-semibold text-foreground">Widget content</h1>
+          <button
+            onClick={onCollapseSidebar}
+            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+            title="Chiudi sidebar"
+          >
+            <ChevronsLeft className="h-4 w-4 text-muted-foreground" />
+          </button>
+        </div>
 
         {/* Provide help section */}
         <div className="mb-4">
