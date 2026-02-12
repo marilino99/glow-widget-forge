@@ -1,4 +1,4 @@
-import { ChevronRight, LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 interface SidebarItemProps {
@@ -25,29 +25,26 @@ const SidebarItem = ({
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center justify-between rounded-lg border border-border bg-card px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
-        active ? "border-primary bg-primary/5" : ""
+      className={`flex w-full items-center justify-between rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-muted/50 ${
+        active ? "text-primary" : ""
       }`}
     >
       <div className="flex items-center gap-3">
-        <Icon className="h-5 w-5 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">{label}</span>
+        <Icon className={`h-5 w-5 ${active ? "text-primary" : "text-muted-foreground"}`} />
+        <span className={`text-sm font-medium ${active ? "text-primary" : "text-foreground"}`}>{label}</span>
         {badge && (
           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
             {badge}
           </span>
         )}
       </div>
-      <div className="flex items-center gap-2">
-        {hasToggle && (
-          <Switch
-            checked={toggleValue}
-            onCheckedChange={onToggle}
-            onClick={(e) => e.stopPropagation()}
-          />
-        )}
-        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-      </div>
+      {hasToggle && (
+        <Switch
+          checked={toggleValue}
+          onCheckedChange={onToggle}
+          onClick={(e) => e.stopPropagation()}
+        />
+      )}
     </button>
   );
 };
