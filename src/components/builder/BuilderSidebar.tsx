@@ -570,7 +570,7 @@ const BuilderSidebar = ({
               icon={BarChart3}
               label="Metrics"
               badge="PRO"
-              onClick={() => handleSelectWidget("metrics")}
+              onClick={() => isPro ? handleSelectWidget("metrics") : onUpgrade()}
               active={activeWidget === "metrics"}
             />
           </div>
