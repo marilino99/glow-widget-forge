@@ -15,6 +15,10 @@ import {
   Code,
   Instagram,
   BarChart3,
+  Sparkles,
+  Settings,
+  LifeBuoy,
+  ChevronRight,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -626,14 +630,37 @@ const BuilderSidebar = ({
               </div>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="top" className="w-48">
-            <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-              {userEmail}
+          <DropdownMenuContent align="start" side="top" className="w-56 p-1">
+            {/* User info */}
+            <div className="flex items-center gap-3 px-2 py-2">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
+                {userInitial}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-semibold text-foreground">{userInitial}</span>
+                <span className="text-xs text-muted-foreground truncate">@{userEmail?.split("@")[0] || "user"}</span>
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+            {!isPro && (
+              <DropdownMenuItem onClick={onUpgrade} className="gap-3 py-2">
+                <Sparkles className="h-4 w-4" />
+                Upgrade plan
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem className="gap-3 py-2">
+              <Settings className="h-4 w-4" />
+              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onSignOut} className="text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
+            <DropdownMenuItem className="gap-3 py-2">
+              <LifeBuoy className="h-4 w-4" />
+              Help
+              <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onSignOut} className="gap-3 py-2">
+              <LogOut className="h-4 w-4" />
+              Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
