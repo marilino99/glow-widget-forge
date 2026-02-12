@@ -487,12 +487,12 @@ const BuilderSidebar = ({
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex-1 overflow-y-auto p-6">
-        <h1 className="mb-8 text-2xl font-bold text-foreground">Widget content</h1>
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
 
         {/* Provide help section */}
-        <div className="mb-6">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="mb-3">
+          <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             Provide help
           </p>
           <div className="space-y-0.5">
@@ -530,8 +530,8 @@ const BuilderSidebar = ({
         </div>
 
         {/* Boost sales section */}
-        <div className="mb-6">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="mb-3">
+          <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             Boost sales
           </p>
           <div className="space-y-0.5">
@@ -552,8 +552,8 @@ const BuilderSidebar = ({
         </div>
 
         {/* Build trust section */}
-        <div className="mb-6">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="mb-3">
+          <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             Build trust
           </p>
           <div className="space-y-0.5">
@@ -580,7 +580,7 @@ const BuilderSidebar = ({
 
         {/* Customize look section */}
         <div>
-          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             Customize look
           </p>
           <div className="space-y-0.5">
