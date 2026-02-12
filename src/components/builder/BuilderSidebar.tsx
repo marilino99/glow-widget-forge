@@ -1,12 +1,12 @@
 import { useState } from "react";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
@@ -687,17 +687,17 @@ const BuilderSidebar = ({
       </div>
 
       {/* Logout confirmation dialog */}
-      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <AlertDialogContent className="max-w-sm rounded-2xl p-8 text-center [&>button]:hidden" style={{ backdropFilter: 'blur(8px)' }}>
-          <AlertDialogHeader className="space-y-2">
-            <AlertDialogTitle className="text-2xl font-bold text-center">
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="max-w-sm rounded-2xl p-8 text-center [&>button]:hidden border-0 shadow-xl" overlayClassName="bg-black/10 backdrop-blur-sm">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-2xl font-bold text-center">
               Are you sure you{"\n"}want to log out?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-center text-muted-foreground">
+            </DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground">
               Log out of Widjet as {userEmail}?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-4">
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-4">
             <Button
               onClick={() => {
                 setShowLogoutDialog(false);
@@ -714,9 +714,9 @@ const BuilderSidebar = ({
             >
               Cancel
             </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
