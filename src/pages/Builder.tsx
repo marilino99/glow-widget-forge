@@ -163,7 +163,7 @@ const Builder = () => {
       {/* Left sidebar - full height */}
       <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
-        <div className="flex h-14 shrink-0 items-center justify-between px-4" style={{ backgroundColor: '#f9f9f9' }}>
+        <div className="group flex h-14 shrink-0 items-center justify-between px-4" style={{ backgroundColor: '#f9f9f9' }}>
           <button
             onClick={() => window.location.reload()}
             className="flex items-center gap-2"
@@ -174,7 +174,7 @@ const Builder = () => {
           </button>
           <button
             onClick={() => setIsSidebarCollapsed(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+            className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 hover:bg-muted opacity-0 group-hover:opacity-100"
             title="Chiudi sidebar"
           >
             <ChevronsLeft className="h-5 w-5 text-muted-foreground" />
