@@ -43,6 +43,7 @@ const SidebarItem = ({
           checked={toggleValue}
           onCheckedChange={onToggle}
           onClick={(e) => e.stopPropagation()}
+          className="h-5 w-9 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input [&>span]:h-4 [&>span]:w-4 [&>span]:data-[state=checked]:translate-x-4"
         />
       )}
     </button>
