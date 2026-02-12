@@ -688,12 +688,12 @@ const BuilderSidebar = ({
 
       {/* Logout confirmation dialog */}
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent className="max-w-sm rounded-2xl p-8 text-center [&>button]:hidden border-0 shadow-xl" overlayClassName="bg-black/10 backdrop-blur-sm">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-2xl font-bold text-center">
-              Are you sure you{"\n"}want to log out?
+        <DialogContent className="max-w-sm rounded-3xl p-8 text-center [&>button]:hidden border-0 shadow-xl" overlayClassName="bg-black/10 backdrop-blur-sm">
+          <DialogHeader className="space-y-1">
+            <DialogTitle className="text-base font-medium text-center text-foreground">
+              Are you sure you want to log out?
             </DialogTitle>
-            <DialogDescription className="text-center text-muted-foreground">
+            <DialogDescription className="text-center text-base text-muted-foreground">
               Log out of Widjet as {userEmail}?
             </DialogDescription>
           </DialogHeader>
@@ -703,14 +703,14 @@ const BuilderSidebar = ({
                 setShowLogoutDialog(false);
                 onSignOut?.();
               }}
-              className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 py-6 text-base font-semibold"
+              className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 py-6 text-base font-normal"
             >
               Log out
             </Button>
             <Button
               variant="outline"
               onClick={() => setShowLogoutDialog(false)}
-              className="w-full rounded-full py-6 text-base font-semibold sm:mt-0"
+              className="w-full rounded-full py-6 text-base font-normal sm:mt-0"
             >
               Cancel
             </Button>
