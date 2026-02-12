@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Boxes, HelpCircle, Loader2, MessageCircle, ChevronsRight } from "lucide-react";
+import { Boxes, HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
@@ -163,7 +163,7 @@ const Builder = () => {
       {/* Left sidebar - full height */}
       <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
-        <div className="flex h-14 shrink-0 items-center px-4" style={{ backgroundColor: '#f9f9f9' }}>
+        <div className="flex h-14 shrink-0 items-center justify-between px-4" style={{ backgroundColor: '#f9f9f9' }}>
           <button
             onClick={() => window.location.reload()}
             className="flex items-center gap-2"
@@ -171,6 +171,13 @@ const Builder = () => {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Boxes className="h-5 w-5" />
             </div>
+          </button>
+          <button
+            onClick={() => setIsSidebarCollapsed(true)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted"
+            title="Chiudi sidebar"
+          >
+            <ChevronsLeft className="h-4 w-4 text-muted-foreground" />
           </button>
         </div>
         {/* Sidebar content */}
