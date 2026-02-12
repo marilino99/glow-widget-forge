@@ -665,8 +665,8 @@ const BuilderSidebar = ({
             <DropdownMenuSeparator />
             {!isPro && (
               <DropdownMenuItem onClick={onUpgrade} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
-                <Sparkles className="h-4 w-4" />
-                Upgrade plan
+                <Sparkles className="h-4 w-4" style={{ color: '#D946EF' }} />
+                <span style={{ color: '#D946EF' }}>Upgrade plan</span>
               </DropdownMenuItem>
             )}
             <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
