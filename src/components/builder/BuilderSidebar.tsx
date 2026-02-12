@@ -1,4 +1,5 @@
 import { useState } from "react";
+import widjetLogo from "@/assets/widjet-logo.png";
 import {
   MessageSquare,
   Phone,
@@ -491,8 +492,14 @@ const BuilderSidebar = ({
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex-1 overflow-hidden px-4 py-4">
-        <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
+      {/* Logo */}
+      <div className="shrink-0 border-b border-border px-4 py-3">
+        <button onClick={() => window.location.reload()} className="flex items-center gap-2">
+          <img src={widjetLogo} alt="Widjet" className="h-7" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-hidden px-4 py-3">
 
         {/* Provide help section */}
         <div className="mb-3">
