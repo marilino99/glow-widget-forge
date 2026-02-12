@@ -638,7 +638,7 @@ const BuilderSidebar = ({
       </div>
 
       {/* Bottom account section */}
-      <div className="shrink-0 border-t border-border px-3 py-2">
+      <div className="shrink-0 px-3 py-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/50">
