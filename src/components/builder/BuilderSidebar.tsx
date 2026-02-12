@@ -490,7 +490,7 @@ const BuilderSidebar = ({
   const userInitial = userEmail?.charAt(0).toUpperCase() || "U";
 
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="flex h-full flex-col" style={{ backgroundColor: '#f9f9f9' }}>
       <div className="flex-1 overflow-hidden px-4 py-4">
         <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
 
