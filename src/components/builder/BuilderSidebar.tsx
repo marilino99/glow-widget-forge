@@ -690,8 +690,8 @@ const BuilderSidebar = ({
       <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <DialogContent className="max-w-sm rounded-3xl p-8 text-center [&>button]:hidden border-0 shadow-xl" overlayClassName="bg-black/10 backdrop-blur-sm">
           <DialogHeader className="space-y-1">
-            <DialogTitle className="text-base font-medium text-center text-foreground">
-              Are you sure you want to log out?
+            <DialogTitle className="text-base font-medium text-center text-foreground whitespace-pre-line">
+              {"Are you sure you\nwant to log out?"}
             </DialogTitle>
             <DialogDescription className="text-center text-base text-muted-foreground">
               Log out of Widjet as {userEmail}?
