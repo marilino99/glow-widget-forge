@@ -481,7 +481,7 @@ const BuilderSidebar = ({
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           Provide help
         </p>
-        <div className="space-y-2">
+        <div className="space-y-0.5">
           <SidebarItem
             icon={MessageSquare}
             label="Contact card"
@@ -520,7 +520,7 @@ const BuilderSidebar = ({
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           Boost sales
         </p>
-        <div className="space-y-2">
+        <div className="space-y-0.5">
           <SidebarItem
             icon={LayoutGrid}
             label="Product carousel"
@@ -542,7 +542,7 @@ const BuilderSidebar = ({
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           Build trust
         </p>
-        <div className="space-y-2">
+        <div className="space-y-0.5">
           <SidebarItem
             icon={Star}
             label="Google reviews"
@@ -569,7 +569,7 @@ const BuilderSidebar = ({
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           Customize look
         </p>
-        <div className="space-y-2">
+        <div className="space-y-0.5">
           <SidebarItem
             icon={Palette}
             label="Theme & colors"
