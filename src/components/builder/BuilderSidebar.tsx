@@ -540,23 +540,19 @@ const BuilderSidebar = ({
               onClick={() => handleSelectWidget("custom-links")}
               active={activeWidget === "custom-links"}
             />
+            {!isPro && (
+              <button
+                onClick={onUpgrade}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]"
+              >
+                <div className="flex items-center gap-3">
+                  <Sparkles className="h-[18px] w-[18px] text-purple-500" />
+                  <span className="text-sm font-medium text-purple-600">Upgrade plan</span>
+                </div>
+              </button>
+            )}
           </div>
         </div>
-
-        {/* Upgrade CTA for free users */}
-        {!isPro && (
-          <div className="mb-4">
-            <button
-              onClick={onUpgrade}
-              className="flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]"
-            >
-              <div className="flex items-center gap-3">
-                <Sparkles className="h-[18px] w-[18px] text-purple-500" />
-                <span className="text-sm font-medium text-purple-600">Upgrade plan</span>
-              </div>
-            </button>
-          </div>
-        )}
 
         {/* Boost sales section */}
         <div className="mb-4">
