@@ -260,10 +260,10 @@ const Builder = () => {
       {isSidebarCollapsed && (
         <button
           onClick={() => setIsSidebarCollapsed(false)}
-          className="absolute left-2 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-all hover:bg-muted hover:shadow-md animate-fade-in"
+          className="absolute left-2 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
           title="Apri sidebar"
         >
-          <ChevronsRight className="h-5 w-5 text-muted-foreground" />
+          <ChevronsRight className="h-4 w-4 text-muted-foreground" />
         </button>
       )}
 
