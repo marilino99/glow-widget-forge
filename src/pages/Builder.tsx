@@ -12,6 +12,7 @@ import { Boxes, HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft 
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
+import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import { ProductCardData } from "@/types/productCard";
 import { LocalLink } from "@/components/builder/CustomLinksPanel";
@@ -68,6 +69,7 @@ const Builder = () => {
   const [livePreviewJs, setLivePreviewJs] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   
   // Track initial typography values for cancel functionality
   const [initialTypography, setInitialTypography] = useState({
@@ -244,7 +246,7 @@ const Builder = () => {
             forwardEmail={config.forwardEmail}
             onForwardEmailChange={(email: string) => updateConfig({ forwardEmail: email })}
             isPro={plan === "pro"}
-            onUpgrade={startCheckout}
+            onUpgrade={() => setShowUpgradeOverlay(true)}
             onGoogleBusinessSelect={setGoogleBusiness}
             customCss={config.customCss}
             customJs={config.customJs}
@@ -325,6 +327,14 @@ const Builder = () => {
           />
         </div>
       </div>
+
+      {/* Upgrade overlay */}
+      {showUpgradeOverlay && (
+        <UpgradeOverlay
+          onBack={() => setShowUpgradeOverlay(false)}
+          onUpgrade={startCheckout}
+        />
+      )}
     </div>
   );
 };
