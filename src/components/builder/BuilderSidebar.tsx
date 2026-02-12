@@ -1,5 +1,14 @@
 import { useState } from "react";
 import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
   MessageSquare,
   Phone,
   MessageCircle,
@@ -206,6 +215,7 @@ const BuilderSidebar = ({
   const [showInjectionCodePanel, setShowInjectionCodePanel] = useState(false);
   const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(false);
   const [hasGoogleBusiness, setHasGoogleBusiness] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const handleGoogleBusinessSelect = (business: GoogleBusinessData | null) => {
     onGoogleBusinessSelect?.(business);
@@ -668,13 +678,45 @@ const BuilderSidebar = ({
               Help
               <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onSignOut} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
+            <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
               <LogOut className="h-4 w-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Logout confirmation dialog */}
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent className="max-w-sm rounded-2xl p-8 text-center [&>button]:hidden" style={{ backdropFilter: 'blur(8px)' }}>
+          <AlertDialogHeader className="space-y-2">
+            <AlertDialogTitle className="text-2xl font-bold text-center">
+              Are you sure you{"\n"}want to log out?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-muted-foreground">
+              Log out of Widjet as {userEmail}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-4">
+            <Button
+              onClick={() => {
+                setShowLogoutDialog(false);
+                onSignOut?.();
+              }}
+              className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 py-6 text-base font-semibold"
+            >
+              Log out
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowLogoutDialog(false)}
+              className="w-full rounded-full py-6 text-base font-semibold sm:mt-0"
+            >
+              Cancel
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
