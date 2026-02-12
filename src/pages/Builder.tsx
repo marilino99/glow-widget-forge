@@ -66,6 +66,7 @@ const Builder = () => {
   const [googleBusiness, setGoogleBusiness] = useState<GoogleBusinessData | null>(null);
   const [livePreviewCss, setLivePreviewCss] = useState<string | null>(null);
   const [livePreviewJs, setLivePreviewJs] = useState<string | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
   
   // Track initial typography values for cancel functionality
   const [initialTypography, setInitialTypography] = useState({
@@ -159,7 +160,7 @@ const Builder = () => {
   return (
     <div className="flex h-screen bg-background">
       {/* Left sidebar - full height */}
-      <div className="flex w-72 shrink-0 flex-col border-r border-border">
+      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 ${isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
         <div className="flex h-14 shrink-0 items-center px-4" style={{ backgroundColor: '#f9f9f9' }}>
           <button
@@ -242,6 +243,7 @@ const Builder = () => {
             onInjectionCodeLivePreview={handleInjectionCodeLivePreview}
             userEmail={user?.email || ""}
             onSignOut={signOut}
+            onPanelOpenChange={setIsPanelOpen}
           />
         </div>
       </div>

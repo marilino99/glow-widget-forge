@@ -115,6 +115,7 @@ interface BuilderSidebarProps {
   onInjectionCodeLivePreview?: (css: string, js: string) => void;
   userEmail?: string;
   onSignOut?: () => void;
+  onPanelOpenChange?: (isOpen: boolean) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -186,6 +187,7 @@ const BuilderSidebar = ({
   onInjectionCodeLivePreview,
   userEmail,
   onSignOut,
+  onPanelOpenChange,
 }: BuilderSidebarProps) => {
   
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -242,67 +244,73 @@ const BuilderSidebar = ({
     } else if (widgetType === "injection-code") {
       setShowInjectionCodePanel(true);
     }
+    onPanelOpenChange?.(true);
     onSelectWidget(widgetType);
+  };
+
+  const closePanel = () => {
+    onPanelOpenChange?.(false);
+    onSelectWidget(null as unknown as string);
   };
 
   const handleBackFromContactCard = () => {
     setShowContactCardPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromThemeColors = () => {
     setShowThemeColorsPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromProductCarousel = () => {
     setShowProductCarouselPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromTypography = () => {
     setShowTypographyPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromFaq = () => {
     setShowFaqPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromInstagram = () => {
     setShowInstagramPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromWhatsApp = () => {
     setShowWhatsAppPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromCustomLinks = () => {
     setShowCustomLinksPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromMetrics = () => {
     setShowMetricsPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromGoogleReviews = () => {
     setShowGoogleReviewsPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromSizePosition = () => {
     setShowSizePositionPanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   const handleBackFromInjectionCode = () => {
     setShowInjectionCodePanel(false);
-    onSelectWidget(null as unknown as string);
+    closePanel();
   };
 
   // Check if typography has unsaved changes
