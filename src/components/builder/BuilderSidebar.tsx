@@ -497,7 +497,7 @@ const BuilderSidebar = ({
         {/* Provide help section */}
         <div className="mb-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Provide help
+            Support customer
           </p>
           <div className="space-y-0.5">
             <SidebarItem
