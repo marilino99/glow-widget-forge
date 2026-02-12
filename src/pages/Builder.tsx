@@ -174,7 +174,7 @@ const Builder = () => {
           </button>
           <button
             onClick={() => setIsSidebarCollapsed(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 hover:bg-muted opacity-0 group-hover:opacity-100"
+            className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] opacity-0 group-hover:opacity-100"
             title="Chiudi sidebar"
           >
             <ChevronsLeft className="h-5 w-5 text-muted-foreground" />
