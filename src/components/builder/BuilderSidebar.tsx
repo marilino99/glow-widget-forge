@@ -487,7 +487,7 @@ const BuilderSidebar = ({
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-hidden px-4 py-4">
         <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
 
         {/* Provide help section */}
