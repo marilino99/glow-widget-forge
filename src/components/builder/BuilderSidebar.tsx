@@ -495,7 +495,7 @@ const BuilderSidebar = ({
         <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
 
         {/* Provide help section */}
-        <div className="mb-5">
+        <div className="mb-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Provide help
           </p>
@@ -534,7 +534,7 @@ const BuilderSidebar = ({
         </div>
 
         {/* Boost sales section */}
-        <div className="mb-5">
+        <div className="mb-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Boost sales
           </p>
@@ -556,7 +556,7 @@ const BuilderSidebar = ({
         </div>
 
         {/* Build trust section */}
-        <div className="mb-5">
+        <div className="mb-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Build trust
           </p>
