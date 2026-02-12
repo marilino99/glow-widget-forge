@@ -31,7 +31,7 @@ const SidebarItem = ({
     >
       <div className="flex items-center gap-2.5">
         <Icon className={`h-4 w-4 ${active ? "text-primary" : "text-muted-foreground"}`} />
-        <span className={`text-[13px] font-medium ${active ? "text-primary" : "text-foreground"}`}>{label}</span>
+        <span className={`text-[13px] ${active ? "text-primary font-medium" : "text-foreground"}`}>{label}</span>
         {badge && (
           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
             {badge}
