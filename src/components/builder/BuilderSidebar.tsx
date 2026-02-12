@@ -651,7 +651,7 @@ const BuilderSidebar = ({
               </div>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="top" className="w-56 p-1">
+          <DropdownMenuContent align="start" side="top" className="w-[calc(288px-24px)] rounded-2xl p-2">
             {/* User info */}
             <div className="flex items-center gap-3 px-2 py-2">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
