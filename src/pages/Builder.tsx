@@ -157,10 +157,11 @@ const Builder = () => {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-background">
-      {/* Top navbar - minimal */}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-sidebar px-4">
-        <div className="flex items-center gap-3">
+    <div className="flex h-screen bg-background">
+      {/* Left sidebar - full height */}
+      <div className="flex w-96 shrink-0 flex-col border-r border-border">
+        {/* Sidebar header with logo */}
+        <div className="flex h-14 shrink-0 items-center px-4 border-b border-border">
           <button
             onClick={() => window.location.reload()}
             className="flex items-center gap-2"
@@ -170,34 +171,8 @@ const Builder = () => {
             </div>
           </button>
         </div>
-
-        <div className="flex items-center gap-2">
-          {isSaving && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-sm">Saving...</span>
-            </div>
-          )}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="relative gap-2 text-muted-foreground hover:text-foreground"
-            onClick={() => navigate("/chats")}
-          >
-            <MessageCircle className="h-5 w-5" />
-            {hasUnread && (
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
-            )}
-            <span className="hidden sm:inline">Chat</span>
-          </Button>
-          <AddToWebsiteDialog widgetId={config.id || undefined} />
-        </div>
-      </header>
-
-      {/* Main content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar - widget content */}
-        <div className="w-96 shrink-0 border-r border-border">
+        {/* Sidebar content */}
+        <div className="flex-1 overflow-hidden">
           <BuilderSidebar
             onSelectWidget={setActiveWidget}
             activeWidget={activeWidget}
@@ -269,9 +244,33 @@ const Builder = () => {
             onSignOut={signOut}
           />
         </div>
+      </div>
 
-        {/* Right panel - preview */}
-        <div className="flex-1">
+      {/* Right panel - full height */}
+      <div className="flex flex-1 flex-col">
+        {/* Right header with actions */}
+        <div className="flex h-14 shrink-0 items-center justify-end border-b border-border px-4">
+          {isSaving && (
+            <div className="flex items-center gap-2 text-muted-foreground mr-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="text-sm">Saving...</span>
+            </div>
+          )}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="relative gap-2 text-muted-foreground hover:text-foreground"
+            onClick={() => navigate("/chats")}
+          >
+            <MessageCircle className="h-5 w-5" />
+            {hasUnread && (
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
+            )}
+            <span className="hidden sm:inline">Chat</span>
+          </Button>
+          <AddToWebsiteDialog widgetId={config.id || undefined} />
+        </div>
+        <div className="flex-1 overflow-hidden">
           <WidgetPreviewPanel 
             activeWidget={activeWidget}
             selectedAvatar={config.selectedAvatar} 
