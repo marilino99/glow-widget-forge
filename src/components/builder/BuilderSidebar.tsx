@@ -540,17 +540,6 @@ const BuilderSidebar = ({
               onClick={() => handleSelectWidget("custom-links")}
               active={activeWidget === "custom-links"}
             />
-            {!isPro && (
-              <button
-                onClick={onUpgrade}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]"
-              >
-                <div className="flex items-center gap-3">
-                  <Sparkles className="h-[18px] w-[18px]" style={{ color: '#D946EF' }} />
-                    <span className="text-sm font-medium" style={{ color: '#D946EF' }}>Upgrade plan</span>
-                </div>
-              </button>
-            )}
           </div>
         </div>
 
