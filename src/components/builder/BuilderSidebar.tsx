@@ -617,10 +617,13 @@ const BuilderSidebar = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/50">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background text-sm font-semibold">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
                 {userInitial}
               </div>
-              <span className="text-sm font-medium text-foreground truncate">{userEmail || "Account"}</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-medium text-foreground truncate">{userEmail || "Account"}</span>
+                <span className="text-xs text-muted-foreground">{isPro ? "Pro" : "Free"}</span>
+              </div>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="top" className="w-48">
