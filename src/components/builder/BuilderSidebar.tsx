@@ -7,7 +7,7 @@ import {
   Link2,
   LayoutGrid,
   Gift,
-  
+  LogOut,
   Star,
   Palette,
   Type,
@@ -16,6 +16,13 @@ import {
   Instagram,
   BarChart3,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import SidebarItem from "./SidebarItem";
 import ContactCardPanel from "./ContactCardPanel";
 import ThemeColorsPanel from "./ThemeColorsPanel";
@@ -102,6 +109,8 @@ interface BuilderSidebarProps {
   customCss: string;
   customJs: string;
   onInjectionCodeLivePreview?: (css: string, js: string) => void;
+  userEmail?: string;
+  onSignOut?: () => void;
 }
 
 const BuilderSidebar = ({ 
@@ -171,6 +180,8 @@ const BuilderSidebar = ({
   customCss,
   customJs,
   onInjectionCodeLivePreview,
+  userEmail,
+  onSignOut,
 }: BuilderSidebarProps) => {
   
   const [showContactCardPanel, setShowContactCardPanel] = useState(false);
@@ -472,129 +483,157 @@ const BuilderSidebar = ({
     );
   }
 
+  const userInitial = userEmail?.charAt(0).toUpperCase() || "U";
+
   return (
-    <div className="h-full overflow-y-auto bg-background p-6">
-      <h1 className="mb-8 text-2xl font-bold text-foreground">Widget content</h1>
+    <div className="flex h-full flex-col bg-background">
+      <div className="flex-1 overflow-y-auto p-6">
+        <h1 className="mb-8 text-2xl font-bold text-foreground">Widget content</h1>
 
-      {/* Provide help section */}
-      <div className="mb-6">
-        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Provide help
-        </p>
-        <div className="space-y-0.5">
-          <SidebarItem
-            icon={MessageSquare}
-            label="Contact card"
-            onClick={() => handleSelectWidget("contact-card")}
-            active={activeWidget === "contact-card"}
-          />
-          <SidebarItem
-            icon={Phone}
-            label="WhatsApp"
-            hasToggle
-            toggleValue={whatsappEnabled}
-            onToggle={onWhatsappToggle}
-            onClick={() => handleSelectWidget("whatsapp")}
-            active={activeWidget === "whatsapp"}
-          />
-          <SidebarItem
-            icon={HelpCircle}
-            label="FAQ"
-            hasToggle
-            toggleValue={faqEnabled}
-            onToggle={onFaqToggle}
-            onClick={() => handleSelectWidget("faq")}
-            active={activeWidget === "faq"}
-          />
-          <SidebarItem
-            icon={Link2}
-            label="Custom links"
-            onClick={() => handleSelectWidget("custom-links")}
-            active={activeWidget === "custom-links"}
-          />
+        {/* Provide help section */}
+        <div className="mb-6">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Provide help
+          </p>
+          <div className="space-y-0.5">
+            <SidebarItem
+              icon={MessageSquare}
+              label="Contact card"
+              onClick={() => handleSelectWidget("contact-card")}
+              active={activeWidget === "contact-card"}
+            />
+            <SidebarItem
+              icon={Phone}
+              label="WhatsApp"
+              hasToggle
+              toggleValue={whatsappEnabled}
+              onToggle={onWhatsappToggle}
+              onClick={() => handleSelectWidget("whatsapp")}
+              active={activeWidget === "whatsapp"}
+            />
+            <SidebarItem
+              icon={HelpCircle}
+              label="FAQ"
+              hasToggle
+              toggleValue={faqEnabled}
+              onToggle={onFaqToggle}
+              onClick={() => handleSelectWidget("faq")}
+              active={activeWidget === "faq"}
+            />
+            <SidebarItem
+              icon={Link2}
+              label="Custom links"
+              onClick={() => handleSelectWidget("custom-links")}
+              active={activeWidget === "custom-links"}
+            />
+          </div>
+        </div>
+
+        {/* Boost sales section */}
+        <div className="mb-6">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Boost sales
+          </p>
+          <div className="space-y-0.5">
+            <SidebarItem
+              icon={LayoutGrid}
+              label="Product carousel"
+              onClick={() => handleSelectWidget("product-carousel")}
+              active={activeWidget === "product-carousel"}
+            />
+            <SidebarItem
+              icon={BarChart3}
+              label="Metrics"
+              badge="PRO"
+              onClick={() => handleSelectWidget("metrics")}
+              active={activeWidget === "metrics"}
+            />
+          </div>
+        </div>
+
+        {/* Build trust section */}
+        <div className="mb-6">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Build trust
+          </p>
+          <div className="space-y-0.5">
+            <SidebarItem
+              icon={Star}
+              label="Google reviews"
+              hasToggle={hasGoogleBusiness}
+              toggleValue={googleReviewsEnabled}
+              onToggle={handleGoogleReviewsToggle}
+              onClick={() => handleSelectWidget("google-reviews")}
+              active={activeWidget === "google-reviews"}
+            />
+            <SidebarItem
+              icon={Instagram}
+              label="Instagram UGC"
+              hasToggle
+              toggleValue={instagramEnabled}
+              onToggle={onInstagramToggle}
+              onClick={() => handleSelectWidget("instagram")}
+              active={activeWidget === "instagram"}
+            />
+          </div>
+        </div>
+
+        {/* Customize look section */}
+        <div>
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Customize look
+          </p>
+          <div className="space-y-0.5">
+            <SidebarItem
+              icon={Palette}
+              label="Theme & colors"
+              onClick={() => handleSelectWidget("theme-colors")}
+              active={activeWidget === "theme-colors"}
+            />
+            <SidebarItem
+              icon={Type}
+              label="Typography"
+              onClick={() => handleSelectWidget("typography")}
+              active={activeWidget === "typography"}
+            />
+            <SidebarItem
+              icon={Maximize2}
+              label="Size & position"
+              onClick={() => handleSelectWidget("size-position")}
+              active={activeWidget === "size-position"}
+            />
+            <SidebarItem
+              icon={Code}
+              label="Injection code"
+              onClick={() => handleSelectWidget("injection-code")}
+              active={activeWidget === "injection-code"}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Boost sales section */}
-      <div className="mb-6">
-        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Boost sales
-        </p>
-        <div className="space-y-0.5">
-          <SidebarItem
-            icon={LayoutGrid}
-            label="Product carousel"
-            onClick={() => handleSelectWidget("product-carousel")}
-            active={activeWidget === "product-carousel"}
-          />
-          <SidebarItem
-            icon={BarChart3}
-            label="Metrics"
-            badge="PRO"
-            onClick={() => handleSelectWidget("metrics")}
-            active={activeWidget === "metrics"}
-          />
-        </div>
-      </div>
-
-      {/* Build trust section */}
-      <div className="mb-6">
-        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Build trust
-        </p>
-        <div className="space-y-0.5">
-          <SidebarItem
-            icon={Star}
-            label="Google reviews"
-            hasToggle={hasGoogleBusiness}
-            toggleValue={googleReviewsEnabled}
-            onToggle={handleGoogleReviewsToggle}
-            onClick={() => handleSelectWidget("google-reviews")}
-            active={activeWidget === "google-reviews"}
-          />
-          <SidebarItem
-            icon={Instagram}
-            label="Instagram UGC"
-            hasToggle
-            toggleValue={instagramEnabled}
-            onToggle={onInstagramToggle}
-            onClick={() => handleSelectWidget("instagram")}
-            active={activeWidget === "instagram"}
-          />
-        </div>
-      </div>
-
-      {/* Customize look section */}
-      <div>
-        <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Customize look
-        </p>
-        <div className="space-y-0.5">
-          <SidebarItem
-            icon={Palette}
-            label="Theme & colors"
-            onClick={() => handleSelectWidget("theme-colors")}
-            active={activeWidget === "theme-colors"}
-          />
-          <SidebarItem
-            icon={Type}
-            label="Typography"
-            onClick={() => handleSelectWidget("typography")}
-            active={activeWidget === "typography"}
-          />
-          <SidebarItem
-            icon={Maximize2}
-            label="Size & position"
-            onClick={() => handleSelectWidget("size-position")}
-            active={activeWidget === "size-position"}
-          />
-          <SidebarItem
-            icon={Code}
-            label="Injection code"
-            onClick={() => handleSelectWidget("injection-code")}
-            active={activeWidget === "injection-code"}
-          />
-        </div>
+      {/* Bottom account section */}
+      <div className="shrink-0 border-t border-border p-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/50">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background text-sm font-semibold">
+                {userInitial}
+              </div>
+              <span className="text-sm font-medium text-foreground truncate">{userEmail || "Account"}</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" side="top" className="w-48">
+            <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+              {userEmail}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onSignOut} className="text-destructive">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
