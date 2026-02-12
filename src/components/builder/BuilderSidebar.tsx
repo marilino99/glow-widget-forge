@@ -554,6 +554,39 @@ const BuilderSidebar = ({
           </div>
         </div>
 
+        {/* Customize look section */}
+        <div className="mb-4">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Customize look
+          </p>
+          <div className="space-y-0.5">
+            <SidebarItem
+              icon={Palette}
+              label="Theme & colors"
+              onClick={() => handleSelectWidget("theme-colors")}
+              active={activeWidget === "theme-colors"}
+            />
+            <SidebarItem
+              icon={Type}
+              label="Typography"
+              onClick={() => handleSelectWidget("typography")}
+              active={activeWidget === "typography"}
+            />
+            <SidebarItem
+              icon={Maximize2}
+              label="Size & position"
+              onClick={() => handleSelectWidget("size-position")}
+              active={activeWidget === "size-position"}
+            />
+            <SidebarItem
+              icon={Code}
+              label="Injection code"
+              onClick={() => handleSelectWidget("injection-code")}
+              active={activeWidget === "injection-code"}
+            />
+          </div>
+        </div>
+
         {/* Boost sales section */}
         <div className="mb-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -599,39 +632,6 @@ const BuilderSidebar = ({
               onToggle={onInstagramToggle}
               onClick={() => handleSelectWidget("instagram")}
               active={activeWidget === "instagram"}
-            />
-          </div>
-        </div>
-
-        {/* Customize look section */}
-        <div>
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Customize look
-          </p>
-          <div className="space-y-0.5">
-            <SidebarItem
-              icon={Palette}
-              label="Theme & colors"
-              onClick={() => handleSelectWidget("theme-colors")}
-              active={activeWidget === "theme-colors"}
-            />
-            <SidebarItem
-              icon={Type}
-              label="Typography"
-              onClick={() => handleSelectWidget("typography")}
-              active={activeWidget === "typography"}
-            />
-            <SidebarItem
-              icon={Maximize2}
-              label="Size & position"
-              onClick={() => handleSelectWidget("size-position")}
-              active={activeWidget === "size-position"}
-            />
-            <SidebarItem
-              icon={Code}
-              label="Injection code"
-              onClick={() => handleSelectWidget("injection-code")}
-              active={activeWidget === "injection-code"}
             />
           </div>
         </div>
