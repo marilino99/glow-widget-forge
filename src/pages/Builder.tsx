@@ -161,7 +161,7 @@ const Builder = () => {
       {/* Left sidebar - full height */}
       <div className="flex w-96 shrink-0 flex-col border-r border-border">
         {/* Sidebar header with logo */}
-        <div className="flex h-14 shrink-0 items-center px-4 border-b border-border">
+        <div className="flex h-14 shrink-0 items-center px-4">
           <button
             onClick={() => window.location.reload()}
             className="flex items-center gap-2"
