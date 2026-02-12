@@ -543,6 +543,24 @@ const BuilderSidebar = ({
           </div>
         </div>
 
+        {/* Upgrade CTA for free users */}
+        {!isPro && (
+          <div className="mb-4">
+            <button
+              onClick={onUpgrade}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-purple-500 text-purple-500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="19" x2="12" y2="5" />
+                  <polyline points="5 12 12 5 19 12" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-purple-600">Upgrade plan</span>
+            </button>
+          </div>
+        )}
+
         {/* Boost sales section */}
         <div className="mb-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
