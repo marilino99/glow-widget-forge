@@ -664,22 +664,22 @@ const BuilderSidebar = ({
             </div>
             <DropdownMenuSeparator />
             {!isPro && (
-              <DropdownMenuItem onClick={onUpgrade} className="gap-3 py-2">
+              <DropdownMenuItem onClick={onUpgrade} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]">
                 <Sparkles className="h-4 w-4" />
                 Upgrade plan
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="gap-3 py-2">
+            <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]">
               <Settings className="h-4 w-4" />
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-3 py-2">
+            <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]">
               <LifeBuoy className="h-4 w-4" />
               Help
               <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onSignOut} className="gap-3 py-2">
+            <DropdownMenuItem onClick={onSignOut} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]">
               <LogOut className="h-4 w-4" />
               Log out
             </DropdownMenuItem>
