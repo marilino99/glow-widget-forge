@@ -79,6 +79,15 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
     toast.success("Photo updated");
   };
 
+  const handleRemoveAvatar = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    setAvatarUrl(null);
+    await supabase.from("profiles").update({ avatar_url: null }).eq("user_id", user.id);
+    onAvatarChange?.(null);
+    toast.success("Photo removed");
+  };
+
   const handleChangeEmail = async () => {
     const newEmail = prompt("Enter your new email address:");
     if (!newEmail) return;
@@ -223,10 +232,17 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                         )}
                       </div>
                     </label>
-                    <label className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-all opacity-0 group-hover/photo:opacity-100">
-                      <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                      Upload photo
-                    </label>
+                    <div className="flex flex-col gap-1 opacity-0 group-hover/photo:opacity-100 transition-all">
+                      <label className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                        Upload photo
+                      </label>
+                      {avatarUrl && (
+                        <button onClick={handleRemoveAvatar} className="text-sm text-red-500 hover:text-red-600 transition-colors text-left">
+                          Remove photo
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
