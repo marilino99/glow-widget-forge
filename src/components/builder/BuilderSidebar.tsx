@@ -728,6 +728,9 @@ const BuilderSidebar = ({
         open={showSettingsDialog}
         onOpenChange={setShowSettingsDialog}
         userEmail={userEmail}
+        language={language}
+        onLanguageChange={onLanguageChange}
+        onSaveConfig={onSaveConfig}
       />
     </div>
   );
