@@ -21,7 +21,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail }: SettingsDialogProps) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[720px] h-[520px] p-0 rounded-2xl border-0 shadow-xl overflow-hidden [&>button]:hidden"
+        className="max-w-[880px] h-[520px] p-0 rounded-2xl border-0 shadow-xl overflow-hidden [&>button]:hidden"
         overlayClassName="bg-black/10 backdrop-blur-sm"
       >
         <div className="flex h-full">
