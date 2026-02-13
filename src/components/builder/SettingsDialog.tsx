@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { X, Settings, Bell, User, CreditCard, ChevronDown, ArrowUpCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -40,6 +40,19 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
   const [showManageMenu, setShowManageMenu] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
+  const manageMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close manage menu on outside click
+  useEffect(() => {
+    if (!showManageMenu) return;
+    const handleClick = (e: MouseEvent) => {
+      if (manageMenuRef.current && !manageMenuRef.current.contains(e.target as Node)) {
+        setShowManageMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showManageMenu]);
   const [profileLoading, setProfileLoading] = useState(false);
 
   // Load profile when Account tab is opened
@@ -316,7 +329,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                             : "You're on the Pro plan. Enjoy all premium features."}
                         </p>
                       </div>
-                      <div className="relative">
+                      <div className="relative" ref={manageMenuRef}>
                         <Button
                           variant="outline"
                           className="rounded-xl px-4 gap-2"
