@@ -1,41 +1,30 @@
 
-# Redesign Sidebar - Stile Lista Pulita
 
-## Panoramica
-Ridisegnare la lista principale della sidebar del Builder per passare dallo stile attuale (card con bordi e sfondo) a uno stile lista pulito e minimale come nelle immagini di riferimento: icona + label su una riga, senza bordi o card, con sezioni separate da titoli.
+## Effetto Gradiente Arcobaleno sul Pulsante Publish
 
-## Cosa cambia visivamente
+Aggiungere un bordo animato con gradiente arcobaleno che scorre intorno al pulsante "Publish" quando ci si passa sopra col mouse.
 
-```text
-PRIMA (card style):                    DOPO (list style):
-+----------------------------+         
-| [icon] Contact card    [>] |         [icon]  Contact card
-+----------------------------+         [icon]  WhatsApp         [toggle]
-+----------------------------+         [icon]  FAQ              [toggle]
-| [icon] WhatsApp  [sw] [>] |         [icon]  Custom links
-+----------------------------+         
-                                       BOOST SALES
-                                       [icon]  Product carousel
-                                       [icon]  Metrics          PRO
-```
+### Come funziona
 
-## Modifiche tecniche
+Il pulsante verra' avvolto in un contenitore con un gradiente conico arcobaleno che ruota continuamente. Al passaggio del mouse, il gradiente diventa visibile creando l'effetto di un bordo luminoso che scorre.
 
-### 1. `SidebarItem.tsx` - Redesign completo
-- Rimuovere il bordo (`border`), lo sfondo card (`bg-card`), e il padding della card
-- Layout: padding verticale py-2.5, padding orizzontale px-2
-- Icona a sinistra (h-5 w-5), label con font-medium text-sm
-- Rimuovere il ChevronRight (freccia a destra)
-- Mantenere toggle e badge PRO sulla destra
-- Stato hover: sfondo leggero `hover:bg-muted/50` con rounded-lg
-- Stato active: testo primary, nessun bordo speciale
+### Modifiche
 
-### 2. `BuilderSidebar.tsx` - Aggiustamenti spacing
-- Rimuovere `space-y-2` dai gruppi (i nuovi item sono piu compatti, basta space-y-0.5 o nessuno)
-- I titoli di sezione restano invariati (uppercase, muted, tracking-wider)
-- Il titolo "Widget content" resta invariato
-- Nessuna modifica alla logica dei pannelli o alle props
+**1. `tailwind.config.ts`**
+- Aggiungere una keyframe `rainbow-spin` che ruota il gradiente di 360 gradi
+- Aggiungere l'animazione corrispondente `animate-rainbow-spin`
 
-### 3. Nessuna modifica funzionale
-- Tutti i click handler, toggle, pannelli e dati restano identici
-- Solo stile CSS/Tailwind aggiornato
+**2. `src/components/builder/AddToWebsiteDialog.tsx`**
+- Sostituire il semplice `<Button>` con una struttura a due livelli:
+  - Un `div` esterno con il gradiente conico arcobaleno (`conic-gradient`) che ruota tramite l'animazione
+  - Il `Button` interno posizionato sopra, con sfondo solido che lascia visibile solo un sottile bordo arcobaleno (circa 2px)
+- Il gradiente e' visibile solo al hover del contenitore esterno (opacity 0 di default, opacity 100 al hover)
+- Transizione fluida di opacita' per un effetto di comparsa morbido
+
+### Dettagli tecnici
+
+- Il gradiente conico usa i colori: rosso, arancione, giallo, verde, ciano, blu, viola, e torna al rosso
+- La rotazione completa avviene in circa 2 secondi per un effetto fluido ma non troppo veloce
+- Il pulsante interno mantiene il suo stile originale (colori primary, dimensione sm)
+- Il bordo arcobaleno ha uno spessore di circa 2px grazie al padding del contenitore esterno
+
