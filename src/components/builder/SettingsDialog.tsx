@@ -99,7 +99,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
         className="max-w-[880px] h-[520px] p-0 rounded-2xl border-0 shadow-xl overflow-hidden [&>button]:hidden"
         overlayClassName="bg-black/10 backdrop-blur-sm"
       >
-        <div className="flex h-full">
+        <div className="flex h-full min-h-0">
           {/* Left sidebar */}
           <div className="w-[200px] shrink-0 border-r border-border/40 p-3 flex flex-col">
             <button
@@ -132,7 +132,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
           </div>
 
           {/* Right content */}
-          <div className="flex-1 overflow-y-auto p-6 pb-10">
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 pb-10">
             <h2 className="text-lg font-semibold text-foreground mb-6">
               {tabs.find((t) => t.id === activeTab)?.label}
             </h2>
