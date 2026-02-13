@@ -159,10 +159,7 @@ export const useWidgetConfiguration = () => {
         setConfig(prev => ({ ...prev, id: data.id }));
       }
 
-      toast({
-        title: "Saved",
-        description: "Your changes have been saved.",
-      });
+      // Save successful - no toast needed
     } catch (error) {
       console.error("Error saving widget configuration:", error);
       toast({
