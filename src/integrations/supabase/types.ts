@@ -241,6 +241,7 @@ export type Database = {
           offer_help: string
           say_hello: string
           selected_avatar: string | null
+          show_branding: boolean
           updated_at: string
           user_id: string
           website_url: string | null
@@ -267,6 +268,7 @@ export type Database = {
           offer_help?: string
           say_hello?: string
           selected_avatar?: string | null
+          show_branding?: boolean
           updated_at?: string
           user_id: string
           website_url?: string | null
@@ -293,6 +295,7 @@ export type Database = {
           offer_help?: string
           say_hello?: string
           selected_avatar?: string | null
+          show_branding?: boolean
           updated_at?: string
           user_id?: string
           website_url?: string | null

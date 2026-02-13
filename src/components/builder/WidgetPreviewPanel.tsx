@@ -41,6 +41,7 @@ interface WidgetPreviewPanelProps {
   googleBusiness?: GoogleBusinessData | null;
   customCss?: string;
   customJs?: string;
+  showBranding?: boolean;
 }
 
 // Check if a color is a hex value
@@ -201,6 +202,7 @@ const WidgetPreviewPanel = ({
   activeWidget,
   customCss = "",
   customJs = "",
+  showBranding = true,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -875,11 +877,13 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Powered by */}
+                {showBranding && (
                 <div className={`border-t py-2 text-center ${widgetBorder}`}>
                   <span className={`text-xs ${widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
+                )}
               </div>) : showContactPage ? (/* Contact Page View */
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : ""} ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Contact page header */}
@@ -957,11 +961,13 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
 
+                {showBranding && (
                 <div className={`py-2 text-center shrink-0`}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
+                )}
               </div>) : showShareFeedback ? (/* Share Feedback Form View */
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
@@ -1193,11 +1199,13 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
 
+                {showBranding && (
                 <div className={`py-2 text-center shrink-0`}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
+                )}
               </div>) : showReportBug ? (/* Report Bug Form View */
           <div className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
@@ -1440,11 +1448,13 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
 
+                {showBranding && (
                 <div className={`py-2 text-center shrink-0`}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
+                )}
               </div>) : (/* Home View */
           <div id="wj-pop" className={`flex flex-col h-[500px] max-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
@@ -1735,11 +1745,13 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
 
+                {showBranding && (
                 <div className={`py-2 text-center shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
                     Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
+                )}
               </div>)}
           </div>
         </div>
