@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { X, Settings, Bell, User, CreditCard, ChevronDown, ArrowUpCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,8 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
   const [password, setPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [showManageMenu, setShowManageMenu] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
 
   // Load profile when Account tab is opened
@@ -115,6 +117,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="max-w-[880px] h-[520px] p-0 rounded-2xl border-0 shadow-xl overflow-hidden [&>button]:hidden"
@@ -338,16 +341,9 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                             <div className="border-t mx-2" />
                             <button
                               className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-muted transition-colors"
-                              onClick={async () => {
+                              onClick={() => {
                                 setShowManageMenu(false);
-                                try {
-                                  const { data, error } = await supabase.functions.invoke("customer-portal");
-                                  if (error) throw error;
-                                  if (data?.url) window.open(data.url, "_blank");
-                                } catch (err) {
-                                  console.error("Error opening portal:", err);
-                                  toast.error("Could not open subscription management");
-                                }
+                                setShowCancelDialog(true);
                               }}
                             >
                               <X className="h-4 w-4" />
@@ -380,6 +376,52 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
         </div>
       </DialogContent>
     </Dialog>
+
+      {/* Cancel Subscription confirmation dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent className="max-w-sm rounded-3xl p-8 text-center [&>button]:hidden border-0 shadow-xl" overlayClassName="bg-black/10 backdrop-blur-sm">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-medium text-center text-foreground whitespace-pre-line">
+              {"Are you sure you want\nto cancel?"}
+            </DialogTitle>
+            <DialogDescription className="text-center text-base text-muted-foreground">
+              {subscriptionEnd
+                ? `Your access to Pro features will end on ${new Date(subscriptionEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}.`
+                : "Your access to Pro features will end at the end of your billing period."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-2">
+            <Button
+              onClick={async () => {
+                setCancelLoading(true);
+                try {
+                  const { data, error } = await supabase.functions.invoke("customer-portal");
+                  if (error) throw error;
+                  if (data?.url) window.open(data.url, "_blank");
+                } catch (err) {
+                  console.error("Error opening portal:", err);
+                  toast.error("Could not open subscription management");
+                } finally {
+                  setCancelLoading(false);
+                  setShowCancelDialog(false);
+                }
+              }}
+              disabled={cancelLoading}
+              className="w-full rounded-full border-red-500 text-red-500 hover:bg-red-50 py-6 text-base font-normal"
+              variant="outline"
+            >
+              {cancelLoading ? "Loading..." : "Cancel subscription"}
+            </Button>
+            <Button
+              onClick={() => setShowCancelDialog(false)}
+              className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 py-6 text-base font-normal sm:mt-0"
+            >
+              Keep Pro
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
