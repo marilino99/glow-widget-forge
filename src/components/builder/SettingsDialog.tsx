@@ -208,16 +208,25 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                 {/* Photo */}
                 <div>
                   <span className="text-sm font-semibold text-foreground">Photo</span>
-                  <div className="mt-2">
-                    <label className="cursor-pointer">
+                  <div className="mt-2 flex items-center gap-4">
+                    <label className="cursor-pointer group relative">
                       <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt="Profile" className="h-20 w-20 rounded-full object-cover border border-border" />
-                      ) : (
-                        <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center text-2xl font-semibold text-muted-foreground">
-                          {firstName ? firstName[0].toUpperCase() : userEmail?.[0]?.toUpperCase() || "?"}
+                      <div className="relative">
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt="Profile" className="h-20 w-20 rounded-full object-cover border border-border" />
+                        ) : (
+                          <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center text-2xl font-semibold text-primary">
+                            {firstName ? firstName[0].toUpperCase() : userEmail?.[0]?.toUpperCase() || "?"}
+                          </div>
+                        )}
+                        <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">Upload</span>
                         </div>
-                      )}
+                      </div>
+                    </label>
+                    <label className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                      Upload photo
                     </label>
                   </div>
                 </div>
