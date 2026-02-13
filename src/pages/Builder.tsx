@@ -8,12 +8,13 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Boxes, HelpCircle, Loader2, MessageCircle, MessageSquareText, ChevronsRight, ChevronsLeft } from "lucide-react";
+import { Boxes, HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
+import FeedbackPopover from "@/components/builder/FeedbackPopover";
 import { ProductCardData } from "@/types/productCard";
 import { LocalLink } from "@/components/builder/CustomLinksPanel";
 import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
@@ -282,15 +283,7 @@ const Builder = () => {
               <span className="text-sm">Saving...</span>
             </div>
           )}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="gap-2 text-muted-foreground hover:text-foreground"
-            onClick={() => navigate("/feedback")}
-          >
-            <MessageSquareText className="h-5 w-5" />
-            <span className="hidden sm:inline">Feedback</span>
-          </Button>
+          <FeedbackPopover />
           <Button 
             variant="ghost" 
             size="sm" 
