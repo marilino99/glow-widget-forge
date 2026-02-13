@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X, Settings, Bell, User, CreditCard } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface SettingsDialogProps {
   open: boolean;
@@ -88,6 +89,27 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                       <option value="de">Deutsch</option>
                       <option value="pt">Português</option>
                     </select>
+                  </div>
+                </div>
+
+                {/* Widjet branding */}
+                <div className="py-4 border-b border-border/40">
+                  <div className="flex items-start justify-between gap-6">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-foreground">Widjet branding</span>
+                        <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide" style={{ backgroundColor: 'rgba(217, 70, 239, 0.12)', color: '#D946EF' }}>
+                          Pro
+                        </span>
+                      </div>
+                      <p className="text-sm mt-1" style={{ color: '#898884' }}>
+                        Show "Powered by Widjet" on your widget.
+                      </p>
+                    </div>
+                    <Switch
+                      checked={true}
+                      className="h-5 w-9 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input [&>span]:h-4 [&>span]:w-4 [&>span]:data-[state=checked]:translate-x-4"
+                    />
                   </div>
                 </div>
               </div>
