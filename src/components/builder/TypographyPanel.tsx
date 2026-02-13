@@ -1,20 +1,7 @@
-import { ArrowLeft, ImagePlus, Info } from "lucide-react";
+import { ArrowLeft, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useState, useRef } from "react";
 
 interface TypographyPanelProps {
@@ -117,39 +104,6 @@ const TypographyPanel = ({
             </div>
           </div>
 
-          {/* Choose Language Section */}
-          <div>
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-foreground">
-                Choose language
-              </Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className="text-muted-foreground hover:text-foreground">
-                      <Info className="h-5 w-5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Select the language for your widget text</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <Select value={language} onValueChange={onLanguageChange}>
-              <SelectTrigger className="mt-2 w-full bg-muted border-0">
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent className="bg-background border border-border z-50">
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="it">Italiano</SelectItem>
-                <SelectItem value="es">Español</SelectItem>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="de">Deutsch</SelectItem>
-                <SelectItem value="pt">Português</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           {/* Say Hello Section */}
           <div>
