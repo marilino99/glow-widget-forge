@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Boxes, HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft } from "lucide-react";
+import { Boxes, HelpCircle, Loader2, MessageCircle, MessageSquareText, ChevronsRight, ChevronsLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
@@ -293,6 +293,15 @@ const Builder = () => {
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
             )}
             <span className="hidden sm:inline">Chat</span>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="gap-2 text-muted-foreground hover:text-foreground"
+            onClick={() => navigate("/feedback")}
+          >
+            <MessageSquareText className="h-5 w-5" />
+            <span className="hidden sm:inline">Feedback</span>
           </Button>
           <AddToWebsiteDialog widgetId={config.id || undefined} />
         </div>
