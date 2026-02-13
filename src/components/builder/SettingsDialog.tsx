@@ -19,6 +19,7 @@ interface SettingsDialogProps {
   showBranding: boolean;
   onShowBrandingChange: (show: boolean) => void;
   onAvatarChange?: (url: string | null) => void;
+  onNameChange?: (name: string) => void;
 }
 
 const tabs = [
@@ -28,7 +29,7 @@ const tabs = [
   { id: "billing", label: "Billing", icon: CreditCard },
 ];
 
-const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, onUpgrade, showBranding, onShowBrandingChange, onAvatarChange }: SettingsDialogProps) => {
+const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, onUpgrade, showBranding, onShowBrandingChange, onAvatarChange, onNameChange }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState("general");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -82,6 +83,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
 
     setProfileLoading(false);
     setPassword("");
+    onNameChange?.(firstName);
     toast.success("Profile updated");
   };
 

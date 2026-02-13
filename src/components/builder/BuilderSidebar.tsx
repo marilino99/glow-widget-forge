@@ -226,16 +226,18 @@ const BuilderSidebar = ({
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
+  const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
 
-  // Load user avatar from profiles
+  // Load user profile (avatar + name)
   useEffect(() => {
-    const loadAvatar = async () => {
+    const loadProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data } = await supabase.from("profiles").select("avatar_url").eq("user_id", user.id).single();
+      const { data } = await supabase.from("profiles").select("avatar_url, first_name").eq("user_id", user.id).single();
       if (data?.avatar_url) setUserAvatarUrl(data.avatar_url);
+      if (data?.first_name) setUserDisplayName(data.first_name);
     };
-    loadAvatar();
+    loadProfile();
   }, []);
 
   const handleGoogleBusinessSelect = (business: GoogleBusinessData | null) => {
@@ -670,7 +672,7 @@ const BuilderSidebar = ({
                 </div>
               )}
               <div className="flex flex-col min-w-0">
-                <span className="text-sm font-medium text-foreground truncate">{userEmail || "Account"}</span>
+                <span className="text-sm font-medium text-foreground truncate">{userDisplayName || userEmail || "Account"}</span>
                 <span className="text-xs text-muted-foreground">{isPro ? "Pro" : "Free"}</span>
               </div>
             </button>
@@ -686,7 +688,7 @@ const BuilderSidebar = ({
                 </div>
               )}
               <div className="flex flex-col min-w-0">
-                <span className="text-sm font-semibold text-foreground">{userInitial}</span>
+                <span className="text-sm font-semibold text-foreground">{userDisplayName || userInitial}</span>
                 <span className="text-xs text-muted-foreground truncate">@{userEmail?.split("@")[0] || "user"}</span>
               </div>
             </div>
@@ -761,6 +763,7 @@ const BuilderSidebar = ({
         showBranding={showBranding}
         onShowBrandingChange={onShowBrandingChange}
         onAvatarChange={setUserAvatarUrl}
+        onNameChange={setUserDisplayName}
       />
     </div>
   );
