@@ -15,6 +15,7 @@ interface SettingsDialogProps {
   onLanguageChange: (language: string) => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
   isPro: boolean;
+  subscriptionEnd?: string | null;
   onUpgrade: () => void;
   showBranding: boolean;
   onShowBrandingChange: (show: boolean) => void;
@@ -29,7 +30,7 @@ const tabs = [
   { id: "billing", label: "Billing", icon: CreditCard },
 ];
 
-const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, onUpgrade, showBranding, onShowBrandingChange, onAvatarChange, onNameChange }: SettingsDialogProps) => {
+const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, subscriptionEnd, onUpgrade, showBranding, onShowBrandingChange, onAvatarChange, onNameChange }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState("general");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -300,21 +301,49 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                       {isPro ? "Pro" : "Free"}
                     </span>
                   </div>
-                  <p className="text-sm mb-5" style={{ color: '#898884' }}>
-                    {isPro
-                      ? "You're on the Pro plan. Enjoy all premium features."
-                      : "Upgrade to access advanced features designed for growing teams and creators."}
-                  </p>
-                  {!isPro && (
-                    <Button
-                      onClick={() => {
-                        onOpenChange(false);
-                        onUpgrade();
-                      }}
-                      className="bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold rounded-xl px-6 py-2.5"
-                    >
-                      Upgrade plan
-                    </Button>
+
+                  {isPro ? (
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">Widjet Pro</p>
+                        <p className="text-sm" style={{ color: '#898884' }}>
+                          {subscriptionEnd
+                            ? `Your plan auto-renews on ${new Date(subscriptionEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+                            : "You're on the Pro plan. Enjoy all premium features."}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        className="rounded-xl px-4"
+                        onClick={async () => {
+                          try {
+                            const { data, error } = await supabase.functions.invoke("customer-portal");
+                            if (error) throw error;
+                            if (data?.url) window.open(data.url, "_blank");
+                          } catch (err) {
+                            console.error("Error opening portal:", err);
+                            toast.error("Could not open subscription management");
+                          }
+                        }}
+                      >
+                        Manage
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm mb-5" style={{ color: '#898884' }}>
+                        Upgrade to access advanced features designed for growing teams and creators.
+                      </p>
+                      <Button
+                        onClick={() => {
+                          onOpenChange(false);
+                          onUpgrade();
+                        }}
+                        className="bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold rounded-xl px-6 py-2.5"
+                      >
+                        Upgrade plan
+                      </Button>
+                    </>
                   )}
                 </div>
               </div>

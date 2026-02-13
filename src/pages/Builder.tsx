@@ -23,7 +23,7 @@ const Builder = () => {
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
   const { hasUnread } = useUnreadMessages();
-  const { plan, startCheckout } = useSubscription();
+  const { plan, subscriptionEnd, startCheckout } = useSubscription();
   const { 
     productCards, 
     isLoading: isLoadingCards, 
@@ -246,6 +246,7 @@ const Builder = () => {
             forwardEmail={config.forwardEmail}
             onForwardEmailChange={(email: string) => updateConfig({ forwardEmail: email })}
             isPro={plan === "pro"}
+            subscriptionEnd={subscriptionEnd}
             onUpgrade={() => setShowUpgradeOverlay(true)}
             onGoogleBusinessSelect={setGoogleBusiness}
             customCss={config.customCss}

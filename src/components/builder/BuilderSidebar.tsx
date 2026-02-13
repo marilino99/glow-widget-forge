@@ -120,6 +120,7 @@ interface BuilderSidebarProps {
   forwardEmail: string;
   onForwardEmailChange: (email: string) => void;
   isPro: boolean;
+  subscriptionEnd?: string | null;
   onUpgrade: () => void;
   onGoogleBusinessSelect?: (business: GoogleBusinessData | null) => void;
   customCss: string;
@@ -195,6 +196,7 @@ const BuilderSidebar = ({
   forwardEmail,
   onForwardEmailChange,
   isPro,
+  subscriptionEnd,
   onUpgrade,
   onGoogleBusinessSelect,
   customCss,
@@ -759,6 +761,7 @@ const BuilderSidebar = ({
         onLanguageChange={onLanguageChange}
         onSaveConfig={onSaveConfig}
         isPro={isPro}
+        subscriptionEnd={subscriptionEnd}
         onUpgrade={onUpgrade}
         showBranding={showBranding}
         onShowBrandingChange={onShowBrandingChange}
