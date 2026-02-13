@@ -71,7 +71,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                   <span className="text-sm font-semibold text-foreground">Language</span>
                   <div className="flex items-baseline justify-between gap-6 mt-1">
                     <p className="text-sm" style={{ color: '#898884' }}>
-                      Choose in what language the respondents will see your widget. This applies to the text which is not customized by you e.g. default buttons, errors, etc.
+                      Choose in what language the respondents will see your widget.
                     </p>
                     <select
                       value={language}
