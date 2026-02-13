@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X, Settings, Bell, User, CreditCard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 interface SettingsDialogProps {
   open: boolean;
@@ -147,9 +148,36 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
 
             {activeTab === "billing" && (
               <div className="space-y-5">
-                <p className="text-sm text-muted-foreground">
-                  Billing information coming soon.
-                </p>
+                <div>
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <h3 className="text-base font-bold text-foreground">Widjet plan</h3>
+                    <span
+                      className="rounded-full px-2.5 py-0.5 text-xs font-medium"
+                      style={{
+                        backgroundColor: isPro ? 'rgba(217, 70, 239, 0.12)' : 'hsl(0 0% 90%)',
+                        color: isPro ? '#D946EF' : 'hsl(0 0% 45%)',
+                      }}
+                    >
+                      {isPro ? "Pro" : "Free"}
+                    </span>
+                  </div>
+                  <p className="text-sm mb-5" style={{ color: '#898884' }}>
+                    {isPro
+                      ? "You're on the Pro plan. Enjoy all premium features."
+                      : "Upgrade to access advanced features designed for growing teams and creators."}
+                  </p>
+                  {!isPro && (
+                    <Button
+                      onClick={() => {
+                        onOpenChange(false);
+                        onUpgrade();
+                      }}
+                      className="bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold rounded-xl px-6 py-2.5"
+                    >
+                      Upgrade plan
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </div>
