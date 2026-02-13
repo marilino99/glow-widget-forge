@@ -71,10 +71,12 @@ const SettingsDialog = ({ open, onOpenChange, userEmail }: SettingsDialogProps) 
                       Choose in what language the respondents will see your widget. This applies to the text which is not customized by you e.g. default buttons, errors, etc.
                     </p>
                     <select className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none -mt-1">
-                      <option>English</option>
-                      <option>Italiano</option>
-                      <option>Español</option>
-                      <option>Français</option>
+                      <option value="en">English</option>
+                      <option value="it">Italiano</option>
+                      <option value="es">Español</option>
+                      <option value="fr">Français</option>
+                      <option value="de">Deutsch</option>
+                      <option value="pt">Português</option>
                     </select>
                   </div>
                 </div>
