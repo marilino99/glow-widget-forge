@@ -25,6 +25,7 @@ export interface WidgetConfiguration {
   forwardEmail: string;
   customCss: string;
   customJs: string;
+  showBranding: boolean;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -49,6 +50,7 @@ const defaultConfig: WidgetConfiguration = {
   forwardEmail: "",
   customCss: "",
   customJs: "",
+  showBranding: true,
 };
 
 export const useWidgetConfiguration = () => {
@@ -100,6 +102,7 @@ export const useWidgetConfiguration = () => {
             forwardEmail: (data as any).forward_email || "",
             customCss: (data as any).custom_css || "",
             customJs: (data as any).custom_js || "",
+            showBranding: (data as any).show_branding ?? true,
           });
         }
       } catch (error) {
@@ -146,6 +149,7 @@ export const useWidgetConfiguration = () => {
           forward_email: updatedConfig.forwardEmail,
           custom_css: updatedConfig.customCss,
           custom_js: updatedConfig.customJs,
+          show_branding: updatedConfig.showBranding,
         }, {
           onConflict: "user_id"
         })

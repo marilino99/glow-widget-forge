@@ -128,6 +128,8 @@ interface BuilderSidebarProps {
   onSignOut?: () => void;
   onPanelOpenChange?: (isOpen: boolean) => void;
   onCollapseSidebar?: () => void;
+  showBranding: boolean;
+  onShowBrandingChange: (show: boolean) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -201,6 +203,8 @@ const BuilderSidebar = ({
   onSignOut,
   onPanelOpenChange,
   onCollapseSidebar,
+  showBranding,
+  onShowBrandingChange,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -733,6 +737,8 @@ const BuilderSidebar = ({
         onSaveConfig={onSaveConfig}
         isPro={isPro}
         onUpgrade={onUpgrade}
+        showBranding={showBranding}
+        onShowBrandingChange={onShowBrandingChange}
       />
     </div>
   );

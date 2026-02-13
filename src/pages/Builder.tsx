@@ -255,6 +255,8 @@ const Builder = () => {
             onSignOut={signOut}
             onPanelOpenChange={setIsPanelOpen}
             onCollapseSidebar={() => setIsSidebarCollapsed(true)}
+            showBranding={config.showBranding}
+            onShowBrandingChange={(show) => updateConfig({ showBranding: show })}
           />
         </div>
       </div>
@@ -324,6 +326,7 @@ const Builder = () => {
             googleBusiness={googleBusiness}
             customCss={livePreviewCss ?? config.customCss}
             customJs={livePreviewJs ?? config.customJs}
+            showBranding={config.showBranding}
           />
         </div>
       </div>

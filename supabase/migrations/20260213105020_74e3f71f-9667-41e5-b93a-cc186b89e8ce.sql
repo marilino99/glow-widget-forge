@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_configurations ADD COLUMN show_branding boolean NOT NULL DEFAULT true;
