@@ -50,6 +50,7 @@ import CustomLinksPanel from "./CustomLinksPanel";
 import MetricsPanel from "./MetricsPanel";
 import SizePositionPanel from "./SizePositionPanel";
 import InjectionCodePanel from "./InjectionCodePanel";
+import SettingsDialog from "./SettingsDialog";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -218,6 +219,7 @@ const BuilderSidebar = ({
   const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(false);
   const [hasGoogleBusiness, setHasGoogleBusiness] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
 
   const handleGoogleBusinessSelect = (business: GoogleBusinessData | null) => {
     onGoogleBusinessSelect?.(business);
@@ -670,7 +672,7 @@ const BuilderSidebar = ({
                 <span style={{ color: '#D946EF' }}>Upgrade plan</span>
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
+            <DropdownMenuItem onClick={() => setShowSettingsDialog(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
               <Settings className="h-4 w-4" />
               Settings
             </DropdownMenuItem>
@@ -720,6 +722,13 @@ const BuilderSidebar = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Settings dialog */}
+      <SettingsDialog
+        open={showSettingsDialog}
+        onOpenChange={setShowSettingsDialog}
+        userEmail={userEmail}
+      />
     </div>
   );
 };
