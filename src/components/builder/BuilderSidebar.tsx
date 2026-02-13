@@ -731,6 +731,8 @@ const BuilderSidebar = ({
         language={language}
         onLanguageChange={onLanguageChange}
         onSaveConfig={onSaveConfig}
+        isPro={isPro}
+        onUpgrade={onUpgrade}
       />
     </div>
   );
