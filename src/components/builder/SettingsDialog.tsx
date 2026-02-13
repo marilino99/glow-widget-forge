@@ -32,6 +32,8 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
   const [activeTab, setActiveTab] = useState("general");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState(userEmail || "");
+  const [password, setPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
 
@@ -45,6 +47,8 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
   const loadProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    setEmail(user.email || "");
+    setPassword("");
     const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
     if (data) {
       setFirstName(data.first_name || "");
@@ -56,11 +60,29 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
   const handleUpdateProfile = async () => {
     setProfileLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { error } = await supabase.from("profiles").update({ first_name: firstName, last_name: lastName }).eq("user_id", user.id);
+    if (!user) { setProfileLoading(false); return; }
+
+    // Update profile (first/last name)
+    const { error: profileError } = await supabase.from("profiles").update({ first_name: firstName, last_name: lastName }).eq("user_id", user.id);
+    if (profileError) { toast.error("Failed to update profile"); setProfileLoading(false); return; }
+
+    // Update email if changed
+    if (email && email !== user.email) {
+      const { error: emailError } = await supabase.auth.updateUser({ email });
+      if (emailError) { toast.error(emailError.message); setProfileLoading(false); return; }
+      toast.success("Confirmation email sent to your new address");
+    }
+
+    // Update password if provided
+    if (password && password.length > 0) {
+      if (password.length < 6) { toast.error("Password must be at least 6 characters"); setProfileLoading(false); return; }
+      const { error: pwError } = await supabase.auth.updateUser({ password });
+      if (pwError) { toast.error(pwError.message); setProfileLoading(false); return; }
+    }
+
     setProfileLoading(false);
-    if (error) { toast.error("Failed to update profile"); } 
-    else { toast.success("Profile updated"); }
+    setPassword("");
+    toast.success("Profile updated");
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,22 +108,6 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
     await supabase.from("profiles").update({ avatar_url: null }).eq("user_id", user.id);
     onAvatarChange?.(null);
     toast.success("Photo removed");
-  };
-
-  const handleChangeEmail = async () => {
-    const newEmail = prompt("Enter your new email address:");
-    if (!newEmail) return;
-    const { error } = await supabase.auth.updateUser({ email: newEmail });
-    if (error) { toast.error(error.message); }
-    else { toast.success("Confirmation email sent to your new address"); }
-  };
-
-  const handleSetPassword = async () => {
-    const newPassword = prompt("Enter your new password (min 6 characters):");
-    if (!newPassword || newPassword.length < 6) { toast.error("Password must be at least 6 characters"); return; }
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) { toast.error(error.message); }
-    else { toast.success("Password updated"); }
   };
 
   return (
@@ -261,23 +267,13 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                 {/* Email */}
                 <div>
                   <span className="text-sm font-semibold text-foreground">Email</span>
-                  <div className="relative mt-1.5">
-                    <Input value={userEmail || ""} readOnly className="rounded-xl pr-28" />
-                    <button onClick={handleChangeEmail} className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      Change email
-                    </button>
-                  </div>
+                  <Input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 rounded-xl" placeholder="Email" />
                 </div>
 
                 {/* Password */}
                 <div>
                   <span className="text-sm font-semibold text-foreground">Password</span>
-                  <div className="relative mt-1.5">
-                    <Input type="password" value="" readOnly className="rounded-xl pr-28" placeholder="" />
-                    <button onClick={handleSetPassword} className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      Set password
-                    </button>
-                  </div>
+                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1.5 rounded-xl" placeholder="New password" />
                 </div>
 
                 {/* Update button */}
