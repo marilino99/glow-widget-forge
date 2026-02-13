@@ -64,19 +64,19 @@ const SettingsDialog = ({ open, onOpenChange, userEmail }: SettingsDialogProps) 
 
             {activeTab === "general" && (
               <div className="space-y-5">
-                <div className="flex items-start justify-between gap-6 py-4 border-b border-border/40">
-                  <div className="space-y-1">
-                    <span className="text-sm font-semibold text-foreground">Language</span>
+                <div className="py-4 border-b border-border/40">
+                  <span className="text-sm font-semibold text-foreground">Language</span>
+                  <div className="flex items-start justify-between gap-6 mt-1">
                     <p className="text-sm" style={{ color: '#898884' }}>
                       Choose in what language the respondents will see your widget. This applies to the text which is not customized by you e.g. default buttons, errors, etc.
                     </p>
+                    <select className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none">
+                      <option>English</option>
+                      <option>Italiano</option>
+                      <option>Español</option>
+                      <option>Français</option>
+                    </select>
                   </div>
-                  <select className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none">
-                    <option>English</option>
-                    <option>Italiano</option>
-                    <option>Español</option>
-                    <option>Français</option>
-                  </select>
                 </div>
               </div>
             )}
