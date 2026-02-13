@@ -79,7 +79,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                         onLanguageChange(e.target.value);
                         onSaveConfig({ language: e.target.value });
                       }}
-                      className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none -mt-1"
+                      className="shrink-0 min-w-[160px] rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground outline-none"
                     >
                       <option value="en">English</option>
                       <option value="it">Italiano</option>
