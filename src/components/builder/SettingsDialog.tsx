@@ -219,9 +219,6 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                             {firstName ? firstName[0].toUpperCase() : userEmail?.[0]?.toUpperCase() || "?"}
                           </div>
                         )}
-                        <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <span className="text-white text-xs font-medium">Upload</span>
-                        </div>
                       </div>
                     </label>
                     <label className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors">
