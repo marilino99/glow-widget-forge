@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -56,6 +56,7 @@ import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
 import { LocalLink } from "./CustomLinksPanel";
 import { GoogleBusinessData } from "./GoogleReviewsPanel";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BuilderSidebarProps {
   onSelectWidget: (widgetType: string) => void;
@@ -224,6 +225,18 @@ const BuilderSidebar = ({
   const [hasGoogleBusiness, setHasGoogleBusiness] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
+
+  // Load user avatar from profiles
+  useEffect(() => {
+    const loadAvatar = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase.from("profiles").select("avatar_url").eq("user_id", user.id).single();
+      if (data?.avatar_url) setUserAvatarUrl(data.avatar_url);
+    };
+    loadAvatar();
+  }, []);
 
   const handleGoogleBusinessSelect = (business: GoogleBusinessData | null) => {
     onGoogleBusinessSelect?.(business);
@@ -649,9 +662,13 @@ const BuilderSidebar = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
-                {userInitial}
-              </div>
+              {userAvatarUrl ? (
+                <img src={userAvatarUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
+              ) : (
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
+                  {userInitial}
+                </div>
+              )}
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-medium text-foreground truncate">{userEmail || "Account"}</span>
                 <span className="text-xs text-muted-foreground">{isPro ? "Pro" : "Free"}</span>
@@ -661,9 +678,13 @@ const BuilderSidebar = ({
           <DropdownMenuContent align="start" side="top" className="w-[calc(288px-24px)] rounded-2xl p-2">
             {/* User info */}
             <div className="flex items-center gap-3 px-2 py-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
-                {userInitial}
-              </div>
+              {userAvatarUrl ? (
+                <img src={userAvatarUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
+              ) : (
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
+                  {userInitial}
+                </div>
+              )}
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-semibold text-foreground">{userInitial}</span>
                 <span className="text-xs text-muted-foreground truncate">@{userEmail?.split("@")[0] || "user"}</span>
@@ -739,6 +760,7 @@ const BuilderSidebar = ({
         onUpgrade={onUpgrade}
         showBranding={showBranding}
         onShowBrandingChange={onShowBrandingChange}
+        onAvatarChange={setUserAvatarUrl}
       />
     </div>
   );

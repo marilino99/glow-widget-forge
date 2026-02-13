@@ -18,6 +18,7 @@ interface SettingsDialogProps {
   onUpgrade: () => void;
   showBranding: boolean;
   onShowBrandingChange: (show: boolean) => void;
+  onAvatarChange?: (url: string | null) => void;
 }
 
 const tabs = [
@@ -27,7 +28,7 @@ const tabs = [
   { id: "billing", label: "Billing", icon: CreditCard },
 ];
 
-const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, onUpgrade, showBranding, onShowBrandingChange }: SettingsDialogProps) => {
+const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, onUpgrade, showBranding, onShowBrandingChange, onAvatarChange }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState("general");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -74,6 +75,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
     const url = urlData.publicUrl;
     setAvatarUrl(url);
     await supabase.from("profiles").update({ avatar_url: url }).eq("user_id", user.id);
+    onAvatarChange?.(url);
     toast.success("Photo updated");
   };
 
