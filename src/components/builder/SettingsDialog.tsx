@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { X, Settings, Bell, User, CreditCard } from "lucide-react";
+import { X, Settings, Bell, User, CreditCard, ChevronDown, ArrowUpCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
   const [email, setEmail] = useState(userEmail || "");
   const [password, setPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [showManageMenu, setShowManageMenu] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
 
   // Load profile when Account tab is opened
@@ -312,22 +313,49 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                             : "You're on the Pro plan. Enjoy all premium features."}
                         </p>
                       </div>
-                      <Button
-                        variant="outline"
-                        className="rounded-xl px-4"
-                        onClick={async () => {
-                          try {
-                            const { data, error } = await supabase.functions.invoke("customer-portal");
-                            if (error) throw error;
-                            if (data?.url) window.open(data.url, "_blank");
-                          } catch (err) {
-                            console.error("Error opening portal:", err);
-                            toast.error("Could not open subscription management");
-                          }
-                        }}
-                      >
-                        Manage
-                      </Button>
+                      <div className="relative">
+                        <Button
+                          variant="outline"
+                          className="rounded-xl px-4 gap-2"
+                          onClick={() => setShowManageMenu(prev => !prev)}
+                        >
+                          Manage
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                        {showManageMenu && (
+                          <div className="absolute right-0 top-full mt-1 w-52 bg-background border rounded-2xl shadow-lg z-50 py-1 overflow-hidden">
+                            <button
+                              className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                              onClick={() => {
+                                setShowManageMenu(false);
+                                onOpenChange(false);
+                                onUpgrade();
+                              }}
+                            >
+                              <ArrowUpCircle className="h-4 w-4" />
+                              Upgrade plan
+                            </button>
+                            <div className="border-t mx-2" />
+                            <button
+                              className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-muted transition-colors"
+                              onClick={async () => {
+                                setShowManageMenu(false);
+                                try {
+                                  const { data, error } = await supabase.functions.invoke("customer-portal");
+                                  if (error) throw error;
+                                  if (data?.url) window.open(data.url, "_blank");
+                                } catch (err) {
+                                  console.error("Error opening portal:", err);
+                                  toast.error("Could not open subscription management");
+                                }
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                              Cancel Subscription
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <>
