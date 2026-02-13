@@ -113,6 +113,10 @@ export default {
             transform: "scale(1)",
           },
         },
+        "rainbow-spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -120,6 +124,7 @@ export default {
         "widget-collapse": "widget-collapse 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards",
         "widget-expand": "widget-expand 0.35s cubic-bezier(0, 0, 0.2, 1)",
         "button-pop": "button-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "rainbow-spin": "rainbow-spin 2s linear infinite",
       },
     },
   },
