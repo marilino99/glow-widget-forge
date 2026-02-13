@@ -208,8 +208,8 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                 {/* Photo */}
                 <div>
                   <span className="text-sm font-semibold text-foreground">Photo</span>
-                  <div className="mt-2 flex items-center gap-4">
-                    <label className="cursor-pointer group relative">
+                  <div className="mt-2 group/photo flex items-center gap-4">
+                    <label className="cursor-pointer relative">
                       <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                       <div className="relative">
                         {avatarUrl ? (
@@ -221,7 +221,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                         )}
                       </div>
                     </label>
-                    <label className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <label className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-all opacity-0 group-hover/photo:opacity-100">
                       <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                       Upload photo
                     </label>
