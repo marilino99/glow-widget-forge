@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X, Settings, Bell, User, CreditCard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface SettingsDialogProps {
   open: boolean;
@@ -26,6 +29,69 @@ const tabs = [
 
 const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, onUpgrade, showBranding, onShowBrandingChange }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState("general");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  // Load profile when Account tab is opened
+  useEffect(() => {
+    if (open && activeTab === "account") {
+      loadProfile();
+    }
+  }, [open, activeTab]);
+
+  const loadProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
+    if (data) {
+      setFirstName(data.first_name || "");
+      setLastName(data.last_name || "");
+      setAvatarUrl(data.avatar_url);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    setProfileLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ first_name: firstName, last_name: lastName }).eq("user_id", user.id);
+    setProfileLoading(false);
+    if (error) { toast.error("Failed to update profile"); } 
+    else { toast.success("Profile updated"); }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const filePath = `${user.id}/avatar-${Date.now()}`;
+    const { error: uploadError } = await supabase.storage.from("custom-avatars").upload(filePath, file, { upsert: true });
+    if (uploadError) { toast.error("Upload failed"); return; }
+    const { data: urlData } = supabase.storage.from("custom-avatars").getPublicUrl(filePath);
+    const url = urlData.publicUrl;
+    setAvatarUrl(url);
+    await supabase.from("profiles").update({ avatar_url: url }).eq("user_id", user.id);
+    toast.success("Photo updated");
+  };
+
+  const handleChangeEmail = async () => {
+    const newEmail = prompt("Enter your new email address:");
+    if (!newEmail) return;
+    const { error } = await supabase.auth.updateUser({ email: newEmail });
+    if (error) { toast.error(error.message); }
+    else { toast.success("Confirmation email sent to your new address"); }
+  };
+
+  const handleSetPassword = async () => {
+    const newPassword = prompt("Enter your new password (min 6 characters):");
+    if (!newPassword || newPassword.length < 6) { toast.error("Password must be at least 6 characters"); return; }
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) { toast.error(error.message); }
+    else { toast.success("Password updated"); }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -138,11 +204,62 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
             )}
 
             {activeTab === "account" && (
-              <div className="space-y-5">
-                <div className="flex items-center justify-between py-3 border-b border-border/40">
-                  <span className="text-sm text-foreground">Email</span>
-                  <span className="text-sm text-muted-foreground">{userEmail || "—"}</span>
+              <div className="space-y-6">
+                {/* Photo */}
+                <div>
+                  <span className="text-sm font-semibold text-foreground">Photo</span>
+                  <div className="mt-2">
+                    <label className="cursor-pointer">
+                      <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="Profile" className="h-20 w-20 rounded-full object-cover border border-border" />
+                      ) : (
+                        <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center text-2xl font-semibold text-muted-foreground">
+                          {firstName ? firstName[0].toUpperCase() : userEmail?.[0]?.toUpperCase() || "?"}
+                        </div>
+                      )}
+                    </label>
+                  </div>
                 </div>
+
+                {/* First name */}
+                <div>
+                  <span className="text-sm font-semibold text-foreground">First name</span>
+                  <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="mt-1.5 rounded-xl" placeholder="First name" />
+                </div>
+
+                {/* Last name */}
+                <div>
+                  <span className="text-sm font-semibold text-foreground">Last name</span>
+                  <Input value={lastName} onChange={(e) => setLastName(e.target.value)} className="mt-1.5 rounded-xl" placeholder="Last name" />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <span className="text-sm font-semibold text-foreground">Email</span>
+                  <div className="relative mt-1.5">
+                    <Input value={userEmail || ""} readOnly className="rounded-xl pr-28" />
+                    <button onClick={handleChangeEmail} className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      Change email
+                    </button>
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div>
+                  <span className="text-sm font-semibold text-foreground">Password</span>
+                  <div className="relative mt-1.5">
+                    <Input type="password" value="" readOnly className="rounded-xl pr-28" placeholder="" />
+                    <button onClick={handleSetPassword} className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      Set password
+                    </button>
+                  </div>
+                </div>
+
+                {/* Update button */}
+                <Button onClick={handleUpdateProfile} disabled={profileLoading} className="bg-foreground hover:bg-foreground/90 text-background font-semibold rounded-xl px-6">
+                  {profileLoading ? "Updating..." : "Update"}
+                </Button>
               </div>
             )}
 
