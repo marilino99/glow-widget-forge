@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowLeft, Send, MessageCircle, User, Search } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { it } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 
 interface Conversation {
   id: string;
@@ -193,7 +193,7 @@ const Chats = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Cerca conversazioni..."
+              placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -207,10 +207,10 @@ const Chats = () => {
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <MessageCircle className="h-12 w-12 text-muted-foreground/50" />
               <p className="mt-4 text-sm text-muted-foreground">
-                Nessuna conversazione
+                No conversations
               </p>
               <p className="text-xs text-muted-foreground">
-                I messaggi dei visitatori appariranno qui
+                Visitor messages will appear here
               </p>
             </div>
           ) : (
@@ -234,12 +234,12 @@ const Chats = () => {
                       <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(conv.last_message_at), {
                           addSuffix: true,
-                          locale: it,
+                          locale: enUS,
                         })}
                       </span>
                     </div>
                     <p className="truncate text-sm text-muted-foreground">
-                      {conv.last_message || "Nuova conversazione"}
+                      {conv.last_message || "New conversation"}
                     </p>
                     {conv.unread_count > 0 && (
                       <span className="mt-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-medium text-primary-foreground">
@@ -266,7 +266,7 @@ const Chats = () => {
               <div>
                 <h2 className="font-semibold">{selectedConversation.visitor_name}</h2>
                 <p className="text-xs text-muted-foreground">
-                  Iniziata {formatDistanceToNow(new Date(selectedConversation.created_at), { addSuffix: true, locale: it })}
+                  Started {formatDistanceToNow(new Date(selectedConversation.created_at), { addSuffix: true, locale: enUS })}
                 </p>
               </div>
             </div>
@@ -296,7 +296,7 @@ const Chats = () => {
                             : "text-muted-foreground"
                         }`}
                       >
-                        {new Date(message.created_at).toLocaleTimeString("it-IT", {
+                        {new Date(message.created_at).toLocaleTimeString("en-US", {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
@@ -312,7 +312,7 @@ const Chats = () => {
             <div className="border-t border-border p-4">
               <div className="flex items-center gap-2">
                 <Input
-                  placeholder="Scrivi un messaggio..."
+                  placeholder="Type a message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => {
@@ -338,9 +338,9 @@ const Chats = () => {
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
               <MessageCircle className="h-10 w-10 text-muted-foreground" />
             </div>
-            <h2 className="mt-4 text-xl font-semibold">Seleziona una chat</h2>
+            <h2 className="mt-4 text-xl font-semibold">Select a chat</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Scegli una conversazione dalla lista per visualizzare i messaggi
+              Choose a conversation from the list to view messages
             </p>
           </div>
         )}
