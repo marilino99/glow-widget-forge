@@ -68,7 +68,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail }: SettingsDialogProps) 
                   <div className="space-y-1">
                     <span className="text-sm font-semibold text-foreground">Language</span>
                     <p className="text-sm text-muted-foreground">
-                      Choose in what language the respondents will see your form. This applies to the text which is not customized by you e.g. default buttons, errors, etc.
+                      Choose in what language the respondents will see your widget. This applies to the text which is not customized by you e.g. default buttons, errors, etc.
                     </p>
                   </div>
                   <select className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none">
