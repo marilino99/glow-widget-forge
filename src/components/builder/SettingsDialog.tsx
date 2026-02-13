@@ -132,7 +132,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
           </div>
 
           {/* Right content */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-6 pb-10">
             <h2 className="text-lg font-semibold text-foreground mb-6">
               {tabs.find((t) => t.id === activeTab)?.label}
             </h2>
