@@ -10,6 +10,8 @@ interface SettingsDialogProps {
   language: string;
   onLanguageChange: (language: string) => void;
   onSaveConfig: (config: Record<string, unknown>) => void;
+  isPro: boolean;
+  onUpgrade: () => void;
 }
 
 const tabs = [
@@ -19,7 +21,7 @@ const tabs = [
   { id: "billing", label: "Billing", icon: CreditCard },
 ];
 
-const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig }: SettingsDialogProps) => {
+const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig, isPro, onUpgrade }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState("general");
 
   return (
@@ -108,6 +110,12 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                     </div>
                     <Switch
                       checked={true}
+                      onCheckedChange={(checked) => {
+                        if (!checked && !isPro) {
+                          onOpenChange(false);
+                          onUpgrade();
+                        }
+                      }}
                       className="h-5 w-9 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input [&>span]:h-4 [&>span]:w-4 [&>span]:data-[state=checked]:translate-x-4"
                     />
                   </div>
