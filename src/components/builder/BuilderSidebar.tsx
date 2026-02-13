@@ -701,9 +701,10 @@ const BuilderSidebar = ({
                 <span style={{ color: '#D946EF' }}>Upgrade plan</span>
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
+            <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground" disabled>
               <LayoutGrid className="h-4 w-4" />
               Integrations
+              <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">coming soon</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowSettingsDialog(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] focus:bg-[hsl(0_0%_93%)] focus:text-foreground">
               <Settings className="h-4 w-4" />
