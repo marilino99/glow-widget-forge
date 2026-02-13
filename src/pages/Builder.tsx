@@ -285,6 +285,15 @@ const Builder = () => {
           <Button 
             variant="ghost" 
             size="sm" 
+            className="gap-2 text-muted-foreground hover:text-foreground"
+            onClick={() => navigate("/feedback")}
+          >
+            <MessageSquareText className="h-5 w-5" />
+            <span className="hidden sm:inline">Feedback</span>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
             className="relative gap-2 text-muted-foreground hover:text-foreground"
             onClick={() => navigate("/chats")}
           >
@@ -293,15 +302,6 @@ const Builder = () => {
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
             )}
             <span className="hidden sm:inline">Chat</span>
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="gap-2 text-muted-foreground hover:text-foreground"
-            onClick={() => navigate("/feedback")}
-          >
-            <MessageSquareText className="h-5 w-5" />
-            <span className="hidden sm:inline">Feedback</span>
           </Button>
           <AddToWebsiteDialog widgetId={config.id || undefined} />
         </div>
