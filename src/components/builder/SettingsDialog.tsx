@@ -6,6 +6,9 @@ interface SettingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userEmail?: string;
+  language: string;
+  onLanguageChange: (language: string) => void;
+  onSaveConfig: (config: Record<string, unknown>) => void;
 }
 
 const tabs = [
@@ -15,7 +18,7 @@ const tabs = [
   { id: "billing", label: "Billing", icon: CreditCard },
 ];
 
-const SettingsDialog = ({ open, onOpenChange, userEmail }: SettingsDialogProps) => {
+const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageChange, onSaveConfig }: SettingsDialogProps) => {
   const [activeTab, setActiveTab] = useState("general");
 
   return (
@@ -70,7 +73,14 @@ const SettingsDialog = ({ open, onOpenChange, userEmail }: SettingsDialogProps) 
                     <p className="text-sm" style={{ color: '#898884' }}>
                       Choose in what language the respondents will see your widget. This applies to the text which is not customized by you e.g. default buttons, errors, etc.
                     </p>
-                    <select className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none -mt-1">
+                    <select
+                      value={language}
+                      onChange={(e) => {
+                        onLanguageChange(e.target.value);
+                        onSaveConfig({ language: e.target.value });
+                      }}
+                      className="shrink-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none -mt-1"
+                    >
                       <option value="en">English</option>
                       <option value="it">Italiano</option>
                       <option value="es">Español</option>
