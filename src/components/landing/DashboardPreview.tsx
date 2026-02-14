@@ -24,37 +24,37 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 35% 45% at 8% 15%, #110c29 0%, #1e1145 50%, transparent 100%),
-            radial-gradient(ellipse 35% 45% at 92% 15%, #110c29 0%, #1e1145 50%, transparent 100%)
+            radial-gradient(ellipse 40% 50% at 6% 12%, #110c29 0%, #1a0f3a 60%, transparent 100%),
+            radial-gradient(ellipse 40% 50% at 94% 12%, #110c29 0%, #1a0f3a 60%, transparent 100%)
           `,
-          filter: "blur(40px)",
-          opacity: 0.8,
+          filter: "blur(30px)",
+          opacity: 1,
         }}
       />
       {/* Layer 4: Aurora — medium violet transition */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[180px] h-[550px]"
+        className="pointer-events-none absolute inset-x-0 top-[200px] h-[550px]"
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 45% 50% at 15% 20%, #5b21b6 0%, #7c3aed 50%, transparent 100%),
-            radial-gradient(ellipse 45% 50% at 85% 20%, #5b21b6 0%, #7c3aed 50%, transparent 100%)
+            radial-gradient(ellipse 50% 55% at 14% 18%, #5b21b6 0%, #7c3aed 55%, transparent 100%),
+            radial-gradient(ellipse 50% 55% at 86% 18%, #5b21b6 0%, #7c3aed 55%, transparent 100%)
           `,
-          filter: "blur(50px)",
-          opacity: 0.8,
+          filter: "blur(40px)",
+          opacity: 0.9,
         }}
       />
       {/* Layer 5: Aurora — light violet glow bridging to white */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[280px] h-[500px]"
+        className="pointer-events-none absolute inset-x-0 top-[320px] h-[500px]"
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 55% 50% at 22% 25%, #8b5cf6 0%, #a78bfa 50%, transparent 100%),
-            radial-gradient(ellipse 55% 50% at 78% 25%, #8b5cf6 0%, #a78bfa 50%, transparent 100%)
+            radial-gradient(ellipse 60% 55% at 20% 22%, #8b5cf6 0%, #c4b5fd 55%, transparent 100%),
+            radial-gradient(ellipse 60% 55% at 80% 22%, #8b5cf6 0%, #c4b5fd 55%, transparent 100%)
           `,
-          filter: "blur(60px)",
-          opacity: 0.65,
+          filter: "blur(50px)",
+          opacity: 0.75,
         }}
       />
       {/* Layer 6: Central white wash */}
