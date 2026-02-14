@@ -12,20 +12,20 @@ const DashboardPreview = () => {
       />
       {/* Layer 2: Dark-to-transparent fade */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[200px] h-[400px]"
+        className="pointer-events-none absolute inset-x-0 top-[300px] h-[500px]"
         aria-hidden
         style={{
           background: "linear-gradient(to bottom, #110c29 0%, transparent 100%)",
         }}
       />
-      {/* Layer 3: Aurora — dark violet streaks going to the sides */}
+      {/* Layer 3: Aurora — dark violet streaks to the sides */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[700px]"
+        className="pointer-events-none absolute inset-x-0 top-[250px] h-[600px]"
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 40% 60% at 10% 10%, #110c29 0%, transparent 100%),
-            radial-gradient(ellipse 40% 60% at 90% 10%, #110c29 0%, transparent 100%)
+            radial-gradient(ellipse 40% 60% at 10% 15%, #110c29 0%, transparent 100%),
+            radial-gradient(ellipse 40% 60% at 90% 15%, #110c29 0%, transparent 100%)
           `,
           filter: "blur(40px)",
           opacity: 1,
@@ -33,7 +33,7 @@ const DashboardPreview = () => {
       />
       {/* Layer 4: Aurora — medium violet transition */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[40px] h-[650px]"
+        className="pointer-events-none absolute inset-x-0 top-[300px] h-[550px]"
         aria-hidden
         style={{
           background: `
@@ -46,7 +46,7 @@ const DashboardPreview = () => {
       />
       {/* Layer 5: Aurora — light violet glow bridging to white */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[70px] h-[600px]"
+        className="pointer-events-none absolute inset-x-0 top-[320px] h-[500px]"
         aria-hidden
         style={{
           background: `
