@@ -151,12 +151,20 @@ All colors MUST be HSL.
   pointer-events: none;
   z-index: -1;
   animation: pillGlowRotate 4s linear infinite;
-  transition: inset 0.3s ease, padding 0.3s ease;
+  transition: inset 0.3s ease, padding 0.3s ease, background 0.4s ease;
 }
 
 .wow-pill:hover::before {
   inset: -3px;
   padding: 3px;
+  background: conic-gradient(
+    from var(--pill-glow-angle),
+    hsl(25, 95%, 55%),
+    hsl(340, 85%, 55%),
+    hsl(270, 80%, 58%),
+    hsl(220, 90%, 58%),
+    hsl(25, 95%, 55%)
+  );
 }
 
 /* Soft diffused glow behind */
