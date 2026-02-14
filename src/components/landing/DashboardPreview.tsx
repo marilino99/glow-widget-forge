@@ -4,20 +4,21 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-40 pb-24 overflow-hidden">
-      {/* Deep violet base covering top area */}
+      {/* Solid dark block with curved bottom edge */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[900px]"
+        className="pointer-events-none absolute inset-x-[-5%] top-0 h-[420px]"
         aria-hidden
         style={{
-          background: "linear-gradient(to bottom, #110c29 0%, #110c29 15%, transparent 100%)",
+          background: "#110c29",
+          borderRadius: "0 0 50% 50%",
         }}
       />
-      {/* Purple glow blob for curved fade effect */}
+      {/* Purple glow bleeding down from the curved edge */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[900px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[800px]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 100% 70% at 50% 15%, hsl(270, 80%, 25%) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 80% 50% at 50% 25%, hsl(270, 80%, 30%) 0%, transparent 70%)",
         }}
       />
 
