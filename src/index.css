@@ -109,39 +109,38 @@ All colors MUST be HSL.
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 36px;
-  padding: 0 18px;
+  height: 40px;
+  padding: 0 22px;
   border-radius: 9999px;
   background: #ffffff;
   color: hsl(var(--foreground));
-  font-weight: 500;
-  font-size: 13px;
+  font-weight: 600;
+  font-size: 14px;
   text-decoration: none;
   isolation: isolate;
   border: none;
-  box-shadow: 0 0 24px hsla(270, 80%, 55%, 0.25), 0 0 8px hsla(270, 80%, 55%, 0.15), 0 1px 3px hsla(0, 0%, 0%, 0.04);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  animation: pillPulse 3s ease-in-out infinite;
+  box-shadow: none;
+  transition: transform 0.2s ease;
 }
 
 .wow-pill:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 36px hsla(270, 80%, 55%, 0.4), 0 0 12px hsla(270, 80%, 55%, 0.25), 0 2px 6px hsla(0, 0%, 0%, 0.06);
 }
 
-/* Animated gradient border */
+/* Thick animated gradient border */
 .wow-pill::before {
   content: "";
   position: absolute;
-  inset: -2px;
-  padding: 2px;
+  inset: -3px;
+  padding: 3px;
   border-radius: inherit;
   background: conic-gradient(
     from var(--pill-glow-angle),
-    hsla(270, 90%, 55%, 1),
-    hsla(200, 95%, 55%, 0.7),
-    hsla(330, 90%, 55%, 0.6),
-    hsla(270, 90%, 55%, 1)
+    hsl(25, 95%, 55%),
+    hsl(340, 85%, 55%),
+    hsl(270, 80%, 58%),
+    hsl(220, 90%, 58%),
+    hsl(25, 95%, 55%)
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -150,35 +149,31 @@ All colors MUST be HSL.
   mask-composite: exclude;
   pointer-events: none;
   z-index: -1;
-  animation: pillGlowRotate 3s linear infinite;
+  animation: pillGlowRotate 4s linear infinite;
 }
 
-/* Soft outer glow */
+/* Soft diffused glow behind */
 .wow-pill::after {
   content: "";
   position: absolute;
-  inset: -12px;
+  inset: -10px;
   border-radius: inherit;
   background: conic-gradient(
     from var(--pill-glow-angle),
-    hsla(270, 85%, 55%, 0.25),
-    hsla(200, 90%, 55%, 0.15),
-    hsla(330, 85%, 55%, 0.12),
-    hsla(270, 85%, 55%, 0.25)
+    hsla(25, 95%, 55%, 0.2),
+    hsla(340, 85%, 55%, 0.15),
+    hsla(270, 80%, 58%, 0.2),
+    hsla(220, 90%, 58%, 0.15),
+    hsla(25, 95%, 55%, 0.2)
   );
-  filter: blur(14px);
+  filter: blur(16px);
   pointer-events: none;
   z-index: -2;
-  animation: pillGlowRotate 3s linear infinite;
+  animation: pillGlowRotate 4s linear infinite;
 }
 
 @keyframes pillGlowRotate {
   to { --pill-glow-angle: 360deg; }
-}
-
-@keyframes pillPulse {
-  0%, 100% { box-shadow: 0 0 24px hsla(270, 80%, 55%, 0.25), 0 0 8px hsla(270, 80%, 55%, 0.15), 0 1px 3px hsla(0, 0%, 0%, 0.04); }
-  50% { box-shadow: 0 0 32px hsla(270, 80%, 55%, 0.35), 0 0 14px hsla(270, 80%, 55%, 0.2), 0 1px 3px hsla(0, 0%, 0%, 0.04); }
 }
 
 @keyframes ringRotate {
