@@ -4,18 +4,17 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
-      {/* Aurora gradient: dark top (#110c29) → purple → white bottom */}
-      {/* Layered aurora: dark top matching Features, soft purple cloud, white bottom */}
+      {/* Aurora: dark #110c29 top → soft purple nebula → clean white bottom */}
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden
         style={{
           background: `
-            linear-gradient(to bottom, #110c29 0%, transparent 55%),
-            radial-gradient(ellipse 120% 60% at 50% 0%, #2e1065 0%, #6d28d9 30%, transparent 70%),
-            radial-gradient(ellipse 90% 40% at 30% 15%, rgba(139,92,246,0.4) 0%, transparent 70%),
-            radial-gradient(ellipse 90% 40% at 70% 15%, rgba(139,92,246,0.3) 0%, transparent 70%),
-            linear-gradient(to bottom, transparent 40%, #ffffff 70%)
+            linear-gradient(to bottom, #110c29 0%, #1e1145 12%, transparent 50%),
+            radial-gradient(ellipse 100% 50% at 50% 20%, #4c1d95 0%, rgba(109,40,217,0.5) 40%, transparent 80%),
+            radial-gradient(ellipse 80% 35% at 25% 18%, rgba(139,92,246,0.35) 0%, transparent 70%),
+            radial-gradient(ellipse 80% 35% at 75% 18%, rgba(139,92,246,0.25) 0%, transparent 70%),
+            linear-gradient(to bottom, transparent 35%, rgba(245,243,255,0.6) 55%, #ffffff 68%)
           `,
           backgroundColor: '#ffffff',
         }}
