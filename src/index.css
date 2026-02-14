@@ -240,7 +240,13 @@ All colors MUST be HSL.
     hsl(270, 80%, 65%) 100%
   );
   animation: heroBorderRotate 6s linear infinite;
-  box-shadow: 0 0 15px 3px hsla(270, 100%, 64%, 0.25), 0 0 30px 8px hsla(270, 100%, 64%, 0.15), 0 0 50px 15px hsla(270, 100%, 64%, 0.08);
+  box-shadow: 0 0 12px 2px hsla(270, 100%, 64%, 0.2), 0 0 30px 6px hsla(270, 100%, 64%, 0.1);
+  animation: heroBorderRotate 6s linear infinite, heroGlowPulse 3s ease-in-out infinite;
+}
+
+@keyframes heroGlowPulse {
+  0%, 100% { box-shadow: 0 0 12px 2px hsla(270, 100%, 64%, 0.2), 0 0 30px 6px hsla(270, 100%, 64%, 0.1); }
+  50% { box-shadow: 0 0 18px 4px hsla(270, 100%, 64%, 0.3), 0 0 40px 10px hsla(270, 100%, 64%, 0.15); }
 }
 
 @keyframes heroBorderRotate {
