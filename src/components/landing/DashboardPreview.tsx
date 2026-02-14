@@ -3,8 +3,14 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 
 const DashboardPreview = () => {
   return (
-    <section id="dashboard" className="relative px-6 py-24">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-muted/30 via-muted/50 to-muted/30" />
+    <section id="dashboard" className="relative px-6 pt-32 pb-24">
+      {/* Curved gradient transition from Features (#110c29) */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[500px]"
+        style={{
+          background: "radial-gradient(ellipse 120% 80% at 50% 0%, #110c29 0%, transparent 70%)",
+        }}
+      />
 
       <div className="mx-auto max-w-6xl">
         <motion.div
