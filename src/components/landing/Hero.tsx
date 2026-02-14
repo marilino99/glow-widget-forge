@@ -135,11 +135,13 @@ const Hero = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-white/[0.02]" />
             </div>
             {/* Widget screenshot */}
-            <img 
-              src={widgetPreview} 
-              alt="Jetwidget widget preview showing chat, FAQ and contact features" 
-              className="relative w-full h-full object-contain rounded-2xl"
-            />
+            <div className="relative rounded-2xl overflow-hidden bg-background/80">
+              <img 
+                src={widgetPreview} 
+                alt="Jetwidget widget preview showing chat, FAQ and contact features" 
+                className="w-full h-full object-cover block"
+              />
+            </div>
           </div>
         </motion.div>
       </div>
