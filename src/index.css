@@ -222,3 +222,26 @@ All colors MUST be HSL.
     );
   }
 }
+
+/* Hero image gradient border */
+@property --hero-border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.hero-image-border {
+  background: conic-gradient(
+    from var(--hero-border-angle),
+    hsl(270, 80%, 65%) 0%,
+    hsl(250, 85%, 65%) 25%,
+    hsl(270, 75%, 70%) 50%,
+    hsl(290, 70%, 60%) 75%,
+    hsl(270, 80%, 65%) 100%
+  );
+  animation: heroBorderRotate 6s linear infinite;
+}
+
+@keyframes heroBorderRotate {
+  to { --hero-border-angle: 360deg; }
+}

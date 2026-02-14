@@ -92,7 +92,7 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        {/* Right side — product screenshot placeholder */}
+        {/* Right side — product screenshot */}
         <motion.div
           custom={3}
           initial="hidden"
@@ -100,39 +100,9 @@ const Hero = () => {
           variants={fadeUp}
           className="relative flex-1 max-w-md lg:max-w-lg flex flex-col"
         >
-          {/* Animated glow border */}
-          <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden>
-            <motion.div
-              className="absolute top-0 left-0 w-20 h-20 rounded-full bg-primary/30 blur-[30px]"
-              animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.45, 0.3] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute top-0 right-0 w-20 h-20 rounded-full bg-primary/25 blur-[30px]"
-              animate={{ scale: [1.05, 1, 1.05], opacity: [0.25, 0.4, 0.25] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-primary/25 blur-[30px]"
-              animate={{ scale: [1, 1.08, 1], opacity: [0.25, 0.38, 0.25] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            />
-            <motion.div
-              className="absolute bottom-0 right-0 w-20 h-20 rounded-full bg-primary/25 blur-[30px]"
-              animate={{ scale: [1.05, 1, 1.05], opacity: [0.25, 0.4, 0.25] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            />
-          </div>
-
-          {/* Liquid glass container */}
-          <div className="relative z-10 h-full">
-            {/* Widget screenshot with liquid glass */}
-            <div className="relative rounded-2xl overflow-hidden border border-white/[0.15] bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_20px_60px_-15px_rgba(0,0,0,0.3)]">
-              {/* Inner glass highlight */}
-              <div className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden">
-                <div className="absolute -top-1/2 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.08] to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-white/[0.02]" />
-              </div>
+          {/* Gradient border wrapper */}
+          <div className="hero-image-border relative rounded-3xl p-[2px]">
+            <div className="relative rounded-[22px] overflow-hidden bg-background">
               <img 
                 src={widgetPreview} 
                 alt="Jetwidget widget preview showing chat, FAQ and contact features" 
