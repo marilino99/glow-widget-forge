@@ -6,7 +6,7 @@ const DashboardPreview = () => {
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
       {/* Layer 1: Solid dark base matching Features */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[300px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[400px]"
         aria-hidden
         style={{ background: "#110c29" }}
       />
