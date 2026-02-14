@@ -98,7 +98,7 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="relative flex-1 max-w-md lg:max-w-lg flex flex-col"
+          className="relative flex-1 max-w-md lg:max-w-lg flex flex-col overflow-visible"
         >
           {/* Gradient border wrapper */}
           <div className="hero-image-border relative rounded-3xl p-[2px]">
