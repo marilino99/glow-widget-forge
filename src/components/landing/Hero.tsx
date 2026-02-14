@@ -71,8 +71,8 @@ const Hero = () => {
             variants={fadeUp}
             className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg"
           >
-            Build beautiful support & sales widgets. Customize every detail.
-            Publish to any website with one line of code.
+            Create no-code website widgets for live chat, FAQs & sales.
+            Customize everything, then add to any site with one line of code.
           </motion.p>
 
           {/* CTA */}
