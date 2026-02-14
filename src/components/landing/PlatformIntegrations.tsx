@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { AvatarGroup } from "@/components/ui/avatar-group";
 import wixLogo from "@/assets/logo-wix.png";
+import odooLogo from "@/assets/logo-odoo.png";
 
 const platformAvatars = [
   {
@@ -24,7 +25,7 @@ const platformAvatars = [
     label: "Wix",
   },
   {
-    src: "https://cdn.worldvectorlogo.com/logos/odoo-2.svg",
+    src: odooLogo,
     label: "Odoo",
   },
 ];
