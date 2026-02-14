@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import widgetPreview from "@/assets/widget-preview-hero.png";
+import AnimatedGlowingPill from "@/components/ui/animated-glowing-pill";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -41,10 +42,10 @@ const Hero = () => {
             variants={fadeUp}
             className="mb-4"
           >
-            <span className="wow-pill">
+            <AnimatedGlowingPill>
               <Sparkles className="h-3.5 w-3.5" />
               Now with AI-powered responses
-            </span>
+            </AnimatedGlowingPill>
           </motion.div>
 
           {/* Headline */}
