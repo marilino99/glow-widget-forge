@@ -42,7 +42,13 @@ const Logos3 = ({
         </p>
       </div>
       <div className="pt-2">
-        <div className="relative mx-auto flex items-center justify-center lg:max-w-5xl">
+        <div
+          className="relative mx-auto flex items-center justify-center lg:max-w-5xl"
+          style={{
+            maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+            WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+          }}
+        >
           <Carousel
             opts={{ loop: true }}
             plugins={[AutoScroll({ playOnInit: true })]}
@@ -66,8 +72,6 @@ const Logos3 = ({
               ))}
             </CarouselContent>
           </Carousel>
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background via-background/60 to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background via-background/60 to-transparent" />
         </div>
       </div>
     </section>
