@@ -24,11 +24,11 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 35% 60% at 15% 15%, #2e1065 0%, transparent 100%),
-            radial-gradient(ellipse 35% 60% at 85% 15%, #2e1065 0%, transparent 100%)
+            radial-gradient(ellipse 30% 50% at 12% 12%, #2e1065 0%, transparent 100%),
+            radial-gradient(ellipse 30% 50% at 88% 12%, #2e1065 0%, transparent 100%)
           `,
-          filter: "blur(40px)",
-          opacity: 1,
+          filter: "blur(50px)",
+          opacity: 0.7,
         }}
       />
       {/* Layer 4: Aurora — medium violet transition */}
@@ -37,11 +37,11 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 50% 55% at 20% 25%, #5b21b6 0%, transparent 100%),
-            radial-gradient(ellipse 50% 55% at 80% 25%, #5b21b6 0%, transparent 100%)
+            radial-gradient(ellipse 40% 45% at 18% 22%, #5b21b6 0%, transparent 100%),
+            radial-gradient(ellipse 40% 45% at 82% 22%, #5b21b6 0%, transparent 100%)
           `,
-          filter: "blur(70px)",
-          opacity: 0.7,
+          filter: "blur(80px)",
+          opacity: 0.45,
         }}
       />
       {/* Layer 5: Aurora — light violet glow bridging to white */}
@@ -50,11 +50,11 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 60% 50% at 25% 35%, #8b5cf6 0%, transparent 100%),
-            radial-gradient(ellipse 60% 50% at 75% 35%, #8b5cf6 0%, transparent 100%)
+            radial-gradient(ellipse 50% 45% at 22% 32%, #8b5cf6 0%, transparent 100%),
+            radial-gradient(ellipse 50% 45% at 78% 32%, #8b5cf6 0%, transparent 100%)
           `,
-          filter: "blur(80px)",
-          opacity: 0.45,
+          filter: "blur(90px)",
+          opacity: 0.3,
         }}
       />
       {/* Layer 6: Central white wash */}
