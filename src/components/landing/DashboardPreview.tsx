@@ -3,16 +3,17 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 
 const DashboardPreview = () => {
   return (
-    <section id="dashboard" className="relative px-6 pt-32 pb-24">
+    <section id="dashboard" className="relative px-6 pt-32 pb-24 overflow-hidden">
       {/* Curved gradient transition from Features (#110c29) */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[500px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[600px]"
+        aria-hidden
         style={{
-          background: "radial-gradient(ellipse 120% 80% at 50% 0%, #110c29 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 130% 90% at 50% 0%, #110c29 0%, transparent 65%)",
         }}
       />
 
-      <div className="mx-auto max-w-6xl">
+      <div className="relative z-10 mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -20,11 +21,11 @@ const DashboardPreview = () => {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <span className="text-sm font-medium uppercase tracking-widest text-primary">Dashboard</span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <span className="text-sm font-medium uppercase tracking-widest text-white/70">Dashboard</span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
             One place for everything
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-xl text-white/60">
             Manage all your widgets, conversations, and analytics from a single intuitive dashboard.
           </p>
         </motion.div>
