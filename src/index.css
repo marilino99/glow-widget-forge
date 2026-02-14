@@ -108,14 +108,14 @@ All colors MUST be HSL.
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 40px;
-  padding: 0 22px;
+  gap: 5px;
+  height: 34px;
+  padding: 0 16px;
   border-radius: 9999px;
   background: #ffffff;
   color: hsl(var(--foreground));
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
   text-decoration: none;
   isolation: isolate;
   border: none;
