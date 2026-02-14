@@ -40,37 +40,21 @@ const fadeUp = {
 const PlatformIntegrations = () => {
   return (
     <section className="py-12 md:py-16">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10">
-          <motion.div
-            custom={0}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="shrink-0"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-primary mb-1">Discover integrations</p>
-            <h2 className="text-lg md:text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
-              Make Jetwidget even more powerful by using these tools
-            </h2>
-          </motion.div>
-
-          <motion.div
-            custom={1}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <AvatarGroup
-              avatars={platformAvatars}
-              maxVisible={4}
-              size={52}
-              overlap={16}
-            />
-          </motion.div>
-        </div>
+      <div className="mx-auto max-w-4xl px-6 flex justify-center">
+        <motion.div
+          custom={0}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+        >
+          <AvatarGroup
+            avatars={platformAvatars}
+            maxVisible={4}
+            size={52}
+            overlap={16}
+          />
+        </motion.div>
       </div>
     </section>
   );
