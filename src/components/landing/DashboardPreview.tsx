@@ -3,22 +3,41 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 
 const DashboardPreview = () => {
   return (
-    <section id="dashboard" className="relative px-6 pt-40 pb-24 overflow-hidden">
-      {/* Solid dark block with curved bottom edge */}
+    <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
+      {/* Layer 1: Dark violet base — full width, fading down */}
       <div
-        className="pointer-events-none absolute inset-x-[-5%] top-0 h-[420px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[700px]"
         aria-hidden
         style={{
-          background: "#110c29",
-          borderRadius: "0 0 50% 50%",
+          background: "linear-gradient(to bottom, #1a0f3c 0%, transparent 100%)",
         }}
       />
-      {/* Purple glow bleeding down from the curved edge */}
+      {/* Layer 2: Left purple glow blob */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[800px]"
+        className="pointer-events-none absolute top-0 left-0 h-[650px] w-[45%]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 80% 50% at 50% 25%, hsl(270, 80%, 30%) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse 100% 80% at 20% 30%, #7b5cff 0%, transparent 70%)",
+          filter: "blur(60px)",
+          opacity: 0.6,
+        }}
+      />
+      {/* Layer 3: Right purple glow blob */}
+      <div
+        className="pointer-events-none absolute top-0 right-0 h-[650px] w-[45%]"
+        aria-hidden
+        style={{
+          background: "radial-gradient(ellipse 100% 80% at 80% 30%, #7b5cff 0%, transparent 70%)",
+          filter: "blur(60px)",
+          opacity: 0.6,
+        }}
+      />
+      {/* Layer 4: Center bright fade — creates the light "window" in the middle */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-[200px] h-[600px]"
+        aria-hidden
+        style={{
+          background: "radial-gradient(ellipse 60% 55% at 50% 40%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 40%, transparent 70%)",
         }}
       />
 
