@@ -42,7 +42,7 @@ const AvatarGroup = ({
               <motion.img
                 src={avatar.src}
                 alt={avatar.alt || avatar.label || ""}
-                className="rounded-full border-2 border-background object-cover shadow-sm"
+                className="rounded-full border-2 border-background bg-card object-contain p-2 shadow-sm"
                 style={{ width: size, height: size }}
                 animate={{ scale: isHovered ? 1.15 : 1 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
