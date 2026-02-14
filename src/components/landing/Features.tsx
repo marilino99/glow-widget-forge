@@ -113,7 +113,7 @@ const features = [
 
 const Features = () => {
   return (
-    <section id="features" className="relative px-6 py-24 bg-[hsl(0,0%,8%)] text-white overflow-hidden">
+    <section id="features" className="relative px-6 py-24 bg-[#110c29] text-white overflow-hidden">
       <div className="relative z-10 mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
