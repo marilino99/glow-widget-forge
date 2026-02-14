@@ -34,10 +34,10 @@ const DashboardPreview = () => {
       />
       {/* Layer 4: Center bright fade — creates the light "window" in the middle */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[200px] h-[600px]"
+        className="pointer-events-none absolute inset-x-0 top-[150px] h-[700px]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 60% 55% at 50% 40%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 40%, transparent 70%)",
+          background: "radial-gradient(ellipse 75% 60% at 50% 38%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 25%, rgba(255,255,255,0.4) 50%, transparent 75%)",
         }}
       />
 
