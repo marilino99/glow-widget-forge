@@ -112,7 +112,7 @@ All colors MUST be HSL.
   height: 36px;
   padding: 0 18px;
   border-radius: 9999px;
-  background: hsl(var(--background));
+  background: #ffffff;
   color: hsl(var(--foreground));
   font-weight: 500;
   font-size: 13px;
