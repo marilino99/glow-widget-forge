@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import widgetPreview from "@/assets/widget-preview-hero.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -145,32 +146,12 @@ const Hero = () => {
               transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
             />
           </div>
-          {/* Dashboard mockup preview */}
-          <div className="relative z-10 w-full max-w-xl rounded-2xl border border-border/60 bg-card shadow-2xl shadow-primary/10 overflow-hidden">
-            <div className="flex items-center gap-2 border-b border-border/40 bg-muted/30 px-4 py-2.5">
-              <div className="flex gap-1.5">
-                <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
-                <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
-                <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
-              </div>
-              <div className="ml-2 h-5 flex-1 rounded bg-muted/50 px-3 flex items-center">
-                <span className="text-[10px] text-muted-foreground">jetwidget.com/builder</span>
-              </div>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="h-6 w-32 rounded bg-muted/60" />
-              <div className="grid grid-cols-3 gap-3">
-                <div className="h-20 rounded-lg bg-muted/40" />
-                <div className="h-20 rounded-lg bg-muted/40" />
-                <div className="h-20 rounded-lg bg-muted/40" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-3 w-3/4 rounded bg-muted/30" />
-                <div className="h-3 w-1/2 rounded bg-muted/30" />
-              </div>
-              <div className="h-10 w-full rounded-lg bg-primary/20" />
-            </div>
-          </div>
+          {/* Widget screenshot */}
+          <img 
+            src={widgetPreview} 
+            alt="Jetwidget widget preview showing chat, FAQ and contact features" 
+            className="relative z-10 w-full max-w-xl rounded-2xl border border-border/60 shadow-2xl shadow-primary/10"
+          />
         </motion.div>
       </div>
     </section>
