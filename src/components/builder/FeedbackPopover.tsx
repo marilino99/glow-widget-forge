@@ -51,7 +51,7 @@ const FeedbackPopover = () => {
         <div className="mt-3 flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
             Need help?{" "}
-            <a href="mailto:support@widjet.io" className="text-primary hover:underline">
+            <a href="mailto:support@jetwidget.com" className="text-primary hover:underline">
               Contact us
             </a>
           </p>

@@ -20,7 +20,7 @@ const features = [
   {
     icon: Palette,
     title: "Remove branding.",
-    description: "Hide all Widjet branding and make your widget truly your own.",
+    description: "Hide all Jetwidget branding and make your widget truly your own.",
   },
   {
     icon: Globe,
@@ -57,7 +57,7 @@ const UpgradeOverlay = ({ onBack, onUpgrade }: UpgradeOverlayProps) => {
             <h1 className="text-4xl font-bold text-foreground mb-3">
               Do more with{" "}
               <span className="relative">
-                Widjet
+                Jetwidget
                 <span className="absolute -bottom-1 left-0 right-0 h-1 rounded-full bg-purple-500" />
               </span>
             </h1>

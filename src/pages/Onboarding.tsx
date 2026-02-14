@@ -116,9 +116,9 @@ const Onboarding = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <Boxes className="h-6 w-6" />
             </div>
-            <span className="text-xl font-semibold text-foreground">Widjet</span>
+            <span className="text-xl font-semibold text-foreground">Jetwidget</span>
           </div>
-          <CardTitle className="text-2xl">Welcome to Widjet! 🎉</CardTitle>
+          <CardTitle className="text-2xl">Welcome to Jetwidget! 🎉</CardTitle>
           <CardDescription>
             Let's set up your widget. Enter your website URL and we'll automatically match your brand identity.
           </CardDescription>

@@ -41,7 +41,7 @@ const Signup = () => {
 
       toast({
         title: "Account created",
-        description: "Welcome to Widjet!",
+        description: "Welcome to Jetwidget!",
       });
       navigate("/onboarding");
     }
@@ -57,7 +57,7 @@ const Signup = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <Boxes className="h-6 w-6" />
             </div>
-            <span className="text-xl font-semibold text-foreground">Widjet</span>
+            <span className="text-xl font-semibold text-foreground">Jetwidget</span>
           </Link>
           <CardTitle className="text-2xl">Create your account</CardTitle>
           <CardDescription>Start building widgets in minutes</CardDescription>

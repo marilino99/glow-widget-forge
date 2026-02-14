@@ -4,7 +4,7 @@ import { Navbar1 } from "@/components/ui/shadcnblocks-com-navbar1";
 const navData = {
   logo: {
     url: "#",
-    title: "widjett.",
+    title: "jetwidget.",
   },
   menu: [
     { title: "Home", url: "#" },

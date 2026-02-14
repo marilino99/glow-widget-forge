@@ -50,11 +50,11 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
 
-  const embedCode = widgetId ? `<!-- Start of Widjet (widjet.com) code -->
+  const embedCode = widgetId ? `<!-- Start of Jetwidget (jetwidget.com) code -->
 <script>
   window.__wj = window.__wj || {};
   window.__wj.widgetId = "${widgetId}";
-  window.__wj.product_name = "widjet";
+  window.__wj.product_name = "jetwidget";
   ;(function(w,d,s){
     var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s);
@@ -63,8 +63,8 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
     f.parentNode.insertBefore(j,f);
   })(window,document,'script');
 </script>
-<noscript>Enable JavaScript to use the widget powered by Widjet</noscript>
-<!-- End of Widjet code -->` : `<!-- Widget ID not yet available. Save your configuration first. -->`;
+<noscript>Enable JavaScript to use the widget powered by Jetwidget</noscript>
+<!-- End of Jetwidget code -->` : `<!-- Widget ID not yet available. Save your configuration first. -->`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(embedCode);
@@ -111,7 +111,7 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
 
           {/* Ready message */}
           <p className="font-semibold text-foreground">
-            Your Widjet is ready! Add it to your website and start helping your customers right away.
+            Your Jetwidget is ready! Add it to your website and start helping your customers right away.
           </p>
 
           {/* Code section */}
@@ -230,7 +230,7 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
 
           {/* See how to install section */}
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">See how to install Widjet with:</p>
+            <p className="text-sm text-muted-foreground">See how to install Jetwidget with:</p>
             <div className="grid grid-cols-2 gap-3">
               <PlatformCard
                 logo={<WooCommerceLogo className="h-10 w-10" />}

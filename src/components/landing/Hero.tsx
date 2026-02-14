@@ -154,7 +154,7 @@ const Hero = () => {
                 <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
               </div>
               <div className="ml-2 h-5 flex-1 rounded bg-muted/50 px-3 flex items-center">
-                <span className="text-[10px] text-muted-foreground">widjett.app/builder</span>
+                <span className="text-[10px] text-muted-foreground">jetwidget.com/builder</span>
               </div>
             </div>
             <div className="p-6 space-y-4">
