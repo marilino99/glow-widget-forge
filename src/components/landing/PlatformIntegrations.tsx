@@ -19,12 +19,12 @@ const platformAvatars = [
     label: "HubSpot",
   },
   {
-    src: "https://cdn.worldvectorlogo.com/logos/wordpress-icon-1.svg",
-    label: "WordPress",
-  },
-  {
     src: "https://cdn.worldvectorlogo.com/logos/wix-2.svg",
     label: "Wix",
+  },
+  {
+    src: "https://cdn.worldvectorlogo.com/logos/odoo-2.svg",
+    label: "Odoo",
   },
 ];
 
