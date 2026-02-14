@@ -240,7 +240,7 @@ All colors MUST be HSL.
     hsl(270, 80%, 65%) 100%
   );
   animation: heroBorderRotate 6s linear infinite;
-  box-shadow: 0 0 50px 5px hsl(270, 80%, 60% / 0.5), 0 0 100px 15px hsl(270, 70%, 55% / 0.3), 0 0 150px 25px hsl(270, 60%, 50% / 0.15);
+  box-shadow: 0 0 40px 8px hsl(270, 80%, 60% / 0.6), 0 0 80px 20px hsl(270, 70%, 55% / 0.4), 0 0 140px 40px hsl(270, 60%, 50% / 0.25), 0 0 200px 60px hsl(270, 50%, 45% / 0.1);
 }
 
 @keyframes heroBorderRotate {
