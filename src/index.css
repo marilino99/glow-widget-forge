@@ -151,12 +151,13 @@ All colors MUST be HSL.
   pointer-events: none;
   z-index: -1;
   animation: pillGlowRotate 4s linear infinite;
-  transition: inset 0.3s ease, padding 0.3s ease, background 0.4s ease;
+  transition: inset 0.3s ease, padding 0.3s ease, background 0.4s ease, animation-duration 0.3s ease;
 }
 
 .wow-pill:hover::before {
   inset: -3px;
   padding: 3px;
+  animation-duration: 1.5s;
   background: conic-gradient(
     from var(--pill-glow-angle),
     hsl(25, 95%, 55%),
