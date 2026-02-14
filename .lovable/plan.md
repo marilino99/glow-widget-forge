@@ -1,21 +1,16 @@
 
 
-## Effetto gradiente viola sulla headline Hero
+## Make the wow-pill background solid white
 
-Applicare un gradiente testo sulla headline "Widgets that turn visitors into customers", passando dal colore scuro (foreground) al viola, ispirandosi all'immagine di riferimento dove alcune lettere sfumano gradualmente nel viola.
+The pill already has `background: #ffffff` but the issue is that the page background behind the glow may not be fully white, making the glow look off. The fix is simple:
 
-### Cosa cambia
+### Change in `src/index.css`
 
-La headline attualmente ha la parola "customers" con un gradiente grigio. Il nuovo effetto applichera un gradiente che parte dal colore scuro del testo e sfuma progressivamente verso il viola (coerente con il glow e il pulsante CTA), distribuito su tutta la headline invece che solo sull'ultima parola.
+Ensure the `.wow-pill` has a clean solid white background with no transparency or inherited values interfering. The current code already sets `background: #ffffff`, so the real issue might be that the `::after` glow pseudo-element is bleeding through. We need to make sure the pill itself sits cleanly on top with an opaque white fill.
 
-### Dettaglio tecnico
+- Confirm `background: #ffffff` on `.wow-pill`
+- Add `box-shadow: none` to remove any residual shadow
+- Ensure `isolation: isolate` and proper `z-index` stacking so the white background covers the glow behind the text area, while the glow only appears around the edges (exactly like the ClickUp reference)
 
-**File: `src/components/landing/Hero.tsx`**
-
-- Rimuovere lo `<span>` separato per "customers" con il suo gradiente grigio
-- Applicare all'intero `<h1>` un gradiente testo via Tailwind:
-  - `bg-gradient-to-r from-foreground via-foreground to-[hsl(270,80%,55%)]`
-  - `bg-clip-text text-transparent`
-- Il gradiente partira dal colore scuro (foreground) sulla sinistra e sfumera verso il viola sulla destra, creando lo stesso effetto della reference image
-- Il viola utilizzato (`hsl(270,80%,55%)`) e lo stesso gia presente nei glow blob, mantenendo coerenza visiva
+This is a one-line verification/tweak in `src/index.css`.
 
