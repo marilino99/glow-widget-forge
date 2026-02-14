@@ -42,10 +42,10 @@ const DashboardPreview = () => {
       />
       {/* Layer 5: Large white center wash */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[180px] h-[750px]"
+        className="pointer-events-none absolute inset-x-0 top-[130px] h-[750px]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 90% 75% at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.97) 15%, rgba(255,255,255,0.85) 30%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.15) 65%, transparent 80%)",
+          background: "radial-gradient(ellipse 90% 75% at 50% 45%, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,0.9) 35%, rgba(255,255,255,0.5) 55%, rgba(255,255,255,0.15) 68%, transparent 80%)",
           filter: "blur(15px)",
         }}
       />
