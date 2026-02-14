@@ -101,7 +101,7 @@ const Hero = () => {
           className="relative flex-1 max-w-md lg:max-w-lg flex flex-col overflow-visible"
         >
           {/* Gradient border wrapper */}
-          <div className="hero-image-border relative rounded-3xl p-[2px]">
+          <div className="hero-image-border relative rounded-3xl p-[1.5px]">
             <div className="relative rounded-[22px] overflow-hidden bg-background">
               <img 
                 src={widgetPreview} 
