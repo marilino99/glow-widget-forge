@@ -45,8 +45,8 @@ const Logos3 = ({
         <div
           className="relative mx-auto flex items-center justify-center lg:max-w-5xl"
           style={{
-            maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
-            WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+            maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 5%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.6) 15%, black 25%, black 75%, rgba(0,0,0,0.6) 85%, rgba(0,0,0,0.3) 90%, rgba(0,0,0,0.1) 95%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 5%, rgba(0,0,0,0.3) 10%, rgba(0,0,0,0.6) 15%, black 25%, black 75%, rgba(0,0,0,0.6) 85%, rgba(0,0,0,0.3) 90%, rgba(0,0,0,0.1) 95%, transparent 100%)",
           }}
         >
           <Carousel
