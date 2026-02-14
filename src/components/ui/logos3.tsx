@@ -43,10 +43,10 @@ const Logos3 = ({
       </div>
       <div className="pt-2">
         <div
-          className="relative mx-auto flex items-center justify-center lg:max-w-5xl overflow-hidden"
+          className="relative mx-auto flex items-center justify-center lg:max-w-6xl px-16 overflow-hidden"
           style={{
-            maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.03) 3%, rgba(0,0,0,0.08) 6%, rgba(0,0,0,0.15) 9%, rgba(0,0,0,0.25) 12%, rgba(0,0,0,0.4) 15%, rgba(0,0,0,0.6) 18%, rgba(0,0,0,0.8) 22%, black 28%, black 72%, rgba(0,0,0,0.8) 78%, rgba(0,0,0,0.6) 82%, rgba(0,0,0,0.4) 85%, rgba(0,0,0,0.25) 88%, rgba(0,0,0,0.15) 91%, rgba(0,0,0,0.08) 94%, rgba(0,0,0,0.03) 97%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.03) 3%, rgba(0,0,0,0.08) 6%, rgba(0,0,0,0.15) 9%, rgba(0,0,0,0.25) 12%, rgba(0,0,0,0.4) 15%, rgba(0,0,0,0.6) 18%, rgba(0,0,0,0.8) 22%, black 28%, black 72%, rgba(0,0,0,0.8) 78%, rgba(0,0,0,0.6) 82%, rgba(0,0,0,0.4) 85%, rgba(0,0,0,0.25) 88%, rgba(0,0,0,0.15) 91%, rgba(0,0,0,0.08) 94%, rgba(0,0,0,0.03) 97%, transparent 100%)",
+            maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, rgba(0,0,0,0.2) 14%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.85) 28%, black 35%, black 65%, rgba(0,0,0,0.85) 72%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.2) 86%, rgba(0,0,0,0.05) 92%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 8%, rgba(0,0,0,0.2) 14%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.85) 28%, black 35%, black 65%, rgba(0,0,0,0.85) 72%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.2) 86%, rgba(0,0,0,0.05) 92%, transparent 100%)",
           }}
         >
           <Carousel
