@@ -4,41 +4,41 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
-      {/* Layer 1: Dark violet base — matches Features bg, fading down */}
+      {/* Layer 1: Dark violet base — matches Features bg, long gradual fade */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[800px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[900px]"
         aria-hidden
         style={{
-          background: "linear-gradient(to bottom, #110c29 0%, #110c29 5%, #1a0f3c 15%, transparent 100%)",
+          background: "linear-gradient(to bottom, #110c29 0%, #110c29 8%, #15102e 20%, #1a1335 35%, transparent 100%)",
         }}
       />
       {/* Layer 2: Left purple glow blob */}
       <div
-        className="pointer-events-none absolute top-0 left-0 h-[750px] w-[50%]"
+        className="pointer-events-none absolute top-[100px] left-0 h-[600px] w-[45%]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 120% 90% at 15% 25%, #7b5cff 0%, #5a3fd4 30%, transparent 75%)",
-          filter: "blur(80px)",
-          opacity: 0.45,
+          background: "radial-gradient(ellipse 110% 80% at 20% 30%, #7b5cff 0%, #5a3fd4 25%, transparent 70%)",
+          filter: "blur(90px)",
+          opacity: 0.35,
         }}
       />
       {/* Layer 3: Right purple glow blob */}
       <div
-        className="pointer-events-none absolute top-0 right-0 h-[750px] w-[50%]"
+        className="pointer-events-none absolute top-[100px] right-0 h-[600px] w-[45%]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 120% 90% at 85% 25%, #7b5cff 0%, #5a3fd4 30%, transparent 75%)",
-          filter: "blur(80px)",
-          opacity: 0.45,
+          background: "radial-gradient(ellipse 110% 80% at 80% 30%, #7b5cff 0%, #5a3fd4 25%, transparent 70%)",
+          filter: "blur(90px)",
+          opacity: 0.35,
         }}
       />
-      {/* Layer 4: Center bright fade — creates the light "window" in the middle */}
+      {/* Layer 4: Center bright fade */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[150px] h-[700px]"
+        className="pointer-events-none absolute inset-x-0 top-[200px] h-[700px]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 75% 60% at 50% 38%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 25%, rgba(255,255,255,0.4) 50%, transparent 75%)",
-          filter: "blur(30px)",
+          background: "radial-gradient(ellipse 70% 55% at 50% 40%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 25%, rgba(255,255,255,0.35) 50%, transparent 75%)",
+          filter: "blur(35px)",
         }}
       />
 
