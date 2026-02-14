@@ -1,16 +1,27 @@
 
 
-## Make the wow-pill background solid white
+## Problem
 
-The pill already has `background: #ffffff` but the issue is that the page background behind the glow may not be fully white, making the glow look off. The fix is simple:
+The purple glow (box-shadow) around the hero image is not visible because the parent `<section>` element in the Hero component has `overflow-hidden` applied, which clips any shadow that extends beyond the section boundaries.
 
-### Change in `src/index.css`
+**Line 18 in Hero.tsx:**
+```
+<section className="relative overflow-hidden px-6 pb-24 pt-10 md:pb-32 md:pt-16">
+```
 
-Ensure the `.wow-pill` has a clean solid white background with no transparency or inherited values interfering. The current code already sets `background: #ffffff`, so the real issue might be that the `::after` glow pseudo-element is bleeding through. We need to make sure the pill itself sits cleanly on top with an opaque white fill.
+The `overflow-hidden` is there to contain the background blur effects (the decorative blobs), but it also clips the `box-shadow` on the hero image.
 
-- Confirm `background: #ffffff` on `.wow-pill`
-- Add `box-shadow: none` to remove any residual shadow
-- Ensure `isolation: isolate` and proper `z-index` stacking so the white background covers the glow behind the text area, while the glow only appears around the edges (exactly like the ClickUp reference)
+## Solution
 
-This is a one-line verification/tweak in `src/index.css`.
+Two changes are needed:
+
+1. **Hero.tsx** - Remove `overflow-hidden` from the `<section>` tag and instead move it to the background effects container only (the div with the decorative blobs), so the glow on the image is no longer clipped.
+
+2. Specifically, change the section class from `overflow-hidden` to `overflow-x-clip` (or remove it entirely), which will prevent horizontal scrollbar from the blobs but still allow the vertical glow to be visible. Alternatively, move `overflow-hidden` to only the background blobs wrapper div.
+
+## Technical Details
+
+- **File**: `src/components/landing/Hero.tsx`, line 18
+- Change: Replace `overflow-hidden` on the `<section>` with `overflow-x-clip` to only clip horizontal overflow (preventing scrollbar from blobs) while allowing the vertical box-shadow glow to render visibly.
+- The background blobs container (line 20) already has `overflow-hidden`, so horizontal containment is handled there too.
 
