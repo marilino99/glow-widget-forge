@@ -3,8 +3,8 @@ import { AvatarGroup } from "@/components/ui/avatar-group";
 
 const platformAvatars = [
   {
-    src: "https://cdn.worldvectorlogo.com/logos/active-campaign.svg",
-    label: "ActiveCampaign",
+    src: "https://cdn.worldvectorlogo.com/logos/wordpress-icon-1.svg",
+    label: "WordPress",
   },
   {
     src: "https://cdn.worldvectorlogo.com/logos/zapier-2.svg",
