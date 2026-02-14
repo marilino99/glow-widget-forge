@@ -128,7 +128,7 @@ const Hero = () => {
           </div>
 
           {/* Liquid glass container */}
-          <div className="relative z-10 h-full rounded-3xl border border-white/[0.15] bg-white/[0.06] p-3 backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_20px_60px_-15px_rgba(0,0,0,0.3)]">
+          <div className="relative z-10 h-full rounded-3xl border border-white/[0.15] bg-white/[0.06] overflow-hidden backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_20px_60px_-15px_rgba(0,0,0,0.3)]">
             {/* Inner glass highlight */}
             <div className="pointer-events-none absolute inset-0 rounded-3xl overflow-hidden">
               <div className="absolute -top-1/2 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.08] to-transparent" />
@@ -138,7 +138,7 @@ const Hero = () => {
             <img 
               src={widgetPreview} 
               alt="Jetwidget widget preview showing chat, FAQ and contact features" 
-              className="relative w-full h-full object-contain rounded-2xl"
+              className="relative w-full h-full object-cover"
             />
           </div>
         </motion.div>
