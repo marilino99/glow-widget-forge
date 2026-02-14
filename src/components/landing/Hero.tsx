@@ -14,7 +14,7 @@ const fadeUp = {
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden px-6 pb-24 pt-10 md:pb-32 md:pt-16">
+    <section className="relative overflow-x-clip px-6 pb-24 pt-10 md:pb-32 md:pt-16">
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -left-32 -top-32 h-[500px] w-[500px] animate-pulse rounded-full bg-primary/[0.08] blur-[120px]" />
