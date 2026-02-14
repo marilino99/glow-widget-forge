@@ -51,16 +51,19 @@ const PlatformIntegrations = () => {
     <section className="py-20 md:py-28">
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-          <motion.h2
+          <motion.div
             custom={0}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
-            className="text-2xl md:text-3xl font-bold tracking-tight text-foreground max-w-md"
+            className="max-w-md"
           >
-            Connesso alle piattaforme di cui si fidano le aziende globali
-          </motion.h2>
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-primary mb-2">Discover integrations</p>
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+              Make Jetwidget even more powerful by using these tools
+            </h2>
+          </motion.div>
 
           <motion.div
             custom={1}
