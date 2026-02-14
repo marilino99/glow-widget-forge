@@ -1,22 +1,20 @@
 
-## Fix: ridurre larghezza immagine e correggere estensione inferiore
+
+## Miglioramento allineamento UI della colonna sinistra dell'Hero
 
 ### Problema
-L'immagine a destra occupa troppo spazio orizzontale (`flex-1` = 50%) e in basso non si estende correttamente fino all'altezza del pulsante "Start for Free". Il `self-stretch` funziona solo se il contenitore flex ha un'altezza definita dal contenuto piu' alto, ma `object-cover` puo' tagliare l'immagine in modo non ottimale.
+Con `md:items-stretch` il contenitore sinistro si estende per tutta l'altezza, ma il contenuto testuale resta ancorato in alto con spaziature troppo ampie tra badge, titolo, sottotitolo e pulsante. Il risultato e' un layout "disperso" che non comunica coesione visiva.
 
 ### Soluzione
+Centrare verticalmente il blocco di testo nella colonna sinistra usando `justify-center`, e ridurre leggermente gli spazi tra gli elementi per un aspetto piu' compatto e professionale.
+
+### Dettaglio tecnico
 
 **File: `src/components/landing/Hero.tsx`**
 
-1. **Ridurre la larghezza dell'immagine**: Cambiare il wrapper destro da `flex-1` a `flex-1 max-w-md lg:max-w-lg` per limitare la larghezza massima e bilanciare meglio con il testo a sinistra.
+1. **Colonna sinistra** (riga 35): aggiungere `flex flex-col justify-center` per centrare verticalmente il contenuto rispetto all'immagine a destra
+2. **Spaziatura badge** (riga 42): ridurre `mb-6` a `mb-4` per avvicinare il badge al titolo
+3. **Spaziatura sottotitolo** (riga 72): ridurre `mt-5` a `mt-4`
+4. **Spaziatura CTA** (riga 84): ridurre `mt-10` a `mt-8` per compattare il blocco
 
-2. **Correggere l'estensione inferiore**: Usare `object-contain` invece di `object-cover` sull'immagine per evitare che venga tagliata, e mantenere `h-full` per riempire lo spazio verticale disponibile fino all'altezza del pulsante. Rimuovere `self-stretch` dal wrapper e usare invece `md:items-stretch` sul contenitore padre per garantire che entrambe le colonne abbiano la stessa altezza.
-
-### Modifiche specifiche
-
-- Contenitore padre: da `md:items-start` a `md:items-stretch` per forzare altezza uguale
-- Wrapper immagine: da `flex-1 self-stretch` a `flex-1 max-w-md lg:max-w-lg` (rimuovere `self-stretch` perche' il padre gestisce l'altezza)
-- Immagine: da `object-cover` a `object-contain` per mostrare tutta l'immagine senza tagli
-
-### File modificato
-- `src/components/landing/Hero.tsx`
+Queste modifiche renderanno la colonna sinistra visivamente piu' bilanciata e coesa, con gli elementi raggruppati in modo armonico al centro verticale.
