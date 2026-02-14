@@ -178,6 +178,10 @@ const Features = () => {
           })}
         </div>
       </div>
+      {/* Bottom glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[300px] pointer-events-none -z-0" aria-hidden>
+        <div className="w-full h-full rounded-full bg-gradient-to-r from-[hsl(270,80%,50%)] via-[hsl(310,70%,50%)] to-[hsl(25,95%,55%)] opacity-40 blur-[120px] translate-y-1/2" />
+      </div>
     </section>
   );
 };

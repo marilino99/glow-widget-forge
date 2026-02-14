@@ -1,37 +1,32 @@
 
 
-## Semplificazione Aurora — 3 strati netti
+## Problem
+The purple glow around the hero image is barely visible — it appears as a thin line rather than a dramatic diffused aura. Two issues:
 
-Il problema attuale: ci sono troppi layer sovrapposti con gradienti radiali posizionati ai lati, che creano un effetto confuso. La soluzione e' semplificare drasticamente a **3 strati chiari e concentrici**, tutti centrati orizzontalmente, che creano una progressione netta dall'esterno verso il centro.
+1. **CSS Compatibility**: The modern `hsl(270, 80%, 60% / 0.6)` alpha syntax may not render correctly in all browsers. The safer `hsla()` syntax should be used instead.
+2. **Intensity**: Even if rendering, the values are too subtle for a white background. The glow needs to be significantly more dramatic.
 
-### Struttura visiva (dall'alto/esterno verso il centro)
+## Solution
 
-```text
-+------------------------------------------+
-|          #110c29 (scuro solido)           |  <-- Strato 1: base scura
-|                                          |
-|   ~~~~ viola scuro #3b1d8e ~~~~          |  <-- Strato 2: anello viola
-|                                          |
-|      ===== bianco puro =====             |  <-- Strato 3: centro bianco
-|        "One place for everything"        |
-|                                          |
-+------------------------------------------+
+### File: `src/index.css` (line 243)
+
+Replace the current `box-shadow` with much more intense values using `hsla()` syntax for full browser compatibility:
+
+```css
+.hero-image-border {
+  box-shadow: 
+    0 0 30px 10px hsla(270, 80%, 60%, 0.7),
+    0 0 60px 20px hsla(270, 75%, 55%, 0.5),
+    0 0 100px 40px hsla(270, 70%, 55%, 0.35),
+    0 0 160px 60px hsla(270, 65%, 50%, 0.2),
+    0 0 220px 80px hsla(270, 60%, 50%, 0.1);
+}
 ```
 
-### Cosa cambia in `DashboardPreview.tsx`
+This adds 5 layers with:
+- Higher opacities (0.7 for the innermost layer)
+- Larger spread values (up to 80px spread, 220px blur)
+- `hsla()` syntax for full browser support
 
-Si rimuovono tutti i 6 layer attuali e si sostituiscono con **3 layer semplici**, tutti con gradienti centrati (`at 50% 50%`):
-
-1. **Strato 1 — Base scura**: `#110c29` solido in alto, sfuma verso il basso con un `linear-gradient`. Copre la parte superiore della sezione, uguale al colore di Features.
-
-2. **Strato 2 — Alone viola**: Un singolo `radial-gradient` ellittico centrato che va da `#5b21b6` (viola intenso) a trasparente. Crea un anello/alone viola attorno alla zona centrale. Niente blur eccessivo, cosi' il confine e' visibile.
-
-3. **Strato 3 — Centro bianco**: Un `radial-gradient` ellittico centrato che va da `#ffffff` solido al centro a trasparente verso l'esterno. Questo copre la zona delle scritte con bianco puro.
-
-### Dettagli tecnici
-
-- Niente piu' gradienti posizionati ai lati (6%/94%, 14%/86% ecc.) — tutto centrato
-- Blur ridotto (max 20-25px) per mantenere i confini netti tra gli strati
-- Il testo resta bianco (`text-white`) perche' lo sfondo bianco e' dietro/sotto, ma il testo e' nella zona di transizione dove il viola e' ancora visibile. Se necessario si aggiustera' il colore del testo dopo il test visivo
-- Nessuna modifica al contenuto (testo, immagine, animazioni)
+No changes needed in Hero.tsx — the overflow-visible is already in place.
 
