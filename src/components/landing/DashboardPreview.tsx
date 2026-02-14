@@ -4,12 +4,12 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
-      {/* Layer 1: Dark violet base — full width, fading down */}
+      {/* Layer 1: Dark violet base — matches Features bg, fading down */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[700px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[800px]"
         aria-hidden
         style={{
-          background: "linear-gradient(to bottom, #1a0f3c 0%, transparent 100%)",
+          background: "linear-gradient(to bottom, #110c29 0%, #110c29 5%, #1a0f3c 15%, transparent 100%)",
         }}
       />
       {/* Layer 2: Left purple glow blob */}
