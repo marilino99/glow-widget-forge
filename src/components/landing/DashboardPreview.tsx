@@ -3,8 +3,12 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 
 const DashboardPreview = () => {
   return (
-    <section id="dashboard" className="relative px-6 py-24">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-muted/30 via-muted/50 to-muted/30" />
+    <section id="dashboard" className="relative px-6 pb-24 pt-0 overflow-hidden">
+      {/* Purple-to-background gradient fade from features section */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[500px]" style={{
+        background: "linear-gradient(to bottom, #110c29 0%, rgba(17,12,41,0.7) 25%, rgba(17,12,41,0.3) 50%, transparent 100%)"
+      }} />
+      <div className="pointer-events-none absolute inset-0 -z-20 bg-background" />
 
       <div className="mx-auto max-w-6xl">
         <motion.div
@@ -12,13 +16,13 @@ const DashboardPreview = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center"
+          className="text-center pt-24"
         >
           <span className="text-sm font-medium uppercase tracking-widest text-primary">Dashboard</span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
             One place for everything
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-xl text-white/60">
             Manage all your widgets, conversations, and analytics from a single intuitive dashboard.
           </p>
         </motion.div>
