@@ -669,20 +669,32 @@ const WidgetPreviewPanel = ({
               <div className="absolute inset-0 bg-slate-50">
                 <div className="h-full w-full bg-white p-8 space-y-5">
                   {/* Header placeholder */}
-                  <div className="h-10 w-48 rounded-lg bg-slate-200/80" />
+                  <div className="h-10 w-1/4 rounded-lg bg-slate-200/80" />
+                  {/* Nav bar */}
+                  <div className="flex gap-4">
+                    <div className="h-3 w-16 rounded-md bg-slate-200/80" />
+                    <div className="h-3 w-16 rounded-md bg-slate-200/80" />
+                    <div className="h-3 w-16 rounded-md bg-slate-200/80" />
+                    <div className="h-3 w-16 rounded-md bg-slate-200/80" />
+                  </div>
+                  {/* Hero block */}
+                  <div className="mt-6 h-48 w-full rounded-xl bg-slate-200/80" />
                   {/* Text lines */}
-                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
-                  <div className="h-3 w-3/4 max-w-sm rounded-md bg-slate-200/80" />
-                  {/* Main content block */}
-                  <div className="mt-4 h-32 w-full max-w-xl rounded-xl bg-slate-200/80" />
-                  {/* More text lines */}
-                  <div className="h-3 w-full max-w-md rounded-md bg-slate-200/80" />
-                  <div className="h-3 w-2/3 max-w-xs rounded-md bg-slate-200/80" />
+                  <div className="h-4 w-3/4 rounded-md bg-slate-200/80" />
+                  <div className="h-4 w-1/2 rounded-md bg-slate-200/80" />
+                  <div className="h-3 w-full rounded-md bg-slate-100/80" />
+                  <div className="h-3 w-5/6 rounded-md bg-slate-100/80" />
                   {/* Card grid */}
-                  <div className="mt-4 grid grid-cols-3 gap-3 max-w-xl">
-                    <div className="h-20 rounded-xl bg-slate-200/80" />
-                    <div className="h-20 rounded-xl bg-slate-200/80" />
-                    <div className="h-20 rounded-xl bg-slate-200/80" />
+                  <div className="mt-6 grid grid-cols-3 gap-4 w-full">
+                    <div className="h-32 rounded-xl bg-slate-200/80" />
+                    <div className="h-32 rounded-xl bg-slate-200/80" />
+                    <div className="h-32 rounded-xl bg-slate-200/80" />
+                  </div>
+                  {/* Footer area */}
+                  <div className="mt-6 flex gap-4">
+                    <div className="h-3 w-20 rounded-md bg-slate-100/80" />
+                    <div className="h-3 w-20 rounded-md bg-slate-100/80" />
+                    <div className="h-3 w-20 rounded-md bg-slate-100/80" />
                   </div>
                 </div>
               </div>
