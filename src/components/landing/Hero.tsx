@@ -30,7 +30,7 @@ const Hero = () => {
         }}
       />
 
-      <div className="mx-auto flex max-w-7xl flex-col items-start gap-12 md:flex-row md:items-start md:gap-16">
+      <div className="mx-auto flex max-w-7xl flex-col items-start gap-12 md:flex-row md:items-stretch md:gap-16">
         {/* Left side — text content */}
         <div className="flex-1 text-left">
           {/* Badge */}
@@ -101,7 +101,7 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="relative flex-1 self-stretch flex flex-col"
+          className="relative flex-1 max-w-md lg:max-w-lg flex flex-col"
         >
           {/* Animated glow border */}
           <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden>
@@ -150,7 +150,7 @@ const Hero = () => {
           <img 
             src={widgetPreview} 
             alt="Jetwidget widget preview showing chat, FAQ and contact features" 
-            className="relative z-10 w-full h-full object-cover rounded-2xl border border-border/60 shadow-2xl shadow-primary/10"
+            className="relative z-10 w-full h-full object-contain rounded-2xl border border-border/60 shadow-2xl shadow-primary/10"
           />
         </motion.div>
       </div>
