@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { AvatarGroup } from "@/components/ui/avatar-group";
+import wixLogo from "@/assets/logo-wix.png";
 
 const platformAvatars = [
   {
@@ -19,7 +20,7 @@ const platformAvatars = [
     label: "HubSpot",
   },
   {
-    src: "https://cdn.worldvectorlogo.com/logos/wix-2.svg",
+    src: wixLogo,
     label: "Wix",
   },
   {
