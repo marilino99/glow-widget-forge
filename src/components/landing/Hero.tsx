@@ -83,7 +83,7 @@ const Hero = () => {
             variants={fadeUp}
             className="mt-10 flex items-center gap-5"
           >
-            <Button size="lg" className="h-14 gap-2 rounded-full px-10 text-base font-bold shadow-lg shadow-primary/25" asChild>
+            <Button size="lg" className="h-14 gap-2 rounded-full px-10 text-base font-bold shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/40" asChild>
               <a href="/signup">
                 Start for Free
                 <ArrowRight className="h-4 w-4" />
