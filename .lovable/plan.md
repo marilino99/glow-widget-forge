@@ -1,20 +1,22 @@
 
 
-## Miglioramento allineamento UI della colonna sinistra dell'Hero
+## Move Liquid Glass Effect to Inner Image Wrapper
 
-### Problema
-Con `md:items-stretch` il contenitore sinistro si estende per tutta l'altezza, ma il contenuto testuale resta ancorato in alto con spaziature troppo ampie tra badge, titolo, sottotitolo e pulsante. Il risultato e' un layout "disperso" che non comunica coesione visiva.
+The glass styling (border, backdrop-blur, shadow, background) will be transferred from the outer container to the inner `div` that wraps the image. The outer container becomes a plain wrapper that only holds the animated glows.
 
-### Soluzione
-Centrare verticalmente il blocco di testo nella colonna sinistra usando `justify-center`, e ridurre leggermente gli spazi tra gli elementi per un aspetto piu' compatto e professionale.
+### Changes in `src/components/landing/Hero.tsx`
 
-### Dettaglio tecnico
+**Outer container (line ~113):** Remove glass styles, keep only basic layout:
+- From: `rounded-3xl border border-white/[0.15] bg-white/[0.06] p-1.5 backdrop-blur-xl shadow-[...]`
+- To: `h-full` (just a layout wrapper)
 
-**File: `src/components/landing/Hero.tsx`**
+**Inner glass highlight overlay (lines ~115-118):** Move inside the image wrapper instead.
 
-1. **Colonna sinistra** (riga 35): aggiungere `flex flex-col justify-center` per centrare verticalmente il contenuto rispetto all'immagine a destra
-2. **Spaziatura badge** (riga 42): ridurre `mb-6` a `mb-4` per avvicinare il badge al titolo
-3. **Spaziatura sottotitolo** (riga 72): ridurre `mt-5` a `mt-4`
-4. **Spaziatura CTA** (riga 84): ridurre `mt-10` a `mt-8` per compattare il blocco
+**Image wrapper (line ~120):** Apply the full liquid glass effect:
+- From: `relative rounded-2xl overflow-hidden bg-background/80`
+- To: `relative rounded-2xl overflow-hidden border border-white/[0.15] bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_20px_60px_-15px_rgba(0,0,0,0.3)]`
 
-Queste modifiche renderanno la colonna sinistra visivamente piu' bilanciata e coesa, con gli elementi raggruppati in modo armonico al centro verticale.
+The glass highlight gradients (the `from-white/[0.08]` and `from-white/[0.04]` overlays) will also move inside the image wrapper.
+
+The animated glow blobs stay in the same position behind everything. The visual border radius stays `rounded-2xl` as requested.
+
