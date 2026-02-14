@@ -4,66 +4,31 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
-      {/* Layer 1: Solid dark base matching Features */}
+      {/* Strato 1: Base scura solida */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[400px]"
-        aria-hidden
-        style={{ background: "#110c29" }}
-      />
-      {/* Layer 2: Dark-to-transparent fade */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-[300px] h-[500px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[500px]"
         aria-hidden
         style={{
-          background: "linear-gradient(to bottom, #110c29 0%, transparent 100%)",
+          background: "linear-gradient(to bottom, #110c29 0%, #110c29 40%, transparent 100%)",
         }}
       />
-      {/* Layer 3: Aurora — dark violet streaks to the sides */}
+      {/* Strato 2: Alone viola centrato */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[50px] h-[600px]"
+        className="pointer-events-none absolute inset-x-0 top-[80px] h-[600px]"
         aria-hidden
         style={{
-          background: `
-            radial-gradient(ellipse 40% 50% at 6% 12%, #110c29 0%, #1a0f3a 60%, transparent 100%),
-            radial-gradient(ellipse 40% 50% at 94% 12%, #110c29 0%, #1a0f3a 60%, transparent 100%)
-          `,
-          filter: "blur(30px)",
-          opacity: 1,
-        }}
-      />
-      {/* Layer 4: Aurora — medium violet transition */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-[200px] h-[550px]"
-        aria-hidden
-        style={{
-          background: `
-            radial-gradient(ellipse 50% 55% at 14% 18%, #5b21b6 0%, #7c3aed 55%, transparent 100%),
-            radial-gradient(ellipse 50% 55% at 86% 18%, #5b21b6 0%, #7c3aed 55%, transparent 100%)
-          `,
-          filter: "blur(40px)",
+          background: "radial-gradient(ellipse 70% 60% at 50% 40%, #5b21b6 0%, #3b1d8e 40%, transparent 70%)",
+          filter: "blur(20px)",
           opacity: 0.9,
         }}
       />
-      {/* Layer 5: Aurora — light violet glow bridging to white */}
+      {/* Strato 3: Centro bianco puro */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[320px] h-[500px]"
+        className="pointer-events-none absolute inset-x-0 top-[80px] h-[600px]"
         aria-hidden
         style={{
-          background: `
-            radial-gradient(ellipse 60% 55% at 20% 22%, #8b5cf6 0%, #c4b5fd 55%, transparent 100%),
-            radial-gradient(ellipse 60% 55% at 80% 22%, #8b5cf6 0%, #c4b5fd 55%, transparent 100%)
-          `,
-          filter: "blur(50px)",
-          opacity: 0.75,
-        }}
-      />
-      {/* Layer 6: Central white wash */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-[100px] h-[750px]"
-        aria-hidden
-        style={{
-          background: "radial-gradient(ellipse 85% 70% at 50% 45%, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 18%, rgba(255,255,255,0.9) 32%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.1) 65%, transparent 80%)",
-          filter: "blur(12px)",
+          background: "radial-gradient(ellipse 45% 40% at 50% 40%, #ffffff 0%, #ffffff 30%, rgba(255,255,255,0.6) 55%, transparent 75%)",
+          filter: "blur(8px)",
         }}
       />
 
