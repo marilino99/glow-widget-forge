@@ -1,22 +1,21 @@
 
 
-## Move Liquid Glass Effect to Inner Image Wrapper
+## Effetto gradiente viola sulla headline Hero
 
-The glass styling (border, backdrop-blur, shadow, background) will be transferred from the outer container to the inner `div` that wraps the image. The outer container becomes a plain wrapper that only holds the animated glows.
+Applicare un gradiente testo sulla headline "Widgets that turn visitors into customers", passando dal colore scuro (foreground) al viola, ispirandosi all'immagine di riferimento dove alcune lettere sfumano gradualmente nel viola.
 
-### Changes in `src/components/landing/Hero.tsx`
+### Cosa cambia
 
-**Outer container (line ~113):** Remove glass styles, keep only basic layout:
-- From: `rounded-3xl border border-white/[0.15] bg-white/[0.06] p-1.5 backdrop-blur-xl shadow-[...]`
-- To: `h-full` (just a layout wrapper)
+La headline attualmente ha la parola "customers" con un gradiente grigio. Il nuovo effetto applichera un gradiente che parte dal colore scuro del testo e sfuma progressivamente verso il viola (coerente con il glow e il pulsante CTA), distribuito su tutta la headline invece che solo sull'ultima parola.
 
-**Inner glass highlight overlay (lines ~115-118):** Move inside the image wrapper instead.
+### Dettaglio tecnico
 
-**Image wrapper (line ~120):** Apply the full liquid glass effect:
-- From: `relative rounded-2xl overflow-hidden bg-background/80`
-- To: `relative rounded-2xl overflow-hidden border border-white/[0.15] bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_20px_60px_-15px_rgba(0,0,0,0.3)]`
+**File: `src/components/landing/Hero.tsx`**
 
-The glass highlight gradients (the `from-white/[0.08]` and `from-white/[0.04]` overlays) will also move inside the image wrapper.
-
-The animated glow blobs stay in the same position behind everything. The visual border radius stays `rounded-2xl` as requested.
+- Rimuovere lo `<span>` separato per "customers" con il suo gradiente grigio
+- Applicare all'intero `<h1>` un gradiente testo via Tailwind:
+  - `bg-gradient-to-r from-foreground via-foreground to-[hsl(270,80%,55%)]`
+  - `bg-clip-text text-transparent`
+- Il gradiente partira dal colore scuro (foreground) sulla sinistra e sfumera verso il viola sulla destra, creando lo stesso effetto della reference image
+- Il viola utilizzato (`hsl(270,80%,55%)`) e lo stesso gia presente nei glow blob, mantenendo coerenza visiva
 
