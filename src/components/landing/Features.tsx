@@ -1,63 +1,184 @@
-import { Palette, Clock, BarChart3, Code2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: Palette,
-    title: "Visual Customization",
+    number: 1,
+    title: "Drag & Drop Builder",
     description:
-      "Design pixel-perfect popups with colors, fonts, layouts, and shadows that match your brand.",
+      "Create widgets visually with our intuitive builder. No code needed — just drag, drop, and publish. Customize every detail in real-time with instant preview.",
+    mockup: (
+      <div className="space-y-3">
+        <div className="rounded-xl bg-white p-5 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-900">Components</span>
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-900 text-white text-xs">+</div>
+          </div>
+          <div className="space-y-2.5">
+            {["Chat Widget", "Contact Form", "Survey"].map((item) => (
+              <div key={item} className="flex items-center gap-3 rounded-lg border border-gray-100 px-3 py-2.5">
+                <div className="h-4 w-4 rounded bg-primary/20" />
+                <span className="text-sm text-gray-700">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-xl bg-white/80 px-4 py-3 shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">Preview</span>
+            <span className="rounded bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">Live</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
-    icon: Clock,
-    title: "Smart Triggers",
+    number: 2,
+    title: "Real-time Analytics & Insights",
     description:
-      "Show popups at the right moment—on scroll, after delay, or when visitors are about to leave.",
+      "Track conversations, response times, and visitor engagement with detailed dashboards. Automated notifications and intelligent scheduling help you stay on top of every metric.",
+    mockup: (
+      <div className="space-y-3">
+        <div className="rounded-xl bg-white p-5 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-900">Deadlines</span>
+            <span className="rounded border border-gray-200 px-2 py-0.5 text-[10px] text-gray-500">May 2</span>
+          </div>
+          <div className="space-y-2">
+            {[
+              { label: "Campaign Launch", sub: "Tomorrow", color: "bg-purple-400" },
+              { label: "Report Due", sub: "In 2 days", color: "bg-blue-400" },
+              { label: "Review Meeting", sub: "Tuesday, May 16", color: "bg-green-400" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2.5">
+                <div className={`h-4 w-4 shrink-0 rounded ${item.color}`} />
+                <div>
+                  <p className="text-sm font-medium text-gray-800">{item.label}</p>
+                  <p className="text-[11px] text-gray-400">{item.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
-    icon: BarChart3,
-    title: "A/B Testing",
+    number: 3,
+    title: "Reports & Data Always Ready",
     description:
-      "Test different designs and products to discover what converts best for your audience.",
-  },
-  {
-    icon: Code2,
-    title: "Easy Embed",
-    description:
-      "Copy one line of code and your widget works on any website, CMS, or e-commerce platform.",
+      "View real-time engagement data and costs, with monthly reports always up to date. Reduce dependency on external tools, eliminating errors and wasted time.",
+    mockup: (
+      <div className="flex gap-3">
+        <div className="flex-1 rounded-xl bg-white p-5 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-sm font-semibold text-gray-900">Engagement</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-400 text-xs">↓</div>
+          </div>
+          <div className="mb-2 text-lg font-bold text-primary">32,527</div>
+          <div className="flex items-end gap-1.5 h-20">
+            {[40, 55, 70, 85, 60, 45].map((h, i) => (
+              <div
+                key={i}
+                className="flex-1 rounded-t bg-primary/20 transition-all"
+                style={{ height: `${h}%` }}
+              />
+            ))}
+          </div>
+          <div className="mt-1.5 flex justify-between text-[9px] text-gray-400">
+            {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((m) => (
+              <span key={m}>{m}</span>
+            ))}
+          </div>
+        </div>
+        <div className="w-28 rounded-xl bg-white p-4 shadow-sm">
+          <span className="text-xs font-semibold text-gray-900">Stats</span>
+          <div className="mt-3 space-y-3">
+            {[
+              { label: "Active", val: "196K" },
+              { label: "Growth", val: "56%" },
+              { label: "Avg", val: "56.0" },
+            ].map((s) => (
+              <div key={s.label}>
+                <p className="text-[10px] text-gray-400">{s.label}</p>
+                <p className="text-sm font-semibold text-gray-800">{s.val}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
   },
 ];
 
 const Features = () => {
   return (
-    <section className="bg-muted/30 py-20 sm:py-28">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div className="mx-auto mb-16 max-w-2xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Everything you need to boost sales
+    <section id="features" className="relative px-6 py-24 bg-[hsl(0,0%,8%)] text-white overflow-hidden">
+      <div className="relative z-10 mx-auto max-w-6xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center relative"
+        >
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden>
+            <div className="w-[90%] h-[120%] rounded-full bg-gradient-to-r from-[hsl(270,80%,50%)] via-[hsl(310,70%,50%)] to-[hsl(25,95%,55%)] opacity-50 blur-[100px]" />
+          </div>
+          <h2 className="relative text-3xl font-bold tracking-tight text-white md:text-5xl">
+            Everything you need,
+            <br />
+            <span className="text-white/50">nothing you don't</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
-            A complete toolkit for creating high-converting product recommendation widgets.
-          </p>
-        </div>
+        </motion.div>
 
-        {/* Feature grid */}
-        <div className="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="group rounded-2xl border border-border bg-card p-8 transition-all hover:border-primary/20 hover:shadow-lg"
-            >
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <feature.icon className="h-6 w-6" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold text-foreground">
-                {feature.title}
-              </h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </div>
-          ))}
+        {/* Feature rows */}
+        <div className="mt-20 space-y-24">
+          {features.map((feature, i) => {
+            const isReversed = i % 2 !== 0;
+
+            return (
+              <motion.div
+                key={feature.number}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className={`grid items-center gap-12 md:grid-cols-2 ${isReversed ? "md:direction-rtl" : ""}`}
+              >
+                {/* Image / Mockup */}
+                <div className={`group relative rounded-2xl p-[1px] overflow-hidden ${isReversed ? "md:order-2" : ""}`}>
+                  {/* Rotating gradient border */}
+                  <div
+                    className="absolute inset-[-50%] animate-[spin_4s_linear_infinite]"
+                    style={{
+                      background: "conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.3) 25%, transparent 50%, rgba(255,255,255,0.15) 75%, transparent 100%)"
+                    }}
+                  />
+                  <div className="relative rounded-2xl bg-[hsl(0,0%,10%)] p-6">
+                    {feature.mockup}
+                  </div>
+                </div>
+
+                {/* Text */}
+                <div className={isReversed ? "md:order-1" : ""}>
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-sm font-semibold text-white">
+                    {feature.number}
+                  </span>
+                  <h3 className="mt-4 text-2xl font-bold text-white md:text-3xl">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-white/60 max-w-md">
+                    {feature.description}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
+      </div>
+      {/* Bottom glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[300px] pointer-events-none -z-0" aria-hidden>
+        <div className="w-full h-full rounded-full bg-gradient-to-r from-[hsl(270,80%,50%)] via-[hsl(310,70%,50%)] to-[hsl(25,95%,55%)] opacity-40 blur-[120px] translate-y-1/2" />
       </div>
     </section>
   );
