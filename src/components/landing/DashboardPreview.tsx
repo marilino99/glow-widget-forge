@@ -21,11 +21,11 @@ const DashboardPreview = () => {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <span className="text-sm font-medium uppercase tracking-widest text-white/70">Dashboard</span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
+          <span className="text-sm font-medium uppercase tracking-widest text-foreground/50">Dashboard</span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             One place for everything
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-white/60">
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
             Manage all your widgets, conversations, and analytics from a single intuitive dashboard.
           </p>
         </motion.div>
