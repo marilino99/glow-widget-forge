@@ -9,7 +9,7 @@ const DashboardPreview = () => {
         className="pointer-events-none absolute inset-0"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 140% 100% at 50% 100%, #ffffff 25%, #f5f3ff 45%, #8b5cf6 70%, #2e1065 88%, #110c29 100%)",
+          background: "radial-gradient(ellipse 140% 100% at 50% 100%, #ffffff 35%, #f5f3ff 52%, #8b5cf6 75%, #2e1065 90%, #110c29 100%)",
         }}
       />
 
