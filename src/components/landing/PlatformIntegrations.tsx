@@ -60,7 +60,7 @@ const PlatformIntegrations = () => {
             className="shrink-0"
           >
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-primary mb-1">Discover integrations</p>
-            <h2 className="text-lg md:text-xl font-bold tracking-tight text-foreground max-w-xs">
+            <h2 className="text-lg md:text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
               Make Jetwidget even more powerful by using these tools
             </h2>
           </motion.div>
