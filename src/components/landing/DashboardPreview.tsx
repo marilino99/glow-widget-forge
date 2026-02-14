@@ -24,8 +24,8 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 30% 50% at 12% 12%, #2e1065 0%, transparent 100%),
-            radial-gradient(ellipse 30% 50% at 88% 12%, #2e1065 0%, transparent 100%)
+            radial-gradient(ellipse 30% 50% at 12% 12%, #110c29 0%, transparent 100%),
+            radial-gradient(ellipse 30% 50% at 88% 12%, #110c29 0%, transparent 100%)
           `,
           filter: "blur(50px)",
           opacity: 0.7,
