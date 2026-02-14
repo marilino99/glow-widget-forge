@@ -192,3 +192,26 @@ All colors MUST be HSL.
     animation: scroll-up 20s linear infinite;
   }
 }
+
+.hero-gradient-text {
+  background-image: linear-gradient(
+    to bottom,
+    hsl(var(--foreground)) 0%,
+    hsl(var(--foreground)) 40%,
+    hsl(270, 60%, 55%) 75%,
+    hsl(270, 80%, 50%) 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .hero-gradient-text {
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--foreground)) 30%,
+      hsl(270, 30%, 65%) 60%,
+      hsl(270, 70%, 55%) 80%,
+      hsl(270, 80%, 50%) 100%
+    );
+  }
+}
