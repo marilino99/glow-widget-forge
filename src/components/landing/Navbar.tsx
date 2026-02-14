@@ -43,7 +43,7 @@ const navData = {
   ],
   auth: {
     login: { text: "Log in", url: "/login" },
-    signup: { text: "Get Started. It's FREE!", url: "/signup" },
+    signup: { text: "Get Started", url: "/signup" },
   },
 };
 
