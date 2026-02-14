@@ -4,27 +4,40 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
-      {/* Full atmosphere canvas — stacked radial glows */}
+      {/* Layer 1: Dark violet base — full width, fading down */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[700px]"
         aria-hidden
         style={{
-          background: `
-            radial-gradient(ellipse 45% 60% at 50% 35%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.3) 50%, transparent 80%),
-            radial-gradient(ellipse 70% 55% at 15% 20%, rgba(123,92,255,0.55) 0%, transparent 70%),
-            radial-gradient(ellipse 70% 55% at 85% 20%, rgba(123,92,255,0.55) 0%, transparent 70%),
-            radial-gradient(ellipse 90% 70% at 50% 10%, rgba(90,50,200,0.4) 0%, transparent 65%),
-            radial-gradient(ellipse 120% 80% at 50% 0%, #1a0f3c 0%, #110c29 30%, transparent 70%)
-          `,
+          background: "linear-gradient(to bottom, #1a0f3c 0%, transparent 100%)",
         }}
       />
-      {/* Extra soft blur glow orb — center light bloom */}
+      {/* Layer 2: Left purple glow blob */}
       <div
-        className="pointer-events-none absolute left-1/2 top-[15%] -translate-x-1/2 h-[500px] w-[600px]"
+        className="pointer-events-none absolute top-0 left-0 h-[650px] w-[45%]"
         aria-hidden
         style={{
-          background: "radial-gradient(circle, rgba(200,180,255,0.35) 0%, transparent 70%)",
-          filter: "blur(80px)",
+          background: "radial-gradient(ellipse 100% 80% at 20% 30%, #7b5cff 0%, transparent 70%)",
+          filter: "blur(60px)",
+          opacity: 0.6,
+        }}
+      />
+      {/* Layer 3: Right purple glow blob */}
+      <div
+        className="pointer-events-none absolute top-0 right-0 h-[650px] w-[45%]"
+        aria-hidden
+        style={{
+          background: "radial-gradient(ellipse 100% 80% at 80% 30%, #7b5cff 0%, transparent 70%)",
+          filter: "blur(60px)",
+          opacity: 0.6,
+        }}
+      />
+      {/* Layer 4: Center bright fade — creates the light "window" in the middle */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-[200px] h-[600px]"
+        aria-hidden
+        style={{
+          background: "radial-gradient(ellipse 60% 55% at 50% 40%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 40%, transparent 70%)",
         }}
       />
 
