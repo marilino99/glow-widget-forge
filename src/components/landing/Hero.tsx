@@ -53,7 +53,8 @@ const Hero = () => {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-[2.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.25rem] bg-gradient-to-r from-foreground via-foreground to-[hsl(270,80%,55%)] bg-clip-text text-transparent"
+            className="text-[2.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.25rem] bg-clip-text text-transparent"
+            style={{ backgroundImage: "linear-gradient(to right, hsl(var(--foreground)) 0%, hsl(var(--foreground)) 30%, hsl(270,40%,75%) 60%, hsl(270,70%,60%) 100%)" }}
           >
             Widgets that turn
             <br />
