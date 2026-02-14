@@ -20,7 +20,7 @@ const DashboardPreview = () => {
       />
       {/* Layer 3: Aurora — dark violet streaks to the sides */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[250px] h-[600px]"
+        className="pointer-events-none absolute inset-x-0 top-[150px] h-[600px]"
         aria-hidden
         style={{
           background: `
