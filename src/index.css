@@ -159,24 +159,7 @@ All colors MUST be HSL.
 }
 
 /* Soft diffused glow behind */
-.wow-pill::after {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: inherit;
-  background: conic-gradient(
-    from var(--pill-glow-angle),
-    hsla(25, 95%, 55%, 0.15),
-    hsla(340, 85%, 55%, 0.1),
-    hsla(270, 80%, 58%, 0.15),
-    hsla(220, 90%, 58%, 0.1),
-    hsla(25, 95%, 55%, 0.15)
-  );
-  filter: blur(20px);
-  pointer-events: none;
-  z-index: -2;
-  animation: pillGlowRotate 4s linear infinite;
-}
+/* No outer glow */
 
 @keyframes pillGlowRotate {
   to { --pill-glow-angle: 360deg; }
