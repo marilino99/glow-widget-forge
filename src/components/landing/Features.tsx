@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 const features = [
   {
@@ -146,15 +147,16 @@ const Features = () => {
                 className={`grid items-center gap-12 md:grid-cols-2 ${isReversed ? "md:direction-rtl" : ""}`}
               >
                 {/* Image / Mockup */}
-                <div className={`group relative rounded-2xl p-[1px] overflow-hidden ${isReversed ? "md:order-2" : ""}`}>
-                  {/* Rotating gradient border */}
-                  <div
-                    className="absolute inset-[-50%] animate-[spin_4s_linear_infinite]"
-                    style={{
-                      background: "conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.3) 25%, transparent 50%, rgba(255,255,255,0.15) 75%, transparent 100%)"
-                    }}
+                <div className={`group relative rounded-2xl ${isReversed ? "md:order-2" : ""}`}>
+                  <GlowingEffect
+                    spread={40}
+                    glow
+                    disabled={false}
+                    proximity={64}
+                    inactiveZone={0.01}
+                    borderWidth={2}
                   />
-                  <div className="relative rounded-2xl bg-[hsl(0,0%,10%)] p-6">
+                  <div className="relative rounded-2xl bg-[hsl(0,0%,10%)] border border-white/10 p-6">
                     {feature.mockup}
                   </div>
                 </div>
