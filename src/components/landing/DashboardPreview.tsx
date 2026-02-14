@@ -24,11 +24,11 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 35% 50% at 10% 15%, #110c29 0%, transparent 100%),
-            radial-gradient(ellipse 35% 50% at 90% 15%, #110c29 0%, transparent 100%)
+            radial-gradient(ellipse 28% 40% at 8% 15%, #110c29 0%, transparent 100%),
+            radial-gradient(ellipse 28% 40% at 92% 15%, #110c29 0%, transparent 100%)
           `,
-          filter: "blur(50px)",
-          opacity: 0.7,
+          filter: "blur(60px)",
+          opacity: 0.45,
         }}
       />
       {/* Layer 4: Aurora — medium violet transition */}
