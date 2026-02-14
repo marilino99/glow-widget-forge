@@ -103,82 +103,58 @@ All colors MUST be HSL.
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 32px;
-  padding: 0 14px;
+  height: 36px;
+  padding: 0 18px;
   border-radius: 9999px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.7),
-    rgba(255, 255, 255, 0.35)
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #0f172a;
-  font-weight: 600;
-  font-size: 12px;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  font-size: 13px;
   text-decoration: none;
   isolation: isolate;
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.8),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.04),
-    0 4px 24px rgba(15, 23, 42, 0.08),
-    0 1px 2px rgba(15, 23, 42, 0.06);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 0 20px hsla(210, 80%, 60%, 0.12), 0 1px 3px hsla(0, 0%, 0%, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .wow-pill:hover {
   transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.04),
-    0 8px 32px rgba(15, 23, 42, 0.12),
-    0 2px 4px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 0 28px hsla(210, 80%, 60%, 0.18), 0 2px 6px hsla(0, 0%, 0%, 0.06);
 }
 
 .wow-pill::before {
   content: "";
   position: absolute;
-  inset: -2px;
-  padding: 2px;
+  inset: -1.5px;
+  padding: 1.5px;
   border-radius: inherit;
-  background: conic-gradient(
-    from var(--ring-angle, 0deg),
-    #3B82F6, #8B5CF6, #EC4899, #F97316, #22C55E, #3B82F6
+  background: linear-gradient(
+    135deg,
+    hsla(20, 85%, 60%, 0.6),
+    hsla(280, 70%, 55%, 0.4),
+    hsla(210, 80%, 55%, 0.5),
+    hsla(160, 60%, 50%, 0.3)
   );
-  animation: ringRotate 2.6s linear infinite;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  filter: saturate(1.15);
   pointer-events: none;
   z-index: -1;
-}
-
-@property --ring-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
 }
 
 .wow-pill::after {
   content: "";
   position: absolute;
-  inset: -8px;
+  inset: -6px;
   border-radius: inherit;
-  background: conic-gradient(
-    from var(--ring-angle, 0deg),
-    rgba(59,130,246,.45),
-    rgba(139,92,246,.45),
-    rgba(236,72,153,.45),
-    rgba(249,115,22,.45),
-    rgba(34,197,94,.35),
-    rgba(59,130,246,.45)
+  background: radial-gradient(
+    ellipse at center,
+    hsla(210, 80%, 60%, 0.15),
+    transparent 70%
   );
-  filter: blur(14px);
-  opacity: .55;
-  animation: ringRotate 2.6s linear infinite;
+  filter: blur(8px);
   pointer-events: none;
   z-index: -2;
 }
