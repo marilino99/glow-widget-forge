@@ -2,26 +2,31 @@
 
 ## Problem
 
-The purple glow (box-shadow) around the hero image is not visible because the parent `<section>` element in the Hero component has `overflow-hidden` applied, which clips any shadow that extends beyond the section boundaries.
+The purple rotating border is visible, but the diffused glow (box-shadow) around it is still not showing. Looking at the screenshot confirms this -- the border is sharp with no soft purple aura around it.
 
-**Line 18 in Hero.tsx:**
-```
-<section className="relative overflow-hidden px-6 pb-24 pt-10 md:pb-32 md:pt-16">
-```
-
-The `overflow-hidden` is there to contain the background blur effects (the decorative blobs), but it also clips the `box-shadow` on the hero image.
+The likely cause is that the `motion.div` wrapper (line 96-101) or the flex layout container may still be clipping the shadow. Additionally, box-shadow on a white background needs higher opacity to be visible.
 
 ## Solution
 
-Two changes are needed:
+Two changes:
 
-1. **Hero.tsx** - Remove `overflow-hidden` from the `<section>` tag and instead move it to the background effects container only (the div with the decorative blobs), so the glow on the image is no longer clipped.
+### 1. Hero.tsx - Add overflow-visible to parent containers
+- Add `overflow-visible` to the `motion.div` wrapper (line 101) to ensure box-shadow is not clipped by any parent
+- Optionally add padding to the parent flex container so the glow has space to render without being cut by padding/edges
 
-2. Specifically, change the section class from `overflow-hidden` to `overflow-x-clip` (or remove it entirely), which will prevent horizontal scrollbar from the blobs but still allow the vertical glow to be visible. Alternatively, move `overflow-hidden` to only the background blobs wrapper div.
+### 2. index.css - Increase glow intensity
+- Increase the box-shadow opacity and spread values to make them more visible on a white background
+- Use larger spread radius and higher alpha values
 
-## Technical Details
+### Technical Details
 
-- **File**: `src/components/landing/Hero.tsx`, line 18
-- Change: Replace `overflow-hidden` on the `<section>` with `overflow-x-clip` to only clip horizontal overflow (preventing scrollbar from blobs) while allowing the vertical box-shadow glow to render visibly.
-- The background blobs container (line 20) already has `overflow-hidden`, so horizontal containment is handled there too.
+**File: `src/components/landing/Hero.tsx`**
+- Line 101: Add `overflow-visible` to the motion.div class
+- Line 39 (parent flex container): Add some padding or overflow-visible to prevent clipping
+
+**File: `src/index.css`**
+- Increase `.hero-image-border` box-shadow values:
+  - First layer: `0 0 50px 5px hsl(270, 80%, 60% / 0.5)`
+  - Second layer: `0 0 100px 15px hsl(270, 70%, 55% / 0.3)`
+  - Third layer: `0 0 150px 25px hsl(270, 60%, 50% / 0.15)`
 
