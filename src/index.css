@@ -155,8 +155,8 @@ All colors MUST be HSL.
 }
 
 .wow-pill:hover::before {
-  inset: -3px;
-  padding: 3px;
+  inset: -2px;
+  padding: 2px;
   animation-duration: 1.5s;
   background: conic-gradient(
     from var(--pill-glow-angle),
