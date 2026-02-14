@@ -101,7 +101,7 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="relative flex-1"
+          className="relative flex-1 self-stretch flex flex-col"
         >
           {/* Animated glow border */}
           <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden>
@@ -150,7 +150,7 @@ const Hero = () => {
           <img 
             src={widgetPreview} 
             alt="Jetwidget widget preview showing chat, FAQ and contact features" 
-            className="relative z-10 w-full max-w-xl rounded-2xl border border-border/60 shadow-2xl shadow-primary/10"
+            className="relative z-10 w-full h-full object-cover rounded-2xl border border-border/60 shadow-2xl shadow-primary/10"
           />
         </motion.div>
       </div>
