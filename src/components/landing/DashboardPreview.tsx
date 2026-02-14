@@ -4,41 +4,41 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
-      {/* Layer 1: Dark violet base — matches Features bg, long gradual fade */}
+      {/* Layer 1: Full dark base from Features */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[900px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[600px]"
         aria-hidden
         style={{
-          background: "linear-gradient(to bottom, #110c29 0%, #110c29 8%, #15102e 20%, #1a1335 35%, transparent 100%)",
+          background: "linear-gradient(to bottom, #110c29 0%, #110c29 10%, transparent 100%)",
         }}
       />
-      {/* Layer 2: Left purple glow blob */}
+      {/* Layer 2: Left purple glow — wide, diffused */}
       <div
-        className="pointer-events-none absolute top-[100px] left-0 h-[600px] w-[45%]"
+        className="pointer-events-none absolute top-0 left-0 h-[700px] w-[55%]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 110% 80% at 20% 30%, #7b5cff 0%, #5a3fd4 25%, transparent 70%)",
-          filter: "blur(90px)",
-          opacity: 0.35,
+          background: "radial-gradient(ellipse 100% 100% at 0% 0%, #3b1f8e 0%, #2a1570 20%, transparent 65%)",
+          filter: "blur(60px)",
+          opacity: 0.7,
         }}
       />
-      {/* Layer 3: Right purple glow blob */}
+      {/* Layer 3: Right purple glow — wide, diffused */}
       <div
-        className="pointer-events-none absolute top-[100px] right-0 h-[600px] w-[45%]"
+        className="pointer-events-none absolute top-0 right-0 h-[700px] w-[55%]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 110% 80% at 80% 30%, #7b5cff 0%, #5a3fd4 25%, transparent 70%)",
-          filter: "blur(90px)",
-          opacity: 0.35,
+          background: "radial-gradient(ellipse 100% 100% at 100% 0%, #3b1f8e 0%, #2a1570 20%, transparent 65%)",
+          filter: "blur(60px)",
+          opacity: 0.7,
         }}
       />
-      {/* Layer 4: Center bright fade */}
+      {/* Layer 4: Center white wash — large, bright, low */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[180px] h-[700px]"
+        className="pointer-events-none absolute inset-x-0 top-[120px] h-[800px]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 70% 55% at 50% 40%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 25%, rgba(255,255,255,0.35) 50%, transparent 75%)",
-          filter: "blur(35px)",
+          background: "radial-gradient(ellipse 80% 65% at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 20%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.3) 60%, transparent 80%)",
+          filter: "blur(25px)",
         }}
       />
 
