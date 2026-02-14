@@ -880,7 +880,7 @@ const WidgetPreviewPanel = ({
                 {showBranding && (
                 <div className={`border-t py-2 text-center ${widgetBorder}`}>
                   <span className={`text-xs ${widgetSubtext}`}>
-                    Powered by <span className="font-medium">Widjet</span>
+                     Powered by <span className="font-medium">Jetwidget</span>
                   </span>
                 </div>
                 )}
@@ -964,7 +964,7 @@ const WidgetPreviewPanel = ({
                 {showBranding && (
                 <div className={`py-2 text-center shrink-0`}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                    Powered by <span className="font-medium">Widjet</span>
+                     Powered by <span className="font-medium">Jetwidget</span>
                   </span>
                 </div>
                 )}
@@ -1202,7 +1202,7 @@ const WidgetPreviewPanel = ({
                 {showBranding && (
                 <div className={`py-2 text-center shrink-0`}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                    Powered by <span className="font-medium">Widjet</span>
+                     Powered by <span className="font-medium">Jetwidget</span>
                   </span>
                 </div>
                 )}
@@ -1451,7 +1451,7 @@ const WidgetPreviewPanel = ({
                 {showBranding && (
                 <div className={`py-2 text-center shrink-0`}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                    Powered by <span className="font-medium">Widjet</span>
+                     Powered by <span className="font-medium">Jetwidget</span>
                   </span>
                 </div>
                 )}
@@ -1748,7 +1748,7 @@ const WidgetPreviewPanel = ({
                 {showBranding && (
                 <div className={`py-2 text-center shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                   <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                    Powered by <span className="font-medium">Widjet</span>
+                    Powered by <span className="font-medium">Jetwidget</span>
                   </span>
                 </div>
                 )}

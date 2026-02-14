@@ -205,13 +205,13 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
                   <div className="flex items-start justify-between gap-6">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-foreground">Widjet branding</span>
+                        <span className="text-sm font-semibold text-foreground">Jetwidget branding</span>
                         <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide" style={{ backgroundColor: 'rgba(217, 70, 239, 0.12)', color: '#D946EF' }}>
                           Pro
                         </span>
                       </div>
                       <p className="text-sm mt-1" style={{ color: '#898884' }}>
-                        Show "Powered by Widjet" on your widget.
+                        Show "Powered by Jetwidget" on your widget.
                       </p>
                     </div>
                     <Switch
@@ -307,7 +307,7 @@ const SettingsDialog = ({ open, onOpenChange, userEmail, language, onLanguageCha
               <div className="space-y-5">
                 <div>
                   <div className="flex items-center gap-2.5 mb-3">
-                    <h3 className="text-base font-bold text-foreground">Widjet plan</h3>
+                    <h3 className="text-base font-bold text-foreground">Jetwidget plan</h3>
                     <span
                       className="rounded-full px-2.5 py-0.5 text-xs font-medium"
                       style={{

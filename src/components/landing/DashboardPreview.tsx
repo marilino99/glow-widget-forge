@@ -194,7 +194,7 @@ const DashboardPreview = () => {
                       <span className="text-[9px]">Contact</span>
                     </div>
                   </div>
-                  <p className="pb-2 text-center text-[8px] text-white/30">Powered by Widjett</p>
+                  <p className="pb-2 text-center text-[8px] text-white/30">Powered by Jetwidget</p>
                 </div>
               </div>
             </div>
