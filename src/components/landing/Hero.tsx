@@ -32,14 +32,14 @@ const Hero = () => {
 
       <div className="mx-auto flex max-w-7xl flex-col items-start gap-12 md:flex-row md:items-stretch md:gap-16">
         {/* Left side — text content */}
-        <div className="flex-1 text-left">
+        <div className="flex-1 flex flex-col justify-center text-left">
           {/* Badge */}
           <motion.div
             custom={0}
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="mb-6"
+            className="mb-4"
           >
             <span className="wow-pill">
               <Sparkles className="h-3.5 w-3.5" />
@@ -69,7 +69,7 @@ const Hero = () => {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg"
+            className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg"
           >
             Build beautiful support & sales widgets. Customize every detail.
             Publish to any website with one line of code.
@@ -81,7 +81,7 @@ const Hero = () => {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="mt-10 flex items-center gap-5"
+            className="mt-8 flex items-center gap-5"
           >
             <Button size="lg" className="h-14 gap-2 rounded-full px-10 text-base font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:bg-primary hover:scale-105 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple-500/40" asChild>
               <a href="/signup">
