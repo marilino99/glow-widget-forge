@@ -24,37 +24,37 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 30% 50% at 12% 12%, #110c29 0%, transparent 100%),
-            radial-gradient(ellipse 30% 50% at 88% 12%, #110c29 0%, transparent 100%)
+            radial-gradient(ellipse 40% 60% at 10% 10%, #110c29 0%, transparent 100%),
+            radial-gradient(ellipse 40% 60% at 90% 10%, #110c29 0%, transparent 100%)
           `,
-          filter: "blur(50px)",
-          opacity: 0.7,
+          filter: "blur(40px)",
+          opacity: 1,
         }}
       />
       {/* Layer 4: Aurora — medium violet transition */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[50px] h-[650px]"
+        className="pointer-events-none absolute inset-x-0 top-[40px] h-[650px]"
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 40% 45% at 18% 22%, #5b21b6 0%, transparent 100%),
-            radial-gradient(ellipse 40% 45% at 82% 22%, #5b21b6 0%, transparent 100%)
+            radial-gradient(ellipse 50% 55% at 15% 20%, #5b21b6 0%, transparent 100%),
+            radial-gradient(ellipse 50% 55% at 85% 20%, #5b21b6 0%, transparent 100%)
           `,
-          filter: "blur(80px)",
-          opacity: 0.45,
+          filter: "blur(60px)",
+          opacity: 0.7,
         }}
       />
       {/* Layer 5: Aurora — light violet glow bridging to white */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[80px] h-[600px]"
+        className="pointer-events-none absolute inset-x-0 top-[70px] h-[600px]"
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 50% 45% at 22% 32%, #8b5cf6 0%, transparent 100%),
-            radial-gradient(ellipse 50% 45% at 78% 32%, #8b5cf6 0%, transparent 100%)
+            radial-gradient(ellipse 55% 50% at 22% 30%, #8b5cf6 0%, transparent 100%),
+            radial-gradient(ellipse 55% 50% at 78% 30%, #8b5cf6 0%, transparent 100%)
           `,
-          filter: "blur(90px)",
-          opacity: 0.3,
+          filter: "blur(70px)",
+          opacity: 0.55,
         }}
       />
       {/* Layer 6: Central white wash */}
