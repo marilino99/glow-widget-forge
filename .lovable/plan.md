@@ -1,30 +1,35 @@
 
 
-## Effetto Gradiente Arcobaleno sul Pulsante Publish
+## Sfumatura graduale dei loghi "Trusted by"
 
-Aggiungere un bordo animato con gradiente arcobaleno che scorre intorno al pulsante "Publish" quando ci si passa sopra col mouse.
+Il problema attuale e' che il gradiente della maschera CSS passa da trasparente a nero troppo velocemente (in solo il 15% della larghezza), creando un taglio netto visibile.
 
-### Come funziona
+### Soluzione
 
-Il pulsante verra' avvolto in un contenitore con un gradiente conico arcobaleno che ruota continuamente. Al passaggio del mouse, il gradiente diventa visibile creando l'effetto di un bordo luminoso che scorre.
+Modificare il `mask-image` nel file `src/components/ui/logos3.tsx` con un gradiente molto piu' morbido che usa piu' stop intermedi per creare una dissolvenza progressiva su entrambi i lati:
 
-### Modifiche
+- **Sinistra (uscita)**: i loghi svaniscono gradualmente partendo da circa il 25% della larghezza fino al bordo sinistro
+- **Destra (entrata)**: i loghi appaiono gradualmente dal bordo destro fino a circa il 75% della larghezza
 
-**1. `tailwind.config.ts`**
-- Aggiungere una keyframe `rainbow-spin` che ruota il gradiente di 360 gradi
-- Aggiungere l'animazione corrispondente `animate-rainbow-spin`
+### Dettaglio tecnico
 
-**2. `src/components/builder/AddToWebsiteDialog.tsx`**
-- Sostituire il semplice `<Button>` con una struttura a due livelli:
-  - Un `div` esterno con il gradiente conico arcobaleno (`conic-gradient`) che ruota tramite l'animazione
-  - Il `Button` interno posizionato sopra, con sfondo solido che lascia visibile solo un sottile bordo arcobaleno (circa 2px)
-- Il gradiente e' visibile solo al hover del contenitore esterno (opacity 0 di default, opacity 100 al hover)
-- Transizione fluida di opacita' per un effetto di comparsa morbido
+Sostituire l'attuale gradiente lineare con uno piu' articolato con stop multipli:
 
-### Dettagli tecnici
+```
+transparent 0%,
+rgba(0,0,0,0.1) 5%,
+rgba(0,0,0,0.3) 10%,
+rgba(0,0,0,0.6) 15%,
+black 25%,
+black 75%,
+rgba(0,0,0,0.6) 85%,
+rgba(0,0,0,0.3) 90%,
+rgba(0,0,0,0.1) 95%,
+transparent 100%
+```
 
-- Il gradiente conico usa i colori: rosso, arancione, giallo, verde, ciano, blu, viola, e torna al rosso
-- La rotazione completa avviene in circa 2 secondi per un effetto fluido ma non troppo veloce
-- Il pulsante interno mantiene il suo stile originale (colori primary, dimensione sm)
-- Il bordo arcobaleno ha uno spessore di circa 2px grazie al padding del contenitore esterno
+Questo crea una curva di opacita' molto piu' dolce, eliminando completamente il "taglio" netto su entrambi i lati.
+
+### File modificato
+- `src/components/ui/logos3.tsx` - aggiornamento della proprieta' `maskImage` e `WebkitMaskImage`
 
