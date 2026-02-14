@@ -106,24 +106,24 @@ const Hero = () => {
           {/* Animated glow border */}
           <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden>
             <motion.div
-              className="absolute -top-2 -left-2 w-28 h-28 rounded-full bg-[hsla(270,80%,55%,0.5)] blur-[35px]"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.7, 0.5] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute -top-2 -right-2 w-28 h-28 rounded-full bg-[hsla(280,75%,50%,0.45)] blur-[35px]"
-              animate={{ scale: [1.1, 1, 1.1], opacity: [0.5, 0.65, 0.5] }}
+              className="absolute -top-6 -left-6 w-44 h-44 rounded-full bg-[hsla(270,80%,55%,0.4)] blur-[60px]"
+              animate={{ scale: [1, 1.25, 1], opacity: [0.4, 0.65, 0.4] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="absolute -bottom-2 -left-2 w-28 h-28 rounded-full bg-[hsla(260,80%,60%,0.4)] blur-[35px]"
-              animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="absolute -top-6 -right-6 w-44 h-44 rounded-full bg-[hsla(280,75%,50%,0.35)] blur-[60px]"
+              animate={{ scale: [1.1, 1, 1.1], opacity: [0.35, 0.6, 0.35] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="absolute -bottom-2 -right-2 w-28 h-28 rounded-full bg-[hsla(290,70%,50%,0.45)] blur-[35px]"
-              animate={{ scale: [1.1, 1, 1.1], opacity: [0.45, 0.65, 0.45] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -bottom-6 -left-6 w-44 h-44 rounded-full bg-[hsla(260,80%,60%,0.35)] blur-[60px]"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.35, 0.55, 0.35] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            />
+            <motion.div
+              className="absolute -bottom-6 -right-6 w-44 h-44 rounded-full bg-[hsla(290,70%,50%,0.35)] blur-[60px]"
+              animate={{ scale: [1.1, 1, 1.1], opacity: [0.35, 0.6, 0.35] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
             />
           </div>
 
