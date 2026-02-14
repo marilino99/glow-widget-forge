@@ -128,13 +128,15 @@ All colors MUST be HSL.
   inset: -1.5px;
   padding: 1.5px;
   border-radius: inherit;
-  background: linear-gradient(
-    135deg,
+  background: conic-gradient(
+    from var(--ring-angle, 0deg),
     hsla(20, 85%, 60%, 0.6),
-    hsla(280, 70%, 55%, 0.4),
+    hsla(280, 70%, 55%, 0.5),
     hsla(210, 80%, 55%, 0.5),
-    hsla(160, 60%, 50%, 0.3)
+    hsla(160, 60%, 50%, 0.4),
+    hsla(20, 85%, 60%, 0.6)
   );
+  animation: ringRotate 4s linear infinite;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -142,6 +144,12 @@ All colors MUST be HSL.
   mask-composite: exclude;
   pointer-events: none;
   z-index: -1;
+}
+
+@property --ring-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 .wow-pill::after {
