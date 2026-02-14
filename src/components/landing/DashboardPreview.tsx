@@ -14,22 +14,22 @@ const DashboardPreview = () => {
       />
       {/* Layer 2: Left purple glow blob */}
       <div
-        className="pointer-events-none absolute top-0 left-0 h-[650px] w-[45%]"
+        className="pointer-events-none absolute top-0 left-0 h-[750px] w-[50%]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 100% 80% at 20% 30%, #7b5cff 0%, transparent 70%)",
-          filter: "blur(60px)",
-          opacity: 0.6,
+          background: "radial-gradient(ellipse 120% 90% at 15% 25%, #7b5cff 0%, #5a3fd4 30%, transparent 75%)",
+          filter: "blur(80px)",
+          opacity: 0.45,
         }}
       />
       {/* Layer 3: Right purple glow blob */}
       <div
-        className="pointer-events-none absolute top-0 right-0 h-[650px] w-[45%]"
+        className="pointer-events-none absolute top-0 right-0 h-[750px] w-[50%]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 100% 80% at 80% 30%, #7b5cff 0%, transparent 70%)",
-          filter: "blur(60px)",
-          opacity: 0.6,
+          background: "radial-gradient(ellipse 120% 90% at 85% 25%, #7b5cff 0%, #5a3fd4 30%, transparent 75%)",
+          filter: "blur(80px)",
+          opacity: 0.45,
         }}
       />
       {/* Layer 4: Center bright fade — creates the light "window" in the middle */}
