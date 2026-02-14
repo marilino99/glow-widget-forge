@@ -1,32 +1,32 @@
 
 
 ## Problem
+The purple glow around the hero image is barely visible — it appears as a thin line rather than a dramatic diffused aura. Two issues:
 
-The purple rotating border is visible, but the diffused glow (box-shadow) around it is still not showing. Looking at the screenshot confirms this -- the border is sharp with no soft purple aura around it.
-
-The likely cause is that the `motion.div` wrapper (line 96-101) or the flex layout container may still be clipping the shadow. Additionally, box-shadow on a white background needs higher opacity to be visible.
+1. **CSS Compatibility**: The modern `hsl(270, 80%, 60% / 0.6)` alpha syntax may not render correctly in all browsers. The safer `hsla()` syntax should be used instead.
+2. **Intensity**: Even if rendering, the values are too subtle for a white background. The glow needs to be significantly more dramatic.
 
 ## Solution
 
-Two changes:
+### File: `src/index.css` (line 243)
 
-### 1. Hero.tsx - Add overflow-visible to parent containers
-- Add `overflow-visible` to the `motion.div` wrapper (line 101) to ensure box-shadow is not clipped by any parent
-- Optionally add padding to the parent flex container so the glow has space to render without being cut by padding/edges
+Replace the current `box-shadow` with much more intense values using `hsla()` syntax for full browser compatibility:
 
-### 2. index.css - Increase glow intensity
-- Increase the box-shadow opacity and spread values to make them more visible on a white background
-- Use larger spread radius and higher alpha values
+```css
+.hero-image-border {
+  box-shadow: 
+    0 0 30px 10px hsla(270, 80%, 60%, 0.7),
+    0 0 60px 20px hsla(270, 75%, 55%, 0.5),
+    0 0 100px 40px hsla(270, 70%, 55%, 0.35),
+    0 0 160px 60px hsla(270, 65%, 50%, 0.2),
+    0 0 220px 80px hsla(270, 60%, 50%, 0.1);
+}
+```
 
-### Technical Details
+This adds 5 layers with:
+- Higher opacities (0.7 for the innermost layer)
+- Larger spread values (up to 80px spread, 220px blur)
+- `hsla()` syntax for full browser support
 
-**File: `src/components/landing/Hero.tsx`**
-- Line 101: Add `overflow-visible` to the motion.div class
-- Line 39 (parent flex container): Add some padding or overflow-visible to prevent clipping
-
-**File: `src/index.css`**
-- Increase `.hero-image-border` box-shadow values:
-  - First layer: `0 0 50px 5px hsl(270, 80%, 60% / 0.5)`
-  - Second layer: `0 0 100px 15px hsl(270, 70%, 55% / 0.3)`
-  - Third layer: `0 0 150px 25px hsl(270, 60%, 50% / 0.15)`
+No changes needed in Hero.tsx — the overflow-visible is already in place.
 
