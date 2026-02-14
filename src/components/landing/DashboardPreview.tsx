@@ -4,49 +4,12 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 const DashboardPreview = () => {
   return (
     <section id="dashboard" className="relative px-6 pt-44 pb-24 overflow-hidden">
-      {/* Layer 1: Solid dark base matching Features */}
+      {/* Aurora gradient: dark top (#110c29) → purple → white bottom */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[500px]"
+        className="pointer-events-none absolute inset-0"
         aria-hidden
         style={{
-          background: "#110c29",
-        }}
-      />
-      {/* Layer 2: Dark-to-transparent vertical fade below the solid block */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-[350px] h-[500px]"
-        aria-hidden
-        style={{
-          background: "linear-gradient(to bottom, #110c29 0%, transparent 100%)",
-        }}
-      />
-      {/* Layer 3: Purple glow — left side */}
-      <div
-        className="pointer-events-none absolute top-[80px] left-0 h-[700px] w-[50%]"
-        aria-hidden
-        style={{
-          background: "radial-gradient(ellipse 80% 90% at 5% 30%, #6b3fa0 0%, #4a2d80 30%, transparent 70%)",
-          filter: "blur(60px)",
-          opacity: 0.9,
-        }}
-      />
-      {/* Layer 4: Purple glow — right side */}
-      <div
-        className="pointer-events-none absolute top-[80px] right-0 h-[700px] w-[50%]"
-        aria-hidden
-        style={{
-          background: "radial-gradient(ellipse 80% 90% at 95% 30%, #6b3fa0 0%, #4a2d80 30%, transparent 70%)",
-          filter: "blur(60px)",
-          opacity: 0.9,
-        }}
-      />
-      {/* Layer 5: Large white center wash */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-[130px] h-[750px]"
-        aria-hidden
-        style={{
-          background: "radial-gradient(ellipse 90% 75% at 50% 45%, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 20%, rgba(255,255,255,0.9) 35%, rgba(255,255,255,0.5) 55%, rgba(255,255,255,0.15) 68%, transparent 80%)",
-          filter: "blur(15px)",
+          background: "radial-gradient(ellipse 140% 100% at 50% 100%, #ffffff 15%, #f5f3ff 35%, #8b5cf6 65%, #2e1065 85%, #110c29 100%)",
         }}
       />
 
