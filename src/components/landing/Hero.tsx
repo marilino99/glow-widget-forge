@@ -30,7 +30,7 @@ const Hero = () => {
         }}
       />
 
-      <div className="mx-auto flex max-w-7xl flex-col items-start gap-12 md:flex-row md:items-center md:gap-16">
+      <div className="mx-auto flex max-w-7xl flex-col items-start gap-12 md:flex-row md:items-start md:gap-16">
         {/* Left side — text content */}
         <div className="flex-1 text-left">
           {/* Badge */}
