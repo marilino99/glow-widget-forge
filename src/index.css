@@ -98,6 +98,12 @@ All colors MUST be HSL.
 }
 
 /* Glass Pill */
+@property --pill-glow-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .wow-pill {
   position: relative;
   display: inline-flex;
@@ -112,30 +118,61 @@ All colors MUST be HSL.
   font-size: 13px;
   text-decoration: none;
   isolation: isolate;
-  border: 1px solid hsl(var(--border));
-  box-shadow: 0 0 20px hsla(210, 80%, 60%, 0.12), 0 1px 3px hsla(0, 0%, 0%, 0.04);
+  border: none;
+  box-shadow: 0 0 20px hsla(270, 80%, 60%, 0.15), 0 1px 3px hsla(0, 0%, 0%, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .wow-pill:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 28px hsla(210, 80%, 60%, 0.18), 0 2px 6px hsla(0, 0%, 0%, 0.06);
+  box-shadow: 0 0 28px hsla(270, 80%, 60%, 0.25), 0 2px 6px hsla(0, 0%, 0%, 0.06);
 }
 
+/* Animated gradient border */
+.wow-pill::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--pill-glow-angle),
+    hsla(270, 80%, 55%, 0.6),
+    hsla(200, 90%, 55%, 0.4),
+    hsla(330, 80%, 55%, 0.3),
+    hsla(270, 80%, 55%, 0.6)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+  animation: pillGlowRotate 4s linear infinite;
+}
 
+/* Soft outer glow */
 .wow-pill::after {
   content: "";
   position: absolute;
-  inset: -6px;
+  inset: -8px;
   border-radius: inherit;
-  background: radial-gradient(
-    ellipse at center,
-    hsla(210, 80%, 60%, 0.15),
-    transparent 70%
+  background: conic-gradient(
+    from var(--pill-glow-angle),
+    hsla(270, 80%, 55%, 0.12),
+    hsla(200, 90%, 55%, 0.08),
+    hsla(330, 80%, 55%, 0.06),
+    hsla(270, 80%, 55%, 0.12)
   );
-  filter: blur(8px);
+  filter: blur(10px);
   pointer-events: none;
   z-index: -2;
+  animation: pillGlowRotate 4s linear infinite;
+}
+
+@keyframes pillGlowRotate {
+  to { --pill-glow-angle: 360deg; }
 }
 
 @keyframes ringRotate {
