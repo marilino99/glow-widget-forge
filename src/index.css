@@ -127,12 +127,12 @@ All colors MUST be HSL.
   transform: translateY(-1px);
 }
 
-/* Thick animated gradient border */
+/* Animated gradient border - thin, thickens on hover */
 .wow-pill::before {
   content: "";
   position: absolute;
-  inset: -3px;
-  padding: 3px;
+  inset: -1.5px;
+  padding: 1.5px;
   border-radius: inherit;
   background: conic-gradient(
     from var(--pill-glow-angle),
@@ -150,6 +150,12 @@ All colors MUST be HSL.
   pointer-events: none;
   z-index: -1;
   animation: pillGlowRotate 4s linear infinite;
+  transition: inset 0.3s ease, padding 0.3s ease;
+}
+
+.wow-pill:hover::before {
+  inset: -3px;
+  padding: 3px;
 }
 
 /* Soft diffused glow behind */
