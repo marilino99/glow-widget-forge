@@ -357,7 +357,14 @@ const WidgetPreviewPanel = ({
 
   const handleLoadUrl = async (urlToLoad?: string) => {
     const url = urlToLoad || previewUrl;
-    if (!url.trim()) return;
+    if (!url.trim()) {
+      // Reset to skeleton placeholder when URL is cleared
+      setProxyHtml(null);
+      setScreenshotUrl(null);
+      setUseScreenshotFallback(false);
+      setLoadError(null);
+      return;
+    }
     setIsLoading(true);
     setLoadError(null);
     setProxyHtml(null);
