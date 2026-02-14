@@ -3,13 +3,21 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 
 const DashboardPreview = () => {
   return (
-    <section id="dashboard" className="relative px-6 pt-32 pb-24 overflow-hidden">
-      {/* Curved gradient transition from Features (#110c29) */}
+    <section id="dashboard" className="relative px-6 pt-40 pb-24 overflow-hidden">
+      {/* Deep violet base covering top area */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[600px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[900px]"
         aria-hidden
         style={{
-          background: "radial-gradient(ellipse 130% 90% at 50% 0%, #110c29 0%, transparent 65%)",
+          background: "linear-gradient(to bottom, #110c29 0%, #110c29 15%, transparent 100%)",
+        }}
+      />
+      {/* Purple glow blob for curved fade effect */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[900px]"
+        aria-hidden
+        style={{
+          background: "radial-gradient(ellipse 100% 70% at 50% 15%, hsl(270, 80%, 25%) 0%, transparent 70%)",
         }}
       />
 
