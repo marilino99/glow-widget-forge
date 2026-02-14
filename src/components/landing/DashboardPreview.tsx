@@ -38,6 +38,7 @@ const DashboardPreview = () => {
         aria-hidden
         style={{
           background: "radial-gradient(ellipse 75% 60% at 50% 38%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 25%, rgba(255,255,255,0.4) 50%, transparent 75%)",
+          filter: "blur(30px)",
         }}
       />
 
