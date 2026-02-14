@@ -34,7 +34,7 @@ const DashboardPreview = () => {
       />
       {/* Layer 4: Center bright fade */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-[200px] h-[700px]"
+        className="pointer-events-none absolute inset-x-0 top-[280px] h-[700px]"
         aria-hidden
         style={{
           background: "radial-gradient(ellipse 70% 55% at 50% 40%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 25%, rgba(255,255,255,0.35) 50%, transparent 75%)",
