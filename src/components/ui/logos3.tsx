@@ -52,6 +52,7 @@ const Logos3 = ({
           <Carousel
             opts={{ loop: true }}
             plugins={[AutoScroll({ playOnInit: true })]}
+            className="[&>div]:!overflow-visible"
           >
             <CarouselContent className="ml-0">
               {logos.map((logo) => (
