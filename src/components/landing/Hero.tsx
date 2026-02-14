@@ -54,7 +54,7 @@ const Hero = () => {
             animate="visible"
             variants={fadeUp}
             className="text-[2.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.25rem] bg-clip-text text-transparent"
-            style={{ backgroundImage: "linear-gradient(to right, hsl(var(--foreground)) 0%, hsl(var(--foreground)) 15%, hsl(270,20%,45%) 40%, hsl(270,50%,55%) 65%, hsl(270,75%,52%) 85%, hsl(270,80%,50%) 100%)" }}
+            style={{ backgroundImage: "linear-gradient(to right, hsl(var(--foreground)) 0%, hsl(var(--foreground)) 30%, hsl(270,30%,65%) 60%, hsl(270,70%,55%) 80%, hsl(270,80%,50%) 100%)" }}
           >
             Widgets that turn
             <br />
