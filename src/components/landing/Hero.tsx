@@ -111,17 +111,17 @@ const Hero = () => {
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="absolute -top-2 -right-2 w-28 h-28 rounded-full bg-[hsla(25,95%,55%,0.5)] blur-[35px]"
+              className="absolute -top-2 -right-2 w-28 h-28 rounded-full bg-[hsla(280,75%,50%,0.45)] blur-[35px]"
               animate={{ scale: [1.1, 1, 1.1], opacity: [0.5, 0.65, 0.5] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              className="absolute -bottom-2 -left-2 w-28 h-28 rounded-full bg-[hsla(190,80%,50%,0.45)] blur-[35px]"
+              className="absolute -bottom-2 -left-2 w-28 h-28 rounded-full bg-[hsla(260,80%,60%,0.4)] blur-[35px]"
               animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
             />
             <motion.div
-              className="absolute -bottom-2 -right-2 w-28 h-28 rounded-full bg-[hsla(330,80%,55%,0.5)] blur-[35px]"
+              className="absolute -bottom-2 -right-2 w-28 h-28 rounded-full bg-[hsla(290,70%,50%,0.45)] blur-[35px]"
               animate={{ scale: [1.1, 1, 1.1], opacity: [0.45, 0.65, 0.45] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
             />
