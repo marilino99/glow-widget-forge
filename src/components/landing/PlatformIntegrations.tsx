@@ -48,19 +48,19 @@ const fadeUp = {
 
 const PlatformIntegrations = () => {
   return (
-    <section className="py-20 md:py-28">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+    <section className="py-12 md:py-16">
+      <div className="mx-auto max-w-4xl px-6">
+        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10">
           <motion.div
             custom={0}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
-            className="max-w-md"
+            className="shrink-0"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-primary mb-2">Discover integrations</p>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-primary mb-1">Discover integrations</p>
+            <h2 className="text-lg md:text-xl font-bold tracking-tight text-foreground max-w-xs">
               Make Jetwidget even more powerful by using these tools
             </h2>
           </motion.div>
@@ -76,7 +76,7 @@ const PlatformIntegrations = () => {
             {platforms.map((platform, i) => (
               <div
                 key={platform.name}
-                className="flex items-center justify-center h-16 w-16 md:h-20 md:w-20 rounded-full bg-card border border-border shadow-sm"
+                className="flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-card border border-border shadow-sm"
                 style={{ zIndex: platforms.length - i }}
               >
                 {platform.icon}
