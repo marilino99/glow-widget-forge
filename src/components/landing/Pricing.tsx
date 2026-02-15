@@ -14,7 +14,7 @@ const plans = [
     cta: "Get Started",
     highlighted: false,
     featuresLabel: "KEY FEATURES:",
-    features: ["1 widget", "100 conversations/mo", "Basic analytics", "Community support"],
+    features: ["1 widget", "Customizable theme & colors", "Basic analytics", "Community support"],
   },
   {
     name: "Pro",
