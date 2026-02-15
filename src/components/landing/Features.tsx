@@ -36,9 +36,9 @@ const features = [
   },
   {
     number: 2,
-    title: "Quick Answers (FAQ)",
+    title: "FAQ Template",
     description:
-      "Help visitors find answers instantly with a built-in FAQ section. Add your most common questions and let customers help themselves — fewer support tickets, happier customers.",
+      "Reduce support requests by up to 40% with a smart FAQ widget. Add unlimited questions, customize the design to match your brand, and give every visitor instant self-service — 24/7, on any page.",
     mockup: (
       <div className="flex items-center justify-center">
         <img
