@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import featureProductCards from "@/assets/feature-product-cards.png";
 
 const features = [
   {
@@ -69,43 +70,12 @@ const features = [
     description:
       "View real-time engagement data and costs, with monthly reports always up to date. Reduce dependency on external tools, eliminating errors and wasted time.",
     mockup: (
-      <div className="flex gap-3">
-        <div className="flex-1 rounded-xl bg-white p-5 shadow-sm">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-900">Engagement</span>
-            <div className="flex h-6 w-6 items-center justify-center rounded border border-gray-200 text-gray-400 text-xs">↓</div>
-          </div>
-          <div className="mb-2 text-lg font-bold text-primary">32,527</div>
-          <div className="flex items-end gap-1.5 h-20">
-            {[40, 55, 70, 85, 60, 45].map((h, i) => (
-              <div
-                key={i}
-                className="flex-1 rounded-t bg-primary/20 transition-all"
-                style={{ height: `${h}%` }}
-              />
-            ))}
-          </div>
-          <div className="mt-1.5 flex justify-between text-[9px] text-gray-400">
-            {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((m) => (
-              <span key={m}>{m}</span>
-            ))}
-          </div>
-        </div>
-        <div className="w-28 rounded-xl bg-white p-4 shadow-sm">
-          <span className="text-xs font-semibold text-gray-900">Stats</span>
-          <div className="mt-3 space-y-3">
-            {[
-              { label: "Active", val: "196K" },
-              { label: "Growth", val: "56%" },
-              { label: "Avg", val: "56.0" },
-            ].map((s) => (
-              <div key={s.label}>
-                <p className="text-[10px] text-gray-400">{s.label}</p>
-                <p className="text-sm font-semibold text-gray-800">{s.val}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="flex items-center justify-center">
+        <img
+          src={featureProductCards}
+          alt="Product cards carousel with stainless steel bottle and promotional cards"
+          className="w-full max-w-sm rounded-xl"
+        />
       </div>
     ),
   },
