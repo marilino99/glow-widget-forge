@@ -50,7 +50,7 @@ const Footer = () => {
                 your visitors?
               </h2>
               <p className="mx-auto mt-5 max-w-lg text-base text-white/70">
-                Join 2,000+ businesses already using Jetwidget to connect with their customers.
+                Join 2,000+ businesses already using Widjet to connect with their customers.
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button
@@ -83,7 +83,7 @@ const Footer = () => {
       <footer className="border-t border-border/50 px-6 py-12">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 md:flex-row">
           <span className="text-sm font-bold text-foreground">
-            jetwidget<span className="text-primary">.</span>
+            widjet<span className="text-primary">.</span>
           </span>
           <div className="flex gap-8">
             {["Privacy", "Terms", "Contact", "Blog"].map((link) => (
@@ -97,7 +97,7 @@ const Footer = () => {
             ))}
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Jetwidget
+            © {new Date().getFullYear()} Widjet
           </p>
         </div>
       </footer>
