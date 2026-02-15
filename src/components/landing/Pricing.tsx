@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Check, CircleCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const plans = [
@@ -59,6 +60,7 @@ const plans = [
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <section id="pricing" className="px-6 py-24">
@@ -229,6 +231,7 @@ const Pricing = () => {
                         : "bg-foreground text-background hover:bg-foreground/90 border-0"
                     )}
                     size="lg"
+                    onClick={plan.name === "Free" ? () => navigate("/signup") : undefined}
                   >
                     {plan.cta}
                   </Button>
