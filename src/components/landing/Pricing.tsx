@@ -14,7 +14,7 @@ const plans = [
     cta: "Get Started",
     highlighted: false,
     featuresLabel: "KEY FEATURES:",
-    features: ["1 widget", "Customizable theme & colors", "Contact card + WhatsApp integration", "FAQ section", "Community support"],
+    features: ["1 widget", "Customizable theme & colors", "Contact card + WhatsApp integration", "FAQ section", "24/7 support (limited time)"],
   },
   {
     name: "Pro",
