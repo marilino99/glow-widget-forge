@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import featureProductCards from "@/assets/feature-product-cards.png";
 import featureFaq from "@/assets/feature-faq.png";
+import featureBuilder from "@/assets/feature-builder.gif";
 
 const features = [
   {
@@ -10,27 +11,12 @@ const features = [
     description:
       "Create widgets visually with our intuitive builder. No code needed — just drag, drop, and publish. Customize every detail in real-time with instant preview.",
     mockup: (
-      <div className="space-y-3">
-        <div className="rounded-xl bg-white p-5 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-900">Components</span>
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-900 text-white text-xs">+</div>
-          </div>
-          <div className="space-y-2.5">
-            {["Chat Widget", "Contact Form", "Survey"].map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-lg border border-gray-100 px-3 py-2.5">
-                <div className="h-4 w-4 rounded bg-primary/20" />
-                <span className="text-sm text-gray-700">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="rounded-xl bg-white/80 px-4 py-3 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">Preview</span>
-            <span className="rounded bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">Live</span>
-          </div>
-        </div>
+      <div className="flex items-center justify-center">
+        <img
+          src={featureBuilder}
+          alt="Widget builder drag and drop interface demo"
+          className="w-full max-w-sm rounded-xl"
+        />
       </div>
     ),
   },
