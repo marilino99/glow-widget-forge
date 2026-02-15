@@ -51,9 +51,9 @@ const PlatformIntegrations = () => {
           variants={fadeUp}
           className="flex flex-col items-center gap-4"
         >
-          <p className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-xl md:text-2xl font-semibold text-foreground tracking-tight">
             Instant integration — more platforms coming very soon
-          </p>
+          </h3>
           <AvatarGroup
             avatars={platformAvatars}
             maxVisible={4}
