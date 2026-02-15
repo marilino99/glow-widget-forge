@@ -12,7 +12,7 @@ const plans = [
     annualPrice: 0,
     subtitle: "forever",
     description: "Perfect for trying things out",
-    cta: "Get Started",
+    cta: "Sign Up",
     highlighted: false,
     featuresLabel: "KEY FEATURES:",
     features: ["1 widget", "Customizable theme & colors", "Contact card + WhatsApp integration", "FAQ section", "Product carousel", "24/7 support (limited time)"],
