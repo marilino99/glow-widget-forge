@@ -7,7 +7,7 @@ import featureBuilder from "@/assets/feature-builder.gif";
 const features = [
   {
     number: 1,
-    title: "Fully Customizable Builder",
+    title: "Fully Customizable",
     description:
       "Design your perfect widget with a visual drag & drop editor. Change colors, fonts, layouts, inject custom CSS & JavaScript — full customization with zero coding. Preview every change in real time.",
     mockup: (
