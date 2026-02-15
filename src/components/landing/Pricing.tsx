@@ -19,7 +19,7 @@ const plans = [
   },
   {
     name: "Pro",
-    monthlyPrice: 29,
+    monthlyPrice: 19,
     annualPrice: 24,
     subtitle: "Per widget/month, billed monthly",
     description: "For growing businesses",
