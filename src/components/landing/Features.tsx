@@ -7,9 +7,9 @@ import featureBuilder from "@/assets/feature-builder.gif";
 const features = [
   {
     number: 1,
-    title: "Drag & Drop Builder",
+    title: "Fully Customizable Builder",
     description:
-      "Create widgets visually with our intuitive builder. No code needed — just drag, drop, and publish. Customize every detail in real-time with instant preview.",
+      "Design your perfect widget with a visual drag & drop editor. Change colors, fonts, layouts, inject custom CSS & JavaScript — full customization with zero coding. Preview every change in real time.",
     mockup: (
       <div className="flex items-center justify-center">
         <img
