@@ -49,7 +49,11 @@ const PlatformIntegrations = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={fadeUp}
+          className="flex flex-col items-center gap-4"
         >
+          <p className="text-sm font-medium text-muted-foreground">
+            Instant integration — more platforms coming very soon
+          </p>
           <AvatarGroup
             avatars={platformAvatars}
             maxVisible={4}
