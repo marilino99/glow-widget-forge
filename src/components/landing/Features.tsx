@@ -66,9 +66,9 @@ const features = [
   },
   {
     number: 3,
-    title: "Reports & Data Always Ready",
+    title: "Product Cards",
     description:
-      "View real-time engagement data and costs, with monthly reports always up to date. Reduce dependency on external tools, eliminating errors and wasted time.",
+      "Grab your visitors' attention with stunning product cards. Just paste a link to any product and we'll do the rest — beautiful cards, ready to convert in seconds.",
     mockup: (
       <div className="flex items-center justify-center">
         <img
