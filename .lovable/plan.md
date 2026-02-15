@@ -1,32 +1,24 @@
 
+# Miglioramento sezione Dashboard con glow e gradiente
 
-## Problem
-The purple glow around the hero image is barely visible — it appears as a thin line rather than a dramatic diffused aura. Two issues:
+## Obiettivo
+Rendere la sezione Dashboard visivamente piu impattante aggiungendo effetti di glow e gradiente attorno all'immagine, in linea con lo stile gia presente nella sezione Features (sfondo scuro + glow viola).
 
-1. **CSS Compatibility**: The modern `hsl(270, 80%, 60% / 0.6)` alpha syntax may not render correctly in all browsers. The safer `hsla()` syntax should be used instead.
-2. **Intensity**: Even if rendering, the values are too subtle for a white background. The glow needs to be significantly more dramatic.
+## Modifiche previste
 
-## Solution
+### `src/components/landing/DashboardPreview.tsx`
 
-### File: `src/index.css` (line 243)
+1. **Sfondo scuro** - Cambiare lo sfondo della sezione da chiaro/muted a un colore scuro (`#110c29`) come nella sezione Features, con testo bianco per coerenza visiva.
 
-Replace the current `box-shadow` with much more intense values using `hsla()` syntax for full browser compatibility:
+2. **Glow diffuso dietro l'immagine** - Aggiungere un blob di gradiente viola/indaco sfocato posizionato dietro l'immagine per creare un effetto luminoso che attiri l'attenzione.
 
-```css
-.hero-image-border {
-  box-shadow: 
-    0 0 30px 10px hsla(270, 80%, 60%, 0.7),
-    0 0 60px 20px hsla(270, 75%, 55%, 0.5),
-    0 0 100px 40px hsla(270, 70%, 55%, 0.35),
-    0 0 160px 60px hsla(270, 65%, 50%, 0.2),
-    0 0 220px 80px hsla(270, 60%, 50%, 0.1);
-}
-```
+3. **Bordo animato con gradiente** - Applicare all'immagine lo stesso stile `hero-image-border` gia definito in `index.css` (gradiente conico rotante viola con box-shadow glow), creando un wrapper con padding che funge da cornice luminosa animata.
 
-This adds 5 layers with:
-- Higher opacities (0.7 for the innermost layer)
-- Larger spread values (up to 80px spread, 220px blur)
-- `hsla()` syntax for full browser support
+4. **Ombra glow viola** - Sostituire l'attuale `shadow-primary/5` con un box-shadow viola piu intenso per rafforzare l'effetto.
 
-No changes needed in Hero.tsx — the overflow-visible is already in place.
+## Dettagli tecnici
 
+- Riutilizzo della classe CSS `hero-image-border` gia esistente in `index.css` (gradiente conico animato + box-shadow viola)
+- Struttura: wrapper div con `hero-image-border` + padding 2px + immagine con `rounded-2xl` interno
+- Blob glow di sfondo con `blur-[100px]` e gradiente viola/indaco dietro l'immagine
+- Nessun nuovo file CSS necessario, tutto basato su classi esistenti e Tailwind
