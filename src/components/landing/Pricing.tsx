@@ -32,6 +32,7 @@ const plans = [
       "Advanced analytics",
       "24/7 Priority support",
       "Custom branding",
+      "Widget size & position control",
       "Team collaboration (coming soon)",
     ],
   },
