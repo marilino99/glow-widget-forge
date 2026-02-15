@@ -63,13 +63,6 @@ const Footer = () => {
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="h-12 rounded-full border-white/30 bg-transparent px-8 text-base text-white hover:bg-white/10 hover:text-white"
-                >
-                  Book a Demo
-                </Button>
               </div>
               <p className="mt-6 text-sm text-white/40">
                 14 Days Free. No credit card required.
