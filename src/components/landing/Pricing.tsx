@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const plans = [
   {
@@ -60,7 +62,31 @@ const plans = [
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleProCheckout = async () => {
+    setLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/signup");
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { returnUrl: window.location.origin + "/checkout-success" },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section id="pricing" className="px-6 py-24">
@@ -233,7 +259,11 @@ const Pricing = () => {
                           : "bg-foreground text-background hover:bg-foreground/90 border-0"
                     )}
                     size="lg"
-                    onClick={plan.name === "Free" ? () => navigate("/signup") : undefined}
+                    onClick={
+                      plan.name === "Free" ? () => navigate("/signup") :
+                      plan.name === "Pro" ? handleProCheckout : undefined
+                    }
+                    disabled={plan.name === "Pro" && loading}
                   >
                     {plan.cta}
                   </Button>
