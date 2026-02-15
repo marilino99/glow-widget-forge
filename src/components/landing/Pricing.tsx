@@ -30,7 +30,7 @@ const plans = [
       "Unlimited widgets",
       "Unlimited conversations",
       "Advanced analytics",
-      "Priority support",
+      "24/7 Priority support",
       "Custom branding",
       "Team collaboration (coming soon)",
     ],
