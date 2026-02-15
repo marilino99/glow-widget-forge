@@ -23,7 +23,7 @@ const plans = [
     annualPrice: 24,
     subtitle: "Per widget/month, billed monthly",
     description: "For growing businesses",
-    cta: "Start Free Trial",
+    cta: "Get Started",
     highlighted: true,
     badge: "Popular",
     featuresLabel: "EVERYTHING IN FREE +",
