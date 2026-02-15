@@ -166,19 +166,19 @@ const Pricing = () => {
                 {isHighlighted && (
                   <>
                     <motion.div
-                      className="pointer-events-none absolute -top-1/4 -left-1/4 h-[80%] w-[60%] rounded-full opacity-30 blur-[80px]"
+                      className="pointer-events-none absolute -top-1/4 -left-1/4 h-[80%] w-[60%] rounded-full opacity-20 blur-[80px]"
                       style={{ background: "hsl(270,70%,50%)" }}
                       animate={{ x: [0, 50, 0], y: [0, 40, 0] }}
                       transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                     />
                     <motion.div
-                      className="pointer-events-none absolute -bottom-1/4 -right-1/4 h-[70%] w-[55%] rounded-full opacity-25 blur-[80px]"
+                      className="pointer-events-none absolute -bottom-1/4 -right-1/4 h-[70%] w-[55%] rounded-full opacity-15 blur-[80px]"
                       style={{ background: "hsl(25,95%,55%)" }}
                       animate={{ x: [0, -40, 0], y: [0, -30, 0] }}
                       transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                     />
                     <motion.div
-                      className="pointer-events-none absolute top-1/3 left-1/3 h-[50%] w-[40%] rounded-full opacity-20 blur-[70px]"
+                      className="pointer-events-none absolute top-1/3 left-1/3 h-[50%] w-[40%] rounded-full opacity-10 blur-[70px]"
                       style={{ background: "hsl(330,80%,55%)" }}
                       animate={{ x: [0, -30, 30, 0], y: [0, 20, -20, 0] }}
                       transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
@@ -225,7 +225,7 @@ const Pricing = () => {
 
                   <Button
                     className={cn(
-                      "mt-5 w-full rounded-lg",
+                      "relative z-10 mt-5 w-full rounded-lg",
                       isHighlighted
                         ? "bg-white text-black hover:bg-white/90 border-0"
                         : plan.name === "Free" || plan.name === "Business"
