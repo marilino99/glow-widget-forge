@@ -29,6 +29,7 @@ const plans = [
     features: [
       "Unlimited widgets",
       "Unlimited conversations",
+      "Widjet AI",
       "Advanced analytics",
       "24/7 Priority support",
       "Custom branding",
