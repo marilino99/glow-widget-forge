@@ -32,7 +32,7 @@ const plans = [
       "Advanced analytics",
       "Priority support",
       "Custom branding",
-      "Team collaboration",
+      "Team collaboration (coming soon)",
     ],
   },
   {
