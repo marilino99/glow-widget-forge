@@ -225,9 +225,9 @@ const Pricing = () => {
 
                   <Button
                     className={cn(
-                      "relative z-10 mt-5 w-full rounded-lg",
+                      "relative z-10 mt-5 w-full rounded-lg font-semibold transition-all duration-300",
                       isHighlighted
-                        ? "bg-white text-black hover:bg-white/90 border-0"
+                        ? "bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-[1.02]"
                         : plan.name === "Free" || plan.name === "Business"
                           ? "bg-background text-foreground border border-foreground hover:bg-muted"
                           : "bg-foreground text-background hover:bg-foreground/90 border-0"
