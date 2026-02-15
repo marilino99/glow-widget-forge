@@ -65,7 +65,7 @@ const Footer = () => {
                 </Button>
               </div>
               <p className="mt-6 text-sm text-white/40">
-                14 Days Free. No credit card required.
+                Free forever. No credit card required.
               </p>
             </motion.div>
           </div>
