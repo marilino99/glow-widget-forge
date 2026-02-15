@@ -5,8 +5,6 @@ import widjetLogo from "@/assets/widjet-logo.png";
 const navData = {
   logo: {
     url: "#",
-    src: widjetLogo,
-    alt: "Widjet logo",
     title: "widjet.",
   },
   menu: [
