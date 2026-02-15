@@ -228,7 +228,9 @@ const Pricing = () => {
                       "mt-5 w-full rounded-lg",
                       isHighlighted
                         ? "bg-white text-black hover:bg-white/90 border-0"
-                        : "bg-foreground text-background hover:bg-foreground/90 border-0"
+                        : plan.name === "Free"
+                          ? "bg-background text-foreground border border-border hover:bg-muted"
+                          : "bg-foreground text-background hover:bg-foreground/90 border-0"
                     )}
                     size="lg"
                     onClick={plan.name === "Free" ? () => navigate("/signup") : undefined}
