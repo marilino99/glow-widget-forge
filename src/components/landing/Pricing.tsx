@@ -28,7 +28,7 @@ const plans = [
     featuresLabel: "EVERYTHING IN FREE +",
     features: [
       "Unlimited widgets",
-      "5,000 conversations/mo",
+      "Unlimited conversations/mo",
       "Advanced analytics",
       "Priority support",
       "Custom branding",
