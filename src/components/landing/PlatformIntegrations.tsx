@@ -51,9 +51,14 @@ const PlatformIntegrations = () => {
           variants={fadeUp}
           className="flex flex-col items-center gap-4"
         >
-          <h3 className="text-xl md:text-2xl font-semibold text-foreground tracking-tight">
-            Instant integration — more platforms coming very soon
-          </h3>
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h3 className="text-xl md:text-2xl font-semibold text-foreground tracking-tight">
+              Instant integration — more platforms coming very soon
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Just copy the widget code and paste it into your site — works with any platform, no setup needed.
+            </p>
+          </div>
           <AvatarGroup
             avatars={platformAvatars}
             maxVisible={4}
