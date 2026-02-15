@@ -103,7 +103,7 @@ const Hero = () => {
           <div className="relative rounded-3xl overflow-hidden bg-background">
               <img 
                 src={widgetPreview} 
-                alt="Jetwidget widget preview showing chat, FAQ and contact features" 
+                alt="Widjet widget preview showing chat, FAQ and contact features" 
                 className="w-full h-full object-cover block"
               />
             </div>

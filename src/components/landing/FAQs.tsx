@@ -4,8 +4,8 @@ import { motion } from 'framer-motion'
 const faqItems = [
   {
     id: 'item-1',
-    question: 'What is Jetwidget and how does it work?',
-    answer: 'Jetwidget is a SaaS platform that lets you build beautiful support & sales widgets for your website. You design your widget in our visual editor, customize every detail, and publish it with a single line of code — no developers needed.',
+    question: 'What is Widjet and how does it work?',
+    answer: 'Widjet is a SaaS platform that lets you build beautiful support & sales widgets for your website. You design your widget in our visual editor, customize every detail, and publish it with a single line of code — no developers needed.',
   },
   {
     id: 'item-2',
@@ -15,12 +15,12 @@ const faqItems = [
   {
     id: 'item-3',
     question: 'Can I fully customize the look and feel?',
-    answer: 'Yes — colors, fonts, position, icons, animations, and even custom CSS are all configurable. On Pro and Business plans you can also remove the Jetwidget branding for a fully white-label experience.',
+    answer: 'Yes — colors, fonts, position, icons, animations, and even custom CSS are all configurable. On Pro and Business plans you can also remove the Widjet branding for a fully white-label experience.',
   },
   {
     id: 'item-4',
     question: 'How does the AI-powered response feature work?',
-    answer: 'Jetwidget\'s AI reads your knowledge base and automatically drafts replies to common visitor questions. It learns over time and can reduce your support workload by up to 60%, so your team can focus on complex issues.',
+    answer: 'Widjet\'s AI reads your knowledge base and automatically drafts replies to common visitor questions. It learns over time and can reduce your support workload by up to 60%, so your team can focus on complex issues.',
   },
   {
     id: 'item-5',
@@ -35,7 +35,7 @@ const faqItems = [
   {
     id: 'item-7',
     question: 'What kind of analytics do I get?',
-    answer: 'Jetwidget tracks conversation volume, response times, visitor satisfaction, and conversion events. Pro plans include advanced analytics with funnel breakdowns and exportable reports.',
+    answer: 'Widjet tracks conversation volume, response times, visitor satisfaction, and conversion events. Pro plans include advanced analytics with funnel breakdowns and exportable reports.',
   },
 ]
 
@@ -54,7 +54,7 @@ export default function FAQs() {
             Frequently Asked Questions
           </h2>
           <p className="mt-4 text-muted-foreground text-base md:text-lg">
-            Quick answers to the most common questions about Jetwidget.
+            Quick answers to the most common questions about Widjet.
           </p>
         </motion.div>
 
