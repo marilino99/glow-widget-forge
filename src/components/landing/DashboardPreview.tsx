@@ -34,7 +34,7 @@ const DashboardPreview = () => {
           </div>
 
           {/* Animated gradient border wrapper */}
-          <div className="relative hero-image-border rounded-2xl p-[2px]">
+          <div className="relative hero-image-border rounded-2xl p-[2px] transition-transform duration-300 hover:scale-[1.02]">
             <img
               src={dashboardImg}
               alt="Jetwidget dashboard showing widget builder with live preview and chat widget"
