@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import featureProductCards from "@/assets/feature-product-cards.png";
+import featureFaq from "@/assets/feature-faq.png";
 
 const features = [
   {
@@ -35,32 +36,16 @@ const features = [
   },
   {
     number: 2,
-    title: "Real-time Analytics & Insights",
+    title: "Quick Answers (FAQ)",
     description:
-      "Track conversations, response times, and visitor engagement with detailed dashboards. Automated notifications and intelligent scheduling help you stay on top of every metric.",
+      "Help visitors find answers instantly with a built-in FAQ section. Add your most common questions and let customers help themselves — fewer support tickets, happier customers.",
     mockup: (
-      <div className="space-y-3">
-        <div className="rounded-xl bg-white p-5 shadow-sm">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-900">Deadlines</span>
-            <span className="rounded border border-gray-200 px-2 py-0.5 text-[10px] text-gray-500">May 2</span>
-          </div>
-          <div className="space-y-2">
-            {[
-              { label: "Campaign Launch", sub: "Tomorrow", color: "bg-purple-400" },
-              { label: "Report Due", sub: "In 2 days", color: "bg-blue-400" },
-              { label: "Review Meeting", sub: "Tuesday, May 16", color: "bg-green-400" },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2.5">
-                <div className={`h-4 w-4 shrink-0 rounded ${item.color}`} />
-                <div>
-                  <p className="text-sm font-medium text-gray-800">{item.label}</p>
-                  <p className="text-[11px] text-gray-400">{item.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="flex items-center justify-center">
+        <img
+          src={featureFaq}
+          alt="FAQ accordion widget showing frequently asked questions"
+          className="w-full max-w-sm rounded-xl"
+        />
       </div>
     ),
   },
