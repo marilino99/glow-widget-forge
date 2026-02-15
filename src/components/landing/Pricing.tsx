@@ -229,7 +229,7 @@ const Pricing = () => {
                       isHighlighted
                         ? "bg-white text-black hover:bg-white/90 border-0"
                         : plan.name === "Free"
-                          ? "bg-background text-foreground border border-border hover:bg-muted"
+                          ? "bg-background text-foreground border border-foreground hover:bg-muted"
                           : "bg-foreground text-background hover:bg-foreground/90 border-0"
                     )}
                     size="lg"
