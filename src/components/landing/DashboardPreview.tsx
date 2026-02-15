@@ -3,9 +3,7 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 
 const DashboardPreview = () => {
   return (
-    <section id="dashboard" className="relative px-6 py-24">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-muted/30 via-muted/50 to-muted/30" />
-
+    <section id="dashboard" className="relative px-6 py-24 bg-[#110c29] text-white overflow-hidden">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -14,11 +12,11 @@ const DashboardPreview = () => {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <span className="text-sm font-medium uppercase tracking-widest text-primary">Dashboard</span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <span className="text-sm font-medium uppercase tracking-widest text-white/70">Dashboard</span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl">
             One place for everything
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-xl text-white/60">
             Manage all your widgets, conversations, and analytics from a single intuitive dashboard.
           </p>
         </motion.div>
@@ -28,14 +26,22 @@ const DashboardPreview = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-16"
+          className="relative mt-16"
         >
-          <img
-            src={dashboardImg}
-            alt="Jetwidget dashboard showing widget builder with live preview and chat widget"
-            className="w-full rounded-2xl border border-border/60 shadow-2xl shadow-primary/5"
-            loading="lazy"
-          />
+          {/* Glow blob behind image */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden>
+            <div className="w-[80%] h-[80%] rounded-full bg-gradient-to-r from-[hsl(270,80%,50%)] via-[hsl(310,70%,50%)] to-[hsl(250,85%,65%)] opacity-40 blur-[100px]" />
+          </div>
+
+          {/* Animated gradient border wrapper */}
+          <div className="relative hero-image-border rounded-2xl p-[2px]">
+            <img
+              src={dashboardImg}
+              alt="Jetwidget dashboard showing widget builder with live preview and chat widget"
+              className="w-full rounded-2xl"
+              loading="lazy"
+            />
+          </div>
         </motion.div>
       </div>
     </section>
