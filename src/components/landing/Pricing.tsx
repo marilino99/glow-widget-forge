@@ -228,7 +228,7 @@ const Pricing = () => {
                       "mt-5 w-full rounded-lg",
                       isHighlighted
                         ? "bg-white text-black hover:bg-white/90 border-0"
-                        : plan.name === "Free"
+                        : plan.name === "Free" || plan.name === "Business"
                           ? "bg-background text-foreground border border-foreground hover:bg-muted"
                           : "bg-foreground text-background hover:bg-foreground/90 border-0"
                     )}
