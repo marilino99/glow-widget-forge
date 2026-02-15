@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Check, CircleCheck, Sparkles } from "lucide-react";
+import { Check, CircleCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -254,9 +254,6 @@ const Pricing = () => {
                           <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 fill-muted-foreground/30 text-background" />
                         )}
                         {feature}
-                        {feature === "Widjet AI" && (
-                          <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-                        )}
                       </li>
                     ))}
                   </ul>
