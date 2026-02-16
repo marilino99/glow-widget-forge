@@ -14,7 +14,7 @@ import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
-import FeedbackPopover from "@/components/builder/FeedbackPopover";
+
 import { ProductCardData } from "@/types/productCard";
 import { LocalLink } from "@/components/builder/CustomLinksPanel";
 import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
@@ -283,7 +283,7 @@ const Builder = () => {
               <span className="text-sm">Saving...</span>
             </div>
           )}
-          <FeedbackPopover />
+          
           <Button 
             variant="ghost" 
             size="sm" 

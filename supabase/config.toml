@@ -9,9 +9,6 @@ verify_jwt = false
 [functions.send-chat-message]
 verify_jwt = false
 
-[functions.send-bug-report]
-verify_jwt = false
-
 [functions.track-widget-event]
 verify_jwt = false
 
