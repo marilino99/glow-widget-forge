@@ -298,28 +298,8 @@ const WidgetPreviewPanel = ({
   }, [activeWidget]);
 
   const handleSendBugReport = async () => {
-    if (!widgetId) return;
-    setIsSendingBugReport(true);
-    try {
-      const formData = new FormData();
-      formData.append("widget_id", widgetId);
-      formData.append("details", reportBugDetails);
-      formData.append("sender_name", reportBugName || "Anonymous");
-      formData.append("sender_email", reportBugEmail);
-      reportBugFiles.forEach((file, i) => formData.append(`file_${i}`, file));
-
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      await fetch(`${supabaseUrl}/functions/v1/send-bug-report`, {
-        method: "POST",
-        body: formData,
-      });
-
-      setReportBugStep(3);
-    } catch (error) {
-      console.error("Error sending bug report:", error);
-    } finally {
-      setIsSendingBugReport(false);
-    }
+    // Bug report sending removed
+    setReportBugStep(3);
   };
   // Merge saved links with local preview links for display
   const allLinksForPreview = [
