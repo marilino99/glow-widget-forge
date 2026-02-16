@@ -297,7 +297,7 @@ const Builder = () => {
           </Button>
           <AddToWebsiteDialog widgetId={config.id || undefined} />
         </div>
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-gradient-to-b from-[hsl(270,50%,95%)] via-[hsl(260,30%,96%)] to-[hsl(0,0%,98%)]">
           <WidgetPreviewPanel 
             activeWidget={activeWidget}
             selectedAvatar={config.selectedAvatar} 
