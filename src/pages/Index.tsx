@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import { Logos3 } from "@/components/ui/logos3";
@@ -9,6 +13,29 @@ import FAQs from "@/components/landing/FAQs";
 import Footer from "@/components/landing/Footer";
 
 const Index = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loading || !user) return;
+
+    const checkUserStatus = async () => {
+      const { data } = await supabase
+        .from("widget_configurations")
+        .select("id")
+        .eq("user_id", user.id)
+        .limit(1);
+
+      if (data && data.length > 0) {
+        navigate("/builder", { replace: true });
+      } else {
+        navigate("/onboarding", { replace: true });
+      }
+    };
+
+    checkUserStatus();
+  }, [user, loading, navigate]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
