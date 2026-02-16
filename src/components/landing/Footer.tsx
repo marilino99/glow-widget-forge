@@ -1,6 +1,54 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import widjetLogo from "@/assets/widjet-logo-navbar.png";
+
+const footerColumns = [
+  {
+    title: "Product",
+    links: [
+      { name: "Widget Builder", href: "#features" },
+      { name: "Live Chat", href: "#features" },
+      { name: "Analytics", href: "#features" },
+      { name: "Integrations", href: "#" },
+      { name: "Templates", href: "#" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { name: "Help center", href: "#" },
+      { name: "Pricing", href: "#pricing" },
+      { name: "Blog", href: "#" },
+      { name: "Community", href: "#" },
+      { name: "Partner programs", href: "#" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { name: "About us", href: "#" },
+      { name: "Careers", href: "#" },
+      { name: "Security", href: "#" },
+      { name: "Terms & privacy", href: "#" },
+      { name: "Contact", href: "#" },
+    ],
+  },
+  {
+    title: "Widjet for",
+    links: [
+      { name: "E-commerce", href: "#" },
+      { name: "Small business", href: "#" },
+      { name: "Agencies", href: "#" },
+    ],
+  },
+];
+
+const SocialIcon = ({ children, href = "#" }: { children: React.ReactNode; href?: string }) => (
+  <a href={href} className="text-muted-foreground transition-colors hover:text-foreground">
+    {children}
+  </a>
+);
 
 const Footer = () => {
   return (
@@ -9,7 +57,6 @@ const Footer = () => {
       <section className="px-6 py-24">
         <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl">
           <div className="relative rounded-3xl px-8 py-24 overflow-hidden bg-[hsl(220,20%,6%)]">
-            {/* Animated gradient blobs behind content */}
             <motion.div
               className="pointer-events-none absolute -top-1/4 -left-1/4 h-[80%] w-[60%] rounded-full opacity-30 blur-[100px]"
               style={{ background: "hsl(270,70%,50%)" }}
@@ -28,7 +75,6 @@ const Footer = () => {
               animate={{ x: [0, -40, 40, 0], y: [0, 30, -30, 0] }}
               transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
             />
-            {/* Noise/grain overlay */}
             <div
               className="pointer-events-none absolute inset-0 z-[1] opacity-[0.06] mix-blend-overlay"
               style={{
@@ -72,26 +118,53 @@ const Footer = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 px-6 py-12">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 md:flex-row">
-          <span className="text-sm font-bold text-foreground">
-            widjet<span className="text-primary">.</span>
-          </span>
-          <div className="flex gap-8">
-            {["Privacy", "Terms", "Contact", "Blog"].map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {link}
-              </a>
-            ))}
+      {/* Footer — Notion-style */}
+      <footer className="border-t border-border/50 px-6 py-16">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 md:grid-cols-6 lg:gap-16">
+          {/* Brand column */}
+          <div className="col-span-2 flex flex-col gap-6">
+            <img src={widjetLogo} alt="Widjet" className="h-7 w-auto self-start" />
+
+            {/* Social icons */}
+            <div className="flex items-center gap-4">
+              {/* Instagram */}
+              <SocialIcon>
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm5.25-2a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5Z"/></svg>
+              </SocialIcon>
+              {/* X / Twitter */}
+              <SocialIcon>
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+              </SocialIcon>
+              {/* LinkedIn */}
+              <SocialIcon>
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286ZM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124ZM6.838 20.452H3.837V9h3.001v11.452ZM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003Z"/></svg>
+              </SocialIcon>
+              {/* YouTube */}
+              <SocialIcon>
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/></svg>
+              </SocialIcon>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Widjet
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Widjet
-          </p>
+
+          {/* Link columns */}
+          {footerColumns.map((col) => (
+            <div key={col.title} className="flex flex-col gap-3">
+              <h4 className="text-sm font-semibold text-foreground">{col.title}</h4>
+              {col.links.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+          ))}
         </div>
       </footer>
     </>
