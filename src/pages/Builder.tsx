@@ -297,12 +297,8 @@ const Builder = () => {
           </Button>
           <AddToWebsiteDialog widgetId={config.id || undefined} />
         </div>
-        <div className="relative flex-1 overflow-hidden bg-gradient-to-b from-[hsl(270,50%,93%)] via-[hsl(260,35%,96%)] to-[hsl(0,0%,98%)]">
-          {/* Glow blob top-left corner */}
-          <div className="pointer-events-none absolute -top-24 -left-24 h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,hsl(270,70%,82%)_0%,transparent_70%)] opacity-60 blur-3xl" />
-          {/* Glow blob top-right corner */}
-          <div className="pointer-events-none absolute -top-24 -right-24 h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,hsl(250,65%,80%)_0%,transparent_70%)] opacity-50 blur-3xl" />
-          <WidgetPreviewPanel
+        <div className="flex-1 overflow-hidden">
+          <WidgetPreviewPanel 
             activeWidget={activeWidget}
             selectedAvatar={config.selectedAvatar} 
             faqEnabled={config.faqEnabled}
