@@ -145,7 +145,7 @@ const Footer = () => {
               </SocialIcon>
             </div>
 
-            <div className="mt-auto flex flex-col gap-1">
+            <div className="flex flex-col gap-1">
               <p className="text-sm font-semibold text-foreground">
                 Made and hosted in the EU 🇪🇺
               </p>
