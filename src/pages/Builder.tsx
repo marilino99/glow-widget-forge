@@ -170,9 +170,9 @@ const Builder = () => {
         <div className="group flex h-14 shrink-0 items-center justify-between px-4" style={{ backgroundColor: '#f9f9f9' }}>
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center gap-2"
+            className="flex items-center"
           >
-            <img src={widjetLogoNavbar} className="h-8 w-auto" alt="Widjet logo" />
+            <img src={widjetLogoNavbar} className="h-8 w-auto -ml-1" alt="Widjet logo" />
           </button>
           <button
             onClick={() => setIsSidebarCollapsed(true)}
