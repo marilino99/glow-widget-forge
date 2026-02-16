@@ -1,11 +1,13 @@
 import { Layers, BarChart3, MessageSquare } from "lucide-react";
 import { Navbar1 } from "@/components/ui/shadcnblocks-com-navbar1";
-import widjetLogo from "@/assets/widjet-logo.png";
+import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 
 const navData = {
   logo: {
     url: "#",
-    title: "widjet.",
+    src: widjetLogoNavbar,
+    alt: "Widjet logo",
+    title: "",
   },
   menu: [
     { title: "Home", url: "#" },
