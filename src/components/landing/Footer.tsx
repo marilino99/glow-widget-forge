@@ -25,7 +25,7 @@ const footerColumns = [
     links: [
       { name: "Security", href: "#" },
       { name: "Terms & privacy", href: "#" },
-      { name: "Contact", href: "#" },
+      { name: "Contact", href: "mailto:support@getwidjet.com" },
     ],
   },
   {
