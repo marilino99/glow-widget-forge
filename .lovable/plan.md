@@ -1,24 +1,49 @@
 
-# Miglioramento sezione Dashboard con glow e gradiente
+# Onboarding Multi-Step Redesign
 
-## Obiettivo
-Rendere la sezione Dashboard visivamente piu impattante aggiungendo effetti di glow e gradiente attorno all'immagine, in linea con lo stile gia presente nella sezione Features (sfondo scuro + glow viola).
+## Overview
+Redesign the onboarding from a single card with URL input into a multi-step, visually engaging experience with animated transitions, progress indicator, and a live branding extraction preview.
 
-## Modifiche previste
+## Steps
 
-### `src/components/landing/DashboardPreview.tsx`
+### Step 1 - Welcome (no input required)
+- Full-screen layout with Widjet logo (using the navbar logo for brand consistency)
+- Headline: "Welcome to Widjet" with a subtitle explaining the 3-step setup
+- Animated entrance with framer-motion (fade up)
+- Single "Get Started" button
+- Subtle gradient background matching the builder's violet aesthetic
 
-1. **Sfondo scuro** - Cambiare lo sfondo della sezione da chiaro/muted a un colore scuro (`#110c29`) come nella sezione Features, con testo bianco per coerenza visiva.
+### Step 2 - Website URL
+- Input for website URL (same logic as current)
+- Animated illustration/icon of a globe with sparkles
+- Helper text: "We'll automatically extract your logo, colors and theme"
+- "Continue" button (disabled until URL entered) + "Skip" link
 
-2. **Glow diffuso dietro l'immagine** - Aggiungere un blob di gradiente viola/indaco sfocato posizionato dietro l'immagine per creare un effetto luminoso che attiri l'attenzione.
+### Step 3 - Brand Extraction (loading/result)
+- When extracting: animated loading state with pulsing dots and status text ("Scanning website...", "Extracting colors...", "Detecting logo...")
+- When complete: show a mini preview card with the extracted logo, color swatch, and theme detected
+- User sees what was found before proceeding
+- "Continue to Builder" button auto-redirects after brief display
 
-3. **Bordo animato con gradiente** - Applicare all'immagine lo stesso stile `hero-image-border` gia definito in `index.css` (gradiente conico rotante viola con box-shadow glow), creando un wrapper con padding che funge da cornice luminosa animata.
+## Visual Design
+- Dark gradient background (consistent with landing page aesthetic)
+- Progress bar at the top showing steps 1/2/3
+- Each step transitions with framer-motion slide/fade animations
+- Cards with glassmorphism (backdrop-blur, semi-transparent background)
+- Violet accent colors matching the builder palette
 
-4. **Ombra glow viola** - Sostituire l'attuale `shadow-primary/5` con un box-shadow viola piu intenso per rafforzare l'effetto.
+## Technical Details
 
-## Dettagli tecnici
+### Files to modify
+- **src/pages/Onboarding.tsx** - Complete rewrite with multi-step state machine using useState for currentStep (0, 1, 2), framer-motion AnimatePresence for transitions, and the existing branding extraction logic moved into step 3
 
-- Riutilizzo della classe CSS `hero-image-border` gia esistente in `index.css` (gradiente conico animato + box-shadow viola)
-- Struttura: wrapper div con `hero-image-border` + padding 2px + immagine con `rounded-2xl` interno
-- Blob glow di sfondo con `blur-[100px]` e gradiente viola/indaco dietro l'immagine
-- Nessun nuovo file CSS necessario, tutto basato su classi esistenti e Tailwind
+### Dependencies used (already installed)
+- framer-motion for animations
+- lucide-react for icons
+- Existing UI components (Button, Input, Label, Progress)
+
+### Logic changes
+- Step 0 (Welcome): No data, just "Get Started" button
+- Step 1 (URL): Same URL input, on submit triggers extraction and moves to step 2
+- Step 2 (Extraction + Results): Runs extract-branding, shows animated progress, then displays results with extracted logo/color/theme. On "Continue", saves to widget_configurations (same upsert logic) and navigates to /builder
+- Skip remains available at steps 1 and 2, navigating directly to /builder
