@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         from: "WidJet <noreply@getwidjet.com>",
         to: [email],
-        subject: "Your WidJet verification code",
+        subject: "Your WidJet login code",
         html: `
 <!DOCTYPE html>
 <html>
@@ -93,25 +93,33 @@ Deno.serve(async (req) => {
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:40px 20px;">
     <tr>
       <td align="center">
-        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:460px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-          <!-- Header -->
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+          <!-- Logo -->
           <tr>
-            <td style="background:linear-gradient(135deg,#6d28d9,#7c3aed);padding:32px 40px;text-align:center;">
-              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px;">WidJet</h1>
+            <td style="padding:36px 40px 20px;text-align:center;">
+              <img src="https://jqvcafbrccpmygiihyry.supabase.co/storage/v1/object/public/custom-avatars/email-logo.png" alt="WidJet" style="height:36px;width:auto;" />
             </td>
           </tr>
           <!-- Body -->
           <tr>
-            <td style="padding:40px;">
-              <h2 style="margin:0 0 8px;color:#18181b;font-size:20px;font-weight:600;">Verify your email</h2>
-              <p style="margin:0 0 28px;color:#71717a;font-size:14px;line-height:1.6;">
-                Enter the code below to complete your registration. It expires in 10 minutes.
+            <td style="padding:10px 40px 40px;">
+              <h1 style="margin:0 0 16px;color:#18181b;font-size:24px;font-weight:700;text-align:center;">Let's get you logged in</h1>
+              <p style="margin:0 0 32px;color:#52525b;font-size:15px;line-height:1.6;text-align:center;">
+                It looks like you requested to log in to WidJet. Click the button below to <strong>confirm</strong> it's really you and you'll be all set.
               </p>
-              <div style="background-color:#f4f4f5;border-radius:8px;padding:20px;text-align:center;margin-bottom:28px;">
+              <!-- Login Button -->
+              <div style="text-align:center;margin-bottom:32px;">
+                <a href="https://getwidjet.com/login" style="display:inline-block;padding:14px 48px;background-color:#18181b;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">Log in to WidJet</a>
+              </div>
+              <p style="margin:0 0 20px;color:#52525b;font-size:15px;line-height:1.6;text-align:center;">
+                Or, enter this code to complete your login.
+              </p>
+              <!-- OTP Code -->
+              <div style="text-align:center;margin-bottom:32px;">
                 <span style="font-size:36px;font-weight:700;letter-spacing:8px;color:#18181b;font-family:'Courier New',monospace;">${code}</span>
               </div>
-              <p style="margin:0;color:#a1a1aa;font-size:12px;line-height:1.5;">
-                If you didn't create an account on WidJet, you can safely ignore this email.
+              <p style="margin:0;color:#a1a1aa;font-size:13px;line-height:1.6;text-align:center;">
+                If this wasn't you, or if you keep seeing this, we recommend that you change your password. To learn more about keeping your account secure, <a href="https://getwidjet.com" style="color:#7c3aed;text-decoration:underline;">visit our help center</a>.
               </p>
             </td>
           </tr>
