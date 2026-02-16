@@ -76,7 +76,7 @@ const Navbar1 = ({
           <div className="flex items-center gap-6">
             <a href={logo.url} className="flex items-center gap-2">
               {logo.src && (
-                <img src={logo.src} className="w-8" alt={logo.alt || "logo"} />
+                <img src={logo.src} className="h-8 w-auto" alt={logo.alt || "logo"} />
               )}
               <span className="text-xl font-bold">{logo.title}</span>
             </a>
@@ -103,7 +103,7 @@ const Navbar1 = ({
           <div className="flex items-center justify-between">
             <a href={logo.url} className="flex items-center gap-2">
               {logo.src && (
-                <img src={logo.src} className="w-8" alt={logo.alt || "logo"} />
+                <img src={logo.src} className="h-8 w-auto" alt={logo.alt || "logo"} />
               )}
               <span className="text-xl font-bold">{logo.title}</span>
             </a>
@@ -120,7 +120,7 @@ const Navbar1 = ({
                       {logo.src && (
                         <img
                           src={logo.src}
-                          className="w-8"
+                          className="h-8 w-auto"
                           alt={logo.alt || "logo"}
                         />
                       )}
