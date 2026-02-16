@@ -11,7 +11,6 @@ const footerColumns = [
       { name: "Live Chat", href: "#features" },
       { name: "Analytics", href: "#features" },
       { name: "Integrations", href: "#" },
-      { name: "Templates", href: "#" },
     ],
   },
   {
@@ -19,16 +18,11 @@ const footerColumns = [
     links: [
       { name: "Help center", href: "#" },
       { name: "Pricing", href: "#pricing" },
-      { name: "Blog", href: "#" },
-      { name: "Community", href: "#" },
-      { name: "Partner programs", href: "#" },
     ],
   },
   {
     title: "Company",
     links: [
-      { name: "About us", href: "#" },
-      { name: "Careers", href: "#" },
       { name: "Security", href: "#" },
       { name: "Terms & privacy", href: "#" },
       { name: "Contact", href: "#" },
