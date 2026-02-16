@@ -75,7 +75,10 @@ const Pricing = () => {
         return;
       }
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { returnUrl: window.location.origin + "/checkout-success" },
+        body: {
+          returnUrl: window.location.origin,
+          billingInterval: isAnnual ? "year" : "month",
+        },
       });
       if (error) throw error;
       if (data?.url) {

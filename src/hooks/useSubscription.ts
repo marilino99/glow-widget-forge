@@ -44,10 +44,10 @@ export const useSubscription = () => {
     checkSubscription();
   }, [checkSubscription]);
 
-  const startCheckout = async () => {
+  const startCheckout = async (billingInterval: "month" | "year" = "month") => {
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { returnUrl: window.location.origin },
+        body: { returnUrl: window.location.origin, billingInterval },
       });
       if (error) throw error;
       if (data?.url) {
