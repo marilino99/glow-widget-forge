@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
           <!-- Logo -->
           <tr>
             <td style="padding:36px 40px 20px;text-align:center;">
-              <img src="https://jqvcafbrccpmygiihyry.supabase.co/storage/v1/object/public/custom-avatars/email-logo.png" alt="WidJet" style="height:36px;width:auto;" />
+              <img src="https://jqvcafbrccpmygiihyry.supabase.co/storage/v1/object/public/custom-avatars/email-logo-navbar.png" alt="WidJet" style="height:36px;width:auto;" />
             </td>
           </tr>
           <!-- Body -->
