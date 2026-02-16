@@ -4,17 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { Loader2, ArrowLeft, Mail } from "lucide-react";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-
 import { useToast } from "@/hooks/use-toast";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [otpStep, setOtpStep] = useState(false);
+  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -37,8 +39,35 @@ const Signup = () => {
         description: error.message,
       });
     } else {
+      setOtpStep(true);
       toast({
-        title: "Account created",
+        title: "Check your email",
+        description: "We sent you a 6-digit verification code.",
+      });
+    }
+
+    setLoading(false);
+  };
+
+  const handleVerifyOtp = async () => {
+    if (otp.length !== 6) return;
+    setLoading(true);
+
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type: "signup",
+    });
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Verification failed",
+        description: error.message,
+      });
+    } else {
+      toast({
+        title: "Email verified!",
         description: "Welcome to Widjet!",
       });
       navigate("/onboarding");
@@ -46,6 +75,86 @@ const Signup = () => {
 
     setLoading(false);
   };
+
+  const handleResendCode = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+    });
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Resend failed",
+        description: error.message,
+      });
+    } else {
+      toast({
+        title: "Code resent",
+        description: "Check your inbox for a new code.",
+      });
+    }
+    setLoading(false);
+  };
+
+  if (otpStep) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <Mail className="h-7 w-7 text-primary" />
+            </div>
+            <CardTitle className="text-2xl">Verify your email</CardTitle>
+            <CardDescription>
+              We sent a 6-digit code to <span className="font-medium text-foreground">{email}</span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex justify-center">
+              <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+
+            <Button
+              className="w-full"
+              onClick={handleVerifyOtp}
+              disabled={loading || otp.length !== 6}
+            >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Verify email
+            </Button>
+
+            <div className="flex items-center justify-between text-sm">
+              <button
+                onClick={() => { setOtpStep(false); setOtp(""); }}
+                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Back
+              </button>
+              <button
+                onClick={handleResendCode}
+                disabled={loading}
+                className="text-primary hover:underline disabled:opacity-50"
+              >
+                Resend code
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
