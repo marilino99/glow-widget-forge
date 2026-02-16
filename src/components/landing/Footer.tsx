@@ -123,7 +123,7 @@ const Footer = () => {
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 md:grid-cols-6 lg:gap-16">
           {/* Brand column */}
           <div className="col-span-2 flex flex-col gap-6">
-            <img src={widjetLogo} alt="Widjet" className="h-7 w-auto self-start" />
+            <img src={widjetLogo} alt="Widjet" className="h-auto self-start" style={{ width: '132px' }} />
 
             {/* Social icons */}
             <div className="flex items-center gap-4">
