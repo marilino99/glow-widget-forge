@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Boxes, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 import { useToast } from "@/hooks/use-toast";
 
@@ -92,9 +93,8 @@ const Login = () => {
             variant="outline"
             className="w-full"
             onClick={async () => {
-              const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: { redirectTo: window.location.origin },
+              const { error } = await lovable.auth.signInWithOAuth("google", {
+                redirect_uri: window.location.origin,
               });
               if (error) {
                 toast({
