@@ -24,25 +24,53 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    });
-
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Signup failed",
-        description: error.message,
+    try {
+      // 1. Create the account (auto-confirmed, but we'll verify email ourselves)
+      const { error: signupError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        },
       });
-    } else {
+
+      if (signupError) {
+        toast({
+          variant: "destructive",
+          title: "Signup failed",
+          description: signupError.message,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 2. Send verification email via Resend
+      const { error: emailError } = await supabase.functions.invoke(
+        "send-verification-email",
+        { body: { email } }
+      );
+
+      if (emailError) {
+        console.error("Email send error:", emailError);
+        toast({
+          variant: "destructive",
+          title: "Failed to send verification email",
+          description: "Please try again.",
+        });
+        setLoading(false);
+        return;
+      }
+
       setOtpStep(true);
       toast({
         title: "Check your email",
         description: "We sent you a 6-digit verification code.",
+      });
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || "Something went wrong",
       });
     }
 
@@ -53,24 +81,60 @@ const Signup = () => {
     if (otp.length !== 6) return;
     setLoading(true);
 
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: otp,
-      type: "signup",
-    });
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "verify-email-code",
+        { body: { email, code: otp } }
+      );
 
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Verification failed",
-        description: error.message,
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Verification failed",
+          description: "Invalid or expired code. Please try again.",
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (data?.error) {
+        toast({
+          variant: "destructive",
+          title: "Verification failed",
+          description: data.error,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Sign in with the credentials now that email is confirmed
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-    } else {
+
+      if (loginError) {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: "Email verified but login failed. Please sign in manually.",
+        });
+        navigate("/login");
+        setLoading(false);
+        return;
+      }
+
       toast({
         title: "Email verified!",
-        description: "Welcome to Widjet!",
+        description: "Welcome to WidJet!",
       });
       navigate("/onboarding");
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || "Something went wrong",
+      });
     }
 
     setLoading(false);
@@ -78,21 +142,29 @@ const Signup = () => {
 
   const handleResendCode = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email,
-    });
+    try {
+      const { error } = await supabase.functions.invoke(
+        "send-verification-email",
+        { body: { email } }
+      );
 
-    if (error) {
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Resend failed",
+          description: "Could not resend the code. Please try again.",
+        });
+      } else {
+        toast({
+          title: "Code resent",
+          description: "Check your inbox for a new code.",
+        });
+      }
+    } catch (err: any) {
       toast({
         variant: "destructive",
-        title: "Resend failed",
-        description: error.message,
-      });
-    } else {
-      toast({
-        title: "Code resent",
-        description: "Check your inbox for a new code.",
+        title: "Error",
+        description: err.message || "Something went wrong",
       });
     }
     setLoading(false);
