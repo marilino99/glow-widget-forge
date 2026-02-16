@@ -52,7 +52,7 @@ const navData = {
 
 const Navbar = () => {
   return (
-    <div className="sticky top-0 z-50 border-b border-border/30 bg-background backdrop-blur-xl">
+    <div className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
       <Navbar1 {...navData} />
     </div>
   );
