@@ -105,14 +105,7 @@ Deno.serve(async (req) => {
             <td style="padding:10px 40px 40px;">
               <h1 style="margin:0 0 16px;color:#18181b;font-size:24px;font-weight:700;text-align:center;">Let's get you logged in</h1>
               <p style="margin:0 0 32px;color:#52525b;font-size:15px;line-height:1.6;text-align:center;">
-                It looks like you requested to log in to WidJet. Click the button below to <strong>confirm</strong> it's really you and you'll be all set.
-              </p>
-              <!-- Login Button -->
-              <div style="text-align:center;margin-bottom:32px;">
-                <a href="https://getwidjet.com/login" style="display:inline-block;padding:14px 48px;background-color:#18181b;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">Log in to WidJet</a>
-              </div>
-              <p style="margin:0 0 20px;color:#52525b;font-size:15px;line-height:1.6;text-align:center;">
-                Or, enter this code to complete your login.
+                It looks like you requested to log in to WidJet. Enter this code to complete your login:
               </p>
               <!-- OTP Code -->
               <div style="text-align:center;margin-bottom:32px;">
