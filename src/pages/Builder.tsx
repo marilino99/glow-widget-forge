@@ -172,7 +172,7 @@ const Builder = () => {
             onClick={() => window.location.reload()}
             className="flex items-center"
           >
-            <img src={widjetLogoNavbar} className="h-8 w-auto -ml-1" alt="Widjet logo" />
+            <img src={widjetLogoNavbar} className="h-8 w-auto -ml-2.5" alt="Widjet logo" />
           </button>
           <button
             onClick={() => setIsSidebarCollapsed(true)}
