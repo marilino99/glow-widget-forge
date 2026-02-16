@@ -8,7 +8,8 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Boxes, HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft } from "lucide-react";
+import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
@@ -171,9 +172,7 @@ const Builder = () => {
             onClick={() => window.location.reload()}
             className="flex items-center gap-2"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Boxes className="h-5 w-5" />
-            </div>
+            <img src={widjetLogoNavbar} className="h-8 w-auto" alt="Widjet logo" />
           </button>
           <button
             onClick={() => setIsSidebarCollapsed(true)}
