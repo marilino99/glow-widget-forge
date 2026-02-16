@@ -145,6 +145,9 @@ const Footer = () => {
               </SocialIcon>
             </div>
 
+            <p className="text-sm font-semibold text-foreground">
+              Made and hosted in the EU 🇪🇺
+            </p>
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} Widjet
             </p>
