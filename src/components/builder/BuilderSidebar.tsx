@@ -538,7 +538,7 @@ const BuilderSidebar = ({
     <div className="relative flex h-full flex-col bg-gradient-to-b from-[hsl(265,40%,95%)] via-[hsl(270,30%,97%)] to-[hsl(260,20%,98%)] overflow-hidden">
       {/* Glow effect */}
       <div className="pointer-events-none absolute -top-20 -left-20 h-60 w-60 rounded-full bg-[hsl(265,60%,85%)] opacity-30 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -right-16 h-40 w-40 rounded-full bg-[hsl(280,50%,88%)] opacity-20 blur-3xl" />
+      <div className="pointer-events-none absolute -top-10 right-0 h-40 w-40 rounded-full bg-[hsl(280,50%,88%)] opacity-25 blur-3xl" />
       <div className="flex-1 overflow-hidden px-4 py-3">
         <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
 
