@@ -145,12 +145,14 @@ const Footer = () => {
               </SocialIcon>
             </div>
 
-            <p className="text-sm font-semibold text-foreground">
-              Made and hosted in the EU 🇪🇺
-            </p>
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Widjet
-            </p>
+            <div className="mt-auto flex flex-col gap-1">
+              <p className="text-sm font-semibold text-foreground">
+                Made and hosted in the EU 🇪🇺
+              </p>
+              <p className="text-sm text-muted-foreground">
+                © {new Date().getFullYear()} Widjet
+              </p>
+            </div>
           </div>
 
           {/* Link columns */}
