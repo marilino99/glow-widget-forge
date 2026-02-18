@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { widgetId, visitorId, message, visitorName } = await req.json();
+    const { widgetId, visitorId, message, visitorName, visitorToken } = await req.json();
 
     if (!widgetId || !visitorId || !message || typeof message !== 'string') {
       return new Response(
@@ -58,13 +58,16 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (!conversation) {
-      // Create new conversation
+      // Create new conversation with a server-generated visitor token
+      const newVisitorToken = crypto.randomUUID();
+
       const { data: newConv, error: createError } = await supabase
         .from("conversations")
         .insert({
           widget_owner_id: widgetOwnerId,
           visitor_id: visitorId,
           visitor_name: visitorName || "Visitor",
+          visitor_token: newVisitorToken,
           last_message: trimmedMessage,
           last_message_at: new Date().toISOString(),
           unread_count: 1,
@@ -82,6 +85,14 @@ Deno.serve(async (req) => {
 
       conversation = newConv;
     } else {
+      // Existing conversation: validate visitor token
+      if (!visitorToken || visitorToken !== conversation.visitor_token) {
+        return new Response(
+          JSON.stringify({ error: "Invalid visitor token" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       // Update existing conversation
       await supabase
         .from("conversations")
@@ -116,7 +127,8 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         conversationId: conversation.id,
-        messageId: chatMessage.id 
+        messageId: chatMessage.id,
+        visitorToken: conversation.visitor_token,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

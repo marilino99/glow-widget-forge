@@ -559,6 +559,9 @@ Deno.serve(async (req) => {
       localStorage.setItem('wj_visitor_id', visitorId);
     }
 
+    // Retrieve visitor token (server-generated, proves ownership of visitor session)
+    var visitorToken = localStorage.getItem('wj_visitor_token') || '';
+
     // Track last message ID for polling
     var lastMessageId = null;
     var pollInterval = null;
@@ -597,7 +600,7 @@ Deno.serve(async (req) => {
 
     // Poll for new messages
     function pollMessages() {
-      var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id);
+      var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
       if (lastMessageId) {
         pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
       }
@@ -659,8 +662,11 @@ Deno.serve(async (req) => {
         if (xhr.status === 200) {
           try {
             var res = JSON.parse(xhr.responseText);
+            if (res.visitorToken) {
+              visitorToken = res.visitorToken;
+              localStorage.setItem('wj_visitor_token', visitorToken);
+            }
             if (res.messageId) {
-              // Update the temp message ID with real one
               renderedMessageIds[res.messageId] = true;
               lastMessageId = res.messageId;
             }
@@ -670,6 +676,7 @@ Deno.serve(async (req) => {
       xhr.send(JSON.stringify({
         widgetId: id,
         visitorId: visitorId,
+        visitorToken: visitorToken,
         message: msg,
         visitorName: 'Visitor'
       }));

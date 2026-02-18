@@ -20,6 +20,7 @@ Deno.serve(async (req) => {
     const visitorId = url.searchParams.get("visitorId");
     const widgetId = url.searchParams.get("widgetId");
     const lastMessageId = url.searchParams.get("lastMessageId");
+    const visitorToken = url.searchParams.get("visitorToken");
 
     if (!visitorId || !widgetId) {
       return new Response(
@@ -45,7 +46,7 @@ Deno.serve(async (req) => {
     // Find conversation for this visitor
     const { data: conversation, error: convError } = await supabase
       .from("conversations")
-      .select("id")
+      .select("id, visitor_token")
       .eq("widget_owner_id", config.user_id)
       .eq("visitor_id", visitorId)
       .maybeSingle();
@@ -58,6 +59,14 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Validate visitor token
+    if (!visitorToken || visitorToken !== conversation.visitor_token) {
+      return new Response(
+        JSON.stringify({ error: "Invalid visitor token" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Build query for messages
     let query = supabase
       .from("chat_messages")
@@ -67,7 +76,6 @@ Deno.serve(async (req) => {
 
     // If lastMessageId is provided, only get messages after it
     if (lastMessageId) {
-      // Get the timestamp of the last message
       const { data: lastMsg } = await supabase
         .from("chat_messages")
         .select("created_at")

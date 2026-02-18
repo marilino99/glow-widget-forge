@@ -56,6 +56,7 @@ export type Database = {
           updated_at: string | null
           visitor_id: string
           visitor_name: string | null
+          visitor_token: string
           widget_owner_id: string
         }
         Insert: {
@@ -67,6 +68,7 @@ export type Database = {
           updated_at?: string | null
           visitor_id: string
           visitor_name?: string | null
+          visitor_token?: string
           widget_owner_id: string
         }
         Update: {
@@ -78,6 +80,7 @@ export type Database = {
           updated_at?: string | null
           visitor_id?: string
           visitor_name?: string | null
+          visitor_token?: string
           widget_owner_id?: string
         }
         Relationships: []
