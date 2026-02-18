@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import widjetLogo from "@/assets/widjet-logo-navbar.png";
-import { useLandingLang } from "@/contexts/LandingLanguageContext";
+import { useLandingLang, LandingLang } from "@/contexts/LandingLanguageContext";
+
+const langLabels: Record<LandingLang, string> = { en: "EN", it: "IT", de: "DE" };
 
 const SocialIcon = ({ children, href = "#" }: { children: React.ReactNode; href?: string }) => (
   <a href={href} className="text-muted-foreground transition-colors hover:text-foreground">
@@ -11,7 +13,7 @@ const SocialIcon = ({ children, href = "#" }: { children: React.ReactNode; href?
 );
 
 const Footer = () => {
-  const { t } = useLandingLang();
+  const { t, lang, setLang } = useLandingLang();
 
   const footerColumns = [
     {
@@ -93,6 +95,22 @@ const Footer = () => {
             <div className="flex flex-col gap-1">
               <p className="text-sm font-semibold text-foreground">{t("footer.madeInEu")}</p>
               <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Widjet</p>
+            </div>
+            {/* Language switcher */}
+            <div className="flex items-center gap-1">
+              {(["en", "it", "de"] as LandingLang[]).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className={`px-2.5 py-1 text-xs font-medium rounded transition-colors ${
+                    lang === l
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {langLabels[l]}
+                </button>
+              ))}
             </div>
           </div>
 
