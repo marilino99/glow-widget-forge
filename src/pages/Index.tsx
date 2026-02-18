@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { LandingLanguageProvider } from "@/contexts/LandingLanguageContext";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import { Logos3 } from "@/components/ui/logos3";
@@ -11,10 +12,12 @@ import PlatformIntegrations from "@/components/landing/PlatformIntegrations";
 import Pricing from "@/components/landing/Pricing";
 import FAQs from "@/components/landing/FAQs";
 import Footer from "@/components/landing/Footer";
+import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
-const Index = () => {
+const LandingContent = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLandingLang();
 
   useEffect(() => {
     if (loading || !user) return;
@@ -42,7 +45,7 @@ const Index = () => {
       <main>
         <Hero />
         <Logos3
-          heading="Trusted by 2,000+ businesses worldwide"
+          heading={t("logos.heading")}
           logos={[
             { id: "google", description: "Google", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/google.svg", className: "h-6 w-auto opacity-60" },
             { id: "slack", description: "Slack", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/slack.svg", className: "h-6 w-auto opacity-60" },
@@ -62,6 +65,14 @@ const Index = () => {
         <Footer />
       </main>
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <LandingLanguageProvider>
+      <LandingContent />
+    </LandingLanguageProvider>
   );
 };
 
