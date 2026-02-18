@@ -104,7 +104,15 @@ const Onboarding = () => {
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    if (user) {
+      // Create a minimal config so the user isn't sent back to onboarding
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from("widget_configurations") as any).upsert(
+        { user_id: user.id },
+        { onConflict: "user_id" }
+      );
+    }
     navigate("/builder");
   };
 
