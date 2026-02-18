@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import posthog from "@/lib/posthog";
 
 interface AuthContextType {
   user: User | null;
@@ -24,11 +25,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(session?.user ?? null);
         setLoading(false);
         if (event === "SIGNED_IN" && session) {
+          posthog.identify(session.user.id, {
+            email: session.user.email,
+            provider: session.user.app_metadata?.provider || "email",
+          });
           supabase.from("user_activity_logs").insert({
             user_id: session.user.id,
             event_type: "login",
             metadata: { method: session.user.app_metadata?.provider || "email" }
           });
+        }
+        if (event === "SIGNED_OUT") {
+          posthog.reset();
         }
       }
     );
