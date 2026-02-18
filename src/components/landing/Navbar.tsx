@@ -1,16 +1,10 @@
-import { Layers, BarChart3, MessageSquare, Globe } from "lucide-react";
+import { Layers, BarChart3, MessageSquare } from "lucide-react";
 import { Navbar1 } from "@/components/ui/shadcnblocks-com-navbar1";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
-import { useLandingLang, LandingLang } from "@/contexts/LandingLanguageContext";
-
-const langLabels: Record<LandingLang, string> = {
-  en: "EN",
-  it: "IT",
-  de: "DE",
-};
+import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const Navbar = () => {
-  const { t, lang, setLang } = useLandingLang();
+  const { t } = useLandingLang();
 
   const navData = {
     logo: {
@@ -62,25 +56,7 @@ const Navbar = () => {
 
   return (
     <div className="sticky top-0 z-50 border-b border-border/30 bg-background/80 backdrop-blur-xl">
-      <div className="relative">
-        <Navbar1 {...navData} />
-        {/* Language switcher */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden lg:flex items-center gap-1" style={{ right: '280px' }}>
-          {(["en", "it", "de"] as LandingLang[]).map((l) => (
-            <button
-              key={l}
-              onClick={() => setLang(l)}
-              className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
-                lang === l
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {langLabels[l]}
-            </button>
-          ))}
-        </div>
-      </div>
+      <Navbar1 {...navData} />
     </div>
   );
 };
