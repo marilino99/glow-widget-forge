@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import widjetLogo from "@/assets/widjet-logo-navbar.png";
 import { useLandingLang, LandingLang } from "@/contexts/LandingLanguageContext";
 
-const langLabels: Record<LandingLang, string> = { en: "EN", it: "IT", de: "DE" };
+const langLabels: Record<LandingLang, string> = { en: "EN", it: "IT", de: "DE", fr: "FR" };
 
 const SocialIcon = ({ children, href = "#" }: { children: React.ReactNode; href?: string }) => (
   <a href={href} className="text-muted-foreground transition-colors hover:text-foreground">
@@ -98,7 +98,7 @@ const Footer = () => {
             </div>
             {/* Language switcher */}
             <div className="flex items-center gap-1">
-              {(["en", "it", "de"] as LandingLang[]).map((l) => (
+              {(["en", "it", "de", "fr"] as LandingLang[]).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
