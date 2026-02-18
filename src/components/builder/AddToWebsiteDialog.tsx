@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +48,7 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
   const [copied, setCopied] = useState(false);
   const [showWixGuide, setShowWixGuide] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
@@ -74,6 +77,13 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
       description: "The code has been copied to your clipboard.",
     });
     setTimeout(() => setCopied(false), 2000);
+    if (user) {
+      supabase.from("user_activity_logs").insert({
+        user_id: user.id,
+        event_type: "widget_publish",
+        metadata: { widget_id: widgetId }
+      });
+    }
   };
 
   const handleWixClick = () => {

@@ -19,10 +19,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        if (event === "SIGNED_IN" && session) {
+          supabase.from("user_activity_logs").insert({
+            user_id: session.user.id,
+            event_type: "login",
+            metadata: { method: session.user.app_metadata?.provider || "email" }
+          });
+        }
       }
     );
 
