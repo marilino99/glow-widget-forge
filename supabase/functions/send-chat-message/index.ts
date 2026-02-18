@@ -18,9 +18,17 @@ Deno.serve(async (req) => {
 
     const { widgetId, visitorId, message, visitorName } = await req.json();
 
-    if (!widgetId || !visitorId || !message) {
+    if (!widgetId || !visitorId || !message || typeof message !== 'string') {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const trimmedMessage = message.trim();
+    if (trimmedMessage.length === 0 || message.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: "Message must be between 1 and 10,000 characters" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -57,7 +65,7 @@ Deno.serve(async (req) => {
           widget_owner_id: widgetOwnerId,
           visitor_id: visitorId,
           visitor_name: visitorName || "Visitor",
-          last_message: message,
+          last_message: trimmedMessage,
           last_message_at: new Date().toISOString(),
           unread_count: 1,
         })
@@ -78,7 +86,7 @@ Deno.serve(async (req) => {
       await supabase
         .from("conversations")
         .update({
-          last_message: message,
+          last_message: trimmedMessage,
           last_message_at: new Date().toISOString(),
           unread_count: (conversation.unread_count || 0) + 1,
         })
@@ -91,7 +99,7 @@ Deno.serve(async (req) => {
       .insert({
         conversation_id: conversation.id,
         sender_type: "visitor",
-        content: message,
+        content: trimmedMessage,
       })
       .select()
       .single();
