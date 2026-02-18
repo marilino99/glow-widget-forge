@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { AvatarGroup } from "@/components/ui/avatar-group";
 import wixLogo from "@/assets/logo-wix.png";
 import odooLogo from "@/assets/logo-odoo.png";
+import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const platformAvatars = [
   {
@@ -40,6 +41,8 @@ const fadeUp = {
 };
 
 const PlatformIntegrations = () => {
+  const { t } = useLandingLang();
+
   return (
     <section className="py-12 md:py-16">
       <div className="mx-auto max-w-4xl px-6 flex justify-center">
@@ -53,10 +56,10 @@ const PlatformIntegrations = () => {
         >
           <div className="flex flex-col items-center gap-2 text-center">
             <h3 className="text-xl md:text-2xl font-semibold text-foreground tracking-tight">
-              Instant integration
+              {t("platform.title")}
             </h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              Just copy the widget code and paste it into your site — works with any platform, no setup needed.
+              {t("platform.desc")}
             </p>
           </div>
           <AvatarGroup
