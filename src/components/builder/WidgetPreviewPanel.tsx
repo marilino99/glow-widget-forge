@@ -1545,20 +1545,6 @@ const WidgetPreviewPanel = ({
                   </div>
                 </div>
 
-                {/* Nav bar - above content sections */}
-                <div id="wj-footer" className={`px-4 pb-1 pt-3 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                  <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
-                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
-                      <Home className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
-                      <span className="text-xs">{t.home}</span>
-                    </button>
-                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`} onClick={() => { setShowContactPage(true); setShowChat(false); }}>
-                      <MessageCircle className="h-5 w-5" />
-                      <span className="text-xs">{t.contact}</span>
-                    </button>
-                  </div>
-                </div>
-
                 {/* Product Cards Section - horizontal carousel */}
                 {productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
                     {/* Solid mode background band - stops at ~1/4 of first card */}
@@ -1744,8 +1730,19 @@ const WidgetPreviewPanel = ({
                 )}
                 </div>
 
-
-
+                {/* Footer nav - box with backdrop blur */}
+                <div id="wj-footer" className={`px-4 pb-1 pt-3 shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                  <div className={`flex rounded-2xl backdrop-blur-md ${isLight ? "bg-white/70 shadow-sm" : "bg-slate-700/70"}`}>
+                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-900" : widgetText}`}>
+                      <Home className="h-5 w-5" fill={isLight ? "currentColor" : "none"} />
+                      <span className="text-xs">{t.home}</span>
+                    </button>
+                    <button className={`flex flex-1 flex-col items-center gap-1 py-3 ${isLight ? "text-slate-400 hover:text-slate-600" : `${widgetSubtext} hover:opacity-80`}`} onClick={() => { setShowContactPage(true); setShowChat(false); }}>
+                      <MessageCircle className="h-5 w-5" />
+                      <span className="text-xs">{t.contact}</span>
+                    </button>
+                  </div>
+                </div>
 
                 {showBranding && (
                 <div className={`py-2 text-center shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
