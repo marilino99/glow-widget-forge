@@ -137,6 +137,8 @@ interface BuilderSidebarProps {
   chatbotEnabled: boolean;
   onChatbotToggle: (enabled: boolean) => void;
   chatbotInstructions: string;
+  aiProvider: string;
+  aiApiKey: string;
   onSaveChatbotConfig: (config: Record<string, unknown>) => void;
 }
 
@@ -217,6 +219,8 @@ const BuilderSidebar = ({
   chatbotEnabled,
   onChatbotToggle,
   chatbotInstructions,
+  aiProvider,
+  aiApiKey,
   onSaveChatbotConfig,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
@@ -551,6 +555,8 @@ const BuilderSidebar = ({
         chatbotEnabled={chatbotEnabled}
         onChatbotToggle={onChatbotToggle}
         chatbotInstructions={chatbotInstructions}
+        aiProvider={aiProvider}
+        aiApiKey={aiApiKey}
         onSaveConfig={onSaveChatbotConfig}
       />
     );

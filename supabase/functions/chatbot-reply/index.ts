@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     // Get widget config with chatbot settings
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, contact_name, language")
+      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key")
       .eq("id", widgetId)
       .single();
 
@@ -137,39 +137,87 @@ STRICT RULES:
 - Keep responses short (2-3 sentences max unless more detail is needed).
 - Do not make up information. If you don't know, say so and suggest contacting support.`;
 
-    // Call Google Gemini API
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [{ text: systemInstruction }],
-          },
-          contents: conversationHistory,
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 500,
-          },
-        }),
-      }
-    );
+    // Determine which API key and model to use
+    const userApiKey = config.ai_api_key;
+    const aiProvider = config.ai_provider || "google";
+    const effectiveApiKey = userApiKey || geminiApiKey;
 
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text();
-      console.error("Gemini API error:", geminiResponse.status, errorText);
+    if (!effectiveApiKey) {
+      console.error("No AI API key available");
       return new Response(
-        JSON.stringify({ error: "AI generation failed" }),
+        JSON.stringify({ error: "AI not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const geminiData = await geminiResponse.json();
-    const aiReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (aiProvider === "openai" && userApiKey) {
+      // Call OpenAI API
+      const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userApiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: systemInstruction },
+            ...(messages || []).map((msg: any) => ({
+              role: msg.sender_type === "visitor" ? "user" : "assistant",
+              content: msg.content,
+            })),
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
+        }),
+      });
+
+      if (!openaiResponse.ok) {
+        const errorText = await openaiResponse.text();
+        console.error("OpenAI API error:", openaiResponse.status, errorText);
+        return new Response(
+          JSON.stringify({ error: "AI generation failed" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const openaiData = await openaiResponse.json();
+      var aiReply = openaiData?.choices?.[0]?.message?.content;
+    } else {
+      // Call Google Gemini API
+      const geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveApiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            system_instruction: {
+              parts: [{ text: systemInstruction }],
+            },
+            contents: conversationHistory,
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 500,
+            },
+          }),
+        }
+      );
+
+      if (!geminiResponse.ok) {
+        const errorText = await geminiResponse.text();
+        console.error("Gemini API error:", geminiResponse.status, errorText);
+        return new Response(
+          JSON.stringify({ error: "AI generation failed" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const geminiData = await geminiResponse.json();
+      var aiReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+    }
 
     if (!aiReply) {
-      console.error("No reply from Gemini:", JSON.stringify(geminiData));
+      console.error("No AI reply generated");
       return new Response(
         JSON.stringify({ error: "No AI response generated" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
