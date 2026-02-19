@@ -124,13 +124,13 @@ Deno.serve(async (req) => {
 
     var style = d.createElement('style');
     style.textContent = inIframe ? \`
-      #wj-root{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center}
-      #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden;position:absolute;bottom:20px;right:20px}
+      #wj-root{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;pointer-events:none}
+      #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden;position:absolute;bottom:20px;right:20px;pointer-events:auto}
       #wj-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
       #wj-btn.hidden{display:none}
       #wj-btn svg{width:24px;height:24px}
       #wj-btn img{width:100%;height:100%;object-fit:cover}
-      #wj-pop{display:none;width:calc(100% - 24px);max-width:350px;height:calc(100% - 24px);max-height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647}
+      #wj-pop{display:none;width:calc(100% - 24px);max-width:350px;height:calc(100% - 24px);max-height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647;pointer-events:auto}
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto}
