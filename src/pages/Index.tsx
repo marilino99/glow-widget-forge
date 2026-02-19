@@ -47,14 +47,14 @@ const LandingContent = () => {
         <Logos3
           heading={t("logos.heading")}
           logos={[
-            { id: "google", description: "Google", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/google.svg", className: "h-6 w-auto opacity-60" },
-            { id: "slack", description: "Slack", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/slack.svg", className: "h-6 w-auto opacity-60" },
-            { id: "stripe", description: "Stripe", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/stripe.svg", className: "h-6 w-auto opacity-60" },
-            { id: "shopify", description: "Shopify", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/shopify.svg", className: "h-6 w-auto opacity-60" },
-            { id: "spotify", description: "Spotify", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg", className: "h-6 w-auto opacity-60" },
-            { id: "notion", description: "Notion", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/notion.svg", className: "h-6 w-auto opacity-60" },
-            { id: "dropbox", description: "Dropbox", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/dropbox.svg", className: "h-6 w-auto opacity-60" },
-            { id: "airbnb", description: "Airbnb", image: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/airbnb.svg", className: "h-6 w-auto opacity-60" },
+            { id: "veltro", description: "Veltro", image: "", className: "h-6 w-auto opacity-70" },
+            { id: "novabit", description: "Novabit", image: "", className: "h-6 w-auto opacity-70" },
+            { id: "pureflow", description: "Pureflow", image: "", className: "h-6 w-auto opacity-70" },
+            { id: "zendexa", description: "Zendexa", image: "", className: "h-6 w-auto opacity-70" },
+            { id: "crestline", description: "Crestline", image: "", className: "h-6 w-auto opacity-70" },
+            { id: "orbiqo", description: "Orbiqo", image: "", className: "h-6 w-auto opacity-70" },
+            { id: "luminar", description: "Luminar", image: "", className: "h-6 w-auto opacity-70" },
+            { id: "helix", description: "Helix Studio", image: "", className: "h-6 w-auto opacity-70" },
           ]}
         />
         <Features />

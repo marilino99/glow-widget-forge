@@ -61,13 +61,17 @@ const Logos3 = ({
                   className="basis-1/3 select-none pl-0 md:basis-1/4 lg:basis-1/6"
                 >
                   <div className="mx-10 flex shrink-0 items-center justify-center">
-                    <div>
+                    {logo.image ? (
                       <img
                         src={logo.image}
                         alt={logo.description}
                         className={logo.className}
                       />
-                    </div>
+                    ) : (
+                      <span className="text-lg font-bold tracking-tight text-muted-foreground/60 whitespace-nowrap select-none">
+                        {logo.description}
+                      </span>
+                    )}
                   </div>
                 </CarouselItem>
               ))}
