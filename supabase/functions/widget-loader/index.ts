@@ -210,7 +210,7 @@ Deno.serve(async (req) => {
       #wj-chat-bubble-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
       #wj-chat-bubble-avatar svg{width:16px;height:16px;color:#fff}
       #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;border-top-left-radius:4px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
-      #wj-chat-input{position:relative;padding:16px;border-top:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-input{position:relative;padding:16px}
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
       #wj-chat-input-box input{flex:1;border:none;background:transparent;font-size:14px;color:\${dark ? '#fff' : '#0f172a'};outline:none}
       #wj-chat-input-box input::placeholder{color:\${dark ? 'rgba(255,255,255,0.4)' : '#94a3b8'}}
@@ -310,7 +310,7 @@ Deno.serve(async (req) => {
       #wj-chat-bubble-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
       #wj-chat-bubble-avatar svg{width:16px;height:16px;color:#fff}
       #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;border-top-left-radius:4px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
-      #wj-chat-input{position:relative;padding:16px;border-top:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-input{position:relative;padding:16px}
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
       #wj-chat-input-box input{flex:1;border:none;background:transparent;font-size:14px;color:\${dark ? '#fff' : '#0f172a'};outline:none}
       #wj-chat-input-box input::placeholder{color:\${dark ? 'rgba(255,255,255,0.4)' : '#94a3b8'}}
