@@ -23,9 +23,9 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+    const geminiApiKey = Deno.env.get("GOOGLE_GEMINI_API_KEY");
 
-    if (!lovableApiKey) {
+    if (!geminiApiKey) {
       return new Response(
         JSON.stringify({ error: "AI not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -133,45 +133,44 @@ STRICT RULES:
 - Keep responses short (2-3 sentences max).
 - Do not make up information.`;
 
-    // Build OpenAI-compatible messages
-    const openaiMessages = [
-      { role: "system", content: systemInstruction },
-      ...messages.map((msg: { text: string; sender: string }) => ({
-        role: msg.sender === "user" ? "user" : "assistant",
-        content: msg.text,
-      })),
-    ];
+    // Build Gemini-compatible messages
+    const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
+      role: msg.sender === "user" ? "user" : "model",
+      parts: [{ text: msg.text }],
+    }));
 
-    const aiResponse = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+    const geminiResponse = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${lovableApiKey}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: openaiMessages,
-          temperature: 0.7,
-          max_tokens: 500,
+          system_instruction: {
+            parts: [{ text: systemInstruction }],
+          },
+          contents: conversationHistory,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 500,
+          },
         }),
       }
     );
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error("AI Gateway error:", aiResponse.status, errorText);
+    if (!geminiResponse.ok) {
+      const errorText = await geminiResponse.text();
+      console.error("Gemini API error:", geminiResponse.status, errorText);
       return new Response(
         JSON.stringify({ error: "AI generation failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const aiData = await aiResponse.json();
-    const aiReply = aiData?.choices?.[0]?.message?.content;
+    const geminiData = await geminiResponse.json();
+    const aiReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!aiReply) {
+      console.error("No reply from Gemini:", JSON.stringify(geminiData));
       return new Response(
         JSON.stringify({ error: "No AI response generated" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
