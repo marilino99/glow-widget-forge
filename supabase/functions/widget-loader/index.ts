@@ -246,7 +246,7 @@ Deno.serve(async (req) => {
       #wj-btn.pop{animation:wj-btn-pop .4s cubic-bezier(0.34,1.56,0.64,1)}
       #wj-btn svg{width:24px;height:24px}
       #wj-btn img{width:100%;height:100%;object-fit:cover}
-      #wj-pop{display:none;position:absolute;bottom:calc(100% + 14px);\${cfg.widget_position === 'left' ? 'left' : 'right'}:0;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;background:\${bgMain};z-index:2147483647;transform:translateZ(0)}
+      #wj-pop{display:none;position:absolute;bottom:0;\${cfg.widget_position === 'left' ? 'left' : 'right'}:0;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;background:\${bgMain};z-index:2147483647;transform:translateZ(0)}
       #wj-pop.open{display:flex;flex-direction:column;animation:wj-expand .35s cubic-bezier(0,0,0.2,1)}
       #wj-pop.closing{display:flex;flex-direction:column;animation:wj-collapse .3s cubic-bezier(0.4,0,0.2,1) forwards}
       @keyframes wj-expand{from{opacity:0;transform:scale(0.85) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
