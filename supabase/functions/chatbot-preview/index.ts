@@ -23,9 +23,9 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const geminiApiKey = Deno.env.get("GOOGLE_GEMINI_API_KEY");
+    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
 
-    if (!geminiApiKey) {
+    if (!lovableApiKey) {
       return new Response(
         JSON.stringify({ error: "AI not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -83,12 +83,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Build conversation for Gemini
-    const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
-      role: msg.sender === "user" ? "user" : "model",
-      parts: [{ text: msg.text }],
-    }));
-
     const widjetKnowledgeBase = `
 ## What is Widjet
 Widjet is a customizable widget that you can add to any website with a simple copy-paste of a code snippet. It helps businesses engage with their website visitors through multiple features.
@@ -139,30 +133,43 @@ STRICT RULES:
 - Keep responses short (2-3 sentences max).
 - Do not make up information.`;
 
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
+    // Build OpenAI-compatible messages
+    const openaiMessages = [
+      { role: "system", content: systemInstruction },
+      ...messages.map((msg: { text: string; sender: string }) => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.text,
+      })),
+    ];
+
+    const aiResponse = await fetch(
+      "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${lovableApiKey}`,
+        },
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: systemInstruction }] },
-          contents: conversationHistory,
-          generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
+          model: "google/gemini-2.5-flash",
+          messages: openaiMessages,
+          temperature: 0.7,
+          max_tokens: 500,
         }),
       }
     );
 
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text();
-      console.error("Gemini API error:", geminiResponse.status, errorText);
+    if (!aiResponse.ok) {
+      const errorText = await aiResponse.text();
+      console.error("AI Gateway error:", aiResponse.status, errorText);
       return new Response(
         JSON.stringify({ error: "AI generation failed" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const geminiData = await geminiResponse.json();
-    const aiReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const aiData = await aiResponse.json();
+    const aiReply = aiData?.choices?.[0]?.message?.content;
 
     if (!aiReply) {
       return new Response(
