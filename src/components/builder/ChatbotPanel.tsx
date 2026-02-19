@@ -52,26 +52,25 @@ const ChatbotPanel = ({
 
         {chatbotEnabled && (
           <>
-            <div className="rounded-xl bg-primary/5 border border-primary/10 p-3">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Il chatbot risponderà automaticamente ai visitatori basandosi sulle istruzioni che scrivi qui sotto.
-                Inserisci informazioni sulla tua attività, orari, servizi, FAQ, ecc.
+            <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-3">
+              <p className="text-xs text-green-700 dark:text-green-400 leading-relaxed font-medium">
+                ✅ Il chatbot è già attivo e sa rispondere a domande su Widjet (funzionalità, installazione, prezzi, ecc.) senza bisogno di configurazione.
               </p>
             </div>
 
-            {/* Instructions */}
+            {/* Additional Instructions */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-foreground">
-                Knowledge base / Istruzioni
+                Istruzioni aggiuntive (opzionale)
               </Label>
               <Textarea
                 value={instructions}
                 onChange={(e) => setInstructions(e.target.value)}
-                placeholder={`Es:\n- Siamo un negozio di scarpe online\n- Orari: lun-ven 9-18\n- Spediamo in tutta Italia in 2-3 giorni\n- Reso gratuito entro 30 giorni\n- Per ordini sopra 50€ la spedizione è gratuita`}
-                className="min-h-[250px] resize-none rounded-xl text-sm"
+                placeholder={`Aggiungi informazioni specifiche sulla tua attività, es:\n- Siamo un negozio di scarpe online\n- Orari: lun-ven 9-18\n- Spediamo in tutta Italia in 2-3 giorni`}
+                className="min-h-[200px] resize-none rounded-xl text-sm"
               />
               <p className="text-xs text-muted-foreground">
-                Più dettagli inserisci, migliori saranno le risposte del bot.
+                Queste istruzioni verranno aggiunte alla knowledge base predefinita di Widjet.
               </p>
             </div>
 
