@@ -1,25 +1,24 @@
 
-## Fix: Remove Black Gap in Chat Scroll
 
-### Problem
-The chat messages container uses `flex-1` which stretches to fill all vertical space. When messages don't fill the entire area, a large black gap appears between the last message and the input box.
+## Fix: Widget non si apre al click
 
-### Solution
-Wrap the messages inside the scroll container with a flex column that uses `justify-end`, so messages are pushed to the bottom of the scrollable area -- eliminating the gap between the last message and the input field.
+### Problema
+Nel file `supabase/functions/widget-loader/index.ts`, la regola CSS per `#wj-pop` contiene testo duplicato dopo la chiusura `}`. Questo corrompe il parsing CSS del browser e impedisce alla regola `#wj-pop.open{display:flex}` di funzionare -- il popup resta invisibile anche quando si clicca l'icona.
 
-### Technical Details
+### Soluzione
+Rimuovere il testo CSS duplicato su due righe del widget-loader.
 
-**File:** `src/components/builder/WidgetPreviewPanel.tsx`
+### Dettagli Tecnici
 
-1. Update the chat messages container (line 885) from:
-   ```tsx
-   <div className="flex-1 overflow-y-auto px-4 py-4">
-   ```
-   to:
-   ```tsx
-   <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col justify-end">
-   ```
+**File:** `supabase/functions/widget-loader/index.ts`
 
-   This single class addition makes messages stack from the bottom up, so the input always sits directly below the last message with no gap. When messages overflow, scrolling works normally.
+1. **Riga 133** (versione iframe) -- rimuovere il testo duplicato dopo il primo `}`:
+   - Da: `...;z-index:2147483647}border-radius:16px;box-shadow:...;z-index:2147483647}`
+   - A: `...;z-index:2147483647}`
 
-2. Reduce bottom padding on the input container (line 935) from `p-4` to `px-4 py-2` to tighten the spacing between messages and input, matching the reference screenshot.
+2. **Riga 233** (versione standard) -- stessa correzione:
+   - Da: `...;z-index:2147483647}border-radius:16px;box-shadow:...;z-index:2147483647}`
+   - A: `...;z-index:2147483647}`
+
+Dopo il fix, la funzione backend verra' ridistribuita automaticamente e il widget funzionera' correttamente su tutti i siti dove e' installato.
+
