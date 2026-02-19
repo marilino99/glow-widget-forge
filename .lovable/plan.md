@@ -1,28 +1,25 @@
 
-# Migrare chatbot-preview a Google Gemini 2.0 Flash
+## Fix: Remove Black Gap in Chat Scroll
 
-## Situazione attuale
-- `chatbot-reply` (produzione): usa gia Google Gemini 2.0 Flash direttamente -- nessuna modifica necessaria
-- `chatbot-preview` (builder): usa Lovable AI Gateway -- da migrare a Google Gemini API diretta
+### Problem
+The chat messages container uses `flex-1` which stretches to fill all vertical space. When messages don't fill the entire area, a large black gap appears between the last message and the input box.
 
-## Cosa cambia
+### Solution
+Wrap the messages inside the scroll container with a flex column that uses `justify-end`, so messages are pushed to the bottom of the scrollable area -- eliminating the gap between the last message and the input field.
 
-### File: `supabase/functions/chatbot-preview/index.ts`
+### Technical Details
 
-1. Sostituire `LOVABLE_API_KEY` con `GOOGLE_GEMINI_API_KEY` (gia configurata)
-2. Convertire il formato messaggi da OpenAI-compatible a formato Gemini nativo:
-   - Da `{ role: "system"/"user"/"assistant", content: "..." }` 
-   - A `{ role: "user"/"model", parts: [{ text: "..." }] }` con `system_instruction` separata
-3. Cambiare l'endpoint da `ai.gateway.lovable.dev` a `generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`
-4. Aggiornare il parsing della risposta da `choices[0].message.content` a `candidates[0].content.parts[0].text`
+**File:** `src/components/builder/WidgetPreviewPanel.tsx`
 
-## Limiti gratuiti di Gemini 2.0 Flash
-- 15 richieste al minuto (RPM)
-- 1.500 richieste al giorno (RPD)
-- 1 milione di token al minuto
+1. Update the chat messages container (line 885) from:
+   ```tsx
+   <div className="flex-1 overflow-y-auto px-4 py-4">
+   ```
+   to:
+   ```tsx
+   <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col justify-end">
+   ```
 
-Questo dovrebbe essere piu che sufficiente per l'uso in preview/builder.
+   This single class addition makes messages stack from the bottom up, so the input always sits directly below the last message with no gap. When messages overflow, scrolling works normally.
 
-## Dettagli tecnici
-
-Il modello selezionato sara `gemini-2.0-flash` nell'URL dell'endpoint. Nessuna nuova chiave API necessaria, la `GOOGLE_GEMINI_API_KEY` e gia presente nei secrets.
+2. Reduce bottom padding on the input container (line 935) from `p-4` to `px-4 py-2` to tighten the spacing between messages and input, matching the reference screenshot.
