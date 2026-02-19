@@ -19,6 +19,19 @@ const LandingContent = () => {
   const navigate = useNavigate();
   const { t } = useLandingLang();
 
+  // Load Jetwidget on the landing page
+  useEffect(() => {
+    if ((window as any).__wj_loaded) return;
+    (window as any).__wj = (window as any).__wj || {};
+    (window as any).__wj.widgetId = "3274cacf-079b-4985-885f-58425ea23bdb";
+    (window as any).__wj.product_name = "jetwidget";
+    const f = document.getElementsByTagName("script")[0];
+    const j = document.createElement("script");
+    j.async = true;
+    j.src = "https://jqvcafbrccpmygiihyry.supabase.co/functions/v1/widget-loader";
+    f.parentNode?.insertBefore(j, f);
+  }, []);
+
   useEffect(() => {
     if (loading || !user) return;
 
