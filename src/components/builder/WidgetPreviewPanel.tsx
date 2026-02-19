@@ -898,7 +898,7 @@ const WidgetPreviewPanel = ({
                         {contactName?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                     )}
-                    <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
+                    <div className={`rounded-2xl px-4 py-3 text-white ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
                       <p className="text-sm">{t.welcomeMessage}</p>
                     </div>
                   </div>
@@ -922,7 +922,7 @@ const WidgetPreviewPanel = ({
                             {contactName?.charAt(0)?.toUpperCase() || "?"}
                           </div>
                         )}
-                        <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white max-w-[80%]">
+                        <div className={`rounded-2xl px-4 py-3 text-white max-w-[80%] ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
                           <p className="text-sm">{msg.text}</p>
                         </div>
                       </div>
@@ -937,7 +937,7 @@ const WidgetPreviewPanel = ({
                           {contactName?.charAt(0)?.toUpperCase() || "?"}
                         </div>
                       )}
-                      <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
+                      <div className={`rounded-2xl px-4 py-3 text-white ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
                         <div className="flex gap-1">
                           <span className="h-2 w-2 rounded-full bg-white/60 animate-bounce" style={{ animationDelay: "0ms" }} />
                           <span className="h-2 w-2 rounded-full bg-white/60 animate-bounce" style={{ animationDelay: "150ms" }} />
