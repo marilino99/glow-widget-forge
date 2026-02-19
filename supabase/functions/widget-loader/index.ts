@@ -85,6 +85,8 @@ Deno.serve(async (req) => {
     }
     var dark = cfg.widget_theme === 'dark';
     var solid = cfg.background_type === 'solid';
+    var gradient = cfg.background_type === 'gradient';
+    var bgImage = cfg.background_image || '';
     var name = cfg.contact_name || 'Support';
     var help = cfg.offer_help || 'Write to us';
     var hello = cfg.say_hello || 'Hello! 👋';
@@ -99,15 +101,20 @@ Deno.serve(async (req) => {
     var faqEnabled = cfg.faq_enabled;
     var igEnabled = cfg.instagram_enabled;
     var lang = cfg.language || 'en';
+    var whatsappEnabled = cfg.whatsapp_enabled || false;
+    var whatsappCountryCode = (cfg.whatsapp_country_code || '+39').replace('+', '');
+    var whatsappNumber = cfg.whatsapp_number || '';
+    var showBranding = cfg.show_branding !== false;
+    var avatarInitial = name ? name.charAt(0).toUpperCase() : 'S';
 
     var t = {
-      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...' },
-      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...' },
-      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...' },
-      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...' },
-      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...' },
-      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...' },
-      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...' }
+      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp' },
+      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp' },
+      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp' },
+      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...', contactWhatsApp: 'Contactez-nous sur WhatsApp' },
+      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...', contactWhatsApp: 'Contattaci su WhatsApp' },
+      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...', contactWhatsApp: 'Contacte-nos no WhatsApp' },
+      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...', contactWhatsApp: 'Skontaktuj się z nami przez WhatsApp' }
     };
     var tr = t[lang] || t.en;
 
@@ -134,17 +141,20 @@ Deno.serve(async (req) => {
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : ''}}
-      #wj-hello{font-size:22px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${solid ? '#fff' : textMain}}
+      #wj-head{padding:20px 24px \${(solid || gradient) ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : gradient ? 'background:linear-gradient(135deg, '+color.bg+' 0%, '+color.hover+' 100%);color:#fff' : ''}\${bgImage ? ';background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
+      #wj-hello{font-size:22px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${(solid || gradient || bgImage) ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
-      #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
-      #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
-      #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
-      #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
+      #wj-close svg{width:16px;height:16px;stroke:\${(solid || gradient || bgImage) ? '#fff' : textSub}}
+      #wj-contact{margin:0 \${(solid || gradient) ? '0' : '16px'};padding:16px;border-radius:12px;background:\${(solid || gradient) ? 'rgba(30,41,59,0.9)' : bgCard};\${(solid || gradient) ? 'margin-top:16px' : ''}}
+      #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+      #wj-cname{font-size:12px;color:\${(solid || gradient) ? 'rgba(255,255,255,0.6)' : textSub}}
+      #wj-chelp{font-size:14px;color:\${(solid || gradient) ? '#fff' : textMain}}
       #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer}
       #wj-cbtn:hover{background:\${color.hover}}
+      #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${(solid || gradient) ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+      #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
+      #wj-whatsapp svg{width:20px;height:20px}
       #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
       #wj-products::-webkit-scrollbar{display:none}
       .wj-prod{flex-shrink:0;width:calc(100% - 48px);border-radius:16px;overflow:hidden;background:\${dark ? '#1e293b' : '#fff'}}
@@ -234,17 +244,20 @@ Deno.serve(async (req) => {
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
       #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : ''}}
-      #wj-hello{font-size:24px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${solid ? '#fff' : textMain}}
+      #wj-head{padding:20px 24px \${(solid || gradient) ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : gradient ? 'background:linear-gradient(135deg, '+color.bg+' 0%, '+color.hover+' 100%);color:#fff' : ''}\${bgImage ? ';background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
+      #wj-hello{font-size:24px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${(solid || gradient || bgImage) ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
-      #wj-close svg{width:16px;height:16px;stroke:\${solid ? '#fff' : textSub}}
-      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
-      #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:linear-gradient(135deg,#22d3ee,#34d399);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:14px;flex-shrink:0}
-      #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
-      #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
+      #wj-close svg{width:16px;height:16px;stroke:\${(solid || gradient || bgImage) ? '#fff' : textSub}}
+      #wj-contact{margin:0 \${(solid || gradient) ? '0' : '16px'};padding:16px;border-radius:12px;background:\${(solid || gradient) ? 'rgba(30,41,59,0.9)' : bgCard};\${(solid || gradient) ? 'margin-top:16px' : ''}}
+      #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+      #wj-cname{font-size:12px;color:\${(solid || gradient) ? 'rgba(255,255,255,0.6)' : textSub}}
+      #wj-chelp{font-size:14px;color:\${(solid || gradient) ? '#fff' : textMain}}
       #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer}
       #wj-cbtn:hover{background:\${color.hover}}
+      #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${(solid || gradient) ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+      #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
+      #wj-whatsapp svg{width:20px;height:20px}
       #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
       #wj-products::-webkit-scrollbar{display:none}
       .wj-prod{flex-shrink:0;width:calc(100% - 48px);border-radius:16px;overflow:hidden;background:\${dark ? '#1e293b' : '#fff'}}
@@ -357,11 +370,14 @@ Deno.serve(async (req) => {
     contact.id = 'wj-contact';
     var avatarHtml = avatar 
       ? '<img src="' + esc(avatar) + '" id="wj-avatar" alt=""/>' 
-      : '<div id="wj-avatar">C</div>';
-    contact.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' + avatarHtml + '<div style="flex:1"><div id="wj-cname">' + esc(name) + '</div><div id="wj-chelp">' + esc(help) + '</div></div></div><button id="wj-cbtn">' + esc(tr.contactUs) + '</button>';
+      : '<div id="wj-avatar">' + esc(avatarInitial) + '</div>';
+    var whatsappBtnHtml = (whatsappEnabled && whatsappNumber) 
+      ? '<button id="wj-whatsapp" onclick="window.open(\'https://wa.me/' + esc(whatsappCountryCode + whatsappNumber) + '\',\'_blank\')"><svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' + esc(tr.contactWhatsApp || 'Contact us on WhatsApp') + '</button>' 
+      : '';
+    contact.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' + avatarHtml + '<div style="flex:1"><div id="wj-cname">' + esc(name) + '</div><div id="wj-chelp">' + esc(help) + '</div></div></div><button id="wj-cbtn">' + esc(tr.contactUs) + '</button>' + whatsappBtnHtml;
 
-    // In solid mode, contact card goes inside header; otherwise after header
-    if (solid) {
+    // In solid/gradient mode, contact card goes inside header; otherwise after header
+    if (solid || gradient) {
       header.appendChild(contact);
       scroll.appendChild(header);
     } else {
@@ -464,11 +480,13 @@ Deno.serve(async (req) => {
     footer.innerHTML = '<div id="wj-nav"><button class="wj-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>' + esc(tr.home) + '</span></button><button class="wj-nav-item inactive"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>' + esc(tr.contact) + '</span></button></div>';
     homeView.appendChild(footer);
 
-    // Powered by
-    var powered = d.createElement('div');
-    powered.id = 'wj-powered';
-    powered.innerHTML = 'Powered by <span style="font-weight:500">Widjet</span>';
-    homeView.appendChild(powered);
+    // Powered by (conditional based on showBranding)
+    if (showBranding) {
+      var powered = d.createElement('div');
+      powered.id = 'wj-powered';
+      powered.innerHTML = 'Powered by <span style="font-weight:500">Widjet</span>';
+      homeView.appendChild(powered);
+    }
 
     // CHAT VIEW
     var chatView = d.createElement('div');
