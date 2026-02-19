@@ -753,7 +753,7 @@ const WidgetPreviewPanel = ({
 
           {/* Widget preview - interactive */}
           <div 
-            className={`absolute z-20 flex flex-col justify-end transition-all duration-300 ${
+            className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
                 ? "w-[350px] scale-[0.65] origin-bottom-right" 
                 : "w-[350px] bottom-5 right-5"
@@ -953,8 +953,8 @@ const WidgetPreviewPanel = ({
                     </div>
                   )}
                   <div 
-                    className={`flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-neutral-900 border-white/15"}`}
-                    style={chatInputFocused ? { borderColor: actualHexColor, boxShadow: `0 0 0 1px ${actualHexColor}20` } : {}}
+                    className={`flex items-center gap-2 rounded-full border-2 px-4 py-2 transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-neutral-900 border-white/15"}`}
+                    style={chatInputFocused ? { borderColor: actualHexColor, boxShadow: `0 0 0 2px ${actualHexColor}25` } : {}}
                   >
                     <input 
                       type="text" 
