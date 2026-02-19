@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import widgetPreview from "@/assets/widget-preview-hero.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
@@ -71,6 +71,19 @@ const Hero = () => {
           </div>
         </motion.div>
       </div>
+
+      <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp} className="mx-auto max-w-7xl flex justify-center mt-2">
+        <button
+          onClick={() => {
+            const wjBtn = document.getElementById("wj-btn");
+            if (wjBtn) wjBtn.click();
+          }}
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:bg-accent hover:shadow-md hover:-translate-y-0.5"
+        >
+          <Eye className="h-4 w-4" />
+          {t("hero.demo")}
+        </button>
+      </motion.div>
     </section>
   );
 };
