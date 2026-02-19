@@ -69,7 +69,7 @@ const Hero = () => {
           <div className="relative rounded-3xl overflow-hidden bg-background">
             <img src={widgetPreview} alt="Widjet widget preview showing chat, FAQ and contact features" className="w-full h-full object-cover block" />
           </div>
-          <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp} className="flex justify-start mt-4">
+          <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp} className="relative flex items-start gap-3 mt-4">
             <button
               onClick={() => {
                 const wjBtn = document.getElementById("wj-btn");
@@ -80,6 +80,29 @@ const Hero = () => {
               <Eye className="h-4 w-4" />
               {t("hero.demo")}
             </button>
+            {/* Curved arrow from button area pointing up toward the widget image */}
+            <svg
+              className="hidden md:block w-20 h-16 text-muted-foreground/50 -mt-2"
+              viewBox="0 0 80 64"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8 58 C 12 20, 50 10, 68 8"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeDasharray="4 3"
+              />
+              <path
+                d="M62 4 L 70 8 L 62 14"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
           </motion.div>
         </motion.div>
       </div>
