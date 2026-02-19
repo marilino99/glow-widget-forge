@@ -1,43 +1,28 @@
 
-# Chatbot sempre attivo con knowledge base su Widjet
+# Migrare chatbot-preview a Google Gemini 2.0 Flash
+
+## Situazione attuale
+- `chatbot-reply` (produzione): usa gia Google Gemini 2.0 Flash direttamente -- nessuna modifica necessaria
+- `chatbot-preview` (builder): usa Lovable AI Gateway -- da migrare a Google Gemini API diretta
 
 ## Cosa cambia
 
-Attualmente il chatbot funziona solo se l'utente attiva il toggle E scrive delle istruzioni personalizzate. Vogliamo che funzioni **subito, di default**, con una knowledge base integrata su Widjet -- senza che l'utente debba fare nulla.
+### File: `supabase/functions/chatbot-preview/index.ts`
 
-## Modifiche
+1. Sostituire `LOVABLE_API_KEY` con `GOOGLE_GEMINI_API_KEY` (gia configurata)
+2. Convertire il formato messaggi da OpenAI-compatible a formato Gemini nativo:
+   - Da `{ role: "system"/"user"/"assistant", content: "..." }` 
+   - A `{ role: "user"/"model", parts: [{ text: "..." }] }` con `system_instruction` separata
+3. Cambiare l'endpoint da `ai.gateway.lovable.dev` a `generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`
+4. Aggiornare il parsing della risposta da `choices[0].message.content` a `candidates[0].content.parts[0].text`
 
-### 1. Edge Function `chatbot-reply`
-- Rimuovere il controllo che blocca il bot se `chatbot_instructions` e vuoto (riga 53)
-- Il bot funzionera sempre quando `chatbot_enabled` e `true`
-- Aggiungere una **knowledge base predefinita su Widjet** direttamente nel system prompt, che viene sempre inclusa
-- Se l'utente ha scritto istruzioni aggiuntive nel campo `chatbot_instructions`, queste vengono aggiunte IN AGGIUNTA alla knowledge base di Widjet
-- Il system prompt dira al bot di rispondere SOLO su argomenti relativi a Widjet e di rifiutare educatamente domande fuori tema
+## Limiti gratuiti di Gemini 2.0 Flash
+- 15 richieste al minuto (RPM)
+- 1.500 richieste al giorno (RPD)
+- 1 milione di token al minuto
 
-La knowledge base predefinita includera:
-- Cos'e Widjet (widget personalizzabile per siti web)
-- Funzionalita principali (chat, FAQ, product cards, Instagram, WhatsApp, Google Reviews, ecc.)
-- Come si installa (copia-incolla codice)
-- Piani e prezzi
-- Come personalizzare il widget dal builder
+Questo dovrebbe essere piu che sufficiente per l'uso in preview/builder.
 
-### 2. Edge Function `send-chat-message`
-- Il chatbot viene gia triggerato quando `chatbot_enabled` e `true` -- nessuna modifica necessaria qui
+## Dettagli tecnici
 
-### 3. Database: default `chatbot_enabled` a `true`
-- Migrazione per cambiare il default di `chatbot_enabled` da `false` a `true`, cosi i nuovi utenti hanno il bot attivo di default
-- Per gli utenti esistenti, aggiornare il valore a `true` dove ancora `false`
-
-### 4. UI `ChatbotPanel.tsx`
-- Il campo "Knowledge base / Istruzioni" diventa opzionale e viene rinominato a qualcosa come "Istruzioni aggiuntive (opzionale)"
-- Aggiungere una nota che spiega che il bot sa gia rispondere su Widjet di default
-- Il bot funziona anche se il campo e vuoto
-
-### 5. `useWidgetConfiguration.ts`
-- Cambiare il default di `chatbotEnabled` da `false` a `true`
-
-## File coinvolti
-- `supabase/functions/chatbot-reply/index.ts` -- knowledge base Widjet + rimuovere blocco istruzioni vuote
-- `src/components/builder/ChatbotPanel.tsx` -- UI aggiornata
-- `src/hooks/useWidgetConfiguration.ts` -- default `chatbotEnabled: true`
-- Migrazione DB -- default `chatbot_enabled` a `true` + update utenti esistenti
+Il modello selezionato sara `gemini-2.0-flash` nell'URL dell'endpoint. Nessuna nuova chiave API necessaria, la `GOOGLE_GEMINI_API_KEY` e gia presente nei secrets.
