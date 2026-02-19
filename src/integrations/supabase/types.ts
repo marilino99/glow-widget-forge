@@ -48,6 +48,7 @@ export type Database = {
       }
       conversations: {
         Row: {
+          cleared_by_visitor: boolean
           created_at: string | null
           id: string
           last_message: string | null
@@ -60,6 +61,7 @@ export type Database = {
           widget_owner_id: string
         }
         Insert: {
+          cleared_by_visitor?: boolean
           created_at?: string | null
           id?: string
           last_message?: string | null
@@ -72,6 +74,7 @@ export type Database = {
           widget_owner_id: string
         }
         Update: {
+          cleared_by_visitor?: boolean
           created_at?: string | null
           id?: string
           last_message?: string | null
