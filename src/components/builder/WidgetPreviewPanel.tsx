@@ -793,9 +793,9 @@ const WidgetPreviewPanel = ({
                 {/* Chat messages */}
                 <div className="flex-1 overflow-y-auto px-4 py-4">
                   {/* Welcome message */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                      <Sparkles className="h-4 w-4 text-white" />
+                  <div className="flex items-start gap-2">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                      <Sparkles className="h-3 w-3 text-white" />
                     </div>
                     <div className="rounded-2xl rounded-tl-sm bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
                       <p className="text-sm">{t.welcomeMessage}</p>

@@ -206,9 +206,9 @@ Deno.serve(async (req) => {
       #wj-chat-subtitle{font-size:12px;line-height:1.2;color:\${dark ? 'rgba(255,255,255,0.5)' : '#64748b'}}
       #wj-chat-header-right{display:flex;align-items:center;gap:8px}
       #wj-chat-msgs{flex:1;overflow-y:auto;padding:16px}
-      #wj-chat-bubble{display:flex;align-items:flex-start;gap:12px}
-      #wj-chat-bubble-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-      #wj-chat-bubble-avatar svg{width:16px;height:16px;color:#fff}
+      #wj-chat-bubble{display:flex;align-items:flex-start;gap:8px}
+      #wj-chat-bubble-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      #wj-chat-bubble-avatar svg{width:12px;height:12px;color:#fff}
       #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;border-top-left-radius:4px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
       #wj-chat-input{position:relative;padding:16px}
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
@@ -306,9 +306,9 @@ Deno.serve(async (req) => {
       #wj-chat-subtitle{font-size:12px;line-height:1.2;color:\${dark ? 'rgba(255,255,255,0.5)' : '#64748b'}}
       #wj-chat-header-right{display:flex;align-items:center;gap:8px}
       #wj-chat-msgs{flex:1;overflow-y:auto;padding:16px}
-      #wj-chat-bubble{display:flex;align-items:flex-start;gap:12px}
-      #wj-chat-bubble-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-      #wj-chat-bubble-avatar svg{width:16px;height:16px;color:#fff}
+      #wj-chat-bubble{display:flex;align-items:flex-start;gap:8px}
+      #wj-chat-bubble-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      #wj-chat-bubble-avatar svg{width:12px;height:12px;color:#fff}
       #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;border-top-left-radius:4px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
       #wj-chat-input{position:relative;padding:16px}
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
