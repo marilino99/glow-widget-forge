@@ -276,11 +276,19 @@ const WidgetPreviewPanel = ({
       const { data, error } = await supabase.functions.invoke('chatbot-preview', {
         body: { messages: allMessages, widgetId },
       });
-      if (!error && data?.reply) {
+      if (error) {
+        const status = (error as any)?.context?.status;
+        if (status === 429) {
+          setChatMessages(prev => [...prev, { text: "⚠️ Hai raggiunto il limite di richieste AI. Riprova tra qualche minuto.", sender: "bot" as const }]);
+        } else {
+          setChatMessages(prev => [...prev, { text: "⚠️ Si è verificato un errore. Riprova più tardi.", sender: "bot" as const }]);
+        }
+      } else if (data?.reply) {
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const }]);
       }
     } catch (err) {
       console.error('Preview chatbot error:', err);
+      setChatMessages(prev => [...prev, { text: "⚠️ Errore di connessione. Riprova più tardi.", sender: "bot" as const }]);
     } finally {
       setIsBotTyping(false);
     }
