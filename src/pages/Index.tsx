@@ -19,8 +19,10 @@ const LandingContent = () => {
   const navigate = useNavigate();
   const { t } = useLandingLang();
 
-  // Load Widjet on the landing page
+  // Load Widjet on the landing page only for non-authenticated visitors
   useEffect(() => {
+    if (user) return; // Don't load widget for logged-in users (they get redirected)
+
     (window as any).__wj = (window as any).__wj || {};
     (window as any).__wj.widgetId = "3274cacf-079b-4985-885f-58425ea23bdb";
     (window as any).__wj.product_name = "widjet";
@@ -37,7 +39,7 @@ const LandingContent = () => {
       (window as any).__wj_loaded = false;
       j.remove();
     };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (loading || !user) return;
