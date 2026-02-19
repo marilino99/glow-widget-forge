@@ -775,7 +775,7 @@ const BuilderSidebar = ({
               {"Are you sure you\nwant to log out?"}
             </DialogTitle>
             <DialogDescription className="text-center text-base text-muted-foreground">
-              Log out of Jetwidget as {userEmail}?
+              Log out of Widjet as {userEmail}?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-2">
