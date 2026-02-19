@@ -1,0 +1,1 @@
+ALTER TABLE public.conversations ADD COLUMN cleared_at timestamp with time zone DEFAULT NULL;

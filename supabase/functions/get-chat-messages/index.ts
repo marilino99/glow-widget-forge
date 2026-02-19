@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
     // Find conversation for this visitor
     const { data: conversation, error: convError } = await supabase
       .from("conversations")
-      .select("id, visitor_token")
+      .select("id, visitor_token, cleared_by_visitor, cleared_at")
       .eq("widget_owner_id", config.user_id)
       .eq("visitor_id", visitorId)
       .maybeSingle();
@@ -73,6 +73,11 @@ Deno.serve(async (req) => {
       .select("*")
       .eq("conversation_id", conversation.id)
       .order("created_at", { ascending: true });
+
+    // If conversation was cleared by visitor, only show messages after cleared_at
+    if (conversation.cleared_by_visitor && conversation.cleared_at) {
+      query = query.gt("created_at", conversation.cleared_at);
+    }
 
     // If lastMessageId is provided, only get messages after it
     if (lastMessageId) {
