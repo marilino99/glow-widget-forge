@@ -847,8 +847,8 @@ const WidgetPreviewPanel = ({
                     {selectedAvatar ? (
                       <img src={selectedAvatar} alt="Avatar" className="h-8 w-8 rounded-full object-cover" />
                     ) : (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                        <span className="text-xs font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-xs font-bold text-white">
+                        {contactName?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                     )}
                     <div className="flex flex-col">
@@ -894,8 +894,8 @@ const WidgetPreviewPanel = ({
                     {selectedAvatar ? (
                       <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
                     ) : (
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                        <span className="text-[10px] font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
+                        {contactName?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                     )}
                     <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
@@ -918,8 +918,8 @@ const WidgetPreviewPanel = ({
                         {selectedAvatar ? (
                           <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
                         ) : (
-                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                            <span className="text-[10px] font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
+                            {contactName?.charAt(0)?.toUpperCase() || "?"}
                           </div>
                         )}
                         <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white max-w-[80%]">
@@ -933,8 +933,8 @@ const WidgetPreviewPanel = ({
                       {selectedAvatar ? (
                         <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
                       ) : (
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                          <span className="text-[10px] font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
+                          {contactName?.charAt(0)?.toUpperCase() || "?"}
                         </div>
                       )}
                       <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
