@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
       #wj-pop{display:none;width:calc(100% - 24px);max-width:350px;height:calc(100% - 24px);max-height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647;pointer-events:auto;transform:translateZ(0)}
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
-      #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;overscroll-behavior:contain}
+      #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;overscroll-behavior:none}
       #wj-gradient-overlay{display:none}
       \${gradient ? '#wj-gradient-overlay{display:block;position:absolute;top:0;left:0;right:0;height:256px;pointer-events:none;z-index:0;background:linear-gradient(180deg, '+(dark ? color.bg+'88' : color.bg+'30')+' 0%, '+(dark ? color.bg+'44' : color.bg+'15')+' 45%, transparent 100%)}' : ''}
       #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;z-index:1;\${solid ? 'background:'+color.bg+';color:#fff' : ''}\${bgImage ? 'background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
@@ -243,7 +243,7 @@ Deno.serve(async (req) => {
       #wj-pop{display:none;position:fixed;bottom:90px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647;transform:translateZ(0)}
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-      #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;overscroll-behavior:contain}
+      #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;overscroll-behavior:none}
       #wj-gradient-overlay{display:none}
       \${gradient ? '#wj-gradient-overlay{display:block;position:absolute;top:0;left:0;right:0;height:256px;pointer-events:none;z-index:0;background:linear-gradient(180deg, '+(dark ? color.bg+'88' : color.bg+'30')+' 0%, '+(dark ? color.bg+'44' : color.bg+'15')+' 45%, transparent 100%)}' : ''}
       #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;z-index:1;\${solid ? 'background:'+color.bg+';color:#fff' : ''}\${bgImage ? 'background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
