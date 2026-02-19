@@ -53,7 +53,7 @@ const defaultConfig: WidgetConfiguration = {
   customCss: "",
   customJs: "",
   showBranding: true,
-  chatbotEnabled: false,
+  chatbotEnabled: true,
   chatbotInstructions: "",
 };
 
