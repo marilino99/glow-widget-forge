@@ -55,7 +55,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.note2": "No credit card.",
 
     // Logos
-    "logos.heading": "Trusted by 2,000+ businesses worldwide",
+    "logos.heading": "Trusted by 200+ businesses worldwide",
 
     // Features
     "features.title1": "Everything you need,",
@@ -192,7 +192,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.note1": "Gratis per sempre.",
     "hero.note2": "Nessuna carta richiesta.",
 
-    "logos.heading": "Scelto da oltre 2.000 aziende nel mondo",
+    "logos.heading": "Scelto da oltre 200 aziende nel mondo",
 
     "features.title1": "Tutto ciò di cui hai bisogno,",
     "features.title2": "niente di superfluo",
@@ -322,7 +322,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.note1": "Für immer kostenlos.",
     "hero.note2": "Keine Kreditkarte nötig.",
 
-    "logos.heading": "Von über 2.000 Unternehmen weltweit vertraut",
+    "logos.heading": "Von über 200 Unternehmen weltweit vertraut",
 
     "features.title1": "Alles was Sie brauchen,",
     "features.title2": "nichts Überflüssiges",
@@ -452,7 +452,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.note1": "Gratuit pour toujours.",
     "hero.note2": "Pas de carte bancaire.",
 
-    "logos.heading": "Utilisé par plus de 2 000 entreprises dans le monde",
+    "logos.heading": "Utilisé par plus de 200 entreprises dans le monde",
 
     "features.title1": "Tout ce dont vous avez besoin,",
     "features.title2": "rien de superflu",
