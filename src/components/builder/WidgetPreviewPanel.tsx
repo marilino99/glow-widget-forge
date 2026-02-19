@@ -835,7 +835,7 @@ const WidgetPreviewPanel = ({
                   </button>
                 )}
               </div>) : showChat ? (/* Chat View */
-          <div className={`flex h-[560px] max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000', color: isLight ? '#0f172a' : '#ffffff' }}>
+          <div className={`flex h-[540px] max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000', color: isLight ? '#0f172a' : '#ffffff' }}>
                 {/* Chat header */}
                 <div className={`flex items-center justify-between px-4 py-3 border-b ${isLight ? "border-slate-200" : "border-white/10"}`}>
                   <button onClick={() => setShowChat(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
@@ -998,7 +998,7 @@ const WidgetPreviewPanel = ({
 
                 {/* Powered by */}
                 {showBranding && (
-                <div className={`border-t py-2 text-center ${isLight ? "border-slate-200" : "border-white/10"}`}>
+                <div className={`py-2 text-center`}>
                   <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/50"}`}>
                      Powered by <span className="font-medium">Widjet</span>
                   </span>
