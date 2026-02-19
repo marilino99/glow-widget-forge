@@ -21,7 +21,6 @@ const LandingContent = () => {
 
   // Load Widjet on the landing page
   useEffect(() => {
-    if ((window as any).__wj_loaded) return;
     (window as any).__wj = (window as any).__wj || {};
     (window as any).__wj.widgetId = "3274cacf-079b-4985-885f-58425ea23bdb";
     (window as any).__wj.product_name = "widjet";
@@ -30,6 +29,14 @@ const LandingContent = () => {
     j.async = true;
     j.src = "https://jqvcafbrccpmygiihyry.supabase.co/functions/v1/widget-loader";
     f.parentNode?.insertBefore(j, f);
+
+    return () => {
+      // Cleanup: remove widget DOM and reset flag when leaving landing
+      const root = document.getElementById("wj-root");
+      if (root) root.remove();
+      (window as any).__wj_loaded = false;
+      j.remove();
+    };
   }, []);
 
   useEffect(() => {
