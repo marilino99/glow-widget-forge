@@ -12,7 +12,7 @@ const DashboardPreview = () => {
       </div>
       <div className="mx-auto max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center">
-          <span className="text-sm font-medium uppercase tracking-widest text-white/70">{t("dashboard.label")}</span>
+          <span className="text-sm font-medium uppercase tracking-widest text-white">{t("dashboard.label")}</span>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] md:text-5xl">{t("dashboard.title")}</h2>
           <p className="mx-auto mt-4 max-w-xl text-white/60">{t("dashboard.desc")}</p>
         </motion.div>
