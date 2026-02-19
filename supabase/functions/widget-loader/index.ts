@@ -614,8 +614,6 @@ Deno.serve(async (req) => {
     chatView.querySelector('#wj-menu-clear').onclick = function() {
       var msgs = chatView.querySelector('#wj-chat-msgs');
       msgs.innerHTML = '<div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div>';
-      renderedMessageIds = {};
-      lastMessageId = null;
       chatMenu.classList.remove('open');
     };
     // Download transcript
