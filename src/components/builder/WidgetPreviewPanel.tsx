@@ -844,9 +844,13 @@ const WidgetPreviewPanel = ({
                     <ArrowLeft className="h-4 w-4" />
                   </button>
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                      <Sparkles className="h-4 w-4 text-white" />
-                    </div>
+                    {selectedAvatar ? (
+                      <img src={selectedAvatar} alt="Avatar" className="h-8 w-8 rounded-full object-cover" />
+                    ) : (
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                        <span className="text-xs font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                      </div>
+                    )}
                     <div className="flex flex-col">
                       <span className="text-sm font-semibold leading-tight">{contactName}</span>
                       <span className={`text-xs leading-tight ${isLight ? "text-slate-500" : "text-white/50"}`}>{t.contactUs || "The team can also help"}</span>
@@ -886,10 +890,14 @@ const WidgetPreviewPanel = ({
                 {/* Chat messages */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col">
                   {/* Welcome message */}
-                  <div className="flex items-start gap-2">
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                      <Sparkles className="h-3 w-3 text-white" />
-                    </div>
+                    <div className="flex items-start gap-2">
+                    {selectedAvatar ? (
+                      <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
+                    ) : (
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                        <span className="text-[10px] font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                      </div>
+                    )}
                     <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
                       <p className="text-sm">{t.welcomeMessage}</p>
                     </div>
@@ -907,9 +915,13 @@ const WidgetPreviewPanel = ({
                       </div>
                     ) : (
                       <div key={index} className="flex items-start gap-2 mt-3">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                          <Sparkles className="h-3 w-3 text-white" />
-                        </div>
+                        {selectedAvatar ? (
+                          <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
+                        ) : (
+                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                            <span className="text-[10px] font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                          </div>
+                        )}
                         <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white max-w-[80%]">
                           <p className="text-sm">{msg.text}</p>
                         </div>
@@ -918,9 +930,13 @@ const WidgetPreviewPanel = ({
                   ))}
                   {isBotTyping && (
                     <div className="flex items-start gap-2 mt-3">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                        <Sparkles className="h-3 w-3 text-white" />
-                      </div>
+                      {selectedAvatar ? (
+                        <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
+                      ) : (
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                          <span className="text-[10px] font-bold text-white">{contactName?.charAt(0)?.toUpperCase() || "?"}</span>
+                        </div>
+                      )}
                       <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
                         <div className="flex gap-1">
                           <span className="h-2 w-2 rounded-full bg-white/60 animate-bounce" style={{ animationDelay: "0ms" }} />
