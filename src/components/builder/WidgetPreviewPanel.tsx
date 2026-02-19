@@ -849,20 +849,20 @@ const WidgetPreviewPanel = ({
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
                       {showChatMenu && (
-                        <div className={`absolute right-0 top-10 z-50 w-48 rounded-xl shadow-lg border ${isLight ? "bg-white border-slate-200" : "bg-zinc-900 border-white/10"}`}>
+                        <div className={`absolute right-0 top-10 z-50 w-44 rounded-xl shadow-lg border ${isLight ? "bg-white border-slate-200" : "bg-zinc-900 border-white/10"}`}>
                           <button
                             onClick={handleClearChat}
-                            className={`flex w-full items-center gap-3 px-4 py-3 text-sm ${isLight ? "hover:bg-slate-100 text-slate-700" : "hover:bg-white/10 text-white"} rounded-t-xl`}
+                            className={`flex w-full items-center gap-2 px-3 py-2.5 text-sm whitespace-nowrap ${isLight ? "hover:bg-slate-100 text-slate-700" : "hover:bg-white/10 text-white"} rounded-t-xl`}
                           >
-                            <Trash2 className="h-4 w-4" />
-                            Cancella chat
+                            <Trash2 className="h-4 w-4 shrink-0" />
+                            Clear chat
                           </button>
                           <button
                             onClick={handleDownloadTranscript}
                             disabled={chatMessages.length === 0}
-                            className={`flex w-full items-center gap-3 px-4 py-3 text-sm ${isLight ? "hover:bg-slate-100 text-slate-700" : "hover:bg-white/10 text-white"} rounded-b-xl disabled:opacity-40`}
+                            className={`flex w-full items-center gap-2 px-3 py-2.5 text-sm whitespace-nowrap ${isLight ? "hover:bg-slate-100 text-slate-700" : "hover:bg-white/10 text-white"} rounded-b-xl disabled:opacity-40`}
                           >
-                            <Download className="h-4 w-4" />
+                            <Download className="h-4 w-4 shrink-0" />
                             Download transcript
                           </button>
                         </div>
