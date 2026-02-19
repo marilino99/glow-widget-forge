@@ -1,0 +1,1 @@
+ALTER TABLE public.conversations ADD COLUMN cleared_by_visitor boolean NOT NULL DEFAULT false;
