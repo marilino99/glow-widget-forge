@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_configurations ADD COLUMN widget_position text NOT NULL DEFAULT 'right';

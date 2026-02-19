@@ -118,6 +118,7 @@ Deno.serve(async (req) => {
         custom_links: customLinks || [],
         custom_css: config.custom_css || null,
         custom_js: config.custom_js || null,
+        widget_position: config.widget_position || 'right',
       }),
       { headers: corsHeaders }
     );

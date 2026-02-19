@@ -337,6 +337,7 @@ export type Database = {
           whatsapp_enabled: boolean | null
           whatsapp_number: string | null
           widget_color: string
+          widget_position: string
           widget_theme: string
         }
         Insert: {
@@ -368,6 +369,7 @@ export type Database = {
           whatsapp_enabled?: boolean | null
           whatsapp_number?: string | null
           widget_color?: string
+          widget_position?: string
           widget_theme?: string
         }
         Update: {
@@ -399,6 +401,7 @@ export type Database = {
           whatsapp_enabled?: boolean | null
           whatsapp_number?: string | null
           widget_color?: string
+          widget_position?: string
           widget_theme?: string
         }
         Relationships: []

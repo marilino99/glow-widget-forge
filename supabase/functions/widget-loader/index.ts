@@ -233,12 +233,12 @@ Deno.serve(async (req) => {
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-powered{padding:8px;text-align:center;font-size:11px;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};border-top:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
     \` : \`
-      #wj-root{position:fixed;bottom:20px;right:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+      #wj-root{position:fixed;bottom:20px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden}
       #wj-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
       #wj-btn svg{width:24px;height:24px}
       #wj-btn img{width:100%;height:100%;object-fit:cover}
-      #wj-pop{display:none;position:fixed;bottom:90px;right:20px;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647}
+      #wj-pop{display:none;position:fixed;bottom:90px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647}
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
       #wj-scroll{flex:1;overflow-y:auto}
