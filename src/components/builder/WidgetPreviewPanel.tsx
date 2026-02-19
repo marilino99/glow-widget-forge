@@ -256,6 +256,7 @@ const WidgetPreviewPanel = ({
   const [reportBugDetailsError, setReportBugDetailsError] = useState(false);
   const [isSendingBugReport, setIsSendingBugReport] = useState(false);
   const [showShareFeedback, setShowShareFeedback] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
   const [feedbackStep, setFeedbackStep] = useState(1);
   const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
   const [feedbackRatingError, setFeedbackRatingError] = useState(false);
@@ -347,6 +348,11 @@ const WidgetPreviewPanel = ({
       try { new Function(customJs)(); } catch(e) { console.error('[Widget Preview] Custom JS error:', e); }
     }
   }, [customJs]);
+
+  // Auto-scroll chat to bottom when messages change
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages, isBotTyping]);
 
   // Reset dismissed state when business changes
   useEffect(() => {
@@ -921,6 +927,7 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                   )}
+                  <div ref={chatEndRef} />
                 </div>
 
                 {/* Chat input */}
