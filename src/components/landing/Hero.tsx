@@ -69,7 +69,7 @@ const Hero = () => {
           <div className="relative rounded-3xl overflow-hidden bg-background">
             <img src={widgetPreview} alt="Widjet widget preview showing chat, FAQ and contact features" className="w-full h-full object-cover block" />
           </div>
-          <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp} className="flex justify-center mt-4">
+          <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp} className="flex justify-start mt-4">
             <button
               onClick={() => {
                 const wjBtn = document.getElementById("wj-btn");
