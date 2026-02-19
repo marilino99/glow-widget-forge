@@ -1595,7 +1595,7 @@ const WidgetPreviewPanel = ({
                     className="pointer-events-none absolute inset-x-0 top-0 h-64 z-0"
                     style={{ 
                       background: isLight
-                        ? `linear-gradient(180deg, ${actualHexColor}30 0%, ${actualHexColor}15 45%, transparent 100%)`
+                        ? `linear-gradient(180deg, ${actualHexColor}70 0%, ${actualHexColor}38 45%, transparent 100%)`
                         : `linear-gradient(180deg, ${actualHexColor}88 0%, ${actualHexColor}44 45%, transparent 100%)` 
                     }}
                   />
@@ -1610,7 +1610,7 @@ const WidgetPreviewPanel = ({
                     {!isSolidMode && backgroundType !== "image" && (
                       <div 
                         className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl"
-                        style={{ background: `radial-gradient(circle, ${actualHexColor}${isLight ? '25' : '50'}, ${actualHexColor}${isLight ? '05' : '10'})` }}
+                        style={{ background: `radial-gradient(circle, ${actualHexColor}${isLight ? '45' : '50'}, ${actualHexColor}${isLight ? '18' : '10'})` }}
                       />
                     )}
                     <button onClick={() => handleCollapse()} className={`absolute right-4 top-4 ${isSolidMode ? "text-current opacity-70" : widgetSubtext} hover:opacity-80`}>
