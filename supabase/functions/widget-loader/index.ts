@@ -138,19 +138,21 @@ Deno.serve(async (req) => {
       #wj-pop{display:none;width:calc(100% - 24px);max-width:350px;height:calc(100% - 24px);max-height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647;pointer-events:auto}
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
-      #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px \${(solid || gradient) ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : gradient ? 'background:linear-gradient(135deg, '+color.bg+' 0%, '+color.hover+' 100%);color:#fff' : ''}\${bgImage ? ';background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
-      #wj-hello{font-size:22px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${(solid || gradient || bgImage) ? '#fff' : textMain}}
+      #wj-scroll{flex:1;overflow-y:auto;position:relative}
+      #wj-gradient-overlay{display:none}
+      \${gradient ? '#wj-gradient-overlay{display:block;position:absolute;top:0;left:0;right:0;height:256px;pointer-events:none;z-index:0;background:linear-gradient(180deg, '+(dark ? color.bg+'88' : color.bg+'30')+' 0%, '+(dark ? color.bg+'44' : color.bg+'15')+' 45%, transparent 100%)}' : ''}
+      #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;z-index:1;\${solid ? 'background:'+color.bg+';color:#fff' : ''}\${bgImage ? 'background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
+      #wj-hello{font-size:22px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${(solid || bgImage) ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
-      #wj-close svg{width:16px;height:16px;stroke:\${(solid || gradient || bgImage) ? '#fff' : textSub}}
-      #wj-contact{margin:0 \${(solid || gradient) ? '0' : '16px'};padding:16px;border-radius:12px;background:\${(solid || gradient) ? 'rgba(30,41,59,0.9)' : bgCard};\${(solid || gradient) ? 'margin-top:16px' : ''}}
+      #wj-close svg{width:16px;height:16px;stroke:\${(solid || bgImage) ? '#fff' : textSub}}
+      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
-      #wj-cname{font-size:12px;color:\${(solid || gradient) ? 'rgba(255,255,255,0.6)' : textSub}}
-      #wj-chelp{font-size:14px;color:\${(solid || gradient) ? '#fff' : textMain}}
+      #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
+      #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
       #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer}
       #wj-cbtn:hover{background:\${color.hover}}
-      #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${(solid || gradient) ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+      #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${solid ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
       #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
       #wj-whatsapp svg{width:20px;height:20px}
       #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
@@ -241,19 +243,21 @@ Deno.serve(async (req) => {
       #wj-pop{display:none;position:fixed;bottom:90px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647}
       #wj-pop.open{display:flex;flex-direction:column}
       @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-      #wj-scroll{flex:1;overflow-y:auto}
-      #wj-head{padding:20px 24px \${(solid || gradient) ? '16px' : '20px'} 24px;position:relative;\${solid ? 'background:'+color.bg+';color:#fff' : gradient ? 'background:linear-gradient(135deg, '+color.bg+' 0%, '+color.hover+' 100%);color:#fff' : ''}\${bgImage ? ';background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
-      #wj-hello{font-size:24px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${(solid || gradient || bgImage) ? '#fff' : textMain}}
+      #wj-scroll{flex:1;overflow-y:auto;position:relative}
+      #wj-gradient-overlay{display:none}
+      \${gradient ? '#wj-gradient-overlay{display:block;position:absolute;top:0;left:0;right:0;height:256px;pointer-events:none;z-index:0;background:linear-gradient(180deg, '+(dark ? color.bg+'88' : color.bg+'30')+' 0%, '+(dark ? color.bg+'44' : color.bg+'15')+' 45%, transparent 100%)}' : ''}
+      #wj-head{padding:20px 24px \${solid ? '16px' : '20px'} 24px;position:relative;z-index:1;\${solid ? 'background:'+color.bg+';color:#fff' : ''}\${bgImage ? 'background-image:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('+bgImage+');background-size:cover;background-position:center;color:#fff' : ''}}
+      #wj-hello{font-size:24px;font-weight:700;max-width:70%;word-break:break-word;white-space:pre-line;color:\${(solid || bgImage) ? '#fff' : textMain}}
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
-      #wj-close svg{width:16px;height:16px;stroke:\${(solid || gradient || bgImage) ? '#fff' : textSub}}
-      #wj-contact{margin:0 \${(solid || gradient) ? '0' : '16px'};padding:16px;border-radius:12px;background:\${(solid || gradient) ? 'rgba(30,41,59,0.9)' : bgCard};\${(solid || gradient) ? 'margin-top:16px' : ''}}
+      #wj-close svg{width:16px;height:16px;stroke:\${(solid || bgImage) ? '#fff' : textSub}}
+      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
-      #wj-cname{font-size:12px;color:\${(solid || gradient) ? 'rgba(255,255,255,0.6)' : textSub}}
-      #wj-chelp{font-size:14px;color:\${(solid || gradient) ? '#fff' : textMain}}
+      #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
+      #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
       #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer}
       #wj-cbtn:hover{background:\${color.hover}}
-      #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${(solid || gradient) ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+      #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${solid ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
       #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
       #wj-whatsapp svg{width:20px;height:20px}
       #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
@@ -374,8 +378,15 @@ Deno.serve(async (req) => {
       : '';
     contact.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' + avatarHtml + '<div style="flex:1"><div id="wj-cname">' + esc(name) + '</div><div id="wj-chelp">' + esc(help) + '</div></div></div><button id="wj-cbtn">' + esc(tr.contactUs) + '</button>' + whatsappBtnHtml;
 
-    // In solid/gradient mode, contact card goes inside header; otherwise after header
-    if (solid || gradient) {
+    // Add gradient overlay element
+    if (gradient) {
+      var gradOverlay = d.createElement('div');
+      gradOverlay.id = 'wj-gradient-overlay';
+      scroll.appendChild(gradOverlay);
+    }
+
+    // In solid mode, contact card goes inside header; otherwise after header
+    if (solid) {
       header.appendChild(contact);
       scroll.appendChild(header);
     } else {
