@@ -53,6 +53,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.cta": "Start for Free",
     "hero.note1": "Free forever.",
     "hero.note2": "No credit card.",
+    "hero.demo": "Show me live demo",
 
     // Logos
     "logos.heading": "Trusted by 200+ businesses worldwide",
@@ -191,6 +192,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.cta": "Inizia Gratis",
     "hero.note1": "Gratis per sempre.",
     "hero.note2": "Nessuna carta richiesta.",
+    "hero.demo": "Mostrami una demo live",
 
     "logos.heading": "Scelto da oltre 200 aziende nel mondo",
 
@@ -321,6 +323,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.cta": "Kostenlos starten",
     "hero.note1": "Für immer kostenlos.",
     "hero.note2": "Keine Kreditkarte nötig.",
+    "hero.demo": "Live-Demo anzeigen",
 
     "logos.heading": "Von über 200 Unternehmen weltweit vertraut",
 
@@ -451,6 +454,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.cta": "Commencer gratuitement",
     "hero.note1": "Gratuit pour toujours.",
     "hero.note2": "Pas de carte bancaire.",
+    "hero.demo": "Voir la démo en direct",
 
     "logos.heading": "Utilisé par plus de 200 entreprises dans le monde",
 
