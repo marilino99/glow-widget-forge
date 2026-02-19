@@ -146,7 +146,7 @@ Deno.serve(async (req) => {
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${(solid || bgImage) ? '#fff' : textSub}}
-      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
+      #wj-contact{margin:\${solid ? '16px 0 0 0' : '0 16px'};padding:16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
@@ -155,7 +155,7 @@ Deno.serve(async (req) => {
       #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${solid ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
       #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
       #wj-whatsapp svg{width:20px;height:20px}
-      #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+      #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin-top:8px}
       #wj-products::-webkit-scrollbar{display:none}
       .wj-prod{flex-shrink:0;width:calc(100% - 48px);border-radius:16px;overflow:hidden;background:\${dark ? '#1e293b' : '#fff'}}
       .wj-prod-img{aspect-ratio:4/3;background:\${dark ? '#cbd5e1' : '#e2e8f0'};display:flex;align-items:center;justify-content:center}
@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
       .wj-prod-sub{font-size:14px;color:\${textSub};margin-top:2px;margin-bottom:12px}
       .wj-prod-btn{width:100%;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
       .wj-prod-btn:hover{background:\${color.hover}}
-      #wj-ig{padding:0 16px 16px}
+      #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
       #wj-ig-head span{font-size:14px;font-weight:500;color:\${textMain}}
@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
       #wj-ig-list::-webkit-scrollbar{display:none}
       .wj-ig-item{width:80px;height:80px;flex-shrink:0;border-radius:8px;overflow:hidden;background:\${dark ? '#374151' : '#e2e8f0'}}
       .wj-ig-item img{width:100%;height:100%;object-fit:cover}
-      #wj-faq{padding:0 16px 16px}
+      #wj-faq{padding:0 16px 16px;margin-top:8px}
       #wj-faq-box{border-radius:16px;padding:16px;background:\${bgFaq}}
       #wj-faq-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
       #wj-faq-head svg{width:16px;height:16px;color:\${textSub}}
@@ -187,7 +187,7 @@ Deno.serve(async (req) => {
       .wj-faq-q.open svg{transform:rotate(180deg)}
       .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
       .wj-faq-a.open{display:block}
-      #wj-links{padding:0 16px 16px}
+      #wj-links{padding:0 16px 16px;margin-top:8px}
       .wj-link-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;transition:background .15s}
       .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
       .wj-link-item:last-child{margin-bottom:0}
@@ -251,7 +251,7 @@ Deno.serve(async (req) => {
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${(solid || bgImage) ? '#fff' : textSub}}
-      #wj-contact{margin:0 \${solid ? '0' : '16px'};padding:16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard};\${solid ? 'margin-top:16px' : ''}}
+      #wj-contact{margin:\${solid ? '16px 0 0 0' : '0 16px'};padding:16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
@@ -260,7 +260,7 @@ Deno.serve(async (req) => {
       #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${solid ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
       #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
       #wj-whatsapp svg{width:20px;height:20px}
-      #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+      #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin-top:8px}
       #wj-products::-webkit-scrollbar{display:none}
       .wj-prod{flex-shrink:0;width:calc(100% - 48px);border-radius:16px;overflow:hidden;background:\${dark ? '#1e293b' : '#fff'}}
       .wj-prod-img{aspect-ratio:4/3;background:\${dark ? '#cbd5e1' : '#e2e8f0'};display:flex;align-items:center;justify-content:center}
@@ -272,7 +272,7 @@ Deno.serve(async (req) => {
       .wj-prod-sub{font-size:14px;color:\${textSub};margin-top:2px;margin-bottom:12px}
       .wj-prod-btn{width:100%;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
       .wj-prod-btn:hover{background:\${color.hover}}
-      #wj-ig{padding:0 16px 16px}
+      #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
       #wj-ig-head span{font-size:14px;font-weight:500;color:\${textMain}}
@@ -280,7 +280,7 @@ Deno.serve(async (req) => {
       #wj-ig-list::-webkit-scrollbar{display:none}
       .wj-ig-item{width:100px;height:100px;flex-shrink:0;border-radius:8px;overflow:hidden;background:\${dark ? '#374151' : '#e2e8f0'}}
       .wj-ig-item img{width:100%;height:100%;object-fit:cover}
-      #wj-faq{padding:0 16px 16px}
+      #wj-faq{padding:0 16px 16px;margin-top:8px}
       #wj-faq-box{border-radius:16px;padding:16px;background:\${bgFaq}}
       #wj-faq-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
       #wj-faq-head svg{width:16px;height:16px;color:\${textSub}}
@@ -292,7 +292,7 @@ Deno.serve(async (req) => {
       .wj-faq-q.open svg{transform:rotate(180deg)}
       .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
       .wj-faq-a.open{display:block}
-      #wj-links{padding:0 16px 16px}
+      #wj-links{padding:0 16px 16px;margin-top:8px}
       .wj-link-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;transition:background .15s}
       .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
       .wj-link-item:last-child{margin-bottom:0}
