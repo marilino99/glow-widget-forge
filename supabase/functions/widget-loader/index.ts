@@ -353,7 +353,7 @@ Deno.serve(async (req) => {
       #wj-emoji-picker.open{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
       .wj-emoji{border:none;background:transparent;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:background .15s}
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
-      #wj-chat-powered{padding:8px;text-align:center;font-size:12px;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};border-top:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-powered{padding:8px;text-align:center;font-size:12px;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'}}
     \`;
     d.head.appendChild(style);
 
