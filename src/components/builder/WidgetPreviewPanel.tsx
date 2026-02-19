@@ -1581,7 +1581,7 @@ const WidgetPreviewPanel = ({
               </div>) : (/* Home View */
           <div id="wj-pop" className={`flex flex-col h-[560px] max-h-[calc(100vh-12rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
-                <div className={`flex-1 overflow-y-auto relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                <div className={`flex-1 overflow-y-auto overscroll-none relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                 {/* Background image for image mode */}
                 {backgroundType === "image" && backgroundImage && (
                   <div className="absolute inset-x-0 top-0 h-64 z-0">
