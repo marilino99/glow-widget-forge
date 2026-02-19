@@ -79,9 +79,9 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
 
   const lovableReactCode = widgetId ? `// Add this useEffect inside your page component
 useEffect(() => {
-  window.__wj = window.__wj || {};
-  window.__wj.widgetId = "${widgetId}";
-  window.__wj.product_name = "widjet";
+  (window as any).__wj = (window as any).__wj || {};
+  (window as any).__wj.widgetId = "${widgetId}";
+  (window as any).__wj.product_name = "widjet";
   const f = document.getElementsByTagName("script")[0];
   const j = document.createElement("script");
   j.async = true;
@@ -91,7 +91,7 @@ useEffect(() => {
   return () => {
     const root = document.getElementById("wj-root");
     if (root) root.remove();
-    window.__wj_loaded = false;
+    (window as any).__wj_loaded = false;
     j.remove();
   };
 }, []);` : `// Widget ID not yet available. Save your configuration first.`;
