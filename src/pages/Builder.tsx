@@ -258,6 +258,10 @@ const Builder = () => {
             onCollapseSidebar={() => setIsSidebarCollapsed(true)}
             showBranding={config.showBranding}
             onShowBrandingChange={(show) => updateConfig({ showBranding: show })}
+            chatbotEnabled={config.chatbotEnabled}
+            onChatbotToggle={(enabled) => saveConfig({ chatbotEnabled: enabled })}
+            chatbotInstructions={config.chatbotInstructions}
+            onSaveChatbotConfig={saveConfig}
           />
         </div>
       </div>

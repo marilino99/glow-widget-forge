@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.verify-email-code]
 verify_jwt = false
+
+[functions.chatbot-reply]
+verify_jwt = false

@@ -26,6 +26,8 @@ export interface WidgetConfiguration {
   customCss: string;
   customJs: string;
   showBranding: boolean;
+  chatbotEnabled: boolean;
+  chatbotInstructions: string;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -51,6 +53,8 @@ const defaultConfig: WidgetConfiguration = {
   customCss: "",
   customJs: "",
   showBranding: true,
+  chatbotEnabled: false,
+  chatbotInstructions: "",
 };
 
 export const useWidgetConfiguration = () => {
@@ -103,6 +107,8 @@ export const useWidgetConfiguration = () => {
             customCss: (data as any).custom_css || "",
             customJs: (data as any).custom_js || "",
             showBranding: (data as any).show_branding ?? true,
+            chatbotEnabled: (data as any).chatbot_enabled ?? false,
+            chatbotInstructions: (data as any).chatbot_instructions || "",
           });
         }
       } catch (error) {
@@ -150,6 +156,8 @@ export const useWidgetConfiguration = () => {
           custom_css: updatedConfig.customCss,
           custom_js: updatedConfig.customJs,
           show_branding: updatedConfig.showBranding,
+          chatbot_enabled: updatedConfig.chatbotEnabled,
+          chatbot_instructions: updatedConfig.chatbotInstructions,
         }, {
           onConflict: "user_id"
         })
