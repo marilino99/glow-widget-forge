@@ -81,14 +81,7 @@ const ChatbotPanel = ({
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
-        {/* Enable toggle */}
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium text-foreground">Abilita AI Chatbot</Label>
-          <Switch checked={chatbotEnabled} onCheckedChange={onChatbotToggle} />
-        </div>
-
-        {chatbotEnabled && (
-          <>
+        <>
             {/* Feature highlights */}
             <div className="space-y-2.5">
               <div className="flex items-start gap-2.5">
@@ -201,8 +194,7 @@ const ChatbotPanel = ({
                 Salva modifiche
               </Button>
             )}
-          </>
-        )}
+        </>
       </div>
     </div>
   );
