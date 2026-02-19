@@ -882,7 +882,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Chat messages */}
-                <div className="flex-1 overflow-y-auto px-4 py-4">
+                <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col justify-end">
                   {/* Welcome message */}
                   <div className="flex items-start gap-2">
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
@@ -932,7 +932,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Chat input */}
-                <div className="relative p-4">
+                <div className="relative px-4 py-2">
                   {/* Emoji Picker */}
                   {showEmojiPicker && (
                     <div className={`absolute bottom-full left-4 right-4 mb-2 p-3 rounded-xl shadow-lg ${isLight ? "bg-white border border-slate-200" : "bg-neutral-900 border border-white/10"}`}>
