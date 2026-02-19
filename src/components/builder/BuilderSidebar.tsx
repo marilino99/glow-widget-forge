@@ -615,9 +615,6 @@ const BuilderSidebar = ({
             <SidebarItem
               icon={Bot}
               label="AI Chatbot"
-              hasToggle
-              toggleValue={chatbotEnabled}
-              onToggle={onChatbotToggle}
               onClick={() => handleSelectWidget("chatbot")}
               active={activeWidget === "chatbot"}
             />
