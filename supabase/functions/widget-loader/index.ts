@@ -124,8 +124,15 @@ Deno.serve(async (req) => {
     var borderCol = dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0';
 
     // Detect if running inside an iframe (Wix Embed element)
+    // Exclude Lovable preview iframes and the project's own domain from iframe mode
     var inIframe = false;
-    try { inIframe = w.self !== w.top; } catch(e) { inIframe = true; }
+    try {
+      if (w.self !== w.top) {
+        var isLovable = w.location.hostname.indexOf('lovable') !== -1 || w.location.hostname.indexOf('lovableproject') !== -1;
+        var isOwnDomain = w.location.hostname.indexOf('widjett') !== -1;
+        inIframe = !isLovable && !isOwnDomain;
+      }
+    } catch(e) { inIframe = true; }
 
     var style = d.createElement('style');
     style.textContent = inIframe ? \`
