@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
       #wj-ig-list::-webkit-scrollbar{display:none}
       .wj-ig-item{width:80px;height:80px;flex-shrink:0;border-radius:8px;overflow:hidden;background:\${dark ? '#374151' : '#e2e8f0'}}
       .wj-ig-item img{width:100%;height:100%;object-fit:cover}
-      #wj-faq{padding:0 16px 16px;margin-top:8px}
+      #wj-faq{padding:0 16px 16px;margin-top:16px}
       #wj-faq-box{border-radius:16px;padding:16px;background:\${bgFaq}}
       #wj-faq-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
       #wj-faq-head svg{width:16px;height:16px;color:\${textSub}}
@@ -280,7 +280,7 @@ Deno.serve(async (req) => {
       #wj-ig-list::-webkit-scrollbar{display:none}
       .wj-ig-item{width:100px;height:100px;flex-shrink:0;border-radius:8px;overflow:hidden;background:\${dark ? '#374151' : '#e2e8f0'}}
       .wj-ig-item img{width:100%;height:100%;object-fit:cover}
-      #wj-faq{padding:0 16px 16px;margin-top:8px}
+      #wj-faq{padding:0 16px 16px;margin-top:16px}
       #wj-faq-box{border-radius:16px;padding:16px;background:\${bgFaq}}
       #wj-faq-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
       #wj-faq-head svg{width:16px;height:16px;color:\${textSub}}
