@@ -309,6 +309,8 @@ export type Database = {
       }
       widget_configurations: {
         Row: {
+          ai_api_key: string | null
+          ai_provider: string
           background_image: string | null
           background_type: string
           button_logo: string | null
@@ -338,6 +340,8 @@ export type Database = {
           widget_theme: string
         }
         Insert: {
+          ai_api_key?: string | null
+          ai_provider?: string
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
@@ -367,6 +371,8 @@ export type Database = {
           widget_theme?: string
         }
         Update: {
+          ai_api_key?: string | null
+          ai_provider?: string
           background_image?: string | null
           background_type?: string
           button_logo?: string | null

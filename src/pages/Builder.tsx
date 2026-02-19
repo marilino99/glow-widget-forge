@@ -261,6 +261,8 @@ const Builder = () => {
             chatbotEnabled={config.chatbotEnabled}
             onChatbotToggle={(enabled) => saveConfig({ chatbotEnabled: enabled })}
             chatbotInstructions={config.chatbotInstructions}
+            aiProvider={config.aiProvider}
+            aiApiKey={config.aiApiKey}
             onSaveChatbotConfig={saveConfig}
           />
         </div>

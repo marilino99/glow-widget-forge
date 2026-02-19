@@ -28,6 +28,8 @@ export interface WidgetConfiguration {
   showBranding: boolean;
   chatbotEnabled: boolean;
   chatbotInstructions: string;
+  aiProvider: string;
+  aiApiKey: string;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -55,6 +57,8 @@ const defaultConfig: WidgetConfiguration = {
   showBranding: true,
   chatbotEnabled: true,
   chatbotInstructions: "",
+  aiProvider: "google",
+  aiApiKey: "",
 };
 
 export const useWidgetConfiguration = () => {
@@ -107,8 +111,10 @@ export const useWidgetConfiguration = () => {
             customCss: (data as any).custom_css || "",
             customJs: (data as any).custom_js || "",
             showBranding: (data as any).show_branding ?? true,
-            chatbotEnabled: (data as any).chatbot_enabled ?? false,
+            chatbotEnabled: (data as any).chatbot_enabled ?? true,
             chatbotInstructions: (data as any).chatbot_instructions || "",
+            aiProvider: (data as any).ai_provider || "google",
+            aiApiKey: (data as any).ai_api_key || "",
           });
         }
       } catch (error) {
@@ -158,6 +164,8 @@ export const useWidgetConfiguration = () => {
           show_branding: updatedConfig.showBranding,
           chatbot_enabled: updatedConfig.chatbotEnabled,
           chatbot_instructions: updatedConfig.chatbotInstructions,
+          ai_provider: updatedConfig.aiProvider,
+          ai_api_key: updatedConfig.aiApiKey,
         }, {
           onConflict: "user_id"
         })
