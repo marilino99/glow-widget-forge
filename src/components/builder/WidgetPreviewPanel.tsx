@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -235,6 +235,8 @@ const WidgetPreviewPanel = ({
     setIsAnimatingExpand(true);
     setTimeout(() => setIsAnimatingExpand(false), 350);
   };
+  const [showChatMenu, setShowChatMenu] = useState(false);
+  const chatMenuRef = useRef<HTMLDivElement>(null);
   const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
@@ -261,6 +263,34 @@ const WidgetPreviewPanel = ({
   const [feedbackName, setFeedbackName] = useState("");
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
+
+  // Close chat menu on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (chatMenuRef.current && !chatMenuRef.current.contains(e.target as Node)) {
+        setShowChatMenu(false);
+      }
+    };
+    if (showChatMenu) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showChatMenu]);
+
+  const handleClearChat = () => {
+    setChatMessages([]);
+    setShowChatMenu(false);
+  };
+
+  const handleDownloadTranscript = () => {
+    const lines = chatMessages.map(m => `${m.sender === "user" ? "You" : contactName || "Bot"}: ${m.text}`);
+    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "chat-transcript.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+    setShowChatMenu(false);
+  };
 
   const handleSendChatMessage = async (text: string) => {
     const userMsg = { text, sender: "user" as const };
@@ -814,9 +844,30 @@ const WidgetPreviewPanel = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </button>
+                    <div className="relative" ref={chatMenuRef}>
+                      <button onClick={() => setShowChatMenu(prev => !prev)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                      {showChatMenu && (
+                        <div className={`absolute right-0 top-10 z-50 w-48 rounded-xl shadow-lg border ${isLight ? "bg-white border-slate-200" : "bg-zinc-900 border-white/10"}`}>
+                          <button
+                            onClick={handleClearChat}
+                            className={`flex w-full items-center gap-3 px-4 py-3 text-sm ${isLight ? "hover:bg-slate-100 text-slate-700" : "hover:bg-white/10 text-white"} rounded-t-xl`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Cancella chat
+                          </button>
+                          <button
+                            onClick={handleDownloadTranscript}
+                            disabled={chatMessages.length === 0}
+                            className={`flex w-full items-center gap-3 px-4 py-3 text-sm ${isLight ? "hover:bg-slate-100 text-slate-700" : "hover:bg-white/10 text-white"} rounded-b-xl disabled:opacity-40`}
+                          >
+                            <Download className="h-4 w-4" />
+                            Download transcript
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     <button onClick={() => handleCollapse()} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                       <X className="h-4 w-4" />
                     </button>
