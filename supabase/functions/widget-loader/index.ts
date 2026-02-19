@@ -133,11 +133,15 @@ Deno.serve(async (req) => {
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden;position:absolute;bottom:20px;right:20px;pointer-events:auto}
       #wj-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
       #wj-btn.hidden{display:none}
+      #wj-btn.pop{animation:wj-btn-pop .4s cubic-bezier(0.34,1.56,0.64,1)}
       #wj-btn svg{width:24px;height:24px}
       #wj-btn img{width:100%;height:100%;object-fit:cover}
-      #wj-pop{display:none;width:calc(100% - 24px);max-width:350px;height:calc(100% - 24px);max-height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647;pointer-events:auto;transform:translateZ(0)}
-      #wj-pop.open{display:flex;flex-direction:column}
-      @keyframes wj-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+      #wj-pop{display:none;width:calc(100% - 24px);max-width:350px;height:calc(100% - 24px);max-height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;background:\${bgMain};z-index:2147483647;pointer-events:auto;transform:translateZ(0)}
+      #wj-pop.open{display:flex;flex-direction:column;animation:wj-expand .35s cubic-bezier(0,0,0.2,1)}
+      #wj-pop.closing{display:flex;flex-direction:column;animation:wj-collapse .3s cubic-bezier(0.4,0,0.2,1) forwards}
+      @keyframes wj-expand{from{opacity:0;transform:scale(0.85) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+      @keyframes wj-collapse{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(0.85) translateY(16px)}}
+      @keyframes wj-btn-pop{0%{transform:scale(0.5);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;background:\${bgMain}}
       #wj-gradient-overlay{display:none}
       \${gradient ? '#wj-gradient-overlay{display:block;position:absolute;top:0;left:0;right:0;height:256px;pointer-events:none;z-index:0;background:linear-gradient(180deg, '+(dark ? color.bg+'88' : color.bg+'30')+' 0%, '+(dark ? color.bg+'44' : color.bg+'15')+' 45%, transparent 100%)}' : ''}
@@ -238,12 +242,16 @@ Deno.serve(async (req) => {
       #wj-root{position:fixed;bottom:20px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s,opacity .2s;background:\${color.bg};overflow:hidden}
       #wj-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
-      #wj-btn.hidden{opacity:0;pointer-events:none}
+      #wj-btn.hidden{opacity:0;pointer-events:none;transform:scale(0.5)}
+      #wj-btn.pop{animation:wj-btn-pop .4s cubic-bezier(0.34,1.56,0.64,1)}
       #wj-btn svg{width:24px;height:24px}
       #wj-btn img{width:100%;height:100%;object-fit:cover}
-      #wj-pop{display:none;position:absolute;bottom:calc(100% + 14px);\${cfg.widget_position === 'left' ? 'left' : 'right'}:0;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;animation:wj-in .2s ease;background:\${bgMain};z-index:2147483647;transform:translateZ(0)}
-      #wj-pop.open{display:flex;flex-direction:column}
-      @keyframes wj-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+      #wj-pop{display:none;position:absolute;bottom:calc(100% + 14px);\${cfg.widget_position === 'left' ? 'left' : 'right'}:0;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;background:\${bgMain};z-index:2147483647;transform:translateZ(0)}
+      #wj-pop.open{display:flex;flex-direction:column;animation:wj-expand .35s cubic-bezier(0,0,0.2,1)}
+      #wj-pop.closing{display:flex;flex-direction:column;animation:wj-collapse .3s cubic-bezier(0.4,0,0.2,1) forwards}
+      @keyframes wj-expand{from{opacity:0;transform:scale(0.85) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+      @keyframes wj-collapse{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(0.85) translateY(16px)}}
+      @keyframes wj-btn-pop{0%{transform:scale(0.5);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;background:\${bgMain}}
       #wj-gradient-overlay{display:none}
       \${gradient ? '#wj-gradient-overlay{display:block;position:absolute;top:0;left:0;right:0;height:256px;pointer-events:none;z-index:0;background:linear-gradient(180deg, '+(dark ? color.bg+'88' : color.bg+'30')+' 0%, '+(dark ? color.bg+'44' : color.bg+'15')+' 45%, transparent 100%)}' : ''}
@@ -532,17 +540,28 @@ Deno.serve(async (req) => {
     // Track impression on load
     trackEvent('impression');
 
+    // Animated close: play collapse, then hide and show button with pop
+    function closeWidget() {
+      pop.classList.remove('open');
+      pop.classList.add('closing');
+      setTimeout(function() {
+        pop.classList.remove('closing');
+        btn.classList.remove('hidden');
+        btn.classList.add('pop');
+        setTimeout(function() { btn.classList.remove('pop'); }, 400);
+      }, 300);
+    }
+
     btn.onclick = function() {
-      var wasOpen = pop.classList.contains('open');
-      pop.classList.toggle('open');
-      btn.classList.toggle('hidden', pop.classList.contains('open'));
-      if (!wasOpen) trackEvent('click');
+      if (pop.classList.contains('open') || pop.classList.contains('closing')) return;
+      pop.classList.add('open');
+      btn.classList.add('hidden');
+      trackEvent('click');
     };
 
     // Close button handler (minimize)
     pop.querySelector('#wj-close').onclick = function() {
-      pop.classList.remove('open');
-      btn.classList.remove('hidden');
+      closeWidget();
     };
 
     // Contact Us button - opens chat
@@ -561,10 +580,9 @@ Deno.serve(async (req) => {
 
     // Chat close button - minimizes widget
     chatView.querySelector('#wj-chat-close').onclick = function() {
-      pop.classList.remove('open');
       chatView.classList.remove('open');
       homeView.classList.remove('hidden');
-      if (inIframe) btn.classList.remove('hidden');
+      closeWidget();
       stopPolling();
     };
 
