@@ -264,6 +264,7 @@ const WidgetPreviewPanel = ({
   const [feedbackName, setFeedbackName] = useState("");
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
+  const [chatInputFocused, setChatInputFocused] = useState(false);
 
   // Close chat menu on outside click
   useEffect(() => {
@@ -951,12 +952,17 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                   )}
-                  <div className={`flex items-center gap-2 rounded-full border px-4 py-2 ${isLight ? "bg-white border-slate-300" : "bg-neutral-900 border-white/20"}`}>
+                  <div 
+                    className={`flex items-center gap-2 rounded-full border-2 px-4 py-2 transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-neutral-900 border-white/15"}`}
+                    style={chatInputFocused ? { borderColor: actualHexColor, boxShadow: `0 0 0 2px ${actualHexColor}25` } : {}}
+                  >
                     <input 
                       type="text" 
                       placeholder={t.writeMessage} 
                       value={chatInputValue}
                       onChange={(e) => setChatInputValue(e.target.value)}
+                      onFocus={() => setChatInputFocused(true)}
+                      onBlur={() => setChatInputFocused(false)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && chatInputValue.trim()) {
                           handleSendChatMessage(chatInputValue.trim());
