@@ -312,6 +312,8 @@ export type Database = {
           background_image: string | null
           background_type: string
           button_logo: string | null
+          chatbot_enabled: boolean
+          chatbot_instructions: string | null
           contact_name: string
           created_at: string
           custom_css: string | null
@@ -339,6 +341,8 @@ export type Database = {
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
+          chatbot_enabled?: boolean
+          chatbot_instructions?: string | null
           contact_name?: string
           created_at?: string
           custom_css?: string | null
@@ -366,6 +370,8 @@ export type Database = {
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
+          chatbot_enabled?: boolean
+          chatbot_instructions?: string | null
           contact_name?: string
           created_at?: string
           custom_css?: string | null

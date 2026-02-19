@@ -33,10 +33,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Get the widget owner
+    // Get the widget owner and chatbot config
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("user_id")
+      .select("user_id, chatbot_enabled")
       .eq("id", widgetId)
       .maybeSingle();
 
@@ -121,6 +121,25 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: "Failed to send message" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Trigger chatbot reply in background if enabled
+    if (config.chatbot_enabled) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      
+      // Fire-and-forget: don't await
+      fetch(`${supabaseUrl}/functions/v1/chatbot-reply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({
+          conversationId: conversation.id,
+          widgetId,
+        }),
+      }).catch((err) => console.error("Failed to trigger chatbot:", err));
     }
 
     return new Response(

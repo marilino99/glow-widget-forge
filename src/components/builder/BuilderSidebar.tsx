@@ -29,6 +29,7 @@ import {
   Settings,
   LifeBuoy,
   ChevronRight,
+  Bot,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -51,6 +52,7 @@ import MetricsPanel from "./MetricsPanel";
 import SizePositionPanel from "./SizePositionPanel";
 import InjectionCodePanel from "./InjectionCodePanel";
 import SettingsDialog from "./SettingsDialog";
+import ChatbotPanel from "./ChatbotPanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -132,6 +134,10 @@ interface BuilderSidebarProps {
   onCollapseSidebar?: () => void;
   showBranding: boolean;
   onShowBrandingChange: (show: boolean) => void;
+  chatbotEnabled: boolean;
+  onChatbotToggle: (enabled: boolean) => void;
+  chatbotInstructions: string;
+  onSaveChatbotConfig: (config: Record<string, unknown>) => void;
 }
 
 const BuilderSidebar = ({ 
@@ -208,6 +214,10 @@ const BuilderSidebar = ({
   onCollapseSidebar,
   showBranding,
   onShowBrandingChange,
+  chatbotEnabled,
+  onChatbotToggle,
+  chatbotInstructions,
+  onSaveChatbotConfig,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -227,6 +237,7 @@ const BuilderSidebar = ({
   const [hasGoogleBusiness, setHasGoogleBusiness] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [showChatbotPanel, setShowChatbotPanel] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
 
@@ -280,6 +291,8 @@ const BuilderSidebar = ({
       setShowSizePositionPanel(true);
     } else if (widgetType === "injection-code") {
       setShowInjectionCodePanel(true);
+    } else if (widgetType === "chatbot") {
+      setShowChatbotPanel(true);
     }
     onPanelOpenChange?.(true);
     onSelectWidget(widgetType);
@@ -347,6 +360,11 @@ const BuilderSidebar = ({
 
   const handleBackFromInjectionCode = () => {
     setShowInjectionCodePanel(false);
+    closePanel();
+  };
+
+  const handleBackFromChatbot = () => {
+    setShowChatbotPanel(false);
     closePanel();
   };
 
@@ -525,6 +543,19 @@ const BuilderSidebar = ({
     );
   }
 
+  // Show Chatbot panel
+  if (showChatbotPanel) {
+    return (
+      <ChatbotPanel
+        onBack={handleBackFromChatbot}
+        chatbotEnabled={chatbotEnabled}
+        onChatbotToggle={onChatbotToggle}
+        chatbotInstructions={chatbotInstructions}
+        onSaveConfig={onSaveChatbotConfig}
+      />
+    );
+  }
+
   // Show Google Reviews panel
   if (showGoogleReviewsPanel) {
     return (
@@ -574,6 +605,15 @@ const BuilderSidebar = ({
               label="Custom links"
               onClick={() => handleSelectWidget("custom-links")}
               active={activeWidget === "custom-links"}
+            />
+            <SidebarItem
+              icon={Bot}
+              label="AI Chatbot"
+              hasToggle
+              toggleValue={chatbotEnabled}
+              onToggle={onChatbotToggle}
+              onClick={() => handleSelectWidget("chatbot")}
+              active={activeWidget === "chatbot"}
             />
           </div>
         </div>
