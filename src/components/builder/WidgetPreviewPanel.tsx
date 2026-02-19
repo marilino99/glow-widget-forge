@@ -239,8 +239,9 @@ const WidgetPreviewPanel = ({
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
-  const [chatMessages, setChatMessages] = useState<string[]>([]);
+  const [chatMessages, setChatMessages] = useState<{text: string; sender: "user" | "bot"}[]>([]);
   const [chatInputValue, setChatInputValue] = useState("");
+  const [isBotTyping, setIsBotTyping] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showContactPage, setShowContactPage] = useState(false);
   const [showReportBug, setShowReportBug] = useState(false);
@@ -260,6 +261,30 @@ const WidgetPreviewPanel = ({
   const [feedbackName, setFeedbackName] = useState("");
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
+
+  const handleSendChatMessage = async (text: string) => {
+    const userMsg = { text, sender: "user" as const };
+    setChatMessages(prev => [...prev, userMsg]);
+    setChatInputValue('');
+    setShowEmojiPicker(false);
+
+    if (!widgetId) return;
+
+    setIsBotTyping(true);
+    try {
+      const allMessages = [...chatMessages, userMsg].map(m => ({ text: m.text, sender: m.sender }));
+      const { data, error } = await supabase.functions.invoke('chatbot-preview', {
+        body: { messages: allMessages, widgetId },
+      });
+      if (!error && data?.reply) {
+        setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const }]);
+      }
+    } catch (err) {
+      console.error('Preview chatbot error:', err);
+    } finally {
+      setIsBotTyping(false);
+    }
+  };
 
   // Inject custom CSS into document
   useEffect(() => {
@@ -803,15 +828,40 @@ const WidgetPreviewPanel = ({
                   </div>
                   {/* User messages */}
                   {chatMessages.map((msg, index) => (
-                    <div key={index} className="flex justify-end mt-3">
-                      <div 
-                        className={`rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%] ${useInlineStyles ? "" : colors.button} text-white`}
-                        style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
-                      >
-                        <p className="text-sm">{msg}</p>
+                    msg.sender === "user" ? (
+                      <div key={index} className="flex justify-end mt-3">
+                        <div 
+                          className={`rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%] ${useInlineStyles ? "" : colors.button} text-white`}
+                          style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
+                        >
+                          <p className="text-sm">{msg.text}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div key={index} className="flex items-start gap-2 mt-3">
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                          <Sparkles className="h-3 w-3 text-white" />
+                        </div>
+                        <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white max-w-[80%]">
+                          <p className="text-sm">{msg.text}</p>
+                        </div>
+                      </div>
+                    )
+                  ))}
+                  {isBotTyping && (
+                    <div className="flex items-start gap-2 mt-3">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                        <Sparkles className="h-3 w-3 text-white" />
+                      </div>
+                      <div className="rounded-2xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-3 text-white">
+                        <div className="flex gap-1">
+                          <span className="h-2 w-2 rounded-full bg-white/60 animate-bounce" style={{ animationDelay: "0ms" }} />
+                          <span className="h-2 w-2 rounded-full bg-white/60 animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="h-2 w-2 rounded-full bg-white/60 animate-bounce" style={{ animationDelay: "300ms" }} />
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
 
                 {/* Chat input */}
@@ -843,9 +893,7 @@ const WidgetPreviewPanel = ({
                       onChange={(e) => setChatInputValue(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && chatInputValue.trim()) {
-                          setChatMessages([...chatMessages, chatInputValue.trim()]);
-                          setChatInputValue('');
-                          setShowEmojiPicker(false);
+                          handleSendChatMessage(chatInputValue.trim());
                         }
                       }}
                       className={`flex-1 bg-transparent text-sm focus:outline-none ${isLight ? "placeholder:text-slate-400" : "placeholder:text-white/40"}`} 
@@ -859,9 +907,7 @@ const WidgetPreviewPanel = ({
                     <button 
                       onClick={() => {
                         if (chatInputValue.trim()) {
-                          setChatMessages([...chatMessages, chatInputValue.trim()]);
-                          setChatInputValue('');
-                          setShowEmojiPicker(false);
+                          handleSendChatMessage(chatInputValue.trim());
                         }
                       }}
                       className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
