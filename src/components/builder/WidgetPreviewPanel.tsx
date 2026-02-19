@@ -953,8 +953,8 @@ const WidgetPreviewPanel = ({
                     </div>
                   )}
                   <div 
-                    className={`flex items-center gap-2 rounded-full border-2 px-4 py-2 transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-neutral-900 border-white/15"}`}
-                    style={chatInputFocused ? { borderColor: actualHexColor, boxShadow: `0 0 0 2px ${actualHexColor}25` } : {}}
+                    className={`flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-200 ${isLight ? "bg-white border-slate-200" : "bg-neutral-900 border-white/15"}`}
+                    style={chatInputFocused ? { borderColor: actualHexColor, boxShadow: `0 0 0 1px ${actualHexColor}20` } : {}}
                   >
                     <input 
                       type="text" 
