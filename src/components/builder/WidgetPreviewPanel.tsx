@@ -765,26 +765,29 @@ const WidgetPreviewPanel = ({
                   </button>
                 )}
               </div>) : showChat ? (/* Chat View */
-          <div className={`flex h-[560px] max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={customGradientStyle}>
+          <div className={`flex h-[560px] max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000', color: isLight ? '#0f172a' : '#ffffff' }}>
                 {/* Chat header */}
-                <div className="flex items-center justify-between px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <button onClick={() => setShowChat(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
-                      <ArrowLeft className="h-4 w-4" />
-                    </button>
+                <div className={`flex items-center justify-between px-4 py-3 border-b ${isLight ? "border-slate-200" : "border-white/10"}`}>
+                  <button onClick={() => setShowChat(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                    <ArrowLeft className="h-4 w-4" />
+                  </button>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                      <Sparkles className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold leading-tight">{contactName}</span>
+                      <span className={`text-xs leading-tight ${isLight ? "text-slate-500" : "text-white/50"}`}>{t.contactUs || "The team can also help"}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <button className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                       <MoreHorizontal className="h-4 w-4" />
                     </button>
+                    <button onClick={() => handleCollapse()} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
+                      <X className="h-4 w-4" />
+                    </button>
                   </div>
-                  <div className={`flex items-center gap-2 rounded-full px-4 py-2 ${widgetCardBg}`}>
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                      <Sparkles className="h-3 w-3 text-white" />
-                    </div>
-                    <span className="text-sm font-medium">{contactName}</span>
-                  </div>
-                  <button onClick={() => handleCollapse()} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
-                    <Minus className="h-4 w-4" />
-                  </button>
                 </div>
 
                 {/* Chat messages */}
@@ -812,10 +815,10 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Chat input */}
-                <div className={`relative border-t p-4 ${widgetBorder}`}>
+                <div className={`relative border-t p-4 ${isLight ? "border-slate-200" : "border-white/10"}`}>
                   {/* Emoji Picker */}
                   {showEmojiPicker && (
-                    <div className={`absolute bottom-full left-4 right-4 mb-2 p-3 rounded-xl shadow-lg ${isLight ? "bg-white border border-slate-200" : "bg-slate-800 border border-slate-700"}`}>
+                    <div className={`absolute bottom-full left-4 right-4 mb-2 p-3 rounded-xl shadow-lg ${isLight ? "bg-white border border-slate-200" : "bg-neutral-900 border border-white/10"}`}>
                       <div className="grid grid-cols-10 gap-1">
                         {commonEmojis.map((emoji, i) => (
                           <button
@@ -832,7 +835,7 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                   )}
-                  <div className={`flex items-center gap-2 rounded-full border border-violet-500/50 px-4 py-2 ${isLight ? "bg-white" : "bg-slate-800/50"}`}>
+                  <div className={`flex items-center gap-2 rounded-full border px-4 py-2 ${isLight ? "bg-white border-slate-300" : "bg-neutral-900 border-white/20"}`}>
                     <input 
                       type="text" 
                       placeholder={t.writeMessage} 
@@ -877,14 +880,14 @@ const WidgetPreviewPanel = ({
 
                 {/* Powered by */}
                 {showBranding && (
-                <div className={`border-t py-2 text-center ${widgetBorder}`}>
-                  <span className={`text-xs ${widgetSubtext}`}>
+                <div className={`border-t py-2 text-center ${isLight ? "border-slate-200" : "border-white/10"}`}>
+                  <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/50"}`}>
                      Powered by <span className="font-medium">Widjet</span>
                   </span>
                 </div>
                 )}
               </div>) : showContactPage ? (/* Contact Page View */
-          <div className={`flex flex-col h-[560px] max-h-[calc(100vh-12rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : ""} ${widgetText}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
+          <div className={`flex flex-col h-[560px] max-h-[calc(100vh-12rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000' }}>
                 {/* Contact page header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   <button onClick={() => setShowContactPage(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
