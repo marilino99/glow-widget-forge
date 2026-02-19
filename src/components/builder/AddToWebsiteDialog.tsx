@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { AlertTriangle, Copy, Check, ExternalLink, Send, X, Globe } from "lucide-react";
+import { AlertTriangle, Copy, Check, ExternalLink, Send, X, Globe, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   WixLogo,
@@ -44,9 +44,17 @@ const PlatformCard = ({ logo, name, onClick, disabled }: PlatformCardProps) => (
   </button>
 );
 
+const LovableLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+  </svg>
+);
+
 const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
   const [copied, setCopied] = useState(false);
+  const [copiedLovable, setCopiedLovable] = useState(false);
   const [showWixGuide, setShowWixGuide] = useState(false);
+  const [showLovableGuide, setShowLovableGuide] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -69,6 +77,25 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
 <noscript>Enable JavaScript to use the widget powered by Widjet</noscript>
 <!-- End of Widjet code -->` : `<!-- Widget ID not yet available. Save your configuration first. -->`;
 
+  const lovableReactCode = widgetId ? `// Add this useEffect inside your page component
+useEffect(() => {
+  window.__wj = window.__wj || {};
+  window.__wj.widgetId = "${widgetId}";
+  window.__wj.product_name = "widjet";
+  const f = document.getElementsByTagName("script")[0];
+  const j = document.createElement("script");
+  j.async = true;
+  j.src = "${widgetLoaderUrl}";
+  f.parentNode?.insertBefore(j, f);
+
+  return () => {
+    const root = document.getElementById("wj-root");
+    if (root) root.remove();
+    window.__wj_loaded = false;
+    j.remove();
+  };
+}, []);` : `// Widget ID not yet available. Save your configuration first.`;
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(embedCode);
     setCopied(true);
@@ -86,8 +113,22 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
     }
   };
 
+  const handleCopyLovable = async () => {
+    await navigator.clipboard.writeText(lovableReactCode);
+    setCopiedLovable(true);
+    toast({
+      title: "Copied!",
+      description: "React code copied to your clipboard.",
+    });
+    setTimeout(() => setCopiedLovable(false), 2000);
+  };
+
   const handleWixClick = () => {
     setShowWixGuide(true);
+  };
+
+  const handleLovableClick = () => {
+    setShowLovableGuide(true);
   };
 
   return (
@@ -167,6 +208,16 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
             <p className="text-sm text-muted-foreground">Try seamless integration with:</p>
             <div className="grid grid-cols-2 gap-3">
               <PlatformCard
+                logo={<LovableLogo className="h-10 w-10 text-rose-500" />}
+                name="Lovable"
+                onClick={handleLovableClick}
+              />
+              <PlatformCard
+                logo={<WixLogo className="h-10 w-auto text-foreground" />}
+                name="Wix"
+                onClick={handleWixClick}
+              />
+              <PlatformCard
                 logo={<WordPressLogo className="h-10 w-10" />}
                 name="WordPress"
                 disabled
@@ -176,13 +227,59 @@ const AddToWebsiteDialog = ({ widgetId }: AddToWebsiteDialogProps) => {
                 name="Google Tag Manager"
                 disabled
               />
-              <PlatformCard
-                logo={<WixLogo className="h-10 w-auto text-foreground" />}
-                name="Wix"
-                onClick={handleWixClick}
-              />
             </div>
           </div>
+
+          {/* Lovable Guide Collapsible */}
+          <Collapsible open={showLovableGuide} onOpenChange={setShowLovableGuide}>
+            <CollapsibleContent>
+              <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/20 p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold text-foreground flex items-center gap-2">
+                    <LovableLogo className="h-5 w-5 text-rose-500" />
+                    Install on Lovable
+                  </h4>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6"
+                    onClick={() => setShowLovableGuide(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <ol className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">1.</span>
+                    Open your Lovable project
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">2.</span>
+                    Copy the React code below
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">3.</span>
+                    Ask Lovable: <span className="font-medium text-foreground">"Add this useEffect to my main page component"</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground">4.</span>
+                    Lovable will integrate it automatically ✨
+                  </li>
+                </ol>
+
+                <Button onClick={handleCopyLovable} size="sm" className="gap-2">
+                  {copiedLovable ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedLovable ? "Copied!" : "Copy React code"}
+                </Button>
+
+                {/* React code preview */}
+                <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+                  <pre className="whitespace-pre-wrap break-all">{lovableReactCode}</pre>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           {/* Wix Guide Collapsible */}
           <Collapsible open={showWixGuide} onOpenChange={setShowWixGuide}>
