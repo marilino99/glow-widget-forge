@@ -753,7 +753,7 @@ const WidgetPreviewPanel = ({
 
           {/* Widget preview - interactive */}
           <div 
-            className={`absolute z-20 transition-all duration-300 ${
+            className={`absolute z-20 flex flex-col justify-end transition-all duration-300 ${
               devicePreview === "mobile" 
                 ? "w-[350px] scale-[0.65] origin-bottom-right" 
                 : "w-[350px] bottom-5 right-5"
