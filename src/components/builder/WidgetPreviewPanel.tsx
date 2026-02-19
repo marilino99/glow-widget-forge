@@ -882,7 +882,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Chat messages */}
-                <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col justify-end">
+                <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col">
                   {/* Welcome message */}
                   <div className="flex items-start gap-2">
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
@@ -929,6 +929,7 @@ const WidgetPreviewPanel = ({
                     </div>
                   )}
                   <div ref={chatEndRef} />
+                  <div className="flex-1" />
                 </div>
 
                 {/* Chat input */}
