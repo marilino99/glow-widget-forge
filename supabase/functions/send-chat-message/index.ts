@@ -93,13 +93,15 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Update existing conversation
+      // Update existing conversation and reset cleared state
       await supabase
         .from("conversations")
         .update({
           last_message: trimmedMessage,
           last_message_at: new Date().toISOString(),
           unread_count: (conversation.unread_count || 0) + 1,
+          cleared_by_visitor: false,
+          cleared_at: null,
         })
         .eq("id", conversation.id);
     }

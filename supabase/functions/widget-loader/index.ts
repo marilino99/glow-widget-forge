@@ -616,6 +616,20 @@ Deno.serve(async (req) => {
       var msgs = chatView.querySelector('#wj-chat-msgs');
       msgs.innerHTML = '<div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div>';
       chatMenu.classList.remove('open');
+      // Reset tracking state so cleared messages don't come back
+      renderedMessageIds = {};
+      lastMessageId = null;
+      // Notify backend to mark conversation as cleared
+      if (visitorToken) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', u + '/functions/v1/clear-chat', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+          widgetId: id,
+          visitorId: visitorId,
+          visitorToken: visitorToken
+        }));
+      }
     };
     // Download transcript
     chatView.querySelector('#wj-menu-download').onclick = function() {
