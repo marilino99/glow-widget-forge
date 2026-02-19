@@ -150,7 +150,14 @@ const Builder = () => {
 
   
 
-  // Show loading state while fetching configuration
+  // Cleanup landing page widget if it leaked into the builder
+  useEffect(() => {
+    const root = document.getElementById("wj-root");
+    if (root) root.remove();
+    (window as any).__wj_loaded = false;
+  }, []);
+
+
   if (isLoading || isLoadingCards || isLoadingFaq || isLoadingInstagram || isLoadingCustomLinks) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
