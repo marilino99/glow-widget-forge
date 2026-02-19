@@ -1,24 +1,28 @@
 
 
-## Fix: Widget non si apre al click
+## Fix del Widget Loader - Errore di Sintassi
 
 ### Problema
-Nel file `supabase/functions/widget-loader/index.ts`, la regola CSS per `#wj-pop` contiene testo duplicato dopo la chiusura `}`. Questo corrompe il parsing CSS del browser e impedisce alla regola `#wj-pop.open{display:flex}` di funzionare -- il popup resta invisibile anche quando si clicca l'icona.
+La funzione `widget-loader` non si deploya correttamente. Il browser riceve una risposta non valida invece dello script JavaScript del widget, causando l'errore "Unexpected identifier 'https'" alla riga 357.
+
+### Causa
+La riga 1 del file `supabase/functions/widget-loader/index.ts` importa `createClient` da `https://esm.sh/@supabase/supabase-js@2.49.1`, ma questa dipendenza **non viene mai usata** nella funzione. La funzione usa solo `Deno.env.get("SUPABASE_URL")` per ottenere l'URL e poi genera uno script JavaScript puro. L'import inutilizzato potrebbe causare problemi di deploy.
 
 ### Soluzione
-Rimuovere il testo CSS duplicato su due righe del widget-loader.
+
+**File: `supabase/functions/widget-loader/index.ts`**
+- Rimuovere completamente l'import inutilizzato `createClient` dalla riga 1
+- Questo elimina la dipendenza esterna non necessaria e potenzialmente problematica
+- La funzione continua a funzionare identicamente perche' non usa mai `createClient`
 
 ### Dettagli Tecnici
 
-**File:** `supabase/functions/widget-loader/index.ts`
+La funzione widget-loader:
+- Legge `SUPABASE_URL` dalle variabili d'ambiente (non serve il client Supabase)
+- Genera e restituisce uno script JavaScript puro come stringa
+- Non fa nessuna query al database
 
-1. **Riga 133** (versione iframe) -- rimuovere il testo duplicato dopo il primo `}`:
-   - Da: `...;z-index:2147483647}border-radius:16px;box-shadow:...;z-index:2147483647}`
-   - A: `...;z-index:2147483647}`
+Rimuovendo l'import, la funzione diventa autosufficiente e si deploya senza dipendenze esterne che possono fallire.
 
-2. **Riga 233** (versione standard) -- stessa correzione:
-   - Da: `...;z-index:2147483647}border-radius:16px;box-shadow:...;z-index:2147483647}`
-   - A: `...;z-index:2147483647}`
-
-Dopo il fix, la funzione backend verra' ridistribuita automaticamente e il widget funzionera' correttamente su tutti i siti dove e' installato.
+Dopo la modifica, verificheremo il deploy e testeremo che lo script venga servito correttamente.
 
