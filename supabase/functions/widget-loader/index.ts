@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
     var tr = t[lang] || t.en;
 
     var bgMain = dark ? '#000' : '#f8f8f8';
-    var bgCard = dark ? '#1e293b' : '#fff';
+    var bgCard = dark ? 'rgba(51,65,85,0.5)' : '#fff';
     var bgFaq = dark ? '#252525' : '#fff';
     var textMain = dark ? '#fff' : '#0f172a';
     var textSub = dark ? 'rgba(255,255,255,0.6)' : '#64748b';
