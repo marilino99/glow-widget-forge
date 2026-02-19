@@ -160,9 +160,13 @@ STRICT RULES:
     if (!geminiResponse.ok) {
       const errorText = await geminiResponse.text();
       console.error("Gemini API error:", geminiResponse.status, errorText);
+      const status = geminiResponse.status === 429 ? 429 : 500;
+      const message = geminiResponse.status === 429
+        ? "Rate limit exceeded. Please try again in a minute."
+        : "AI generation failed";
       return new Response(
-        JSON.stringify({ error: "AI generation failed" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: message }),
+        { status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
