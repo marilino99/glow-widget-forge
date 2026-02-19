@@ -30,6 +30,7 @@ export interface WidgetConfiguration {
   chatbotInstructions: string;
   aiProvider: string;
   aiApiKey: string;
+  widgetPosition: "left" | "right";
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -59,6 +60,7 @@ const defaultConfig: WidgetConfiguration = {
   chatbotInstructions: "",
   aiProvider: "google",
   aiApiKey: "",
+  widgetPosition: "right",
 };
 
 export const useWidgetConfiguration = () => {
@@ -115,6 +117,7 @@ export const useWidgetConfiguration = () => {
             chatbotInstructions: (data as any).chatbot_instructions || "",
             aiProvider: (data as any).ai_provider || "google",
             aiApiKey: (data as any).ai_api_key || "",
+            widgetPosition: ((data as any).widget_position === "left" ? "left" : "right") as "left" | "right",
           });
         }
       } catch (error) {
@@ -166,6 +169,7 @@ export const useWidgetConfiguration = () => {
           chatbot_instructions: updatedConfig.chatbotInstructions,
           ai_provider: updatedConfig.aiProvider,
           ai_api_key: updatedConfig.aiApiKey,
+          widget_position: updatedConfig.widgetPosition,
         }, {
           onConflict: "user_id"
         })

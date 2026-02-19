@@ -140,6 +140,8 @@ interface BuilderSidebarProps {
   aiProvider: string;
   aiApiKey: string;
   onSaveChatbotConfig: (config: Record<string, unknown>) => void;
+  widgetPosition: "left" | "right";
+  onWidgetPositionChange: (position: "left" | "right") => void;
 }
 
 const BuilderSidebar = ({ 
@@ -222,6 +224,8 @@ const BuilderSidebar = ({
   aiProvider,
   aiApiKey,
   onSaveChatbotConfig,
+  widgetPosition,
+  onWidgetPositionChange,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -530,7 +534,7 @@ const BuilderSidebar = ({
   // Show Size & Position panel
   if (showSizePositionPanel) {
     return (
-      <SizePositionPanel onBack={handleBackFromSizePosition} />
+      <SizePositionPanel onBack={handleBackFromSizePosition} widgetPosition={widgetPosition} onWidgetPositionChange={onWidgetPositionChange} />
     );
   }
 

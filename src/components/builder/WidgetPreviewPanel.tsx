@@ -42,6 +42,7 @@ interface WidgetPreviewPanelProps {
   customCss?: string;
   customJs?: string;
   showBranding?: boolean;
+  widgetPosition?: "left" | "right";
 }
 
 // Check if a color is a hex value
@@ -203,6 +204,7 @@ const WidgetPreviewPanel = ({
   customCss = "",
   customJs = "",
   showBranding = true,
+  widgetPosition = "right",
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -755,12 +757,12 @@ const WidgetPreviewPanel = ({
           <div 
             className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
-                ? "w-[350px] scale-[0.65] origin-bottom-right" 
-                : "w-[350px] bottom-5 right-5"
+                ? `w-[350px] scale-[0.65] ${widgetPosition === 'left' ? 'origin-bottom-left' : 'origin-bottom-right'}` 
+                : `w-[350px] bottom-5 ${widgetPosition === 'left' ? 'left-5' : 'right-5'}`
             }`}
             style={devicePreview === "mobile" ? {
               bottom: 'calc(50% - 250px)',
-              right: 'calc(50% - 130px)'
+              [widgetPosition === 'left' ? 'left' : 'right']: 'calc(50% - 130px)'
             } : undefined}
           >
             {/* Google Reviews notification card - always visible */}
@@ -821,7 +823,7 @@ const WidgetPreviewPanel = ({
             )}
 
             {isCollapsed && !isAnimatingCollapse ? (/* Collapsed Icon */
-          <div className="flex flex-col items-end">
+          <div className={`flex flex-col ${widgetPosition === 'left' ? 'items-start' : 'items-end'}`}>
                 {!(googleBusiness && !googleReviewDismissed) && (
                   <button 
                     onClick={() => handleExpand()} 

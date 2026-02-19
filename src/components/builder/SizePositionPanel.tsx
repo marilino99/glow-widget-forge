@@ -12,13 +12,14 @@ import {
 
 interface SizePositionPanelProps {
   onBack: () => void;
+  widgetPosition: "left" | "right";
+  onWidgetPositionChange: (position: "left" | "right") => void;
 }
 
-const SizePositionPanel = ({ onBack }: SizePositionPanelProps) => {
+const SizePositionPanel = ({ onBack, widgetPosition, onWidgetPositionChange }: SizePositionPanelProps) => {
   const [widgetLauncher, setWidgetLauncher] = useState("show");
   const [visibility, setVisibility] = useState("show");
   const [differentForMobile, setDifferentForMobile] = useState(false);
-  const [position, setPosition] = useState<"left" | "right">("right");
   const [sideOffset, setSideOffset] = useState("0");
   const [bottomOffset, setBottomOffset] = useState("0");
 
@@ -85,14 +86,14 @@ const SizePositionPanel = ({ onBack }: SizePositionPanelProps) => {
           {/* Left / Right selector */}
           <div className="grid grid-cols-2 gap-3 pt-2">
             <button
-              onClick={() => setPosition("left")}
+              onClick={() => onWidgetPositionChange("left")}
               className={`relative flex items-center justify-center gap-3 rounded-xl border-2 px-4 py-5 transition-all ${
-                position === "left"
+                widgetPosition === "left"
                   ? "border-foreground bg-background"
                   : "border-transparent bg-muted"
               }`}
             >
-              {position === "left" && (
+              {widgetPosition === "left" && (
                 <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-background">
                   <Check className="h-3.5 w-3.5" />
                 </div>
@@ -104,14 +105,14 @@ const SizePositionPanel = ({ onBack }: SizePositionPanelProps) => {
             </button>
 
             <button
-              onClick={() => setPosition("right")}
+              onClick={() => onWidgetPositionChange("right")}
               className={`relative flex items-center justify-center gap-3 rounded-xl border-2 px-4 py-5 transition-all ${
-                position === "right"
+                widgetPosition === "right"
                   ? "border-foreground bg-background"
                   : "border-transparent bg-muted"
               }`}
             >
-              {position === "right" && (
+              {widgetPosition === "right" && (
                 <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-background">
                   <Check className="h-3.5 w-3.5" />
                 </div>

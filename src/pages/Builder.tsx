@@ -271,6 +271,8 @@ const Builder = () => {
             aiProvider={config.aiProvider}
             aiApiKey={config.aiApiKey}
             onSaveChatbotConfig={saveConfig}
+            widgetPosition={config.widgetPosition}
+            onWidgetPositionChange={(pos) => saveConfig({ widgetPosition: pos })}
           />
         </div>
       </div>
@@ -342,6 +344,7 @@ const Builder = () => {
             customCss={livePreviewCss ?? config.customCss}
             customJs={livePreviewJs ?? config.customJs}
             showBranding={config.showBranding}
+            widgetPosition={config.widgetPosition}
           />
         </div>
       </div>
