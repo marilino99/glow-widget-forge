@@ -815,7 +815,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Chat input */}
-                <div className={`relative border-t p-4 ${isLight ? "border-slate-200" : "border-white/10"}`}>
+                <div className="relative p-4">
                   {/* Emoji Picker */}
                   {showEmojiPicker && (
                     <div className={`absolute bottom-full left-4 right-4 mb-2 p-3 rounded-xl shadow-lg ${isLight ? "bg-white border border-slate-200" : "bg-neutral-900 border border-white/10"}`}>
