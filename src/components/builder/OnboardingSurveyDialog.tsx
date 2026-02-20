@@ -78,13 +78,16 @@ const questions = [
 const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProps) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<SurveyAnswers>>({});
+  const [otherText, setOtherText] = useState("");
 
   const currentQuestion = questions[step];
   const selectedValue = answers[currentQuestion.key];
   const isLastStep = step === questions.length - 1;
+  const showOtherInput = currentQuestion.key === "mainGoal" && selectedValue === "Other";
 
   const handleSelect = (value: string) => {
     setAnswers({ ...answers, [currentQuestion.key]: value });
+    if (value !== "Other") setOtherText("");
   };
 
   const handleNext = () => {
@@ -185,7 +188,29 @@ const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProp
             })}
           </div>
 
-          {/* Footer */}
+          {/* Other input box */}
+          {showOtherInput && (
+            <div className="mt-4">
+              <p className="text-[15px] mb-2" style={{ color: "#333" }}>
+                Describe what you would like to use Widjet for
+              </p>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={otherText}
+                  onChange={(e) => setOtherText(e.target.value.slice(0, 50))}
+                  maxLength={50}
+                  className="w-full rounded-xl px-4 py-3 text-[15px] outline-none"
+                  style={{ backgroundColor: "#e4e8ee", color: "#333" }}
+                  placeholder=""
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px]" style={{ color: "#999" }}>
+                  {otherText.length}/50
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mt-10">
             <span className="text-[15px] font-medium" style={{ color: "#bbb" }}>
               <span style={{ color: "#333", fontWeight: 700 }}>{step + 1}</span>{" "}
