@@ -90,7 +90,7 @@ const OnboardingWebsiteDialog = ({ open, onComplete }: OnboardingWebsiteDialogPr
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) handleSkip(); }}>
       <DialogContent
         className="sm:max-w-md"
         onPointerDownOutside={(e) => e.preventDefault()}
