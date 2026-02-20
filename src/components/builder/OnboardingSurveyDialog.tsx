@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   ShoppingBag,
@@ -33,8 +32,8 @@ const questions = [
   {
     key: "businessType" as const,
     title: "Che tipo di attività hai?",
-    subtitle: "Aiutaci a personalizzare la tua esperienza",
-    selectLabel: "Seleziona 1",
+    subtitle: "Your feedback will help us personalize your experience.",
+    selectLabel: "Select only 1",
     options: [
       { label: "E-commerce", icon: ShoppingBag },
       { label: "Servizi", icon: Briefcase },
@@ -46,8 +45,8 @@ const questions = [
   {
     key: "mainGoal" as const,
     title: "Obiettivo principale?",
-    subtitle: "Cosa vorresti ottenere con il tuo widget?",
-    selectLabel: "Seleziona 1",
+    subtitle: "Your feedback will help us personalize your experience.",
+    selectLabel: "Select only 1",
     options: [
       { label: "Vendite", icon: TrendingUp },
       { label: "Supporto", icon: Headset },
@@ -58,8 +57,8 @@ const questions = [
   {
     key: "monthlyVisitors" as const,
     title: "Visitatori mensili?",
-    subtitle: "Quante persone visitano il tuo sito ogni mese?",
-    selectLabel: "Seleziona 1",
+    subtitle: "Your feedback will help us personalize your experience.",
+    selectLabel: "Select only 1",
     options: [
       { label: "<1K", icon: User },
       { label: "1K-10K", icon: UsersRound },
@@ -97,40 +96,51 @@ const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProp
   return (
     <Dialog open={open}>
       <DialogContent
-        className="sm:max-w-2xl border-0 bg-[#f5f5f7] p-0 overflow-hidden [&>button]:hidden z-[60]"
+        className="sm:max-w-[720px] border-0 p-0 overflow-hidden [&>button]:hidden z-[60] rounded-2xl shadow-2xl"
         overlayClassName="z-[59]"
+        style={{ backgroundColor: "#eef0f4" }}
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        {/* Rainbow glow */}
+        {/* Rainbow glow band at top */}
         <div
-          className="absolute top-0 left-0 right-0 h-24 pointer-events-none"
+          className="absolute top-0 left-0 right-0 h-28 pointer-events-none"
           style={{
-            background: "linear-gradient(135deg, #fce4ec, #e8eaf6, #e0f7fa, #fff9c4)",
-            maskImage: "linear-gradient(to bottom, black, transparent)",
-            WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
-            opacity: 0.7,
+            background: "linear-gradient(100deg, #f9e4b7 0%, #fce4ec 20%, #e8d0f0 40%, #d0d4f7 60%, #d0eef7 80%, #e8f5e1 100%)",
+            maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
+            opacity: 0.85,
           }}
         />
 
-        <div className="relative px-8 pt-8 pb-6">
+        <div className="relative px-10 pt-10 pb-8">
           {/* Skip button */}
           <button
             onClick={handleSkip}
-            className="absolute top-4 right-6 text-sm text-gray-400 hover:text-gray-600 transition-colors font-medium"
+            className="absolute top-5 right-8 text-[15px] font-semibold transition-colors"
+            style={{ color: "#1a1a1a" }}
           >
             Skip
           </button>
 
           {/* Title area */}
-          <div className="text-center mt-4 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">{currentQuestion.title}</h2>
-            <p className="text-sm text-gray-500">{currentQuestion.subtitle}</p>
-            <p className="text-xs text-gray-400 mt-1">{currentQuestion.selectLabel}</p>
+          <div className="text-center mt-2 mb-5">
+            <h2
+              className="text-[28px] font-extrabold leading-tight mb-2"
+              style={{ color: "#111" }}
+            >
+              {currentQuestion.title}
+            </h2>
+            <p className="text-[15px]" style={{ color: "#999" }}>
+              {currentQuestion.subtitle}
+            </p>
+            <p className="text-[13px] mt-2" style={{ color: "#bbb" }}>
+              {currentQuestion.selectLabel}
+            </p>
           </div>
 
           {/* Options grid */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 mt-2">
             {currentQuestion.options.map((option) => {
               const Icon = option.icon;
               const isSelected = selectedValue === option.label;
@@ -139,42 +149,57 @@ const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProp
                   key={option.label}
                   onClick={() => handleSelect(option.label)}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl bg-white px-5 py-4 text-left transition-all duration-150",
-                    "border-2 hover:shadow-sm",
+                    "flex items-center gap-4 rounded-xl px-5 py-5 text-left transition-all duration-150",
+                    "border-2",
                     isSelected
-                      ? "border-gray-900 shadow-sm"
-                      : "border-transparent hover:border-gray-200"
+                      ? "border-[#333] shadow-md"
+                      : "border-transparent hover:border-[#ddd]"
                   )}
+                  style={{ backgroundColor: "#fff" }}
                 >
-                  <div className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-                    isSelected ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600"
-                  )}>
-                    <Icon className="h-5 w-5" />
+                  <div
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: isSelected ? "#e0f2f7" : "#f0f4f8" }}
+                  >
+                    <Icon
+                      className="h-6 w-6"
+                      style={{ color: "#3fb5c5" }}
+                      strokeWidth={1.5}
+                    />
                   </div>
-                  <span className="text-sm font-medium text-gray-800">{option.label}</span>
+                  <span
+                    className="text-[15px] font-semibold"
+                    style={{ color: "#222" }}
+                  >
+                    {option.label}
+                  </span>
                 </button>
               );
             })}
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between mt-8">
-            <span className="text-sm text-gray-400 font-medium">
-              {step + 1} / {questions.length}
+          <div className="flex items-center justify-between mt-10">
+            <span className="text-[15px] font-medium" style={{ color: "#bbb" }}>
+              <span style={{ color: "#333", fontWeight: 700 }}>{step + 1}</span>{" "}
+              / {questions.length}
             </span>
-            <Button
+            <button
               onClick={handleNext}
               disabled={!selectedValue}
               className={cn(
-                "px-6 rounded-lg font-medium",
+                "px-7 py-3 rounded-xl text-[15px] font-semibold transition-all",
                 selectedValue
-                  ? "bg-gray-900 text-white hover:bg-gray-800"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  ? "cursor-pointer"
+                  : "cursor-not-allowed"
               )}
+              style={{
+                backgroundColor: selectedValue ? "#333" : "#d4d4d4",
+                color: selectedValue ? "#fff" : "#999",
+              }}
             >
-              {isLastStep ? "Continua" : "Next →"}
-            </Button>
+              {isLastStep ? "Continua" : "Next  >"}
+            </button>
           </div>
         </div>
       </DialogContent>
