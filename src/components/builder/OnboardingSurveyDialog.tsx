@@ -114,12 +114,12 @@ const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProp
       >
         {/* Rainbow glow band at top */}
         <div
-          className="absolute top-0 left-0 right-0 h-28 pointer-events-none"
+          className="absolute top-0 left-0 right-0 h-36 pointer-events-none blur-md"
           style={{
-            background: "linear-gradient(100deg, #f9e4b7 0%, #fce4ec 20%, #e8d0f0 40%, #d0d4f7 60%, #d0eef7 80%, #e8f5e1 100%)",
+            background: "linear-gradient(100deg, #f5d080 0%, #f8b4c8 20%, #d8a0f0 40%, #a0b0f8 60%, #80d8f0 80%, #b0f0c0 100%)",
             maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
             WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)",
-            opacity: 0.85,
+            opacity: 1,
           }}
         />
 
