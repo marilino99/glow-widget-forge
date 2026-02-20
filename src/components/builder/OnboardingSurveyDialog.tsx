@@ -31,32 +31,32 @@ export interface SurveyAnswers {
 const questions = [
   {
     key: "businessType" as const,
-    title: "Che tipo di attività hai?",
+    title: "What type of business do you have?",
     subtitle: "Your feedback will help us personalize your experience.",
     selectLabel: "Select only 1",
     options: [
       { label: "E-commerce", icon: ShoppingBag },
-      { label: "Servizi", icon: Briefcase },
-      { label: "Ristorante", icon: UtensilsCrossed },
+      { label: "Services", icon: Briefcase },
+      { label: "Restaurant", icon: UtensilsCrossed },
       { label: "Blog", icon: PenLine },
-      { label: "Altro", icon: MoreHorizontal },
+      { label: "Other", icon: MoreHorizontal },
     ],
   },
   {
     key: "mainGoal" as const,
-    title: "Obiettivo principale?",
+    title: "What is your main goal?",
     subtitle: "Your feedback will help us personalize your experience.",
     selectLabel: "Select only 1",
     options: [
-      { label: "Vendite", icon: TrendingUp },
-      { label: "Supporto", icon: Headset },
-      { label: "Lead", icon: Users },
+      { label: "Sales", icon: TrendingUp },
+      { label: "Support", icon: Headset },
+      { label: "Leads", icon: Users },
       { label: "Feedback", icon: MessageSquare },
     ],
   },
   {
     key: "monthlyVisitors" as const,
-    title: "Visitatori mensili?",
+    title: "How many monthly visitors?",
     subtitle: "Your feedback will help us personalize your experience.",
     selectLabel: "Select only 1",
     options: [
@@ -198,7 +198,7 @@ const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProp
                 color: selectedValue ? "#fff" : "#999",
               }}
             >
-              {isLastStep ? "Continua" : "Next  >"}
+              {isLastStep ? "Continue" : "Next  >"}
             </button>
           </div>
         </div>
