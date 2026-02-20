@@ -15,6 +15,8 @@ import {
   UsersRound,
   Building2,
   Globe,
+  GraduationCap,
+  Monitor,
 } from "lucide-react";
 
 interface OnboardingSurveyDialogProps {
@@ -37,7 +39,10 @@ const questions = [
     options: [
       { label: "E-commerce", icon: ShoppingBag },
       { label: "Services", icon: Briefcase },
+      { label: "Software", icon: Monitor },
       { label: "Restaurant", icon: UtensilsCrossed },
+      { label: "Small business owner", icon: UsersRound },
+      { label: "Student", icon: GraduationCap },
       { label: "Blog", icon: PenLine },
       { label: "Other", icon: MoreHorizontal },
     ],
