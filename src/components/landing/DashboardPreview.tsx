@@ -12,7 +12,7 @@ const DashboardPreview = () => {
       </div>
       <div className="mx-auto max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center">
-          <span className="relative inline-flex items-center justify-center rounded-full px-8 py-2.5 bg-white">
+          <span className="relative inline-flex items-center justify-center rounded-full px-8 py-2.5 bg-transparent">
             <span className="absolute inset-0 rounded-full p-[1.5px]" style={{ background: 'linear-gradient(135deg, rgba(245,158,66,0.35), rgba(224,90,138,0.3), rgba(162,89,230,0.35), rgba(106,140,239,0.3))', mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', maskComposite: 'exclude', WebkitMaskComposite: 'xor', padding: '1.5px' }} />
             <span className="text-sm font-bold uppercase tracking-widest" style={{ backgroundImage: 'linear-gradient(90deg, #f59e42 0%, #e05a8a 35%, #a259e6 65%, #6a8cef 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t("dashboard.label")}</span>
           </span>
