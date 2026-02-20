@@ -30,6 +30,7 @@ import {
   LifeBuoy,
   ChevronRight,
   Bot,
+  LayoutTemplate,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -53,6 +54,7 @@ import SizePositionPanel from "./SizePositionPanel";
 import InjectionCodePanel from "./InjectionCodePanel";
 import SettingsDialog from "./SettingsDialog";
 import ChatbotPanel from "./ChatbotPanel";
+import TemplatesPanel, { WidgetTemplate } from "./TemplatesPanel";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -246,6 +248,7 @@ const BuilderSidebar = ({
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [showChatbotPanel, setShowChatbotPanel] = useState(false);
+  const [showTemplatesPanel, setShowTemplatesPanel] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
 
@@ -301,6 +304,8 @@ const BuilderSidebar = ({
       setShowInjectionCodePanel(true);
     } else if (widgetType === "chatbot") {
       setShowChatbotPanel(true);
+    } else if (widgetType === "templates") {
+      setShowTemplatesPanel(true);
     }
     onPanelOpenChange?.(true);
     onSelectWidget(widgetType);
@@ -374,6 +379,24 @@ const BuilderSidebar = ({
   const handleBackFromChatbot = () => {
     setShowChatbotPanel(false);
     closePanel();
+  };
+
+  const handleBackFromTemplates = () => {
+    setShowTemplatesPanel(false);
+    closePanel();
+  };
+
+  const handleApplyTemplate = (template: WidgetTemplate) => {
+    onWidgetThemeChange(template.theme);
+    onWidgetColorChange(template.color);
+    onBackgroundTypeChange(template.backgroundType);
+    onSayHelloChange(template.sayHello);
+    onSaveConfig({
+      widgetTheme: template.theme,
+      widgetColor: template.color,
+      backgroundType: template.backgroundType,
+      sayHello: template.sayHello,
+    });
   };
 
   // Check if typography has unsaved changes
@@ -566,6 +589,18 @@ const BuilderSidebar = ({
     );
   }
 
+  // Show Templates panel
+  if (showTemplatesPanel) {
+    return (
+      <TemplatesPanel
+        onBack={handleBackFromTemplates}
+        isPro={isPro}
+        onUpgrade={onUpgrade}
+        onApplyTemplate={handleApplyTemplate}
+      />
+    );
+  }
+
   // Show Google Reviews panel
   if (showGoogleReviewsPanel) {
     return (
@@ -636,6 +671,12 @@ const BuilderSidebar = ({
               label="Theme & colors"
               onClick={() => handleSelectWidget("theme-colors")}
               active={activeWidget === "theme-colors"}
+            />
+            <SidebarItem
+              icon={LayoutTemplate}
+              label="Templates"
+              onClick={() => handleSelectWidget("templates")}
+              active={activeWidget === "templates"}
             />
             <SidebarItem
               icon={Type}
