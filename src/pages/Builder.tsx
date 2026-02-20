@@ -31,8 +31,24 @@ const Builder = () => {
 
   // Onboarding dialogs for first-time users
   const isNewUser = searchParams.get("onboarding") === "true";
-  const [showSurvey, setShowSurvey] = useState(isNewUser);
+  const [showSurvey, setShowSurvey] = useState(false);
   const [showWebsiteDialog, setShowWebsiteDialog] = useState(isNewUser);
+
+  // Check if user already completed the survey
+  useEffect(() => {
+    if (!isNewUser || !user) return;
+    const checkSurvey = async () => {
+      const { data } = await (supabase.from("user_activity_logs") as any)
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("event_type", "survey_completed")
+        .limit(1);
+      if (!data || data.length === 0) {
+        setShowSurvey(true);
+      }
+    };
+    checkSurvey();
+  }, [isNewUser, user]);
   const { hasUnread } = useUnreadMessages();
   const { plan, subscriptionEnd, startCheckout } = useSubscription();
   const { 
