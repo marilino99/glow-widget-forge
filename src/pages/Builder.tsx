@@ -34,14 +34,14 @@ const Builder = () => {
   const [showSurvey, setShowSurvey] = useState(false);
   const [showWebsiteDialog, setShowWebsiteDialog] = useState(isNewUser);
 
-  // Check if user already completed the survey
+  // Check if user already completed or skipped the survey
   useEffect(() => {
     if (!isNewUser || !user) return;
     const checkSurvey = async () => {
       const { data } = await (supabase.from("user_activity_logs") as any)
         .select("id")
         .eq("user_id", user.id)
-        .eq("event_type", "survey_completed")
+        .in("event_type", ["survey_completed", "survey_skipped"])
         .limit(1);
       if (!data || data.length === 0) {
         setShowSurvey(true);
@@ -176,12 +176,12 @@ const Builder = () => {
   // Handle survey completion
   const handleSurveyComplete = async (answers: { businessType: string; mainGoal: string; monthlyVisitors: string }) => {
     setShowSurvey(false);
-    // Log survey answers
     if (user) {
+      const isSkipped = !answers.businessType && !answers.mainGoal && !answers.monthlyVisitors;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (supabase.from("user_activity_logs") as any).insert({
         user_id: user.id,
-        event_type: "survey_completed",
+        event_type: isSkipped ? "survey_skipped" : "survey_completed",
         metadata: answers,
       });
     }
