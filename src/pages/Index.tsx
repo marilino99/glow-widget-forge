@@ -54,7 +54,7 @@ const LandingContent = () => {
       if (data && data.length > 0) {
         navigate("/builder", { replace: true });
       } else {
-        navigate("/onboarding", { replace: true });
+        navigate("/builder?onboarding=true", { replace: true });
       }
     };
 
