@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronLeft, Paperclip, Monitor, Star, MessageSquare, Sparkles, Upload, Loader2 } from "lucide-react";
+import { ChevronLeft, Paperclip, Monitor, Star, MessageSquare, Sparkles, Upload, Loader2, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,10 @@ interface ContactCardPanelProps {
   onShareFeedbackChange: (enabled: boolean) => void;
   forwardEmail: string;
   onForwardEmailChange: (email: string) => void;
+  logo: string | null;
+  onLogoChange: (logo: string | null) => void;
+  sayHello: string;
+  onSayHelloChange: (text: string) => void;
 }
 
 const avatars = [
@@ -70,6 +74,10 @@ const ContactCardPanel = ({
   onShareFeedbackChange,
   forwardEmail,
   onForwardEmailChange,
+  logo,
+  onLogoChange,
+  sayHello,
+  onSayHelloChange,
 }: ContactCardPanelProps) => {
   const [avatarTab, setAvatarTab] = useState("gallery");
   const [responseTimeEnabled, setResponseTimeEnabled] = useState(true);
@@ -78,6 +86,7 @@ const ContactCardPanel = ({
   const [emailError, setEmailError] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,13 +124,17 @@ const ContactCardPanel = ({
   const [originalOfferHelp, setOriginalOfferHelp] = useState(offerHelp);
   const [originalAvatar, setOriginalAvatar] = useState(selectedAvatar);
   const [originalForwardEmail, setOriginalForwardEmail] = useState(forwardEmail);
+  const [originalLogo, setOriginalLogo] = useState(logo);
+  const [originalSayHello, setOriginalSayHello] = useState(sayHello);
 
   // Check if any changes have been made from original values
   const hasChanges = 
     contactName !== originalName || 
     offerHelp !== originalOfferHelp || 
     selectedAvatar !== originalAvatar ||
-    forwardEmail !== originalForwardEmail;
+    forwardEmail !== originalForwardEmail ||
+    logo !== originalLogo ||
+    sayHello !== originalSayHello;
 
   const handleSave = () => {
     if (!forwardEmail.trim()) {
@@ -133,12 +146,15 @@ const ContactCardPanel = ({
       contactName,
       offerHelp,
       forwardEmail,
+      logo,
+      sayHello,
     });
-    // Update originals so hasChanges becomes false
     setOriginalName(contactName);
     setOriginalOfferHelp(offerHelp);
     setOriginalAvatar(selectedAvatar);
     setOriginalForwardEmail(forwardEmail);
+    setOriginalLogo(logo);
+    setOriginalSayHello(sayHello);
   };
 
   const handleCancel = () => {
@@ -146,6 +162,8 @@ const ContactCardPanel = ({
     onOfferHelpChange(originalOfferHelp);
     onSelectAvatar(originalAvatar);
     onForwardEmailChange(originalForwardEmail);
+    onLogoChange(originalLogo);
+    onSayHelloChange(originalSayHello);
   };
 
   const handleBackClick = () => {
@@ -360,6 +378,61 @@ const ContactCardPanel = ({
             value={offerHelp}
             onChange={(e) => onOfferHelpChange(e.target.value)}
             className="min-h-[120px] resize-none bg-muted/50"
+          />
+        </div>
+
+        {/* Logo */}
+        <div className="mt-8">
+          <Label className="text-base font-semibold text-foreground">Logo</Label>
+          <div className="mt-2 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+              {logo ? (
+                <img src={logo} alt="Logo" className="h-full w-full rounded-lg object-cover" />
+              ) : (
+                <ImagePlus className="h-6 w-6 text-muted-foreground" />
+              )}
+            </div>
+            {logo ? (
+              <Button variant="secondary" size="sm" onClick={() => onLogoChange(null)}>
+                Remove
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => logoInputRef.current?.click()}
+                className="bg-foreground text-background hover:bg-foreground/90"
+              >
+                Upload
+              </Button>
+            )}
+            <input
+              ref={logoInputRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => onLogoChange(reader.result as string);
+                  reader.readAsDataURL(file);
+                }
+              }}
+              className="hidden"
+            />
+          </div>
+        </div>
+
+        {/* Say hello */}
+        <div className="mt-8">
+          <Label className="text-base font-semibold text-foreground">
+            Say hello <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            value={sayHello}
+            onChange={(e) => onSayHelloChange(e.target.value)}
+            placeholder="Hello, nice to see you here 👋"
+            className="mt-2 bg-muted/50"
           />
         </div>
 

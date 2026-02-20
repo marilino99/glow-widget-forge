@@ -550,6 +550,10 @@ const BuilderSidebar = ({
         onShareFeedbackChange={onShareFeedbackChange}
         forwardEmail={forwardEmail}
         onForwardEmailChange={onForwardEmailChange}
+        logo={logo}
+        onLogoChange={onLogoChange}
+        sayHello={sayHello}
+        onSayHelloChange={onSayHelloChange}
       />
     );
   }
@@ -677,12 +681,6 @@ const BuilderSidebar = ({
               label="Templates"
               onClick={() => handleSelectWidget("templates")}
               active={activeWidget === "templates"}
-            />
-            <SidebarItem
-              icon={Type}
-              label="Typography"
-              onClick={() => handleSelectWidget("typography")}
-              active={activeWidget === "typography"}
             />
             <SidebarItem
               icon={Maximize2}
