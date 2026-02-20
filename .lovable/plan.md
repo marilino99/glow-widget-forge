@@ -1,58 +1,50 @@
 
-# Redesign del Survey Popup Onboarding
 
-## Obiettivo
-Ridisegnare il componente `OnboardingSurveyDialog` per replicare esattamente il design dello screenshot di riferimento: un popup grande con effetto glow arcobaleno in alto, card di opzioni con icone in griglia 2 colonne, indicatore di step "1/3" in basso a sinistra, pulsante "Next" in basso a destra, e pulsante "Skip" in alto a destra.
+# Template Gallery - Temi Pronti all'Uso
 
-## Elementi di Design da Replicare
+## Panoramica
+Aggiungere una sezione "Templates" nella sidebar del builder che permette agli utenti di applicare con un click configurazioni predefinite (tema, colore, sfondo, messaggio di benvenuto, ecc.). Alcuni template saranno gratuiti, altri riservati al piano Pro.
 
-- **Effetto glow arcobaleno** in alto (gradiente pastel che sfuma verso il bianco)
-- **Sfondo grigio chiaro** per tutto il popup (non bianco puro)
-- **Titolo grande e bold** (la domanda)
-- **Sottotitolo grigio** ("Aiutaci a personalizzare la tua esperienza")
-- **"Seleziona 1"** come indicazione sotto il sottotitolo
-- **Griglia 2 colonne** con card opzione grandi, sfondo bianco, bordo arrotondato, con icona + testo
-- **Pulsante "Skip"** in alto a destra
-- **Indicatore "1 / 3"** in basso a sinistra
-- **Pulsante "Next >"** in basso a destra (grigio, si attiva quando si seleziona)
-- **Nessun pulsante X** di chiusura
+## Come funziona per l'utente
+1. Nella sidebar, sotto "Customize look", appare una nuova voce **"Templates"**
+2. Cliccando si apre un pannello con una griglia di card preview
+3. Ogni card mostra un'anteprima visiva del widget con quel tema applicato
+4. Cliccando "Apply" il template sovrascrive le impostazioni di aspetto (tema, colore, sfondo, messaggio, ecc.)
+5. I template Pro mostrano un badge "PRO" e richiedono l'upgrade
 
-## Dettagli Tecnici
+## Template inclusi (esempio)
 
-### File da modificare
-**`src/components/builder/OnboardingSurveyDialog.tsx`** - Riscrittura completa del componente
+| Nome | Tipo | Tema | Colore | Sfondo | Messaggio |
+|------|------|------|--------|--------|-----------|
+| Minimal Light | Free | light | gray | solid | "Hi there! How can we help?" |
+| Ocean Blue | Free | dark | blue | gradient | "Welcome aboard!" |
+| Sunset Vibes | Free | dark | orange | gradient | "Hey! What can we do for you?" |
+| Black Friday | Pro | dark | red | image (dark) | "Don't miss our deals!" |
+| Luxury Gold | Pro | dark | yellow | solid | "Welcome to our exclusive store" |
+| Nature Green | Pro | light | green | gradient | "Hello! We're here to help" |
+| Neon Purple | Pro | dark | purple | gradient | "Hey! Let's chat" |
+| Coral Pink | Pro | dark | pink | gradient | "Hi! Ask us anything" |
 
-### Struttura del nuovo componente
-1. Il dialog usa `sm:max-w-2xl` per essere piu grande (come nello screenshot)
-2. Rimuovere il close button dal DialogContent (nascondere la X)
-3. Aggiungere in cima un div con gradiente arcobaleno (rosa/viola/azzurro/giallo) che sfuma verso trasparente
-4. Titolo grande (`text-2xl font-bold`) centrato
-5. Sottotitolo in grigio centrato
-6. Testo "Seleziona 1" in grigio chiaro
-7. Griglia `grid-cols-2` con card opzione: sfondo bianco, rounded-xl, padding generoso, con emoji/icona a sinistra e testo a destra
-8. Footer con "1 / 3" a sinistra e pulsante "Next >" a destra
-9. Pulsante "Skip" posizionato in alto a destra
-10. Lo sfondo del dialog sara `bg-[#f5f5f7]` (grigio chiaro come nello screenshot)
+## Dettagli tecnici
 
-### Icone per le opzioni
-Usare emoji per le icone delle opzioni (come nello screenshot usa illustrazioni):
-- **Domanda 1** (Tipo attivita): E-commerce (shopping bag), Servizi (briefcase), Ristorante (fork/knife), Blog (pen), Altro (dots)
-- **Domanda 2** (Obiettivo): Vendite (chart up), Supporto (headset), Lead (users), Feedback (message)
-- **Domanda 3** (Visitatori): icone diverse per range
+### Nuovi file
+- **`src/components/builder/TemplatesPanel.tsx`** -- Pannello con griglia di template. Ogni template e un oggetto JS con le configurazioni preimpostate (nessun database necessario). Mostra card con anteprima miniatura, nome, e pulsante "Apply". I template Pro hanno un overlay con badge PRO e cliccando si attiva l'UpgradeOverlay.
 
-Si useranno icone Lucide React gia installate nel progetto per mantenere uno stile coerente con illustrazioni stilizzate.
+### Modifiche ai file esistenti
 
-### Comportamento
-- Click su opzione la seleziona (bordo evidenziato)
-- Il pulsante "Next" avanza allo step successivo (non auto-avanza come adesso)
-- All'ultimo step il pulsante diventa "Continua" e chiama `onComplete`
-- "Skip" chiude il survey senza risposte (chiama `onComplete` con valori default o vuoti)
+**`src/components/builder/BuilderSidebar.tsx`**:
+- Aggiungere stato `showTemplatesPanel`
+- Aggiungere icona `LayoutTemplate` da lucide-react
+- Aggiungere `SidebarItem` per "Templates" nella sezione "Customize look"
+- Aggiungere il rendering condizionale del `TemplatesPanel`
+- Al click su "Apply", chiamare le funzioni `onWidgetThemeChange`, `onWidgetColorChange`, `onBackgroundTypeChange`, `onSayHelloChange` ecc. con i valori del template, poi `onSaveConfig` per persistere
 
-### Effetto glow arcobaleno
-Un div posizionato absolute in alto con:
-```css
-background: linear-gradient(135deg, #fce4ec, #e8eaf6, #e0f7fa, #fff9c4);
-height: 80px;
-mask: linear-gradient(to bottom, black, transparent);
-```
-Questo replica l'effetto pastello sfumato visibile nello screenshot.
+### Nessuna modifica al database
+I template sono hardcoded come costanti nel frontend -- non servono nuove tabelle o migrazioni. In futuro si potranno spostare su database se necessario.
+
+### Flusso "Apply Template"
+1. Utente clicca "Apply" su un template
+2. Si apre un dialog di conferma: "Applying this template will override your current theme settings. Continue?"
+3. Se confermato, le impostazioni vengono aggiornate localmente e salvate nel database tramite `saveConfig`
+4. L'anteprima del widget si aggiorna immediatamente
+
