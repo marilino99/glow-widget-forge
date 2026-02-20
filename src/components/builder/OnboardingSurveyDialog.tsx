@@ -57,6 +57,8 @@ const questions = [
       { label: "Support", icon: Headset },
       { label: "Leads", icon: Users },
       { label: "Feedback", icon: MessageSquare },
+      { label: "Product promotions", icon: ShoppingBag },
+      { label: "Other", icon: MoreHorizontal },
     ],
   },
   {
