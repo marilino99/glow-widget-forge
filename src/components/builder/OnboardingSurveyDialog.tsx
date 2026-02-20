@@ -230,7 +230,7 @@ const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProp
                 color: selectedValue ? "#fff" : "#999",
               }}
             >
-              {isLastStep ? "Continue" : "Next  >"}
+              {isLastStep ? "Submit" : "Next  >"}
             </button>
           </div>
         </div>
