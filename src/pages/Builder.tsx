@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useWidgetConfiguration } from "@/hooks/useWidgetConfiguration";
 import { useProductCards } from "@/hooks/useProductCards";
@@ -15,6 +15,9 @@ import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
+import OnboardingSurveyDialog from "@/components/builder/OnboardingSurveyDialog";
+import OnboardingWebsiteDialog from "@/components/builder/OnboardingWebsiteDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 import { ProductCardData } from "@/types/productCard";
 import { LocalLink } from "@/components/builder/CustomLinksPanel";
@@ -22,8 +25,14 @@ import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
 
 const Builder = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
+
+  // Onboarding dialogs for first-time users
+  const isNewUser = searchParams.get("onboarding") === "true";
+  const [showSurvey, setShowSurvey] = useState(isNewUser);
+  const [showWebsiteDialog, setShowWebsiteDialog] = useState(isNewUser);
   const { hasUnread } = useUnreadMessages();
   const { plan, subscriptionEnd, startCheckout } = useSubscription();
   const { 
@@ -148,7 +157,30 @@ const Builder = () => {
     setLivePreviewJs(js);
   }, []);
 
-  
+  // Handle survey completion
+  const handleSurveyComplete = async (answers: { businessType: string; mainGoal: string; monthlyVisitors: string }) => {
+    setShowSurvey(false);
+    // Log survey answers
+    if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase.from("user_activity_logs") as any).insert({
+        user_id: user.id,
+        event_type: "survey_completed",
+        metadata: answers,
+      });
+    }
+  };
+
+  // Handle website dialog completion
+  const handleWebsiteDialogComplete = () => {
+    setShowWebsiteDialog(false);
+    // Remove onboarding param from URL
+    searchParams.delete("onboarding");
+    setSearchParams(searchParams, { replace: true });
+    // Reload config
+    window.location.replace("/builder");
+  };
+
 
   // Cleanup landing page widget if it leaked into the builder
   useEffect(() => {
@@ -356,6 +388,16 @@ const Builder = () => {
           onUpgrade={startCheckout}
         />
       )}
+
+      {/* Onboarding dialogs for first-time users */}
+      <OnboardingWebsiteDialog
+        open={showWebsiteDialog && !showSurvey}
+        onComplete={handleWebsiteDialogComplete}
+      />
+      <OnboardingSurveyDialog
+        open={showSurvey}
+        onComplete={handleSurveyComplete}
+      />
     </div>
   );
 };
