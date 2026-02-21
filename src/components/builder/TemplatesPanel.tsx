@@ -180,10 +180,6 @@ const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate, widgetType,
           {/* Bottom Bar option */}
           <button
             onClick={() => {
-              if (!isPro) {
-                onUpgrade();
-                return;
-              }
               onWidgetTypeChange("bottom-bar");
             }}
             className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
@@ -196,15 +192,6 @@ const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate, widgetType,
               <PanelBottom className="h-6 w-6 text-foreground" />
             </div>
             <span className="text-xs font-medium text-foreground">Bottom Bar</span>
-            {!isPro && (
-              <span
-                className="absolute top-2 right-2 flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide"
-                style={{ backgroundColor: 'rgba(217, 70, 239, 0.9)', color: '#fff' }}
-              >
-                <Lock className="h-2.5 w-2.5" />
-                PRO
-              </span>
-            )}
           </button>
         </div>
       </div>
