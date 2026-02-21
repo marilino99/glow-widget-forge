@@ -242,11 +242,21 @@ const WidgetPreviewPanel = ({
     setTimeout(() => setIsAnimatingExpand(false), 350);
   };
 
-  // Auto-expand widget when widgetType changes so user sees the result
+  // Auto-expand widget when widgetType changes: collapse first, then re-expand like a click
+  const isFirstWidgetType = useRef(true);
   useEffect(() => {
-    if (isCollapsed) {
-      handleExpand();
+    if (isFirstWidgetType.current) {
+      isFirstWidgetType.current = false;
+      return;
     }
+    // First collapse it
+    setIsCollapsed(true);
+    setShowButtonPop(true);
+    // Then after the button pop, simulate a click to expand
+    setTimeout(() => {
+      setShowButtonPop(false);
+      handleExpand();
+    }, 500);
   }, [widgetType]);
   const [showChatMenu, setShowChatMenu] = useState(false);
   const chatMenuRef = useRef<HTMLDivElement>(null);
