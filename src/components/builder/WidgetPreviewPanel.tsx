@@ -808,7 +808,7 @@ const WidgetPreviewPanel = ({
                       {faqItems.map((faq) => (
                         <div
                           key={faq.id}
-                          className="inline-flex self-start rounded-full bg-white px-5 py-2.5 shadow-md border border-slate-100 cursor-pointer hover:shadow-lg transition-shadow"
+                          className="inline-flex self-start rounded-full bg-white px-5 py-2.5 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-100 hover:shadow-lg transition-all duration-200"
                         >
                           <span className="text-sm font-medium text-slate-700">{faq.question}</span>
                         </div>
