@@ -879,18 +879,75 @@ const WidgetPreviewPanel = ({
             isCollapsed && !isAnimatingCollapse ? (
               /* Collapsed: show circular launcher button (tondolino) */
               <div
-                className={`absolute z-20 bottom-5 ${widgetPosition === 'left' ? 'left-5' : 'right-5'}`}
+                className={`absolute z-20 bottom-5 ${widgetPosition === 'left' ? 'left-5' : 'right-5'} flex flex-col ${widgetPosition === 'left' ? 'items-start' : 'items-end'}`}
               >
-                <button 
-                  onClick={() => handleExpand()} 
-                  className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden ${showButtonPop ? 'animate-button-pop' : ''}`}
-                  id="wj-btn"
-                  style={buttonStyle}
-                  onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
-                  onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
-                >
-                  {buttonLogo ? <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" /> : <HelpCircle className="h-7 w-7 text-white" />}
-                </button>
+                {/* Google Reviews notification card */}
+                {googleBusiness && !googleReviewDismissed && (
+                  <div
+                    className="mb-3 w-[300px] rounded-2xl bg-white shadow-lg p-4 border border-slate-100 cursor-pointer"
+                    onClick={() => {
+                      const mapsUrl = googleBusiness.url || googleBusiness.website;
+                      if (mapsUrl) window.open(mapsUrl, "_blank", "noopener,noreferrer");
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-2xl font-bold text-slate-900">{googleBusiness.rating ?? "–"}</span>
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((star) => {
+                              const rating = googleBusiness.rating ?? 0;
+                              const full = star <= Math.floor(rating);
+                              const half = !full && star === Math.ceil(rating) && rating % 1 >= 0.25;
+                              return (
+                                <div key={star} className="relative h-5 w-5">
+                                  <Star className="absolute inset-0 h-5 w-5 text-slate-300" />
+                                  {(full || half) && (
+                                    <div className="absolute inset-0 overflow-hidden" style={{ width: full ? '100%' : '50%' }}>
+                                      <Star className="h-5 w-5 text-slate-900 fill-slate-900" />
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <p className="text-sm text-slate-500 truncate">{googleBusiness.name}</p>
+                        <p className="text-sm text-slate-500">
+                          Check <span className="font-bold text-slate-900">{googleBusiness.user_ratings_total ?? 0}</span> reviews on{" "}
+                          <span className="text-[#4285F4]">G</span>
+                          <span className="text-[#EA4335]">o</span>
+                          <span className="text-[#FBBC05]">o</span>
+                          <span className="text-[#4285F4]">g</span>
+                          <span className="text-[#34A853]">l</span>
+                          <span className="text-[#EA4335]">e</span>
+                        </p>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setGoogleReviewDismissed(true);
+                          handleExpand();
+                        }}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {!(googleBusiness && !googleReviewDismissed) && (
+                  <button 
+                    onClick={() => handleExpand()} 
+                    className={`flex h-14 w-14 items-center justify-center rounded-full ${buttonClass} shadow-lg transition-colors overflow-hidden ${showButtonPop ? 'animate-button-pop' : ''}`}
+                    id="wj-btn"
+                    style={buttonStyle}
+                    onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
+                    onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
+                  >
+                    {buttonLogo ? <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" /> : <HelpCircle className="h-7 w-7 text-white" />}
+                  </button>
+                )}
               </div>
             ) : isBottomBarExpanded ? (
               /* Expanded bottom bar with chat */
