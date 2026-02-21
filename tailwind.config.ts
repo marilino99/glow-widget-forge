@@ -85,15 +85,26 @@ export default {
             opacity: "1",
             transform: "scale(1) translateY(0)",
           },
+          "40%": {
+            opacity: "1",
+            transform: "scale(1.02) translateY(-2px)",
+          },
           "100%": {
             opacity: "0",
-            transform: "scale(0.92) translateY(10px)",
+            transform: "scale(0.6) translateY(20px)",
           },
         },
         "widget-expand": {
           "0%": {
             opacity: "0",
-            transform: "scale(0.92) translateY(10px)",
+            transform: "scale(0.6) translateY(20px)",
+          },
+          "50%": {
+            opacity: "1",
+            transform: "scale(1.03) translateY(-3px)",
+          },
+          "75%": {
+            transform: "scale(0.99) translateY(1px)",
           },
           "100%": {
             opacity: "1",
@@ -102,12 +113,15 @@ export default {
         },
         "button-pop": {
           "0%": {
-            transform: "scale(0.4)",
+            transform: "scale(0)",
             opacity: "0",
           },
-          "60%": {
-            transform: "scale(1.08)",
+          "50%": {
+            transform: "scale(1.15)",
             opacity: "1",
+          },
+          "75%": {
+            transform: "scale(0.95)",
           },
           "100%": {
             transform: "scale(1)",
@@ -121,9 +135,9 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "widget-collapse": "widget-collapse 0.25s cubic-bezier(0.4, 0, 1, 1) forwards",
-        "widget-expand": "widget-expand 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-        "button-pop": "button-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "widget-collapse": "widget-collapse 0.3s cubic-bezier(0.4, 0, 1, 1) forwards",
+        "widget-expand": "widget-expand 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+        "button-pop": "button-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "rainbow-spin": "rainbow-spin 8s linear infinite",
       },
     },
