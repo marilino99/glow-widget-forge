@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 interface TypewriterTextProps {
   text: string;
   speed?: number;
+  wordPause?: number;
   pauseDuration?: number;
   className?: string;
   style?: React.CSSProperties;
@@ -10,7 +11,8 @@ interface TypewriterTextProps {
 
 const TypewriterText = ({
   text,
-  speed = 60,
+  speed = 80,
+  wordPause = 200,
   pauseDuration = 2000,
   className,
   style,
@@ -32,9 +34,11 @@ const TypewriterText = ({
       }, pauseDuration);
     } else {
       if (charIndex < text.length) {
+        const currentChar = text[charIndex];
+        const delay = currentChar === ' ' ? wordPause : speed;
         timerRef.current = setTimeout(() => {
           setCharIndex((i) => i + 1);
-        }, speed);
+        }, delay);
       } else {
         setIsPaused(true);
       }
