@@ -308,40 +308,49 @@ const WidgetPreviewPanel = ({
 
   const startListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    if (!SpeechRecognition) {
+      console.warn("SpeechRecognition not supported");
+      return;
+    }
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = language || "en";
-    recognition.interimResults = true;
-    recognition.continuous = false;
-    recognitionRef.current = recognition;
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = language || "en";
+      recognition.interimResults = true;
+      recognition.continuous = false;
+      recognitionRef.current = recognition;
 
-    let finalTranscript = "";
+      let finalTranscript = "";
 
-    recognition.onresult = (event: any) => {
-      let interim = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        } else {
-          interim += event.results[i][0].transcript;
+      recognition.onresult = (event: any) => {
+        let interim = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
         }
-      }
-      setChatInputValue(finalTranscript + interim);
-    };
+        setChatInputValue(finalTranscript + interim);
+      };
 
-    recognition.onend = () => {
+      recognition.onend = () => {
+        setIsListening(false);
+        recognitionRef.current = null;
+      };
+
+      recognition.onerror = (e: any) => {
+        console.error("Speech recognition error:", e.error);
+        setIsListening(false);
+        recognitionRef.current = null;
+      };
+
+      setIsListening(true);
+      recognition.start();
+    } catch (e) {
+      console.error("Failed to start speech recognition:", e);
       setIsListening(false);
-      recognitionRef.current = null;
-    };
-
-    recognition.onerror = () => {
-      setIsListening(false);
-      recognitionRef.current = null;
-    };
-
-    setIsListening(true);
-    recognition.start();
+    }
   };
 
   const stopListening = () => {
