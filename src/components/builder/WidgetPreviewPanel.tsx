@@ -857,8 +857,9 @@ const WidgetPreviewPanel = ({
                             opacity: 0,
                           }}
                           onClick={() => {
-                            setExpandedFaqId(faq.id);
                             setShowFaqPills(false);
+                            setShowChat(true);
+                            handleSendChatMessage(faq.question);
                           }}
                         >
                           <span className="text-sm font-medium text-slate-600">{faq.question}</span>
@@ -981,6 +982,12 @@ const WidgetPreviewPanel = ({
                         key={faq.id}
                         className="inline-flex self-start rounded-full bg-white px-5 py-2.5 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-100 hover:shadow-lg transition-all duration-200 opacity-0 animate-fade-in"
                         style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
+                        onClick={() => {
+                          setShowFaqPills(false);
+                          handleExpand();
+                          setShowChat(true);
+                          handleSendChatMessage(faq.question);
+                        }}
                       >
                         <span className="text-sm font-medium text-slate-700">{faq.question}</span>
                       </div>
