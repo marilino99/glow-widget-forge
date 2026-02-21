@@ -272,7 +272,9 @@ const WidgetPreviewPanel = ({
   const [showChatMenu, setShowChatMenu] = useState(false);
   const chatMenuRef = useRef<HTMLDivElement>(null);
   const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
-  const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
+   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
+  const [faqAiAnswers, setFaqAiAnswers] = useState<Record<string, string>>({});
+  const [faqAiLoading, setFaqAiLoading] = useState<string | null>(null);
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
   const [chatMessages, setChatMessages] = useState<{text: string; sender: "user" | "bot"}[]>([]);
@@ -360,7 +362,37 @@ const WidgetPreviewPanel = ({
     }
   };
 
-  // Inject custom CSS into document
+  // Fetch AI answer when expanding a FAQ without a user-set answer
+  useEffect(() => {
+    if (!expandedFaqId || !widgetId) return;
+    const faq = faqItems.find(f => f.id === expandedFaqId);
+    if (!faq || faq.answer?.trim() || faqAiAnswers[expandedFaqId]) return;
+    if (!faq.question?.trim()) return;
+
+    let cancelled = false;
+    setFaqAiLoading(expandedFaqId);
+
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('chatbot-preview', {
+          body: {
+            messages: [{ text: faq.question, sender: "user" }],
+            widgetId,
+          },
+        });
+        if (!cancelled && data?.reply) {
+          setFaqAiAnswers(prev => ({ ...prev, [expandedFaqId]: data.reply }));
+        }
+      } catch (err) {
+        console.error('FAQ AI answer error:', err);
+      } finally {
+        if (!cancelled) setFaqAiLoading(null);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [expandedFaqId, widgetId, faqItems, faqAiAnswers]);
+
   useEffect(() => {
     const id = 'wj-preview-custom-css';
     let el = document.getElementById(id) as HTMLStyleElement | null;
@@ -1948,9 +1980,24 @@ const WidgetPreviewPanel = ({
                                 <span className="font-medium">{faq.question || "Untitled question"}</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${expandedFaqId === faq.id ? "rotate-180" : ""} ${isLight ? "text-slate-500" : widgetSubtext}`} />
                               </button>
-                              {expandedFaqId === faq.id && faq.answer && (
+                              {expandedFaqId === faq.id && (
                                 <div className={`px-3 pb-3 pt-1 text-sm ${isLight ? "text-slate-500" : "text-white/60"}`}>
-                                  {faq.answer}
+                                  {faq.answer?.trim()
+                                    ? faq.answer
+                                    : faqAiLoading === faq.id
+                                      ? (
+                                        <div className="flex items-center gap-1.5">
+                                          <div className="flex gap-1">
+                                            <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: actualHexColor, animationDelay: '0ms' }} />
+                                            <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: actualHexColor, animationDelay: '150ms' }} />
+                                            <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: actualHexColor, animationDelay: '300ms' }} />
+                                          </div>
+                                        </div>
+                                      )
+                                      : faqAiAnswers[faq.id]
+                                        ? <span className="italic">{faqAiAnswers[faq.id]}</span>
+                                        : <span className="italic opacity-50">No answer set</span>
+                                  }
                                 </div>
                               )}
                             </div>
