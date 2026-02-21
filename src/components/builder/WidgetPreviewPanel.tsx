@@ -2320,6 +2320,50 @@ const WidgetPreviewPanel = ({
                     ))}
                   </div>
                 )}
+
+                {/* Google Reviews inline section */}
+                {googleBusiness && (
+                  <div className={`px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                    <div
+                      className={`rounded-2xl p-4 cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}
+                      onClick={() => {
+                        const mapsUrl = googleBusiness.url || googleBusiness.website;
+                        if (mapsUrl) window.open(mapsUrl, "_blank", "noopener,noreferrer");
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-2xl font-bold ${isLight ? "text-slate-900" : "text-white"}`}>{googleBusiness.rating ?? "–"}</span>
+                        <div className="flex items-center gap-0.5">
+                          {[1, 2, 3, 4, 5].map((star) => {
+                            const rating = googleBusiness.rating ?? 0;
+                            const full = star <= Math.floor(rating);
+                            const half = !full && star === Math.ceil(rating) && rating % 1 >= 0.25;
+                            return (
+                              <div key={star} className="relative h-5 w-5">
+                                <Star className={`absolute inset-0 h-5 w-5 ${isLight ? "text-slate-300" : "text-white/20"}`} />
+                                {(full || half) && (
+                                  <div className="absolute inset-0 overflow-hidden" style={{ width: full ? '100%' : '50%' }}>
+                                    <Star className={`h-5 w-5 ${isLight ? "text-slate-900 fill-slate-900" : "text-white fill-white"}`} />
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <p className={`text-sm truncate ${isLight ? "text-slate-500" : "text-white/60"}`}>{googleBusiness.name}</p>
+                      <p className={`text-sm ${isLight ? "text-slate-500" : "text-white/60"}`}>
+                        Check <span className={`font-bold ${isLight ? "text-slate-900" : "text-white"}`}>{googleBusiness.user_ratings_total ?? 0}</span> reviews on{" "}
+                        <span className="text-[#4285F4]">G</span>
+                        <span className="text-[#EA4335]">o</span>
+                        <span className="text-[#FBBC05]">o</span>
+                        <span className="text-[#4285F4]">g</span>
+                        <span className="text-[#34A853]">l</span>
+                        <span className="text-[#EA4335]">e</span>
+                      </p>
+                    </div>
+                  </div>
+                )}
                 </div>
 
                 {/* Footer nav - box with backdrop blur */}
