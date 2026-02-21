@@ -778,7 +778,7 @@ const WidgetPreviewPanel = ({
               <>
                 {/* Full-width horizontal glow behind the bar */}
                 <div className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0) 100%)' }} />
-                <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[420px] px-4 ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`}>
+                <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[480px] px-4 ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`}>
                   <div
                     className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg"
                     style={{ cursor: 'pointer', border: `2px solid ${actualHexColor}` }}
