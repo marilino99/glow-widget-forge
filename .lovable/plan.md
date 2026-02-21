@@ -1,35 +1,23 @@
 
 
-# Bottom Bar: Chiudi e Riapri con il Tondolino
+# Effetto Glow Bianco sulla Bottom Bar
 
 ## Cosa cambia
-Quando il widget e impostato su "Bottom Bar":
-- Cliccando la **X** sulla barra, questa si chiude e appare il **tondolino** (bottone circolare) identico a quello del widget Popup
-- Cliccando il **tondolino**, la bottom bar riappare
-- Le animazioni di chiusura/apertura sono le stesse del popup (collapse + button pop)
+Quando la bottom bar appare (dopo il click sul tondolino), viene aggiunto un effetto di **ombra bianca diffusa** attorno alla barra per metterla in risalto sullo sfondo della pagina. L'effetto e visibile solo quando la barra e espansa.
 
 ## Dettagli tecnici
 
 ### File modificato: `src/components/builder/WidgetPreviewPanel.tsx`
 
-1. **Bottom bar**: collegare il pulsante X alla funzione `handleCollapse()` gia esistente
-2. **Condizionare la visibilita della bottom bar** allo stato `isCollapsed`:
-   - Se `isCollapsed === false`: mostra la bottom bar
-   - Se `isCollapsed === true`: mostra il tondolino (stesso bottone circolare del popup)
-3. **Il tondolino nel bottom-bar** chiama `handleExpand()` al click, che resetta `isCollapsed` a `false` e riporta la bottom bar visibile
-4. Il tondolino usa lo stesso stile del popup: colore del widget, logo personalizzato o icona `?`, animazione pop
+Aggiungere un `box-shadow` con glow bianco al contenitore interno della bottom bar (il `div` con classe `rounded-full bg-white`):
 
-### Struttura nel codice
-
-Il blocco `widgetType === "bottom-bar"` diventa:
-
-```text
-if bottom-bar:
-  if isCollapsed:
-    -> mostra tondolino (stessa logica del popup collapsed)
-  else:
-    -> mostra la barra orizzontale
-       -> X chiama handleCollapse()
+```css
+box-shadow: 0 0 20px 8px rgba(255,255,255,0.6), 0 4px 12px rgba(0,0,0,0.08);
 ```
 
-Nessuna modifica al database, nessun nuovo file. Solo logica UI nel `WidgetPreviewPanel`.
+Questo combina:
+- Un glow bianco diffuso (20px blur, 8px spread, 60% opacita)
+- L'ombra sottile esistente per profondita
+
+Viene applicato tramite l'attributo `style` inline sul div interno della barra, riga ~780.
+
