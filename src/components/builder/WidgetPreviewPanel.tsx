@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2 } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -783,7 +783,7 @@ const WidgetPreviewPanel = ({
                     className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg"
                     style={{ cursor: 'pointer', border: `2px solid ${actualHexColor}` }}
                   >
-                    <Sparkles className="h-5 w-5 shrink-0" style={{ color: actualHexColor }} />
+                    <Sparkle className="h-5 w-5 shrink-0" style={{ color: actualHexColor }} />
                     <span className="flex-1 text-sm text-slate-400 truncate">
                       {sayHello || "Curious how we could help? — ask me anything!"}
                     </span>
