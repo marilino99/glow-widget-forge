@@ -196,62 +196,8 @@ const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate, widgetType,
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
-        <p className="mb-3 text-sm text-muted-foreground">
-          Apply a pre-made theme with one click.
-        </p>
-        <div className="grid grid-cols-2 gap-3">
-          {templates.map((t) => {
-            const locked = t.isPro && !isPro;
-            const bgClass =
-              t.backgroundType === "gradient"
-                ? `bg-gradient-to-br ${gradientMap[t.color]}`
-                : colorMap[t.color];
-
-            return (
-              <button
-                key={t.id}
-                onClick={() => handleClick(t)}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-200 hover:shadow-md hover:scale-[1.02]"
-              >
-                {/* Preview swatch */}
-                <div
-                  className={`relative h-24 w-full ${bgClass} flex items-end p-2`}
-                >
-                  {/* Mini chat bubble preview */}
-                  <div
-                    className={`rounded-lg px-2 py-1 text-[10px] leading-tight max-w-[90%] truncate ${
-                      t.theme === "dark"
-                        ? "bg-white/20 text-white"
-                        : "bg-black/10 text-black"
-                    }`}
-                  >
-                    {t.sayHello}
-                  </div>
-
-                  {/* Pro overlay */}
-                  {locked && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-                      <span className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide"
-                        style={{ backgroundColor: 'rgba(217, 70, 239, 0.9)', color: '#fff' }}
-                      >
-                        <Lock className="h-3 w-3" />
-                        PRO
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Name */}
-                <div className="px-2.5 py-2">
-                  <span className="text-xs font-medium text-foreground">{t.name}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* Empty space */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4" />
 
       {/* Confirmation dialog */}
       <Dialog open={!!confirmTemplate} onOpenChange={() => setConfirmTemplate(null)}>
