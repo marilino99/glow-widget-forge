@@ -804,11 +804,12 @@ const WidgetPreviewPanel = ({
                 >
                   {/* FAQ pills on hover */}
                   {showFaqPills && faqItems.length > 0 && (
-                    <div className="flex flex-col gap-2 mb-3 animate-fade-in">
-                      {faqItems.map((faq) => (
+                    <div className="flex flex-col gap-2 mb-3">
+                      {faqItems.map((faq, index) => (
                         <div
                           key={faq.id}
-                          className="inline-flex self-start rounded-full bg-white px-5 py-2.5 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-100 hover:shadow-lg transition-all duration-200"
+                          className="inline-flex self-start rounded-full bg-white px-5 py-2.5 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-100 hover:shadow-lg transition-all duration-200 opacity-0 animate-fade-in"
+                          style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
                         >
                           <span className="text-sm font-medium text-slate-700">{faq.question}</span>
                         </div>
