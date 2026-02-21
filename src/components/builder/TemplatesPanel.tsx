@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Lock, MessageSquare, PanelBottom } from "lucide-react";
+import { ArrowLeft, Lock, MessageSquare, PanelBottom, Star, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -124,9 +124,13 @@ interface TemplatesPanelProps {
   onApplyTemplate: (template: WidgetTemplate) => void;
   widgetType: "popup" | "bottom-bar";
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
+  hasGoogleBusiness?: boolean;
+  googleReviewsEnabled?: boolean;
+  onGoogleReviewsToggle?: (enabled: boolean) => void;
+  onOpenGoogleReviews?: () => void;
 }
 
-const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate, widgetType, onWidgetTypeChange }: TemplatesPanelProps) => {
+const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate, widgetType, onWidgetTypeChange, hasGoogleBusiness, googleReviewsEnabled, onGoogleReviewsToggle, onOpenGoogleReviews }: TemplatesPanelProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
 
   const handleClick = (template: WidgetTemplate) => {
@@ -158,46 +162,65 @@ const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate, widgetType,
         <h2 className="text-lg font-semibold text-foreground">Templates</h2>
       </div>
 
-      {/* Widget Type Selector */}
-      <div className="flex-shrink-0 px-4 pb-3">
-        <p className="mb-2 text-sm font-medium text-foreground">Widget type</p>
-        <div className="grid grid-cols-2 gap-3">
-          {/* Popup option */}
-          <button
-            onClick={() => onWidgetTypeChange("popup")}
-            className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
-              widgetType === "popup"
-                ? "border-foreground bg-card shadow-sm"
-                : "border-border bg-card/50"
-            }`}
-          >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
-              <MessageSquare className="h-6 w-6 text-foreground" />
-            </div>
-            <span className="text-xs font-medium text-foreground">Popup</span>
-          </button>
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        {/* Widget Type Selector */}
+        <div className="pb-4">
+          <p className="mb-2 text-sm font-medium text-foreground">Widget type</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => onWidgetTypeChange("popup")}
+              className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
+                widgetType === "popup"
+                  ? "border-foreground bg-card shadow-sm"
+                  : "border-border bg-card/50"
+              }`}
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
+                <MessageSquare className="h-6 w-6 text-foreground" />
+              </div>
+              <span className="text-xs font-medium text-foreground">Popup</span>
+            </button>
+            <button
+              onClick={() => onWidgetTypeChange("bottom-bar")}
+              className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
+                widgetType === "bottom-bar"
+                  ? "border-foreground bg-card shadow-sm"
+                  : "border-border bg-card/50"
+              }`}
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
+                <PanelBottom className="h-6 w-6 text-foreground" />
+              </div>
+              <span className="text-xs font-medium text-foreground">Bottom Bar</span>
+            </button>
+          </div>
+        </div>
 
-          {/* Bottom Bar option */}
+        {/* Google Reviews add-on */}
+        <div className="pt-2">
+          <p className="mb-2 text-sm font-medium text-foreground">Add-ons</p>
           <button
-            onClick={() => {
-              onWidgetTypeChange("bottom-bar");
-            }}
-            className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
-              widgetType === "bottom-bar"
-                ? "border-foreground bg-card shadow-sm"
-                : "border-border bg-card/50"
-            }`}
+            onClick={onOpenGoogleReviews}
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 hover:bg-[hsl(0_0%_93%)]"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
-              <PanelBottom className="h-6 w-6 text-foreground" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+              <Star className="h-4 w-4 text-foreground" />
             </div>
-            <span className="text-xs font-medium text-foreground">Bottom Bar</span>
+            <span className="flex-1 text-left text-sm font-medium text-foreground">Google reviews</span>
+            {hasGoogleBusiness && onGoogleReviewsToggle && (
+              <span onClick={(e) => e.stopPropagation()}>
+                <input
+                  type="checkbox"
+                  checked={googleReviewsEnabled}
+                  onChange={(e) => onGoogleReviewsToggle(e.target.checked)}
+                  className="h-4 w-4 rounded accent-foreground"
+                />
+              </span>
+            )}
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </button>
         </div>
       </div>
-
-      {/* Empty space */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4" />
 
       {/* Confirmation dialog */}
       <Dialog open={!!confirmTemplate} onOpenChange={() => setConfirmTemplate(null)}>

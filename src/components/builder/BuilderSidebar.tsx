@@ -607,6 +607,13 @@ const BuilderSidebar = ({
         onApplyTemplate={handleApplyTemplate}
         widgetType={widgetType}
         onWidgetTypeChange={onWidgetTypeChange}
+        hasGoogleBusiness={hasGoogleBusiness}
+        googleReviewsEnabled={googleReviewsEnabled}
+        onGoogleReviewsToggle={handleGoogleReviewsToggle}
+        onOpenGoogleReviews={() => {
+          setShowTemplatesPanel(false);
+          handleSelectWidget("google-reviews");
+        }}
       />
     );
   }
@@ -731,15 +738,6 @@ const BuilderSidebar = ({
             Build trust
           </p>
           <div className="space-y-0.5">
-            <SidebarItem
-              icon={Star}
-              label="Google reviews"
-              hasToggle={hasGoogleBusiness}
-              toggleValue={googleReviewsEnabled}
-              onToggle={handleGoogleReviewsToggle}
-              onClick={() => handleSelectWidget("google-reviews")}
-              active={activeWidget === "google-reviews"}
-            />
             <SidebarItem
               icon={Instagram}
               label="Instagram UGC"
