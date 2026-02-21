@@ -824,6 +824,10 @@ const WidgetPreviewPanel = ({
                             animation: `fadeInUp 0.4s ease-out ${index * 150}ms forwards`,
                             opacity: 0,
                           }}
+                          onClick={() => {
+                            setExpandedFaqId(faq.id);
+                            setShowFaqPills(false);
+                          }}
                         >
                           <span className="text-sm font-medium text-slate-600">{faq.question}</span>
                         </div>
