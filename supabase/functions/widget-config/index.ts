@@ -119,6 +119,7 @@ Deno.serve(async (req) => {
         custom_css: config.custom_css || null,
         custom_js: config.custom_js || null,
         widget_position: config.widget_position || 'right',
+        widget_type: config.widget_type || 'popup',
       }),
       { headers: corsHeaders }
     );

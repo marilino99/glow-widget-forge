@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Lock } from "lucide-react";
+import { ArrowLeft, Lock, MessageSquare, PanelBottom } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -122,9 +122,11 @@ interface TemplatesPanelProps {
   isPro: boolean;
   onUpgrade: () => void;
   onApplyTemplate: (template: WidgetTemplate) => void;
+  widgetType: "popup" | "bottom-bar";
+  onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
 }
 
-const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate }: TemplatesPanelProps) => {
+const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate, widgetType, onWidgetTypeChange }: TemplatesPanelProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
 
   const handleClick = (template: WidgetTemplate) => {
@@ -154,6 +156,57 @@ const TemplatesPanel = ({ onBack, isPro, onUpgrade, onApplyTemplate }: Templates
           <ArrowLeft className="h-4 w-4 text-foreground" />
         </button>
         <h2 className="text-lg font-semibold text-foreground">Templates</h2>
+      </div>
+
+      {/* Widget Type Selector */}
+      <div className="flex-shrink-0 px-4 pb-3">
+        <p className="mb-2 text-sm font-medium text-foreground">Widget type</p>
+        <div className="grid grid-cols-2 gap-3">
+          {/* Popup option */}
+          <button
+            onClick={() => onWidgetTypeChange("popup")}
+            className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
+              widgetType === "popup"
+                ? "border-foreground bg-card shadow-sm"
+                : "border-border bg-card/50"
+            }`}
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
+              <MessageSquare className="h-6 w-6 text-foreground" />
+            </div>
+            <span className="text-xs font-medium text-foreground">Popup</span>
+          </button>
+
+          {/* Bottom Bar option */}
+          <button
+            onClick={() => {
+              if (!isPro) {
+                onUpgrade();
+                return;
+              }
+              onWidgetTypeChange("bottom-bar");
+            }}
+            className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
+              widgetType === "bottom-bar"
+                ? "border-foreground bg-card shadow-sm"
+                : "border-border bg-card/50"
+            }`}
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
+              <PanelBottom className="h-6 w-6 text-foreground" />
+            </div>
+            <span className="text-xs font-medium text-foreground">Bottom Bar</span>
+            {!isPro && (
+              <span
+                className="absolute top-2 right-2 flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide"
+                style={{ backgroundColor: 'rgba(217, 70, 239, 0.9)', color: '#fff' }}
+              >
+                <Lock className="h-2.5 w-2.5" />
+                PRO
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Grid */}

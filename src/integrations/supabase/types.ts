@@ -345,6 +345,7 @@ export type Database = {
           widget_color: string
           widget_position: string
           widget_theme: string
+          widget_type: string
         }
         Insert: {
           ai_api_key?: string | null
@@ -377,6 +378,7 @@ export type Database = {
           widget_color?: string
           widget_position?: string
           widget_theme?: string
+          widget_type?: string
         }
         Update: {
           ai_api_key?: string | null
@@ -409,6 +411,7 @@ export type Database = {
           widget_color?: string
           widget_position?: string
           widget_theme?: string
+          widget_type?: string
         }
         Relationships: []
       }
