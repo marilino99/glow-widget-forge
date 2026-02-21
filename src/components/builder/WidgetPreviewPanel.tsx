@@ -819,8 +819,11 @@ const WidgetPreviewPanel = ({
                       {faqItems.filter(f => f.question.trim()).map((faq, index) => (
                         <div
                           key={faq.id}
-                          className="inline-flex rounded-full bg-white px-4 py-2 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-50 hover:shadow-lg transition-all duration-200 opacity-0 animate-fade-in"
-                          style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
+                          className="inline-flex rounded-full bg-white px-4 py-2 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-50 hover:shadow-lg transition-all duration-200"
+                          style={{ 
+                            animation: `fadeInUp 0.4s ease-out ${index * 150}ms forwards`,
+                            opacity: 0,
+                          }}
                         >
                           <span className="text-sm font-medium text-slate-600">{faq.question}</span>
                         </div>
