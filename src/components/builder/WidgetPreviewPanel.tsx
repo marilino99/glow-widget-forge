@@ -241,6 +241,13 @@ const WidgetPreviewPanel = ({
     setIsAnimatingExpand(true);
     setTimeout(() => setIsAnimatingExpand(false), 350);
   };
+
+  // Auto-expand widget when widgetType changes so user sees the result
+  useEffect(() => {
+    if (isCollapsed) {
+      handleExpand();
+    }
+  }, [widgetType]);
   const [showChatMenu, setShowChatMenu] = useState(false);
   const chatMenuRef = useRef<HTMLDivElement>(null);
   const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
