@@ -786,7 +786,10 @@ const WidgetPreviewPanel = ({
                   >
                     <Sparkle className="h-3.5 w-3.5 shrink-0" style={{ color: actualHexColor }} />
                     <TypewriterText
-                      text={sayHello || "Curious how we could help? — ask me anything!"}
+                      texts={[
+                        sayHello || "Curious how we could help? — ask me anything!",
+                        ...faqItems.map((faq) => faq.question),
+                      ]}
                       className="flex-1 text-base text-slate-400 truncate"
                     />
                     <div className="flex items-center gap-1.5 shrink-0">
