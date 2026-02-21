@@ -31,6 +31,7 @@ export interface WidgetConfiguration {
   aiProvider: string;
   aiApiKey: string;
   widgetPosition: "left" | "right";
+  widgetType: "popup" | "bottom-bar";
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -61,6 +62,7 @@ const defaultConfig: WidgetConfiguration = {
   aiProvider: "google",
   aiApiKey: "",
   widgetPosition: "right",
+  widgetType: "popup",
 };
 
 export const useWidgetConfiguration = () => {
@@ -118,6 +120,7 @@ export const useWidgetConfiguration = () => {
             aiProvider: (data as any).ai_provider || "google",
             aiApiKey: (data as any).ai_api_key || "",
             widgetPosition: ((data as any).widget_position === "left" ? "left" : "right") as "left" | "right",
+            widgetType: ((data as any).widget_type === "bottom-bar" ? "bottom-bar" : "popup") as "popup" | "bottom-bar",
           });
         }
       } catch (error) {
@@ -170,6 +173,7 @@ export const useWidgetConfiguration = () => {
           ai_provider: updatedConfig.aiProvider,
           ai_api_key: updatedConfig.aiApiKey,
           widget_position: updatedConfig.widgetPosition,
+          widget_type: updatedConfig.widgetType,
         }, {
           onConflict: "user_id"
         })

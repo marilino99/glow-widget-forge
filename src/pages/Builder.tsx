@@ -321,6 +321,8 @@ const Builder = () => {
             onSaveChatbotConfig={saveConfig}
             widgetPosition={config.widgetPosition}
             onWidgetPositionChange={(pos) => saveConfig({ widgetPosition: pos })}
+            widgetType={config.widgetType}
+            onWidgetTypeChange={(type) => saveConfig({ widgetType: type })}
           />
         </div>
       </div>
@@ -393,6 +395,7 @@ const Builder = () => {
             customJs={livePreviewJs ?? config.customJs}
             showBranding={config.showBranding}
             widgetPosition={config.widgetPosition}
+            widgetType={config.widgetType}
           />
         </div>
       </div>

@@ -1,0 +1,1 @@
+ALTER TABLE widget_configurations ADD COLUMN widget_type TEXT NOT NULL DEFAULT 'popup';

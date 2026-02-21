@@ -144,6 +144,8 @@ interface BuilderSidebarProps {
   onSaveChatbotConfig: (config: Record<string, unknown>) => void;
   widgetPosition: "left" | "right";
   onWidgetPositionChange: (position: "left" | "right") => void;
+  widgetType: "popup" | "bottom-bar";
+  onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
 }
 
 const BuilderSidebar = ({ 
@@ -228,6 +230,8 @@ const BuilderSidebar = ({
   onSaveChatbotConfig,
   widgetPosition,
   onWidgetPositionChange,
+  widgetType,
+  onWidgetTypeChange,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -601,6 +605,8 @@ const BuilderSidebar = ({
         isPro={isPro}
         onUpgrade={onUpgrade}
         onApplyTemplate={handleApplyTemplate}
+        widgetType={widgetType}
+        onWidgetTypeChange={onWidgetTypeChange}
       />
     );
   }

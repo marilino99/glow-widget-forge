@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2 } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -43,6 +43,7 @@ interface WidgetPreviewPanelProps {
   customJs?: string;
   showBranding?: boolean;
   widgetPosition?: "left" | "right";
+  widgetType?: "popup" | "bottom-bar";
 }
 
 // Check if a color is a hex value
@@ -205,6 +206,7 @@ const WidgetPreviewPanel = ({
   customJs = "",
   showBranding = true,
   widgetPosition = "right",
+  widgetType = "popup",
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -753,7 +755,34 @@ const WidgetPreviewPanel = ({
             )
           )}
 
-          {/* Widget preview - interactive */}
+          {/* Bottom Bar widget type */}
+          {widgetType === "bottom-bar" && (
+            <div className="absolute bottom-4 left-4 right-4 z-20">
+              <div
+                className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg border border-slate-200/80"
+                style={{ cursor: 'pointer' }}
+              >
+                <Sparkles className="h-5 w-5 shrink-0 text-slate-400" />
+                <span className="flex-1 text-sm text-slate-400 truncate">
+                  {sayHello || "Curious how we could help? — ask me anything!"}
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                  </button>
+                  <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                    <Maximize2 className="h-4 w-4 text-slate-400" />
+                  </button>
+                  <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                    <X className="h-4 w-4 text-slate-400" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Popup widget type */}
+          {widgetType === "popup" && (
           <div 
             className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
@@ -1893,6 +1922,7 @@ const WidgetPreviewPanel = ({
                 )}
               </div>)}
           </div>
+          )}
         </div>
       </div>
     </div>;
