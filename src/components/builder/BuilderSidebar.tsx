@@ -146,6 +146,8 @@ interface BuilderSidebarProps {
   onWidgetPositionChange: (position: "left" | "right") => void;
   widgetType: "popup" | "bottom-bar";
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
+  initialGoogleReviewsEnabled?: boolean;
+  initialHasGoogleBusiness?: boolean;
 }
 
 const BuilderSidebar = ({ 
@@ -232,6 +234,8 @@ const BuilderSidebar = ({
   onWidgetPositionChange,
   widgetType,
   onWidgetTypeChange,
+  initialGoogleReviewsEnabled,
+  initialHasGoogleBusiness,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -247,8 +251,8 @@ const BuilderSidebar = ({
   const [showGoogleReviewsPanel, setShowGoogleReviewsPanel] = useState(false);
   const [showSizePositionPanel, setShowSizePositionPanel] = useState(false);
   const [showInjectionCodePanel, setShowInjectionCodePanel] = useState(false);
-  const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(false);
-  const [hasGoogleBusiness, setHasGoogleBusiness] = useState(false);
+  const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(initialGoogleReviewsEnabled ?? false);
+  const [hasGoogleBusiness, setHasGoogleBusiness] = useState(initialHasGoogleBusiness ?? false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [showChatbotPanel, setShowChatbotPanel] = useState(false);
@@ -273,12 +277,22 @@ const BuilderSidebar = ({
     if (business) {
       setGoogleReviewsEnabled(true);
       setHasGoogleBusiness(true);
+      // Persist to DB
+      onSaveConfig({
+        googleReviewsEnabled: true,
+        googleBusinessName: business.name,
+        googleBusinessRating: business.rating ?? null,
+        googleBusinessRatingsTotal: business.user_ratings_total ?? null,
+        googleBusinessUrl: business.url ?? null,
+        googleBusinessPlaceId: business.place_id ?? null,
+      } as Record<string, unknown>);
     }
   };
 
   const handleGoogleReviewsToggle = (enabled: boolean) => {
     setGoogleReviewsEnabled(enabled);
     if (!enabled) onGoogleBusinessSelect?.(null);
+    onSaveConfig({ googleReviewsEnabled: enabled } as Record<string, unknown>);
   };
 
   const handleSelectWidget = (widgetType: string) => {

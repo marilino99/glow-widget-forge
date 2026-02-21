@@ -328,6 +328,12 @@ export type Database = {
           custom_js: string | null
           faq_enabled: boolean
           forward_email: string | null
+          google_business_name: string | null
+          google_business_place_id: string | null
+          google_business_rating: number | null
+          google_business_ratings_total: number | null
+          google_business_url: string | null
+          google_reviews_enabled: boolean
           id: string
           instagram_enabled: boolean
           language: string
@@ -361,6 +367,12 @@ export type Database = {
           custom_js?: string | null
           faq_enabled?: boolean
           forward_email?: string | null
+          google_business_name?: string | null
+          google_business_place_id?: string | null
+          google_business_rating?: number | null
+          google_business_ratings_total?: number | null
+          google_business_url?: string | null
+          google_reviews_enabled?: boolean
           id?: string
           instagram_enabled?: boolean
           language?: string
@@ -394,6 +406,12 @@ export type Database = {
           custom_js?: string | null
           faq_enabled?: boolean
           forward_email?: string | null
+          google_business_name?: string | null
+          google_business_place_id?: string | null
+          google_business_rating?: number | null
+          google_business_ratings_total?: number | null
+          google_business_url?: string | null
+          google_reviews_enabled?: boolean
           id?: string
           instagram_enabled?: boolean
           language?: string

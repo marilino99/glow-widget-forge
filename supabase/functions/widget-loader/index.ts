@@ -104,6 +104,11 @@ Deno.serve(async (req) => {
     var whatsappNumber = cfg.whatsapp_number || '';
     var showBranding = cfg.show_branding !== false;
     var avatarInitial = name ? name.charAt(0).toUpperCase() : 'S';
+    var grEnabled = cfg.google_reviews_enabled || false;
+    var grName = cfg.google_business_name || '';
+    var grRating = cfg.google_business_rating || 0;
+    var grTotal = cfg.google_business_ratings_total || 0;
+    var grUrl = cfg.google_business_url || '';
 
     var t = {
       en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp' },
@@ -199,6 +204,15 @@ Deno.serve(async (req) => {
       .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
       .wj-faq-a.open{display:block}
       #wj-links{padding:0 16px 16px;margin-top:8px}
+      #wj-greview{padding:0 16px 16px}
+      #wj-greview-box{border-radius:16px;padding:16px;background:\${bgFaq};cursor:pointer;transition:background .15s}
+      #wj-greview-box:hover{background:\${dark ? '#2a2a2a' : '#f1f5f9'}}
+      #wj-greview-stars{display:flex;align-items:center;gap:2px}
+      .wj-star{width:20px;height:20px;position:relative}
+      .wj-star svg{position:absolute;inset:0;width:20px;height:20px}
+      .wj-star-empty{color:\${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'}}
+      .wj-star-fill{color:\${dark ? '#fff' : '#0f172a'}}
+      .wj-star-clip{position:absolute;inset:0;overflow:hidden}
       .wj-link-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;transition:background .15s}
       .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
       .wj-link-item:last-child{margin-bottom:0}
@@ -311,6 +325,15 @@ Deno.serve(async (req) => {
       .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
       .wj-faq-a.open{display:block}
       #wj-links{padding:0 16px 16px;margin-top:8px}
+      #wj-greview{padding:0 16px 16px}
+      #wj-greview-box{border-radius:16px;padding:16px;background:\${bgFaq};cursor:pointer;transition:background .15s}
+      #wj-greview-box:hover{background:\${dark ? '#2a2a2a' : '#f1f5f9'}}
+      #wj-greview-stars{display:flex;align-items:center;gap:2px}
+      .wj-star{width:20px;height:20px;position:relative}
+      .wj-star svg{position:absolute;inset:0;width:20px;height:20px}
+      .wj-star-empty{color:\${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'}}
+      .wj-star-fill{color:\${dark ? '#fff' : '#0f172a'}}
+      .wj-star-clip{position:absolute;inset:0;overflow:hidden}
       .wj-link-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;transition:background .15s}
       .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
       .wj-link-item:last-child{margin-bottom:0}
@@ -515,6 +538,31 @@ Deno.serve(async (req) => {
         linksCont.appendChild(item);
       });
       scroll.appendChild(linksCont);
+    }
+
+    // Google Reviews inline card
+    if (grEnabled && grName) {
+      var grCont = d.createElement('div');
+      grCont.id = 'wj-greview';
+      var starsSvg = '';
+      for (var s = 1; s <= 5; s++) {
+        var isFull = s <= Math.floor(grRating);
+        var isHalf = !isFull && s === Math.ceil(grRating) && grRating % 1 >= 0.25;
+        var starFillSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+        var starEmptySvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+        if (isFull) {
+          starsSvg += '<div class="wj-star"><span class="wj-star-empty">' + starEmptySvg + '</span><div class="wj-star-clip" style="width:100%"><span class="wj-star-fill">' + starFillSvg + '</span></div></div>';
+        } else if (isHalf) {
+          starsSvg += '<div class="wj-star"><span class="wj-star-empty">' + starEmptySvg + '</span><div class="wj-star-clip" style="width:50%"><span class="wj-star-fill">' + starFillSvg + '</span></div></div>';
+        } else {
+          starsSvg += '<div class="wj-star"><span class="wj-star-empty">' + starEmptySvg + '</span></div>';
+        }
+      }
+      grCont.innerHTML = '<div id="wj-greview-box"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:24px;font-weight:700;color:' + textMain + '">' + grRating + '</span><div id="wj-greview-stars">' + starsSvg + '</div></div><p style="font-size:14px;color:' + textSub + ';margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(grName) + '</p><p style="font-size:14px;color:' + textSub + ';margin:4px 0 0">Check <span style="font-weight:700;color:' + textMain + '">' + grTotal + '</span> reviews on <span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span></p></div>';
+      grCont.querySelector('#wj-greview-box').onclick = function() {
+        if (grUrl) w.open(grUrl, '_blank', 'noopener,noreferrer');
+      };
+      scroll.appendChild(grCont);
     }
 
     homeView.appendChild(scroll);

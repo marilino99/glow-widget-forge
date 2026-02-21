@@ -91,7 +91,21 @@ const Builder = () => {
   
   // Live preview state for local (unsaved) custom links
   const [localPreviewLinks, setLocalPreviewLinks] = useState<LocalLink[]>([]);
+  // Initialize googleBusiness from persisted config
   const [googleBusiness, setGoogleBusiness] = useState<GoogleBusinessData | null>(null);
+  
+  // Load persisted Google business from config
+  useEffect(() => {
+    if (!isLoading && config.googleReviewsEnabled && config.googleBusinessName) {
+      setGoogleBusiness({
+        name: config.googleBusinessName,
+        rating: config.googleBusinessRating ?? undefined,
+        user_ratings_total: config.googleBusinessRatingsTotal ?? undefined,
+        url: config.googleBusinessUrl ?? undefined,
+        place_id: config.googleBusinessPlaceId ?? undefined,
+      });
+    }
+  }, [isLoading]);
   const [livePreviewCss, setLivePreviewCss] = useState<string | null>(null);
   const [livePreviewJs, setLivePreviewJs] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -323,6 +337,8 @@ const Builder = () => {
             onWidgetPositionChange={(pos) => saveConfig({ widgetPosition: pos })}
             widgetType={config.widgetType}
             onWidgetTypeChange={(type) => saveConfig({ widgetType: type })}
+            initialGoogleReviewsEnabled={config.googleReviewsEnabled}
+            initialHasGoogleBusiness={!!config.googleBusinessName}
           />
         </div>
       </div>

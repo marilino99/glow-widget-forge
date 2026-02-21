@@ -32,6 +32,12 @@ export interface WidgetConfiguration {
   aiApiKey: string;
   widgetPosition: "left" | "right";
   widgetType: "popup" | "bottom-bar";
+  googleReviewsEnabled: boolean;
+  googleBusinessName: string | null;
+  googleBusinessRating: number | null;
+  googleBusinessRatingsTotal: number | null;
+  googleBusinessUrl: string | null;
+  googleBusinessPlaceId: string | null;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -63,6 +69,12 @@ const defaultConfig: WidgetConfiguration = {
   aiApiKey: "",
   widgetPosition: "right",
   widgetType: "popup",
+  googleReviewsEnabled: false,
+  googleBusinessName: null,
+  googleBusinessRating: null,
+  googleBusinessRatingsTotal: null,
+  googleBusinessUrl: null,
+  googleBusinessPlaceId: null,
 };
 
 export const useWidgetConfiguration = () => {
@@ -121,6 +133,12 @@ export const useWidgetConfiguration = () => {
             aiApiKey: (data as any).ai_api_key || "",
             widgetPosition: ((data as any).widget_position === "left" ? "left" : "right") as "left" | "right",
             widgetType: ((data as any).widget_type === "bottom-bar" ? "bottom-bar" : "popup") as "popup" | "bottom-bar",
+            googleReviewsEnabled: (data as any).google_reviews_enabled ?? false,
+            googleBusinessName: (data as any).google_business_name || null,
+            googleBusinessRating: (data as any).google_business_rating ?? null,
+            googleBusinessRatingsTotal: (data as any).google_business_ratings_total ?? null,
+            googleBusinessUrl: (data as any).google_business_url || null,
+            googleBusinessPlaceId: (data as any).google_business_place_id || null,
           });
         }
       } catch (error) {
@@ -174,6 +192,12 @@ export const useWidgetConfiguration = () => {
           ai_api_key: updatedConfig.aiApiKey,
           widget_position: updatedConfig.widgetPosition,
           widget_type: updatedConfig.widgetType,
+          google_reviews_enabled: updatedConfig.googleReviewsEnabled,
+          google_business_name: updatedConfig.googleBusinessName,
+          google_business_rating: updatedConfig.googleBusinessRating,
+          google_business_ratings_total: updatedConfig.googleBusinessRatingsTotal,
+          google_business_url: updatedConfig.googleBusinessUrl,
+          google_business_place_id: updatedConfig.googleBusinessPlaceId,
         }, {
           onConflict: "user_id"
         })
