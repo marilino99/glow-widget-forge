@@ -775,7 +775,7 @@ const WidgetPreviewPanel = ({
               </div>
             ) : (
               /* Expanded: show bottom bar */
-              <div className={`absolute bottom-4 left-4 right-4 z-20 ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`}>
+              <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[420px] px-4 ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`}>
                 <div
                   className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg border border-slate-200/80"
                   style={{ cursor: 'pointer' }}
