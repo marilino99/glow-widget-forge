@@ -120,6 +120,11 @@ Deno.serve(async (req) => {
         custom_js: config.custom_js || null,
         widget_position: config.widget_position || 'right',
         widget_type: config.widget_type || 'popup',
+        google_reviews_enabled: config.google_reviews_enabled ?? false,
+        google_business_name: config.google_business_name || null,
+        google_business_rating: config.google_business_rating ?? null,
+        google_business_ratings_total: config.google_business_ratings_total ?? null,
+        google_business_url: config.google_business_url || null,
       }),
       { headers: corsHeaders }
     );
