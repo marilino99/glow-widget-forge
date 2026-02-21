@@ -235,11 +235,13 @@ Deno.serve(async (req) => {
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
       #wj-chat-input-box input{flex:1;border:none;background:transparent;font-size:14px;color:\${dark ? '#fff' : '#0f172a'};outline:none}
       #wj-chat-input-box input::placeholder{color:\${dark ? 'rgba(255,255,255,0.4)' : '#94a3b8'}}
-      #wj-chat-emoji,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
+      #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
+      #wj-chat-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
+      @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
       #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-send:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'}}
       #wj-chat-send.active{background:\${color.bg};color:#fff}
-      #wj-chat-emoji svg,#wj-chat-send svg{width:20px;height:20px}
+      #wj-chat-emoji svg,#wj-chat-mic svg,#wj-chat-send svg{width:20px;height:20px}
       #wj-emoji-picker{display:none;position:absolute;bottom:100%;left:16px;right:16px;margin-bottom:8px;padding:12px;border-radius:12px;background:\${dark ? '#111' : '#fff'};border:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'};box-shadow:0 4px 12px rgba(0,0,0,0.15)}
       #wj-emoji-picker.open{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
       .wj-emoji{border:none;background:transparent;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:background .15s}
@@ -352,11 +354,13 @@ Deno.serve(async (req) => {
       #wj-chat-input-box:focus-within{border-color:\${color.bg}}
       #wj-chat-input-box input{flex:1;border:none;background:transparent;font-size:14px;color:\${dark ? '#fff' : '#0f172a'};outline:none}
       #wj-chat-input-box input::placeholder{color:\${dark ? 'rgba(255,255,255,0.4)' : '#94a3b8'}}
-      #wj-chat-emoji,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
+      #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
+      #wj-chat-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
+      @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
       #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-send:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'}}
       #wj-chat-send.active{background:\${color.bg};color:#fff}
-      #wj-chat-emoji svg,#wj-chat-send svg{width:20px;height:20px}
+      #wj-chat-emoji svg,#wj-chat-mic svg,#wj-chat-send svg{width:20px;height:20px}
       #wj-emoji-picker{display:none;position:absolute;bottom:100%;left:16px;right:16px;margin-bottom:8px;padding:12px;border-radius:12px;background:\${dark ? '#111' : '#fff'};border:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'};box-shadow:0 4px 12px rgba(0,0,0,0.15)}
       #wj-emoji-picker.open{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
       .wj-emoji{border:none;background:transparent;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:background .15s}
@@ -540,7 +544,7 @@ Deno.serve(async (req) => {
     var bubbleAvatarHtml = avatar 
       ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' 
       : '<div id="wj-chat-bubble-avatar">' + esc(avatarInitial) + '</div>';
-    chatView.innerHTML = '<div id="wj-chat-header"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button><div id="wj-chat-title">' + chatAvatarHtml + '<div id="wj-chat-title-text"><span id="wj-chat-name">' + esc(name) + '</span><span id="wj-chat-subtitle">' + esc(tr.contactUs || 'The team can also help') + '</span></div></div><div id="wj-chat-header-right"><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div id="wj-chat-menu"><button class="wj-menu-item" id="wj-menu-clear"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Clear chat</button><button class="wj-menu-item" id="wj-menu-download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download transcript</button></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div></div><div id="wj-chat-msgs"><div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div></div><div id="wj-chat-input"><div id="wj-emoji-picker">' + emojiHtml + '</div><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div><div id="wj-chat-powered">Powered by <span style="font-weight:500">Widjet</span></div>';
+    chatView.innerHTML = '<div id="wj-chat-header"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button><div id="wj-chat-title">' + chatAvatarHtml + '<div id="wj-chat-title-text"><span id="wj-chat-name">' + esc(name) + '</span><span id="wj-chat-subtitle">' + esc(tr.contactUs || 'The team can also help') + '</span></div></div><div id="wj-chat-header-right"><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div id="wj-chat-menu"><button class="wj-menu-item" id="wj-menu-clear"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Clear chat</button><button class="wj-menu-item" id="wj-menu-download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download transcript</button></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div></div><div id="wj-chat-msgs"><div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div></div><div id="wj-chat-input"><div id="wj-emoji-picker">' + emojiHtml + '</div><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div><div id="wj-chat-powered">Powered by <span style="font-weight:500">Widjet</span></div>';
 
     pop.appendChild(homeView);
     pop.appendChild(chatView);
@@ -682,6 +686,7 @@ Deno.serve(async (req) => {
     var chatInput = chatInputBox ? chatInputBox.querySelector('input') : null;
     var chatSendBtn = chatView.querySelector('#wj-chat-send');
     var chatEmojiBtn = chatView.querySelector('#wj-chat-emoji');
+    var chatMicBtn = chatView.querySelector('#wj-chat-mic');
     var emojiPicker = chatView.querySelector('#wj-emoji-picker');
 
     // Generate or retrieve visitor ID
@@ -891,6 +896,57 @@ Deno.serve(async (req) => {
           updateSendButton();
         };
       });
+    }
+
+    // Voice dictation (Speech Recognition)
+    var wjRecognition = null;
+    if (chatMicBtn && chatInput) {
+      var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        chatMicBtn.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (wjRecognition) {
+            wjRecognition.stop();
+            return;
+          }
+          try {
+            var recognition = new SpeechRecognition();
+            recognition.lang = lang || 'en';
+            recognition.interimResults = true;
+            recognition.continuous = false;
+            wjRecognition = recognition;
+            var finalTranscript = chatInput.value;
+
+            recognition.onresult = function(ev) {
+              var interim = '';
+              for (var i = ev.resultIndex; i < ev.results.length; i++) {
+                if (ev.results[i].isFinal) {
+                  finalTranscript += ev.results[i][0].transcript;
+                } else {
+                  interim += ev.results[i][0].transcript;
+                }
+              }
+              chatInput.value = finalTranscript + interim;
+              updateSendButton();
+            };
+            recognition.onend = function() {
+              wjRecognition = null;
+              chatMicBtn.classList.remove('listening');
+            };
+            recognition.onerror = function() {
+              wjRecognition = null;
+              chatMicBtn.classList.remove('listening');
+            };
+            chatMicBtn.classList.add('listening');
+            recognition.start();
+          } catch(err) {
+            console.error('[Widjet] Speech recognition error:', err);
+          }
+        };
+      } else {
+        chatMicBtn.style.display = 'none';
+      }
     }
 
     root.appendChild(pop);
