@@ -1,23 +1,44 @@
 
+# Effetto Typewriter sulla Bottom Bar
 
-# Effetto Glow Bianco sulla Bottom Bar
+## Obiettivo
+Aggiungere un effetto "typewriter" al testo della bottom bar, dove le lettere appaiono una alla volta come se venissero digitate.
 
-## Cosa cambia
-Quando la bottom bar appare (dopo il click sul tondolino), viene aggiunto un effetto di **ombra bianca diffusa** attorno alla barra per metterla in risalto sullo sfondo della pagina. L'effetto e visibile solo quando la barra e espansa.
+## Implementazione
+
+### 1. Creare un componente TypewriterText
+Un nuovo componente React (`src/components/builder/TypewriterText.tsx`) che:
+- Riceve il testo completo come prop
+- Mostra le lettere una alla volta con un intervallo regolare (es. 30-40ms per lettera)
+- Una volta completato il testo, fa una pausa e poi ricomincia da capo (loop)
+- Usa `useState` e `useEffect` per gestire l'animazione
+- Mantiene lo stesso stile (colore, dimensione) del testo attuale
+
+### 2. Integrare nel WidgetPreviewPanel
+Sostituire il tag `<span>` statico del testo nella bottom bar (riga ~787) con il nuovo componente `<TypewriterText>`, passando il messaggio `sayHello` come prop.
+
+---
 
 ## Dettagli tecnici
 
-### File modificato: `src/components/builder/WidgetPreviewPanel.tsx`
+### TypewriterText.tsx
+- Props: `text` (string), `speed` (numero ms tra lettere, default ~35ms), `pauseDuration` (pausa prima di ricominciare, default ~2000ms), `className` e `style` per ereditare gli stili
+- Usa `useEffect` con `setInterval` per incrementare un contatore di caratteri visibili
+- Quando il contatore raggiunge la lunghezza del testo, pausa e poi resetta a 0
+- Aggiunge un cursore lampeggiante opzionale (carattere `|`) alla fine durante la digitazione
 
-Aggiungere un `box-shadow` con glow bianco al contenitore interno della bottom bar (il `div` con classe `rounded-full bg-white`):
-
-```css
-box-shadow: 0 0 20px 8px rgba(255,255,255,0.6), 0 4px 12px rgba(0,0,0,0.08);
-```
-
-Questo combina:
-- Un glow bianco diffuso (20px blur, 8px spread, 60% opacita)
-- L'ombra sottile esistente per profondita
-
-Viene applicato tramite l'attributo `style` inline sul div interno della barra, riga ~780.
-
+### WidgetPreviewPanel.tsx (riga ~787)
+- Importare `TypewriterText`
+- Sostituire:
+  ```
+  <span className="flex-1 text-base text-slate-400 truncate">
+    {sayHello || "Curious how we could help?..."}
+  </span>
+  ```
+  Con:
+  ```
+  <TypewriterText
+    text={sayHello || "Curious how we could help? — ask me anything!"}
+    className="flex-1 text-base text-slate-400 truncate"
+  />
+  ```
