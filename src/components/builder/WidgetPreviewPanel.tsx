@@ -244,15 +244,15 @@ const WidgetPreviewPanel = ({
       setIsCollapsed(true);
       setIsAnimatingCollapse(false);
       setShowButtonPop(true);
-      setTimeout(() => setShowButtonPop(false), 450);
-    }, 250);
+      setTimeout(() => setShowButtonPop(false), 500);
+    }, 300);
   };
 
   // Animated expand
   const handleExpand = () => {
     setIsCollapsed(false);
     setIsAnimatingExpand(true);
-    setTimeout(() => setIsAnimatingExpand(false), 400);
+    setTimeout(() => setIsAnimatingExpand(false), 500);
   };
 
   // Auto-expand widget when widgetType changes: collapse first, then re-expand like a click
