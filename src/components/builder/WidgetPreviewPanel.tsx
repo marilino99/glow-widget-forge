@@ -783,8 +783,8 @@ const WidgetPreviewPanel = ({
                     className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg"
                     style={{ cursor: 'pointer', border: `2px solid ${actualHexColor}` }}
                   >
-                    <Sparkle className="h-5 w-5 shrink-0" style={{ color: actualHexColor }} />
-                    <span className="flex-1 text-sm text-slate-400 truncate">
+                    <Sparkle className="h-3.5 w-3.5 shrink-0" style={{ color: actualHexColor }} />
+                    <span className="flex-1 text-base text-slate-400 truncate">
                       {sayHello || "Curious how we could help? — ask me anything!"}
                     </span>
                     <div className="flex items-center gap-1.5 shrink-0">
