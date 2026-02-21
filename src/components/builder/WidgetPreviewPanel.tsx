@@ -10,6 +10,7 @@ import { InstagramPostData } from "@/types/instagramPost";
 import { CustomLinkData } from "@/types/customLink";
 import { GoogleBusinessData } from "./GoogleReviewsPanel";
 import { getTranslations } from "@/lib/translations";
+import TypewriterText from "./TypewriterText";
 
 interface WidgetPreviewPanelProps {
   activeWidget?: string | null;
@@ -784,9 +785,10 @@ const WidgetPreviewPanel = ({
                     style={{ cursor: 'pointer', border: `2px solid ${actualHexColor}` }}
                   >
                     <Sparkle className="h-3.5 w-3.5 shrink-0" style={{ color: actualHexColor }} />
-                    <span className="flex-1 text-base text-slate-400 truncate">
-                      {sayHello || "Curious how we could help? — ask me anything!"}
-                    </span>
+                    <TypewriterText
+                      text={sayHello || "Curious how we could help? — ask me anything!"}
+                      className="flex-1 text-base text-slate-400 truncate"
+                    />
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
