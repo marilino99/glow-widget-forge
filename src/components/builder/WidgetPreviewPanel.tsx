@@ -813,6 +813,20 @@ const WidgetPreviewPanel = ({
                 >
                   {/* Social proof tooltip */}
                   <SocialProofTooltip />
+                  {/* FAQ pills */}
+                  {showFaqPills && faqItems.filter(f => f.question.trim()).length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {faqItems.filter(f => f.question.trim()).map((faq, index) => (
+                        <div
+                          key={faq.id}
+                          className="inline-flex rounded-full bg-white px-4 py-2 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-50 hover:shadow-lg transition-all duration-200 opacity-0 animate-fade-in"
+                          style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
+                        >
+                          <span className="text-sm font-medium text-slate-600">{faq.question}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <div
                     className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg"
                     style={{ cursor: 'pointer', border: `2px solid ${actualHexColor}` }}
