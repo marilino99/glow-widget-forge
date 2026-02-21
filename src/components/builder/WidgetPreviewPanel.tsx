@@ -224,6 +224,16 @@ const WidgetPreviewPanel = ({
   const [showButtonPop, setShowButtonPop] = useState(false);
   const [showFaqPills, setShowFaqPills] = useState(false);
 
+  // Auto-show FAQ pills after delay when bottom bar is expanded
+  useEffect(() => {
+    if (widgetType === "bottom-bar" && !isCollapsed && faqItems.length > 0) {
+      const timer = setTimeout(() => setShowFaqPills(true), 5000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowFaqPills(false);
+    }
+  }, [widgetType, isCollapsed, faqItems.length]);
+
   // Animated collapse: play animation then hide
   const handleCollapse = () => {
     if (isAnimatingCollapse) return;
@@ -800,22 +810,7 @@ const WidgetPreviewPanel = ({
                 <div className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0) 100%)' }} />
                 <div
                   className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[540px] px-4 ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`}
-                  onMouseEnter={() => setShowFaqPills(true)}
                 >
-                  {/* FAQ pills on hover */}
-                  {showFaqPills && faqItems.length > 0 && (
-                    <div className="flex flex-col gap-2 mb-3">
-                      {faqItems.map((faq, index) => (
-                        <div
-                          key={faq.id}
-                          className="inline-flex self-start rounded-full bg-white px-5 py-2.5 shadow-md border border-slate-100 cursor-pointer hover:bg-slate-100 hover:shadow-lg transition-all duration-200 opacity-0 animate-fade-in"
-                          style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
-                        >
-                          <span className="text-sm font-medium text-slate-700">{faq.question}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                   {/* Social proof tooltip */}
                   <SocialProofTooltip />
                   <div
