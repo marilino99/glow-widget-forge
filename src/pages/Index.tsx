@@ -21,7 +21,12 @@ const LandingContent = () => {
 
   // Load Widjet on the landing page only for non-authenticated visitors
   useEffect(() => {
-    if (user) return; // Don't load widget for logged-in users (they get redirected)
+    // Always cleanup first in case widget leaked from a previous session
+    const existingRoot = document.getElementById("wj-root");
+    if (existingRoot) existingRoot.remove();
+    (window as any).__wj_loaded = false;
+
+    if (user || loading) return; // Don't load widget for logged-in users or while checking auth
 
     (window as any).__wj = (window as any).__wj || {};
     (window as any).__wj.widgetId = "3274cacf-079b-4985-885f-58425ea23bdb";
@@ -39,7 +44,7 @@ const LandingContent = () => {
       (window as any).__wj_loaded = false;
       j.remove();
     };
-  }, [user]);
+  }, [user, loading]);
 
   useEffect(() => {
     if (loading || !user) return;
