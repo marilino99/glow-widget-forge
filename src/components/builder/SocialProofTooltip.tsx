@@ -7,7 +7,7 @@ const SocialProofTooltip = () => {
 
   useEffect(() => {
     const showTimer = setTimeout(() => setVisible(true), 3500);
-    const hideTimer = setTimeout(() => setFadingOut(true), 6500);
+    const hideTimer = setTimeout(() => setFadingOut(true), 10500);
     return () => {
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
