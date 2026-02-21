@@ -475,6 +475,15 @@ Deno.serve(async (req) => {
         item.className = 'wj-faq-item';
         item.innerHTML = '<button class="wj-faq-q"><span>' + esc(faq.question || 'Untitled') + '</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button><div class="wj-faq-a">' + esc(faq.answer || '') + '</div>';
         item.querySelector('.wj-faq-q').onclick = function() {
+          var hasAnswer = (faq.answer || '').trim().length > 0;
+          if (!hasAnswer) {
+            // No answer set: open chat and send the question
+            homeView.classList.add('hidden');
+            chatView.classList.add('open');
+            startPolling();
+            sendMessageText(faq.question);
+            return;
+          }
           var isOpen = this.classList.contains('open');
           faqItems.querySelectorAll('.wj-faq-q').forEach(function(q) { q.classList.remove('open'); });
           faqItems.querySelectorAll('.wj-faq-a').forEach(function(a) { a.classList.remove('open'); });
@@ -759,6 +768,42 @@ Deno.serve(async (req) => {
         clearInterval(pollInterval);
         pollInterval = null;
       }
+    }
+
+    // Send a specific text as a visitor message (used by FAQ pills)
+    function sendMessageText(text) {
+      if (!text || !text.trim()) return;
+      var msg = text.trim();
+      var tempId = 'temp_' + Date.now();
+      var tempMsg = { id: tempId, sender_type: 'visitor', content: msg };
+      renderMessage(tempMsg);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', u + '/functions/v1/send-chat-message', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+          try {
+            var res = JSON.parse(xhr.responseText);
+            if (res.visitorToken) {
+              visitorToken = res.visitorToken;
+              localStorage.setItem('wj_visitor_token', visitorToken);
+            }
+            if (res.messageId) {
+              renderedMessageIds[res.messageId] = true;
+              lastMessageId = res.messageId;
+            }
+          } catch(e) {}
+        }
+      };
+      xhr.send(JSON.stringify({
+        widgetId: id,
+        visitorId: visitorId,
+        visitorToken: visitorToken,
+        message: msg,
+        visitorName: 'Visitor'
+      }));
     }
 
     function sendMessage() {
