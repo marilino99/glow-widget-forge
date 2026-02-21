@@ -1,50 +1,70 @@
 
 
-# Template Gallery - Temi Pronti all'Uso
+# Widget Layout Types - Scegli il tipo di widget
 
 ## Panoramica
-Aggiungere una sezione "Templates" nella sidebar del builder che permette agli utenti di applicare con un click configurazioni predefinite (tema, colore, sfondo, messaggio di benvenuto, ecc.). Alcuni template saranno gratuiti, altri riservati al piano Pro.
+Aggiungere il concetto di "Widget Type" (layout) al progetto, permettendo all'utente di scegliere tra diversi stili di widget. Il tipo attuale diventa "Popup" (default), e il nuovo tipo e una "Bottom Bar" -- una barra orizzontale fissa in basso alla pagina con un campo di input, icona sparkle, microfono, espandi/comprimi, e chiudi.
 
 ## Come funziona per l'utente
-1. Nella sidebar, sotto "Customize look", appare una nuova voce **"Templates"**
-2. Cliccando si apre un pannello con una griglia di card preview
-3. Ogni card mostra un'anteprima visiva del widget con quel tema applicato
-4. Cliccando "Apply" il template sovrascrive le impostazioni di aspetto (tema, colore, sfondo, messaggio, ecc.)
-5. I template Pro mostrano un badge "PRO" e richiedono l'upgrade
+1. Nella sezione **Templates** della sidebar, in alto appare un selettore "Widget Type" con due opzioni: **Popup** (attuale) e **Bottom Bar** (nuovo)
+2. Selezionando "Bottom Bar", l'anteprima nel builder cambia mostrando la barra orizzontale in basso
+3. I template di colore/tema sotto continuano a funzionare per entrambi i tipi
+4. Il tipo "Bottom Bar" e una feature **Pro**
+5. Il tipo scelto viene salvato nel database e usato dal widget-loader in produzione
 
-## Template inclusi (esempio)
-
-| Nome | Tipo | Tema | Colore | Sfondo | Messaggio |
-|------|------|------|--------|--------|-----------|
-| Minimal Light | Free | light | gray | solid | "Hi there! How can we help?" |
-| Ocean Blue | Free | dark | blue | gradient | "Welcome aboard!" |
-| Sunset Vibes | Free | dark | orange | gradient | "Hey! What can we do for you?" |
-| Black Friday | Pro | dark | red | image (dark) | "Don't miss our deals!" |
-| Luxury Gold | Pro | dark | yellow | solid | "Welcome to our exclusive store" |
-| Nature Green | Pro | light | green | gradient | "Hello! We're here to help" |
-| Neon Purple | Pro | dark | purple | gradient | "Hey! Let's chat" |
-| Coral Pink | Pro | dark | pink | gradient | "Hi! Ask us anything" |
+## Design della Bottom Bar
+Basato sullo screenshot di riferimento:
+- Barra orizzontale fissa in basso alla pagina, full-width con padding laterale
+- Bordi arrotondati (pill shape), sfondo bianco/chiaro con ombra leggera
+- A sinistra: icona sparkle + testo placeholder (es. "Curious how we could help? - ask me anything!")
+- A destra: icona microfono, icona espandi/comprimi, icona chiudi (X)
+- Cliccando si espande in una chat completa (simile al popup attuale ma ancorata in basso)
 
 ## Dettagli tecnici
 
-### Nuovi file
-- **`src/components/builder/TemplatesPanel.tsx`** -- Pannello con griglia di template. Ogni template e un oggetto JS con le configurazioni preimpostate (nessun database necessario). Mostra card con anteprima miniatura, nome, e pulsante "Apply". I template Pro hanno un overlay con badge PRO e cliccando si attiva l'UpgradeOverlay.
+### Modifica al database
+Aggiungere la colonna `widget_type` alla tabella `widget_configurations`:
+```sql
+ALTER TABLE widget_configurations
+ADD COLUMN widget_type TEXT NOT NULL DEFAULT 'popup';
+```
 
-### Modifiche ai file esistenti
+### File modificati
+
+**`src/hooks/useWidgetConfiguration.ts`**:
+- Aggiungere `widgetType: "popup" | "bottom-bar"` all'interfaccia `WidgetConfiguration`
+- Mappare da/verso la colonna `widget_type` nel database
+
+**`src/components/builder/TemplatesPanel.tsx`**:
+- Aggiungere in cima al pannello un selettore per il tipo di widget (due card grandi: "Popup" e "Bottom Bar")
+- Aggiungere `widgetType` all'interfaccia `WidgetTemplate`
+- Il tipo "Bottom Bar" mostra un badge PRO se l'utente non e Pro
+- Aggiungere la prop `widgetType` e `onWidgetTypeChange` alle props del pannello
+
+**`src/components/builder/WidgetPreviewPanel.tsx`**:
+- Accettare la nuova prop `widgetType`
+- Se `widgetType === "bottom-bar"`, renderizzare l'anteprima come barra orizzontale in basso al pannello di preview, invece del popup classico
+- La bottom bar mostra: icona sparkle, testo del `sayHello`, icone microfono/espandi/chiudi
+- Al click sulla barra, si espande in una chat (riutilizzando la logica chat esistente)
 
 **`src/components/builder/BuilderSidebar.tsx`**:
-- Aggiungere stato `showTemplatesPanel`
-- Aggiungere icona `LayoutTemplate` da lucide-react
-- Aggiungere `SidebarItem` per "Templates" nella sezione "Customize look"
-- Aggiungere il rendering condizionale del `TemplatesPanel`
-- Al click su "Apply", chiamare le funzioni `onWidgetThemeChange`, `onWidgetColorChange`, `onBackgroundTypeChange`, `onSayHelloChange` ecc. con i valori del template, poi `onSaveConfig` per persistere
+- Passare `widgetType` e `onWidgetTypeChange` al `TemplatesPanel`
+- Aggiungere handler per salvare il tipo nel database
 
-### Nessuna modifica al database
-I template sono hardcoded come costanti nel frontend -- non servono nuove tabelle o migrazioni. In futuro si potranno spostare su database se necessario.
+**`src/pages/Builder.tsx`**:
+- Passare `widgetType` dal config al preview e alla sidebar
 
-### Flusso "Apply Template"
-1. Utente clicca "Apply" su un template
-2. Si apre un dialog di conferma: "Applying this template will override your current theme settings. Continue?"
-3. Se confermato, le impostazioni vengono aggiornate localmente e salvate nel database tramite `saveConfig`
-4. L'anteprima del widget si aggiorna immediatamente
+**`supabase/functions/widget-loader/index.ts`**:
+- Leggere `cfg.widget_type` dalla configurazione
+- Se `widget_type === "bottom-bar"`, renderizzare HTML/CSS completamente diverso: una barra orizzontale in basso al posto del bottone circolare + popup
+- La barra si espande in chat al click
+
+**`supabase/functions/widget-config/index.ts`**:
+- Includere `widget_type` nella risposta della configurazione
+
+### Flusso
+1. L'utente apre Templates e seleziona "Bottom Bar" come tipo
+2. L'anteprima nel builder si aggiorna immediatamente mostrando la barra
+3. Il tipo viene salvato nel database
+4. Il widget-loader in produzione legge il tipo e renderizza la barra invece del popup
 
