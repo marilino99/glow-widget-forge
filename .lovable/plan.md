@@ -1,44 +1,24 @@
 
-# Effetto Typewriter sulla Bottom Bar
+## Clicking a FAQ Pill Opens the Chat with the Question
 
-## Obiettivo
-Aggiungere un effetto "typewriter" al testo della bottom bar, dove le lettere appaiono una alla volta come se venissero digitate.
+Currently, clicking a FAQ pill only sets `expandedFaqId` and hides the pills, but nothing visible happens because the expanded FAQ accordion is inside the home view, not the chat view.
 
-## Implementazione
+### What will change
 
-### 1. Creare un componente TypewriterText
-Un nuovo componente React (`src/components/builder/TypewriterText.tsx`) che:
-- Riceve il testo completo come prop
-- Mostra le lettere una alla volta con un intervallo regolare (es. 30-40ms per lettera)
-- Una volta completato il testo, fa una pausa e poi ricomincia da capo (loop)
-- Usa `useState` e `useEffect` per gestire l'animazione
-- Mantiene lo stesso stile (colore, dimensione) del testo attuale
+When a user clicks a FAQ pill above the bottom bar:
+1. The pills will disappear
+2. The chat view will open (`setShowChat(true)`)
+3. The clicked question will be sent as a user message to the chat
+4. The AI will respond with an answer, just like a normal chat message
 
-### 2. Integrare nel WidgetPreviewPanel
-Sostituire il tag `<span>` statico del testo nella bottom bar (riga ~787) con il nuovo componente `<TypewriterText>`, passando il messaggio `sayHello` come prop.
+### Technical details
 
----
+**File: `src/components/builder/WidgetPreviewPanel.tsx`**
 
-## Dettagli tecnici
+- Update the FAQ pill `onClick` handler (around line 859) to:
+  - Call `setShowChat(true)` to open the chat view
+  - Call `handleSendChatMessage(faq.question)` to send the question and get an AI response
+  - Call `setShowFaqPills(false)` to hide the pills
+  - Remove the `setExpandedFaqId(faq.id)` call since we no longer need the accordion behavior
 
-### TypewriterText.tsx
-- Props: `text` (string), `speed` (numero ms tra lettere, default ~35ms), `pauseDuration` (pausa prima di ricominciare, default ~2000ms), `className` e `style` per ereditare gli stili
-- Usa `useEffect` con `setInterval` per incrementare un contatore di caratteri visibili
-- Quando il contatore raggiunge la lunghezza del testo, pausa e poi resetta a 0
-- Aggiunge un cursore lampeggiante opzionale (carattere `|`) alla fine durante la digitazione
-
-### WidgetPreviewPanel.tsx (riga ~787)
-- Importare `TypewriterText`
-- Sostituire:
-  ```
-  <span className="flex-1 text-base text-slate-400 truncate">
-    {sayHello || "Curious how we could help?..."}
-  </span>
-  ```
-  Con:
-  ```
-  <TypewriterText
-    text={sayHello || "Curious how we could help? — ask me anything!"}
-    className="flex-1 text-base text-slate-400 truncate"
-  />
-  ```
+- The existing `handleSendChatMessage` function already handles sending the message and displaying the AI response with typing indicators, so no other changes are needed.
