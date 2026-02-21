@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2 } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -303,6 +303,52 @@ const WidgetPreviewPanel = ({
   const [feedbackEmail, setFeedbackEmail] = useState("");
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
   const [chatInputFocused, setChatInputFocused] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  const startListening = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = language || "en";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognitionRef.current = recognition;
+
+    let finalTranscript = "";
+
+    recognition.onresult = (event: any) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      setChatInputValue(finalTranscript + interim);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+
+    setIsListening(true);
+    recognition.start();
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+  };
 
   // Close chat menu on outside click
   useEffect(() => {
@@ -925,6 +971,17 @@ const WidgetPreviewPanel = ({
                           className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-slate-400"
                         />
                         <button
+                          onClick={() => isListening ? stopListening() : startListening()}
+                          className={`flex h-7 w-7 items-center justify-center rounded-full transition-all ${
+                            isListening 
+                              ? "text-white animate-pulse" 
+                              : "text-slate-400 hover:text-slate-600"
+                          }`}
+                          style={isListening ? { backgroundColor: actualHexColor } : {}}
+                        >
+                          <Mic className="h-4 w-4" />
+                        </button>
+                        <button
                           onClick={() => {
                             if (chatInputValue.trim()) {
                               handleSendChatMessage(chatInputValue.trim());
@@ -1295,6 +1352,19 @@ const WidgetPreviewPanel = ({
                       className={`${widgetSubtext} hover:opacity-80 transition-opacity`}
                     >
                       <Smile className="h-5 w-5" />
+                    </button>
+                    <button 
+                      onClick={() => isListening ? stopListening() : startListening()}
+                      className={`flex h-7 w-7 items-center justify-center rounded-full transition-all ${
+                        isListening 
+                          ? "text-white animate-pulse" 
+                          : isLight 
+                            ? "text-slate-400 hover:text-slate-600" 
+                            : "text-white/40 hover:text-white/70"
+                      }`}
+                      style={isListening ? { backgroundColor: actualHexColor } : {}}
+                    >
+                      <Mic className="h-4 w-4" />
                     </button>
                     <button 
                       onClick={() => {
