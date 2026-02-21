@@ -844,7 +844,7 @@ const WidgetPreviewPanel = ({
                 <div
                   className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[540px] px-4 animate-widget-expand`}
                 >
-                  <div className="flex flex-col rounded-2xl bg-white shadow-xl overflow-hidden" style={{ border: `2px solid ${actualHexColor}` }}>
+                  <div className="flex flex-col rounded-2xl bg-white shadow-xl overflow-hidden" style={{ border: `1px solid ${actualHexColor}` }}>
                     {/* Chat messages area */}
                     <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col max-h-[280px] min-h-[120px]">
                       {/* Welcome message */}
@@ -997,7 +997,7 @@ const WidgetPreviewPanel = ({
                   )}
                   <div
                     className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg"
-                    style={{ cursor: 'pointer', border: `2px solid ${actualHexColor}` }}
+                    style={{ cursor: 'pointer', border: `1px solid ${actualHexColor}` }}
                   >
                     <Sparkle className="h-3.5 w-3.5 shrink-0" style={{ color: actualHexColor }} />
                     <TypewriterText
