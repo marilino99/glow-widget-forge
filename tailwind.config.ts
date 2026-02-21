@@ -83,45 +83,45 @@ export default {
         "widget-collapse": {
           "0%": {
             opacity: "1",
-            transform: "scale(1) translateY(0)",
-          },
-          "40%": {
-            opacity: "1",
-            transform: "scale(1.02) translateY(-2px)",
+            transform: "translateY(0) scale(1)",
           },
           "100%": {
             opacity: "0",
-            transform: "scale(0.6) translateY(20px)",
+            transform: "translateY(12px) scale(0.96)",
           },
         },
         "widget-expand": {
           "0%": {
             opacity: "0",
-            transform: "scale(0.6) translateY(20px)",
+            transform: "translateY(24px) scale(0.97)",
           },
-          "50%": {
+          "40%": {
+            opacity: "0.7",
+            transform: "translateY(6px) scale(0.995)",
+          },
+          "70%": {
             opacity: "1",
-            transform: "scale(1.03) translateY(-3px)",
+            transform: "translateY(-2px) scale(1.005)",
           },
-          "75%": {
-            transform: "scale(0.99) translateY(1px)",
+          "85%": {
+            transform: "translateY(0.5px) scale(1)",
           },
           "100%": {
             opacity: "1",
-            transform: "scale(1) translateY(0)",
+            transform: "translateY(0) scale(1)",
           },
         },
         "button-pop": {
           "0%": {
-            transform: "scale(0)",
+            transform: "scale(0.3)",
             opacity: "0",
           },
-          "50%": {
-            transform: "scale(1.15)",
+          "60%": {
+            transform: "scale(1.08)",
             opacity: "1",
           },
-          "75%": {
-            transform: "scale(0.95)",
+          "80%": {
+            transform: "scale(0.97)",
           },
           "100%": {
             transform: "scale(1)",
@@ -135,9 +135,9 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "widget-collapse": "widget-collapse 0.3s cubic-bezier(0.4, 0, 1, 1) forwards",
-        "widget-expand": "widget-expand 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
-        "button-pop": "button-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "widget-collapse": "widget-collapse 0.25s cubic-bezier(0.4, 0, 0.6, 1) forwards",
+        "widget-expand": "widget-expand 0.6s cubic-bezier(0.22, 0.61, 0.36, 1)",
+        "button-pop": "button-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "rainbow-spin": "rainbow-spin 8s linear infinite",
       },
     },
