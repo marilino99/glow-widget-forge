@@ -757,147 +757,25 @@ const WidgetPreviewPanel = ({
 
           {/* Bottom Bar widget type */}
           {widgetType === "bottom-bar" && (
-            <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col items-stretch">
-              {/* Expanded chat panel */}
+            <div className="absolute bottom-4 left-4 right-4 z-20">
               <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  showChat ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-                }`}
+                className="flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg border border-slate-200/80"
+                style={{ cursor: 'pointer' }}
               >
-                <div className="mx-4 mb-2 flex flex-col rounded-2xl bg-white shadow-2xl border border-slate-200/80 overflow-hidden" style={{ height: '420px' }}>
-                  {/* Chat header */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                    <div className="flex items-center gap-2.5">
-                      {selectedAvatar ? (
-                        <img src={selectedAvatar} alt="Avatar" className="h-8 w-8 rounded-full object-cover" />
-                      ) : (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-xs font-bold text-white">
-                          {contactName?.charAt(0)?.toUpperCase() || "?"}
-                        </div>
-                      )}
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-slate-900 leading-tight">{contactName}</span>
-                        <span className="text-xs text-slate-500 leading-tight">Online</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setShowChat(false); }}
-                      className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-                    >
-                      <Minus className="h-4 w-4 text-slate-400" />
-                    </button>
-                  </div>
-
-                  {/* Chat messages area */}
-                  <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col">
-                    <div className="flex items-start gap-2">
-                      {selectedAvatar ? (
-                        <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
-                      ) : (
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
-                          {contactName?.charAt(0)?.toUpperCase() || "?"}
-                        </div>
-                      )}
-                      <div className="rounded-2xl rounded-tl-sm bg-slate-100 px-3 py-2 text-sm text-slate-900 max-w-[80%]">
-                        {sayHello}
-                      </div>
-                    </div>
-                    {chatMessages.map((msg, i) => (
-                      <div key={i} className={`mt-3 flex ${msg.sender === "user" ? "justify-end" : "items-start gap-2"}`}>
-                        {msg.sender !== "user" && (
-                          selectedAvatar ? (
-                            <img src={selectedAvatar} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
-                          ) : (
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
-                              {contactName?.charAt(0)?.toUpperCase() || "?"}
-                            </div>
-                          )
-                        )}
-                        <div className={`rounded-2xl px-3 py-2 text-sm max-w-[80%] ${
-                          msg.sender === "user"
-                            ? "bg-slate-900 text-white rounded-tr-sm"
-                            : "bg-slate-100 text-slate-900 rounded-tl-sm"
-                        }`}>
-                          {msg.text}
-                        </div>
-                      </div>
-                    ))}
-                    {isBotTyping && (
-                      <div className="mt-3 flex items-start gap-2">
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
-                          {contactName?.charAt(0)?.toUpperCase() || "?"}
-                        </div>
-                        <div className="rounded-2xl rounded-tl-sm bg-slate-100 px-4 py-3">
-                          <div className="flex gap-1">
-                            <div className="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <div className="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <div className="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex-1" />
-                    <div ref={chatEndRef} />
-                  </div>
-
-                  {/* Chat input */}
-                  <div className="px-3 pb-3 pt-1">
-                    <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2">
-                      <input
-                        type="text"
-                        placeholder="Type a message..."
-                        value={chatInputValue}
-                        onChange={(e) => setChatInputValue(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && chatInputValue.trim()) {
-                            handleSendChatMessage(chatInputValue.trim());
-                          }
-                        }}
-                        className="flex-1 text-sm outline-none bg-transparent text-slate-900 placeholder:text-slate-400"
-                      />
-                      <button
-                        onClick={() => chatInputValue.trim() && handleSendChatMessage(chatInputValue.trim())}
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-white shrink-0 hover:bg-slate-800 transition-colors"
-                      >
-                        <ArrowUp className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom bar */}
-              <div className="px-4 pb-4">
-                <div
-                  onClick={() => !showChat && setShowChat(true)}
-                  className={`flex items-center gap-3 rounded-full bg-white px-5 py-3.5 shadow-lg border border-slate-200/80 transition-all duration-200 ${!showChat ? 'cursor-pointer hover:shadow-xl' : ''}`}
-                >
-                  <Sparkles className="h-5 w-5 shrink-0 text-slate-400" />
-                  <span className="flex-1 text-sm text-slate-400 truncate">
-                    {sayHello || "Curious how we could help? — ask me anything!"}
-                  </span>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                    </button>
-                    {showChat ? (
-                      <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-                        onClick={(e) => { e.stopPropagation(); setShowChat(false); }}
-                      >
-                        <X className="h-4 w-4 text-slate-400" />
-                      </button>
-                    ) : (
-                      <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-                        onClick={(e) => { e.stopPropagation(); setShowChat(true); }}
-                      >
-                        <Maximize2 className="h-4 w-4 text-slate-400" />
-                      </button>
-                    )}
-                  </div>
+                <Sparkles className="h-5 w-5 shrink-0 text-slate-400" />
+                <span className="flex-1 text-sm text-slate-400 truncate">
+                  {sayHello || "Curious how we could help? — ask me anything!"}
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                  </button>
+                  <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                    <Maximize2 className="h-4 w-4 text-slate-400" />
+                  </button>
+                  <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors">
+                    <X className="h-4 w-4 text-slate-400" />
+                  </button>
                 </div>
               </div>
             </div>
