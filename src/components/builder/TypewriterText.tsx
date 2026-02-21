@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 interface TypewriterTextProps {
-  text: string;
+  texts: string[];
   speed?: number;
   wordPause?: number;
   pauseDuration?: number;
@@ -10,32 +10,37 @@ interface TypewriterTextProps {
 }
 
 const TypewriterText = ({
-  text,
+  texts,
   speed = 80,
   wordPause = 200,
   pauseDuration = 2000,
   className,
   style,
 }: TypewriterTextProps) => {
+  const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const currentText = texts[textIndex] || "";
+
   useEffect(() => {
+    setTextIndex(0);
     setCharIndex(0);
     setIsPaused(false);
-  }, [text]);
+  }, [texts.join("||")]);
 
   useEffect(() => {
     if (isPaused) {
       timerRef.current = setTimeout(() => {
+        setTextIndex((i) => (i + 1) % texts.length);
         setCharIndex(0);
         setIsPaused(false);
       }, pauseDuration);
     } else {
-      if (charIndex < text.length) {
-        const currentChar = text[charIndex];
-        const delay = currentChar === ' ' ? wordPause : speed;
+      if (charIndex < currentText.length) {
+        const char = currentText[charIndex];
+        const delay = char === " " ? wordPause : speed;
         timerRef.current = setTimeout(() => {
           setCharIndex((i) => i + 1);
         }, delay);
@@ -46,11 +51,11 @@ const TypewriterText = ({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [charIndex, isPaused, text, speed, pauseDuration]);
+  }, [charIndex, isPaused, currentText, texts.length, speed, wordPause, pauseDuration]);
 
   return (
     <span className={className} style={style}>
-      {text.slice(0, charIndex)}
+      {currentText.slice(0, charIndex)}
       {!isPaused && (
         <span className="animate-pulse opacity-80">|</span>
       )}
