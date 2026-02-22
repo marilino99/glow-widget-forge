@@ -19,6 +19,7 @@ import OnboardingWebsiteStep from "@/components/builder/OnboardingWebsiteStep";
 import OnboardingTrainStep from "@/components/builder/OnboardingTrainStep";
 import OnboardingBrandStep from "@/components/builder/OnboardingBrandStep";
 import OnboardingTestStep from "@/components/builder/OnboardingTestStep";
+import OnboardingSurveyDialog, { type SurveyAnswers } from "@/components/builder/OnboardingSurveyDialog";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -38,6 +39,7 @@ const Builder = () => {
   const [showBrandStep, setShowBrandStep] = useState(false);
   const [showTestStep, setShowTestStep] = useState(false);
   const [showWebsiteStep, setShowWebsiteStep] = useState(false);
+  const [showSurveyDialog, setShowSurveyDialog] = useState(false);
   
 
   // Check if user already completed or skipped the survey
@@ -239,6 +241,7 @@ const Builder = () => {
     setShowTestStep(false);
     searchParams.delete("onboarding");
     setSearchParams(searchParams, { replace: true });
+    setShowSurveyDialog(true);
   };
 
   const handleTestStepBack = () => {
@@ -491,6 +494,20 @@ const Builder = () => {
           widgetId={config.id || undefined}
         />
       )}
+
+      <OnboardingSurveyDialog
+        open={showSurveyDialog}
+        onComplete={async (answers: SurveyAnswers) => {
+          setShowSurveyDialog(false);
+          if (user) {
+            await supabase.from("user_activity_logs").insert({
+              user_id: user.id,
+              event_type: "survey_completed",
+              metadata: answers as any,
+            });
+          }
+        }}
+      />
     </div>
   );
 };
