@@ -57,18 +57,18 @@ const OnboardingTestStep = ({
             <div key={i} className="flex items-center">
               {i > 0 && (
                 <div
-                  className="h-[2px] w-16"
-                  style={{ backgroundColor: isPast || isActive ? "#4361ee" : "#d4d8e8" }}
+                  className="h-[2px] w-24"
+                  style={{ backgroundColor: isPast ? "#7c3aed" : "#e5e7eb" }}
                 />
               )}
               <div
-                className="flex items-center justify-center rounded-full text-sm font-bold"
+                className="flex items-center justify-center rounded-full font-bold transition-all"
                 style={{
-                  backgroundColor: isActive || isPast ? "#4361ee" : "transparent",
-                  color: isActive || isPast ? "#fff" : "#c0c4d8",
-                  border: isActive || isPast ? "none" : "2px solid #d4d8e8",
-                  width: isPast && !isActive ? "12px" : "32px",
-                  height: isPast && !isActive ? "12px" : "32px",
+                  width: isActive ? "40px" : "14px",
+                  height: isActive ? "40px" : "14px",
+                  backgroundColor: isActive ? "#7c3aed" : isPast ? "#7c3aed" : "#e5e7eb",
+                  color: isActive ? "#fff" : "transparent",
+                  fontSize: isActive ? "16px" : "0",
                 }}
               >
                 {isActive ? stepNum : ""}
@@ -88,7 +88,7 @@ const OnboardingTestStep = ({
             </h1>
             <p className="text-[#8a8fa8] text-base leading-relaxed">
               Test your AI Agent to make sure it works perfectly. When you're satisfied, copy the code below and paste it before the closing{" "}
-              <code className="text-[#4361ee] font-mono">&lt;/body&gt;</code> tag on your website to activate it.
+              <code className="text-[#7c3aed] font-mono">&lt;/body&gt;</code> tag on your website to activate it.
             </p>
           </div>
 
@@ -140,7 +140,7 @@ const OnboardingTestStep = ({
         </button>
         <button
           onClick={onNext}
-          className="rounded-xl bg-[#4361ee] px-10 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#3a56d4]"
+          className="rounded-xl bg-[#7c3aed] px-10 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
         >
           Next
         </button>

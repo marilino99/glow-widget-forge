@@ -57,18 +57,18 @@ const OnboardingBrandStep = ({
             <div key={i} className="flex items-center">
               {i > 0 && (
                 <div
-                  className="h-[2px] w-16"
-                  style={{ backgroundColor: isPast || isActive ? "#4361ee" : "#d4d8e8" }}
+                  className="h-[2px] w-24"
+                  style={{ backgroundColor: isPast ? "#7c3aed" : "#e5e7eb" }}
                 />
               )}
               <div
-                className="flex items-center justify-center rounded-full text-sm font-bold"
+                className="flex items-center justify-center rounded-full font-bold transition-all"
                 style={{
-                  backgroundColor: isActive || isPast ? "#4361ee" : "transparent",
-                  color: isActive || isPast ? "#fff" : "#c0c4d8",
-                  border: isActive || isPast ? "none" : "2px solid #d4d8e8",
-                  width: isPast && !isActive ? "12px" : "32px",
-                  height: isPast && !isActive ? "12px" : "32px",
+                  width: isActive ? "40px" : "14px",
+                  height: isActive ? "40px" : "14px",
+                  backgroundColor: isActive ? "#7c3aed" : isPast ? "#7c3aed" : "#e5e7eb",
+                  color: isActive ? "#fff" : "transparent",
+                  fontSize: isActive ? "16px" : "0",
                 }}
               >
                 {isActive ? stepNum : ""}
@@ -92,7 +92,7 @@ const OnboardingBrandStep = ({
             {/* Logo upload */}
             <div>
               <p className="text-sm font-medium text-[#1a1a2e] mb-2">Logo</p>
-              <label className="flex h-28 w-28 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-[#d4d8e8] bg-[#f8f9fc] overflow-hidden hover:border-[#4361ee] transition-colors">
+              <label className="flex h-28 w-28 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-[#d4d8e8] bg-[#f8f9fc] overflow-hidden hover:border-[#7c3aed] transition-colors">
                 {logoPreview ? (
                   <img src={logoPreview} alt="Logo" className="h-full w-full object-cover" />
                 ) : (
@@ -110,7 +110,7 @@ const OnboardingBrandStep = ({
                   type="text"
                   value={brandName}
                   onChange={(e) => setBrandName(e.target.value)}
-                  className="w-full rounded-xl border border-[#e0e3ef] bg-white px-4 py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#4361ee] focus:ring-2 focus:ring-[#4361ee]/20"
+                  className="w-full rounded-xl border border-[#e0e3ef] bg-white px-4 py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#7c3aed] focus:ring-2 focus:ring-[#7c3aed]/20"
                 />
               </div>
               <div>
@@ -141,7 +141,7 @@ const OnboardingBrandStep = ({
               value={welcomeMessage}
               onChange={(e) => setWelcomeMessage(e.target.value)}
               rows={4}
-              className="w-full rounded-xl border border-[#e0e3ef] bg-[#f8f9fc] px-4 py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#4361ee] focus:ring-2 focus:ring-[#4361ee]/20 resize-none"
+              className="w-full rounded-xl border border-[#e0e3ef] bg-[#f8f9fc] px-4 py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#7c3aed] focus:ring-2 focus:ring-[#7c3aed]/20 resize-none"
             />
           </div>
 
@@ -152,7 +152,7 @@ const OnboardingBrandStep = ({
               <button
                 onClick={() => setSuggestedEnabled(!suggestedEnabled)}
                 className="relative h-6 w-11 rounded-full transition-colors"
-                style={{ backgroundColor: suggestedEnabled ? "#4361ee" : "#d4d8e8" }}
+                style={{ backgroundColor: suggestedEnabled ? "#7c3aed" : "#d4d8e8" }}
               >
                 <span
                   className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform"
@@ -266,7 +266,7 @@ const OnboardingBrandStep = ({
         </button>
         <button
           onClick={onNext}
-          className="rounded-xl bg-[#4361ee] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#3a56d4]"
+          className="rounded-xl bg-[#7c3aed] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
         >
           Skip Customization
         </button>

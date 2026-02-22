@@ -42,25 +42,21 @@ const OnboardingTrainStep = ({
             <div key={i} className="flex items-center">
               {i > 0 && (
                 <div
-                  className="h-[2px] w-16"
-                  style={{
-                    backgroundColor: isPast || isActive ? "#4361ee" : "#d4d8e8",
-                  }}
+                  className="h-[2px] w-24"
+                  style={{ backgroundColor: isPast ? "#7c3aed" : "#e5e7eb" }}
                 />
               )}
               <div
-                className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold"
+                className="flex items-center justify-center rounded-full font-bold transition-all"
                 style={{
-                  backgroundColor:
-                    isActive || isPast ? "#4361ee" : "transparent",
-                  color: isActive || isPast ? "#fff" : "#c0c4d8",
-                  border:
-                    isActive || isPast ? "none" : "2px solid #d4d8e8",
-                  width: isPast && !isActive ? "12px" : "32px",
-                  height: isPast && !isActive ? "12px" : "32px",
+                  width: isActive ? "40px" : "14px",
+                  height: isActive ? "40px" : "14px",
+                  backgroundColor: isActive ? "#7c3aed" : isPast ? "#7c3aed" : "#e5e7eb",
+                  color: isActive ? "#fff" : "transparent",
+                  fontSize: isActive ? "16px" : "0",
                 }}
               >
-                {isActive ? stepNum : isPast ? "" : ""}
+                {isActive ? stepNum : ""}
               </div>
             </div>
           );
@@ -88,9 +84,9 @@ const OnboardingTrainStep = ({
                 onClick={() => setActiveTab(tab.key)}
                 className="flex flex-1 items-center justify-center gap-2.5 rounded-xl border-2 px-4 py-3.5 text-[14px] font-medium transition-all"
                 style={{
-                  backgroundColor: isActive ? "#f0f2ff" : "#fff",
-                  borderColor: isActive ? "#4361ee" : "#e0e3ef",
-                  color: isActive ? "#4361ee" : "#6a6f88",
+                  backgroundColor: isActive ? "#f3f0ff" : "#fff",
+                  borderColor: isActive ? "#7c3aed" : "#e0e3ef",
+                  color: isActive ? "#7c3aed" : "#6a6f88",
                 }}
               >
                 {tab.icon}
@@ -126,7 +122,7 @@ const OnboardingTrainStep = ({
         </button>
         <button
           onClick={onNext}
-          className="rounded-xl bg-[#4361ee] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#3a56d4]"
+          className="rounded-xl bg-[#7c3aed] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
         >
           Next
         </button>

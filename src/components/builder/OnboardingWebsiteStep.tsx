@@ -31,19 +31,21 @@ const OnboardingWebsiteStep = ({
             <div key={i} className="flex items-center">
               {i > 0 && (
                 <div
-                  className="h-[2px] w-16"
-                  style={{ backgroundColor: isPast ? "#4361ee" : "#d4d8e8" }}
+                  className="h-[2px] w-24"
+                  style={{ backgroundColor: isPast ? "#7c3aed" : "#e5e7eb" }}
                 />
               )}
               <div
-                className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold"
+                className="flex items-center justify-center rounded-full font-bold transition-all"
                 style={{
-                  backgroundColor: isActive || isPast ? "#4361ee" : "transparent",
-                  color: isActive || isPast ? "#fff" : "#c0c4d8",
-                  border: isActive || isPast ? "none" : "2px solid #d4d8e8",
+                  width: isActive ? "40px" : "14px",
+                  height: isActive ? "40px" : "14px",
+                  backgroundColor: isActive ? "#7c3aed" : isPast ? "#7c3aed" : "#e5e7eb",
+                  color: isActive ? "#fff" : "transparent",
+                  fontSize: isActive ? "16px" : "0",
                 }}
               >
-                {isActive || isPast ? stepNum : ""}
+                {isActive ? stepNum : ""}
               </div>
             </div>
           );
@@ -63,7 +65,7 @@ const OnboardingWebsiteStep = ({
           value={websiteUrl}
           onChange={(e) => setWebsiteUrl(e.target.value)}
           placeholder="Enter your website address"
-          className="w-full max-w-lg rounded-xl border border-[#e0e3ef] bg-white px-5 py-4 text-base text-[#1a1a2e] placeholder-[#b0b4c8] outline-none transition-all focus:border-[#4361ee] focus:ring-2 focus:ring-[#4361ee]/20"
+          className="w-full max-w-lg rounded-xl border border-[#e0e3ef] bg-white px-5 py-4 text-base text-[#1a1a2e] placeholder-[#b0b4c8] outline-none transition-all focus:border-[#7c3aed] focus:ring-2 focus:ring-[#7c3aed]/20"
         />
       </div>
 
@@ -77,7 +79,7 @@ const OnboardingWebsiteStep = ({
         </button>
         <button
           onClick={handleNext}
-          className="rounded-xl bg-[#4361ee] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#3a56d4]"
+          className="rounded-xl bg-[#7c3aed] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
         >
           Next
         </button>
