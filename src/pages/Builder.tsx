@@ -16,7 +16,7 @@ import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import OnboardingSurveyDialog from "@/components/builder/OnboardingSurveyDialog";
-import OnboardingWebsiteDialog from "@/components/builder/OnboardingWebsiteDialog";
+
 import { supabase } from "@/integrations/supabase/client";
 
 import { ProductCardData } from "@/types/productCard";
@@ -32,7 +32,7 @@ const Builder = () => {
   // Onboarding dialogs for first-time users
   const isNewUser = searchParams.get("onboarding") === "true";
   const [showSurvey, setShowSurvey] = useState(false);
-  const [showWebsiteDialog, setShowWebsiteDialog] = useState(isNewUser);
+  
 
   // Check if user already completed or skipped the survey
   useEffect(() => {
@@ -190,6 +190,9 @@ const Builder = () => {
   // Handle survey completion
   const handleSurveyComplete = async (answers: { businessType: string; mainGoal: string; monthlyVisitors: string }) => {
     setShowSurvey(false);
+    // Remove onboarding param from URL
+    searchParams.delete("onboarding");
+    setSearchParams(searchParams, { replace: true });
     if (user) {
       const isSkipped = !answers.businessType && !answers.mainGoal && !answers.monthlyVisitors;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -199,16 +202,6 @@ const Builder = () => {
         metadata: answers,
       });
     }
-  };
-
-  // Handle website dialog completion
-  const handleWebsiteDialogComplete = () => {
-    setShowWebsiteDialog(false);
-    // Remove onboarding param from URL
-    searchParams.delete("onboarding");
-    setSearchParams(searchParams, { replace: true });
-    // Reload config
-    window.location.replace("/builder");
   };
 
 
@@ -424,11 +417,7 @@ const Builder = () => {
         />
       )}
 
-      {/* Onboarding dialogs for first-time users */}
-      <OnboardingWebsiteDialog
-        open={showWebsiteDialog && !showSurvey}
-        onComplete={handleWebsiteDialogComplete}
-      />
+      {/* Onboarding survey for first-time users */}
       <OnboardingSurveyDialog
         open={showSurvey}
         onComplete={handleSurveyComplete}
