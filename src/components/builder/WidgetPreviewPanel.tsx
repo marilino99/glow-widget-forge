@@ -1081,9 +1081,9 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                     {/* Branding */}
-                    <div className="flex items-center justify-center gap-1.5 py-2.5">
-                      <img src={widjetLogoNavbar} alt="Widjet" className="h-3.5 w-auto opacity-40" />
-                      <span className="text-[10px] text-slate-300">Powered by Widjet</span>
+                    <div className="flex items-center justify-center gap-1 py-2.5">
+                      <span className="text-[10px] text-slate-300">Powered by</span>
+                      <img src={widjetLogoNavbar} alt="Widjet" className="h-3 w-auto opacity-40" />
                     </div>
                   </div>
                 </div>
