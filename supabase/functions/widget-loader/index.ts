@@ -152,7 +152,7 @@ Deno.serve(async (req) => {
       #wj-pop{display:none;width:calc(100% - 24px);max-width:350px;height:calc(100% - 24px);max-height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;background:\${bgMain};z-index:2147483647;pointer-events:auto;transform:translateZ(0)}
       #wj-pop.open{display:flex;flex-direction:column;animation:wj-expand .35s cubic-bezier(0.16,1,0.3,1)}
       #wj-pop.closing{display:flex;flex-direction:column;animation:wj-collapse .3s cubic-bezier(0.4,0,0.2,1) forwards}
-       @keyframes wj-expand{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+       @keyframes wj-expand{0%{opacity:0}100%{opacity:1}}
       @keyframes wj-collapse{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(0.85) translateY(16px)}}
       @keyframes wj-btn-pop{0%{transform:scale(0.5);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;background:\${bgMain}}
@@ -273,7 +273,7 @@ Deno.serve(async (req) => {
       #wj-pop{display:none;position:absolute;bottom:0;\${cfg.widget_position === 'left' ? 'left' : 'right'}:0;width:350px;height:560px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden;background:\${bgMain};z-index:2147483647;transform:translateZ(0)}
       #wj-pop.open{display:flex;flex-direction:column;animation:wj-expand .35s cubic-bezier(0.16,1,0.3,1)}
       #wj-pop.closing{display:flex;flex-direction:column;animation:wj-collapse .3s cubic-bezier(0.4,0,0.2,1) forwards}
-      @keyframes wj-expand{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+      @keyframes wj-expand{0%{opacity:0}100%{opacity:1}}
       @keyframes wj-collapse{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(0.85) translateY(16px)}}
       @keyframes wj-btn-pop{0%{transform:scale(0.5);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
       #wj-scroll{flex:1;overflow-y:auto;position:relative;border-radius:inherit;background:\${bgMain}}
