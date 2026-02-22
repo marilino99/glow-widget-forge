@@ -94,7 +94,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         <div>
           <p className="text-sm text-muted-foreground">My Workspace</p>
           <h1 className="text-3xl font-bold text-foreground">
-            {getGreeting()}{userName ? `, ${userName}` : ""}
+            {getGreeting()}{userName ? `, ${userName} 👋` : " 👋"}
           </h1>
         </div>
 
