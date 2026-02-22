@@ -127,7 +127,9 @@ Deno.serve(async (req) => {
     var bgFaq = dark ? '#252525' : '#fff';
     var textMain = dark ? '#fff' : '#0f172a';
     var textSub = dark ? 'rgba(255,255,255,0.6)' : '#64748b';
-    var borderCol = dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0';
+    var logoUrl = 'https://jqvcafbrccpmygiihyry.supabase.co/storage/v1/object/public/brand-assets/widjet-logo-navbar.png';
+    var poweredHtml = 'Powered by <img src="' + logoUrl + '" alt="Widjet"/>';
+
 
     // Detect if running inside an iframe (Wix Embed element)
     // Exclude Lovable preview iframes and the project's own domain from iframe mode
@@ -225,7 +227,8 @@ Deno.serve(async (req) => {
       .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
       .wj-nav-item.inactive{color:\${textSub}}
       .wj-nav-item svg{width:20px;height:20px}
-      #wj-powered{padding:8px;text-align:center;font-size:11px;color:\${textSub};background:\${bgMain}}
+      #wj-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};background:${bgMain}}
+      #wj-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
       #wj-home-view{display:flex;flex-direction:column;flex:1;min-height:0}
       #wj-chat-view{display:none;flex-direction:column;flex:1;min-height:0;background:\${dark ? '#000' : '#fff'}}
       #wj-chat-view.open{display:flex}
@@ -261,7 +264,8 @@ Deno.serve(async (req) => {
       #wj-emoji-picker.open{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
       .wj-emoji{border:none;background:transparent;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:background .15s}
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
-      #wj-chat-powered{padding:8px;text-align:center;font-size:11px;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};border-top:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};border-top:1px solid ${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
     \` : \`
       #wj-root{position:fixed;bottom:20px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s,opacity .2s;background:\${color.bg};overflow:hidden}
@@ -346,7 +350,8 @@ Deno.serve(async (req) => {
       .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
       .wj-nav-item.inactive{color:\${textSub}}
       .wj-nav-item svg{width:20px;height:20px}
-      #wj-powered{padding:8px;text-align:center;font-size:12px;color:\${textSub};background:\${bgMain}}
+      #wj-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};background:${bgMain}}
+      #wj-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
       #wj-home-view{display:flex;flex-direction:column;flex:1;min-height:0}
       #wj-chat-view{display:none;flex-direction:column;flex:1;min-height:0;background:\${dark ? '#000' : '#fff'}}
       #wj-chat-view.open{display:flex}
@@ -389,7 +394,8 @@ Deno.serve(async (req) => {
       #wj-emoji-picker.open{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
       .wj-emoji{border:none;background:transparent;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:background .15s}
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
-      #wj-chat-powered{padding:8px;text-align:center;font-size:12px;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'}}
+      #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
+      #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
     \`;
     d.head.appendChild(style);
 
@@ -439,7 +445,8 @@ Deno.serve(async (req) => {
         #wj-bb-send:hover{background:\${dark ? '#52525b' : '#cbd5e1'}}
         #wj-bb-send.active{background:\${color.bg};color:#fff}
         #wj-bb-input-box button svg{width:16px;height:16px}
-        #wj-bb-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
+        #wj-bb-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
+        #wj-bb-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
         #wj-bb-collapsed{pointer-events:auto}
         #wj-bb-collapsed.hidden{display:none}
         @keyframes wj-bb-fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -530,7 +537,7 @@ Deno.serve(async (req) => {
       if (showBranding) {
         var bbPowered = d.createElement('div');
         bbPowered.id = 'wj-bb-powered';
-        bbPowered.innerHTML = 'Powered by <span style="font-weight:500">Widjet</span>';
+        bbPowered.innerHTML = poweredHtml;
         bbChat.appendChild(bbPowered);
       }
 
@@ -921,7 +928,7 @@ Deno.serve(async (req) => {
     if (showBranding) {
       var powered = d.createElement('div');
       powered.id = 'wj-powered';
-      powered.innerHTML = 'Powered by <span style="font-weight:500">Widjet</span>';
+      powered.innerHTML = poweredHtml;
       homeView.appendChild(powered);
     }
 
@@ -936,7 +943,7 @@ Deno.serve(async (req) => {
     var bubbleAvatarHtml = avatar 
       ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' 
       : '<div id="wj-chat-bubble-avatar">' + esc(avatarInitial) + '</div>';
-    chatView.innerHTML = '<div id="wj-chat-header"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button><div id="wj-chat-title">' + chatAvatarHtml + '<div id="wj-chat-title-text"><span id="wj-chat-name">' + esc(name) + '</span><span id="wj-chat-subtitle">' + esc(tr.contactUs || 'The team can also help') + '</span></div></div><div id="wj-chat-header-right"><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div id="wj-chat-menu"><button class="wj-menu-item" id="wj-menu-clear"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Clear chat</button><button class="wj-menu-item" id="wj-menu-download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download transcript</button></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div></div><div id="wj-chat-msgs"><div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div></div><div id="wj-chat-input"><div id="wj-emoji-picker">' + emojiHtml + '</div><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div><div id="wj-chat-powered">Powered by <span style="font-weight:500">Widjet</span></div>';
+    chatView.innerHTML = '<div id="wj-chat-header"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button><div id="wj-chat-title">' + chatAvatarHtml + '<div id="wj-chat-title-text"><span id="wj-chat-name">' + esc(name) + '</span><span id="wj-chat-subtitle">' + esc(tr.contactUs || 'The team can also help') + '</span></div></div><div id="wj-chat-header-right"><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div id="wj-chat-menu"><button class="wj-menu-item" id="wj-menu-clear"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Clear chat</button><button class="wj-menu-item" id="wj-menu-download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download transcript</button></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div></div><div id="wj-chat-msgs"><div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div></div><div id="wj-chat-input"><div id="wj-emoji-picker">' + emojiHtml + '</div><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div><div id="wj-chat-powered">' + poweredHtml + '</div>';
 
     pop.appendChild(homeView);
     pop.appendChild(chatView);
