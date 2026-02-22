@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
     var textMain = dark ? '#fff' : '#0f172a';
     var textSub = dark ? 'rgba(255,255,255,0.6)' : '#64748b';
     var logoUrl = 'https://jqvcafbrccpmygiihyry.supabase.co/storage/v1/object/public/brand-assets/widjet-logo-navbar.png';
-    var poweredHtml = 'Powered by <img src="' + logoUrl + '" alt="Widjet"/>';
+    var poweredHtml = '<a href="https://getwidjet.com" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:4px;color:inherit;text-decoration:none;">Powered by <img src="' + logoUrl + '" alt="Widjet"/></a>';
 
 
     // Detect if running inside an iframe (Wix Embed element)
