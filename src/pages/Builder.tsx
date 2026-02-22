@@ -295,19 +295,12 @@ const Builder = () => {
       <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
         <div className="shrink-0 bg-[#fafafa] px-4 pt-3 pb-2 space-y-3">
-          <div className="group flex items-center justify-between">
+          <div className="flex items-center">
             <button
               onClick={() => window.location.reload()}
               className="flex items-center"
             >
               <img src={widjetLogoNavbar} className="h-8 w-auto -ml-2.5" alt="Widjet logo" />
-            </button>
-            <button
-              onClick={() => setIsSidebarCollapsed(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02] opacity-0 group-hover:opacity-100"
-              title="Chiudi sidebar"
-            >
-              <ChevronsLeft className="h-5 w-5 text-muted-foreground" />
             </button>
           </div>
           {/* Workspace selector */}
