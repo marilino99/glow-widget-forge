@@ -47,6 +47,7 @@ interface WidgetPreviewPanelProps {
   showBranding?: boolean;
   widgetPosition?: "left" | "right";
   widgetType?: "popup" | "bottom-bar";
+  minimal?: boolean;
 }
 
 // Check if a color is a hex value
@@ -210,6 +211,7 @@ const WidgetPreviewPanel = ({
   showBranding = true,
   widgetPosition = "right",
   widgetType = "popup",
+  minimal = false,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -685,10 +687,11 @@ const WidgetPreviewPanel = ({
       ? `linear-gradient(to bottom, ${lightenHex(actualHexColor, 85)}, white, ${lightenHex(actualHexColor, 90)})`
       : `linear-gradient(to bottom right, ${actualHexColor}, #0f172a)`
   } : {};
-  return <div className="flex h-full flex-col bg-muted/50 p-6">
+  return <div className={`flex h-full flex-col ${minimal ? '' : 'bg-muted/50 p-6'}`}>
       {/* Browser mockup */}
-      <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
+      <div className={`flex flex-1 flex-col overflow-hidden ${minimal ? '' : 'rounded-2xl border border-border bg-card shadow-xl'}`}>
         {/* Browser header */}
+        {!minimal && (
         <div className="flex items-center border-b border-border bg-muted/50 px-4 py-3">
           {/* Traffic lights */}
           <div className="flex items-center gap-1.5">
@@ -735,6 +738,7 @@ const WidgetPreviewPanel = ({
             </div>
           </div>
         </div>
+        )}
 
         {/* Preview content area */}
         <div className="relative flex-1 overflow-hidden bg-muted/30">

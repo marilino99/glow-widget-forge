@@ -589,6 +589,7 @@ const Builder = () => {
                 showBranding={config.showBranding}
                 widgetPosition={config.widgetPosition}
                 widgetType={config.widgetType}
+                minimal
               />
             </div>
           </div>
