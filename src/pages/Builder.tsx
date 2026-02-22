@@ -582,6 +582,10 @@ const Builder = () => {
                   onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
                   sayHello={config.sayHello}
                   onSayHelloChange={(sayHello) => updateConfig({ sayHello })}
+                  selectedAvatar={config.selectedAvatar}
+                  onSelectAvatar={(avatar) => updateConfig({ selectedAvatar: avatar })}
+                  offerHelp={config.offerHelp}
+                  onOfferHelpChange={(help) => updateConfig({ offerHelp: help })}
                   onSave={() => saveConfig({})}
                   activeTab={appearanceTab}
                 />
