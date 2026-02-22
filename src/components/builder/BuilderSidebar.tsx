@@ -149,6 +149,8 @@ interface BuilderSidebarProps {
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
+  builderView: "home" | "editor";
+  onBuilderViewChange: (view: "home" | "editor") => void;
 }
 
 const BuilderSidebar = ({ 
@@ -237,6 +239,8 @@ const BuilderSidebar = ({
   onWidgetTypeChange,
   initialGoogleReviewsEnabled,
   initialHasGoogleBusiness,
+  builderView,
+  onBuilderViewChange,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -327,6 +331,7 @@ const BuilderSidebar = ({
       setShowTemplatesPanel(true);
     }
     onPanelOpenChange?.(true);
+    onBuilderViewChange("editor");
     onSelectWidget(widgetType);
   };
 
@@ -652,7 +657,8 @@ const BuilderSidebar = ({
             <SidebarItem
               icon={Home}
               label="Home"
-              active={true}
+              active={builderView === "home"}
+              onClick={() => onBuilderViewChange("home")}
             />
             <SidebarItem
               icon={MessageCircle}
