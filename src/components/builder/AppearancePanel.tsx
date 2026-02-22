@@ -132,7 +132,7 @@ const AppearancePanel = ({
       </div>
 
       {/* Footer with Save */}
-      <div className="shrink-0 border-t border-border px-8 py-4 flex justify-end">
+      <div className="shrink-0 px-8 py-4 flex justify-end">
         <Button onClick={onSave} className="rounded-xl px-8">
           Save
         </Button>
