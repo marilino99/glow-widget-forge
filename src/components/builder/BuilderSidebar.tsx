@@ -642,7 +642,7 @@ const BuilderSidebar = ({
   const userInitial = userEmail?.charAt(0).toUpperCase() || "U";
 
   return (
-    <div className="flex h-full flex-col bg-gradient-to-br from-[hsl(260,30%,97%)] to-[hsl(270,40%,94%)]">
+    <div className="flex h-full flex-col bg-[#fafafa]">
       <div className="flex-1 overflow-hidden px-4 py-3">
         <h1 className="mb-4 text-lg font-semibold text-foreground">Widget content</h1>
 
