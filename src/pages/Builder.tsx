@@ -488,6 +488,7 @@ const Builder = () => {
         <OnboardingTestStep
           onNext={handleTestStepNext}
           onBack={handleTestStepBack}
+          widgetId={config.id || undefined}
         />
       )}
     </div>

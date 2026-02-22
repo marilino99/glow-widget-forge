@@ -1,10 +1,13 @@
-import { Copy, MoreVertical } from "lucide-react";
+import { useState } from "react";
+import { Copy, Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface OnboardingTestStepProps {
   onNext: () => void;
   onBack: () => void;
   totalSteps?: number;
   currentStep?: number;
+  widgetId?: string;
 }
 
 const OnboardingTestStep = ({
@@ -12,7 +15,25 @@ const OnboardingTestStep = ({
   onBack,
   totalSteps = 4,
   currentStep = 4,
+  widgetId,
 }: OnboardingTestStepProps) => {
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
+
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
+
+  const embedCode = widgetId
+    ? `<script async src="${widgetLoaderUrl}" data-id="${widgetId}"></script>`
+    : `<!-- Widget ID not yet available -->`;
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(embedCode);
+    setCopied(true);
+    toast({ title: "Copied!", description: "Code copied to clipboard." });
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const exampleQuestions = [
     "What sizes are available for rings?",
     "How can I track my order?",
@@ -57,120 +78,60 @@ const OnboardingTestStep = ({
         })}
       </div>
 
-      {/* Content: two columns */}
-      <div className="flex flex-1 overflow-hidden px-10 gap-6">
-        {/* Left: Chat preview */}
-        <div className="flex-1 flex flex-col max-w-[580px]">
-          <div className="rounded-2xl bg-white border border-[#eaedf5] shadow-sm flex-1 flex flex-col overflow-hidden">
-            {/* Chat header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#eaedf5]">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4361ee] text-white text-sm font-bold">
-                  A
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1a1a2e]">AI Agent</p>
-                  <p className="text-xs text-[#8a8fa8]">Active now</p>
-                </div>
-              </div>
-              <button className="text-[#b0b4c8]">
-                <MoreVertical className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Chat body */}
-            <div className="flex-1 flex flex-col justify-between p-5 overflow-y-auto">
-              <div>
-                {/* Today label */}
-                <div className="flex justify-center mb-4">
-                  <span className="rounded-full border border-[#e0e3ef] px-4 py-1 text-xs text-[#8a8fa8]">
-                    Today
-                  </span>
-                </div>
-
-                {/* Bot message */}
-                <div className="flex items-end gap-2 mb-2">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#4361ee] text-white text-[10px] font-bold">
-                    A
-                  </div>
-                  <div className="rounded-2xl rounded-bl-md bg-[#f0f2f5] px-4 py-3 max-w-[320px]">
-                    <p className="text-sm text-[#1a1a2e] leading-relaxed">
-                      Welcome! 👋{"\n"}I'm AI Agent's AI Agent, here to assist with any questions you have. How can I help you today?
-                    </p>
-                  </div>
-                </div>
-                <p className="text-[10px] text-[#b0b4c8] ml-9 mb-6">Just now</p>
-              </div>
-
-              {/* Suggested questions */}
-              <div className="flex flex-col items-end gap-2 mt-auto">
-                <button
-                  className="rounded-full border px-4 py-2 text-xs font-medium"
-                  style={{ borderColor: "#4361ee", color: "#4361ee" }}
-                >
-                  What are your payment methods?
-                </button>
-                <button
-                  className="rounded-full border px-4 py-2 text-xs font-medium"
-                  style={{ borderColor: "#4361ee", color: "#4361ee" }}
-                >
-                  How do I request a return?
-                </button>
-                <button
-                  className="rounded-full border px-4 py-2 text-xs font-medium"
-                  style={{ borderColor: "#4361ee", color: "#4361ee" }}
-                >
-                  I have another question
-                </button>
-              </div>
-            </div>
-
-            {/* Powered by */}
-            <div className="flex items-center justify-center gap-1 py-2 text-[10px] text-[#b0b4c8]">
-              Powered by Widjet
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Instructions + examples */}
-        <div className="flex-1 flex flex-col justify-center pl-6">
-          <h1 className="text-3xl font-bold text-[#1a1a2e] mb-4">
-            Test Before Going Live
-          </h1>
-          <p className="text-[#8a8fa8] text-base leading-relaxed mb-10 max-w-md">
-            Test your AI agent to make sure it works perfectly. Once ready press the next button to finalize the launch and go live.
-          </p>
-
-          <p className="text-sm font-medium text-[#1a1a2e] mb-4">
-            Try the examples below:
-          </p>
-
-          <div className="space-y-3 max-w-md">
-            {exampleQuestions.map((q, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between rounded-xl border border-[#e0e3ef] bg-white px-5 py-3.5"
-              >
-                <span className="text-sm text-[#1a1a2e]">{q}</span>
-                <button className="text-[#b0b4c8] hover:text-[#6a6f88] ml-3 shrink-0">
-                  <Copy className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
+      {/* Content */}
+      <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto px-6">
+        <div className="max-w-xl w-full space-y-8">
+          {/* Title */}
+          <div>
+            <h1 className="text-3xl font-bold text-[#1a1a2e] mb-3">
+              🎉 Your AI Agent is ready!
+            </h1>
+            <p className="text-[#8a8fa8] text-base leading-relaxed">
+              Test your AI Agent to make sure it works perfectly. When you're satisfied, copy the code below and paste it before the closing{" "}
+              <code className="text-[#4361ee] font-mono">&lt;/body&gt;</code> tag on your website to activate it.
+            </p>
           </div>
 
-          {/* Decorative arrow */}
-          <div className="mt-6 flex items-center gap-1 text-[#4361ee] opacity-40">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 5l-7 7 7 7" />
-            </svg>
-            <span className="text-2xl tracking-widest">••••</span>
+          {/* Code snippet */}
+          <div className="rounded-2xl border border-[#e0e3ef] bg-[#fafbff] px-6 py-5 flex items-start justify-between gap-4">
+            <pre className="text-sm text-[#1a1a2e] font-mono whitespace-pre-wrap break-all leading-relaxed flex-1">
+              {embedCode}
+            </pre>
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-2 rounded-lg border border-[#e0e3ef] bg-white px-4 py-2 text-sm font-medium text-[#1a1a2e] hover:bg-[#f8f9fc] transition-colors shrink-0"
+            >
+              {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+
+          {/* Example questions */}
+          <div className="space-y-4">
+            <p className="text-[#8a8fa8] text-base">
+              Go ahead, test your AI agent now. Try the examples below:
+            </p>
+
+            <div className="flex flex-col items-center gap-3">
+              {exampleQuestions.map((q, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 rounded-full border border-[#e0e3ef] bg-[#fafbff] px-6 py-3"
+                  style={{ marginLeft: `${i * 40}px` }}
+                >
+                  <span className="text-sm text-[#1a1a2e]">{q}</span>
+                  <button className="text-[#b0b4c8] hover:text-[#6a6f88] shrink-0">
+                    <Copy className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom bar */}
-      <div className="flex items-center justify-end gap-3 px-10 py-6 shrink-0">
+      <div className="flex items-center justify-center gap-3 px-10 py-6 shrink-0">
         <button
           onClick={onBack}
           className="rounded-xl border border-[#e0e3ef] bg-white px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc]"
