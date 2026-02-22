@@ -349,106 +349,93 @@ const ConversationsPanel = () => {
         )}
       </div>
 
-      {/* Column 4: Details panel */}
-      {selectedConversation && (
-        <div className="flex w-72 shrink-0 flex-col border-l border-border bg-background">
-          {/* Tabs */}
-          <div className="flex border-b border-border">
-            <button
-              onClick={() => setDetailsTab("details")}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                detailsTab === "details"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Details
-            </button>
-            <button
-              onClick={() => setDetailsTab("activity")}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                detailsTab === "activity"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Customer Activity
-            </button>
-          </div>
+      {/* Column 4: Details panel - always visible */}
+      <div className="flex w-72 shrink-0 flex-col border-l border-border bg-background">
+        {/* Tabs */}
+        <div className="flex border-b border-border">
+          <button
+            onClick={() => setDetailsTab("details")}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              detailsTab === "details"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Details
+          </button>
+          <button
+            onClick={() => setDetailsTab("activity")}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              detailsTab === "activity"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Customer Activity
+          </button>
+        </div>
 
-          <ScrollArea className="flex-1">
-            {detailsTab === "details" ? (
-              <div className="p-5 space-y-5">
-                {/* Status */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Status</span>
-                  <span className="text-sm text-foreground">Active</span>
-                </div>
-
-                {/* Assignee */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Assignee</span>
-                  <span className="text-sm text-foreground">—</span>
-                </div>
-
-                {/* ID */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">ID</span>
-                  <span className="text-xs text-muted-foreground font-mono truncate max-w-[140px]">
-                    {selectedConversation.id.slice(0, 18)}...
-                  </span>
-                </div>
-
-                {/* Channel */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Channel</span>
-                  <div className="flex items-center gap-1.5">
-                    <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-sm text-foreground">Web Chat</span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-border" />
-
-                {/* AI overview */}
-                <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
-                  <span>AI overview</span>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </button>
-
-                <div className="border-t border-border" />
-
-                {/* Customer info */}
-                <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
-                  <span>Customer info</span>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </button>
-
-                <div className="border-t border-border" />
-
-                {/* Extra info */}
-                <div className="space-y-3 pt-1">
+        <ScrollArea className="flex-1">
+          {detailsTab === "details" ? (
+            <div className="p-5 space-y-5">
+              {selectedConversation ? (
+                <>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Created</span>
-                    <span className="text-xs text-foreground">
-                      {format(new Date(selectedConversation.created_at), "MMM d, yyyy")}
+                    <span className="text-sm text-muted-foreground">Status</span>
+                    <span className="text-sm text-foreground">Active</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Assignee</span>
+                    <span className="text-sm text-foreground">—</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">ID</span>
+                    <span className="text-xs text-muted-foreground font-mono truncate max-w-[140px]">
+                      {selectedConversation.id.slice(0, 18)}...
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Messages</span>
-                    <span className="text-xs text-foreground">{messages.length}</span>
+                    <span className="text-sm text-muted-foreground">Channel</span>
+                    <div className="flex items-center gap-1.5">
+                      <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-sm text-foreground">Web Chat</span>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center p-8 text-center">
-                <p className="text-sm text-muted-foreground">No activity recorded</p>
-              </div>
-            )}
-          </ScrollArea>
-        </div>
-      )}
+                  <div className="border-t border-border" />
+                  <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
+                    <span>AI overview</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                  <div className="border-t border-border" />
+                  <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
+                    <span>Customer info</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                  <div className="border-t border-border" />
+                  <div className="space-y-3 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Created</span>
+                      <span className="text-xs text-foreground">
+                        {format(new Date(selectedConversation.created_at), "MMM d, yyyy")}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Messages</span>
+                      <span className="text-xs text-foreground">{messages.length}</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center">Select a conversation</p>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-8 text-center">
+              <p className="text-sm text-muted-foreground">No activity recorded</p>
+            </div>
+          )}
+        </ScrollArea>
+      </div>
     </div>
   );
 };
