@@ -7,11 +7,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Send,
   MessageCircle,
-  User,
   Search,
   Globe,
-  ChevronRight,
   Loader2,
+  MoreVertical,
+  SlidersHorizontal,
+  ChevronRight,
+  CheckSquare,
+  Hand,
+  Inbox,
+  Trash2,
+  Users,
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { enUS } from "date-fns/locale";
@@ -34,6 +40,15 @@ interface ChatMessage {
   created_at: string;
 }
 
+type FilterType = "all" | "assign_to_me" | "unassigned" | "resolved" | "deleted";
+
+const FILTER_ITEMS: { key: FilterType; label: string; icon: React.ReactNode; color: string }[] = [
+  { key: "assign_to_me", label: "Assign to me", icon: <Inbox className="h-4 w-4" />, color: "text-blue-500" },
+  { key: "unassigned", label: "Unassigned", icon: <Hand className="h-4 w-4" />, color: "text-yellow-500" },
+  { key: "resolved", label: "Resolved", icon: <CheckSquare className="h-4 w-4" />, color: "text-green-500" },
+  { key: "all", label: "All conversations", icon: <Users className="h-4 w-4" />, color: "text-blue-600" },
+];
+
 const ConversationsPanel = () => {
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -42,92 +57,48 @@ const ConversationsPanel = () => {
   const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showDetails, setShowDetails] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [detailsTab, setDetailsTab] = useState<"details" | "activity">("details");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Fetch conversations
   useEffect(() => {
     if (!user) return;
-
     const fetchConversations = async () => {
       const { data, error } = await supabase
         .from("conversations")
         .select("*")
         .eq("widget_owner_id", user.id)
         .order("last_message_at", { ascending: false });
-
-      if (!error && data) {
-        setConversations(data);
-      }
+      if (!error && data) setConversations(data);
       setLoading(false);
     };
-
     fetchConversations();
-
     const channel = supabase
       .channel("conversations-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "conversations",
-          filter: `widget_owner_id=eq.${user.id}`,
-        },
-        () => {
-          fetchConversations();
-        }
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations", filter: `widget_owner_id=eq.${user.id}` }, () => fetchConversations())
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
-  // Fetch messages for selected conversation
   useEffect(() => {
     if (!selectedConversation) return;
-
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from("chat_messages")
         .select("*")
         .eq("conversation_id", selectedConversation.id)
         .order("created_at", { ascending: true });
-
-      if (!error && data) {
-        setMessages(data as ChatMessage[]);
-      }
+      if (!error && data) setMessages(data as ChatMessage[]);
     };
-
     fetchMessages();
-
-    supabase
-      .from("conversations")
-      .update({ unread_count: 0 })
-      .eq("id", selectedConversation.id)
-      .then();
-
+    supabase.from("conversations").update({ unread_count: 0 }).eq("id", selectedConversation.id).then();
     const channel = supabase
       .channel(`messages-${selectedConversation.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "chat_messages",
-          filter: `conversation_id=eq.${selectedConversation.id}`,
-        },
-        (payload) => {
-          setMessages((prev) => [...prev, payload.new as ChatMessage]);
-        }
-      )
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages", filter: `conversation_id=eq.${selectedConversation.id}` }, (payload) => {
+        setMessages((prev) => [...prev, payload.new as ChatMessage]);
+      })
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [selectedConversation]);
 
   useEffect(() => {
@@ -136,15 +107,10 @@ const ConversationsPanel = () => {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation) return;
-
     const messageContent = newMessage.trim();
     setNewMessage("");
-
     await supabase.functions.invoke("send-owner-message", {
-      body: {
-        conversationId: selectedConversation.id,
-        message: messageContent,
-      },
+      body: { conversationId: selectedConversation.id, message: messageContent },
     });
   };
 
@@ -154,7 +120,13 @@ const ConversationsPanel = () => {
       conv.last_message?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalConversations = conversations.length;
+  const filterCounts: Record<FilterType, number> = {
+    all: conversations.length,
+    assign_to_me: 0,
+    unassigned: 0,
+    resolved: 0,
+    deleted: 0,
+  };
 
   if (loading) {
     return (
@@ -164,82 +136,113 @@ const ConversationsPanel = () => {
     );
   }
 
+  const getAvatarColor = (name: string) => {
+    const colors = [
+      "from-purple-500 to-violet-600",
+      "from-blue-500 to-cyan-600",
+      "from-green-500 to-emerald-600",
+      "from-orange-500 to-red-600",
+      "from-pink-500 to-rose-600",
+    ];
+    const idx = (name || "V").charCodeAt(0) % colors.length;
+    return colors[idx];
+  };
+
   return (
-    <div className="flex flex-1 overflow-hidden bg-[#fafafa]">
-      {/* Conversation list */}
-      <div className="flex w-80 shrink-0 flex-col border-r border-border bg-background">
-        {/* Header */}
+    <div className="flex flex-1 overflow-hidden bg-background">
+      {/* Column 1: Filter sidebar */}
+      <div className="flex w-52 shrink-0 flex-col border-r border-border bg-background">
+        <div className="px-5 py-4">
+          <h2 className="text-base font-semibold text-foreground">Conversations</h2>
+        </div>
+        <div className="flex-1 px-2 space-y-0.5">
+          {FILTER_ITEMS.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setActiveFilter(item.key)}
+              className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+                activeFilter === item.key
+                  ? "bg-blue-50 text-blue-700 font-medium"
+                  : "text-muted-foreground hover:bg-muted/50"
+              }`}
+            >
+              <span className={activeFilter === item.key ? "text-blue-600" : item.color}>{item.icon}</span>
+              <span className="flex-1 text-left">{item.label}</span>
+              <span className="text-xs text-muted-foreground">{filterCounts[item.key]}</span>
+            </button>
+          ))}
+        </div>
+        <div className="px-2 pb-4">
+          <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted/50 transition-colors">
+            <Trash2 className="h-4 w-4 text-muted-foreground" />
+            <span>Deleted</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Column 2: Conversation list */}
+      <div className="flex w-72 shrink-0 flex-col border-r border-border bg-background">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
-            <MessageCircle className="h-4 w-4" style={{ color: "#5b5b65" }} />
-            <span className="text-sm font-semibold" style={{ color: "#1c1c1d" }}>
-              All conversations
-            </span>
+            <MessageCircle className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-semibold text-foreground">All conversations</span>
           </div>
-          <span
-            className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium"
-            style={{ color: "#5b5b65" }}
-          >
-            {totalConversations}
-          </span>
+          <button className="rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
+            <MoreVertical className="h-4 w-4" />
+          </button>
         </div>
-
-        {/* Search */}
-        <div className="px-3 py-2">
-          <div className="relative">
+        <div className="flex items-center gap-2 px-3 py-2">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 pl-9 text-sm rounded-lg"
+              className="h-8 pl-9 text-sm rounded-lg border-border"
             />
           </div>
+          <button className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-muted/50 transition-colors">
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+          </button>
         </div>
-
-        {/* Conversations */}
         <ScrollArea className="flex-1">
           {filteredConversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <MessageCircle className="h-10 w-10 text-muted-foreground/30" />
               <p className="mt-3 text-sm text-muted-foreground">No conversations</p>
-              <p className="text-xs text-muted-foreground">Messages will appear here</p>
             </div>
           ) : (
             <div className="space-y-0.5 p-1.5">
               {filteredConversations.map((conv) => (
                 <button
                   key={conv.id}
-                  onClick={() => {
-                    setSelectedConversation(conv);
-                    setShowDetails(false);
-                  }}
-                  className={`flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
+                  onClick={() => setSelectedConversation(conv)}
+                  className={`flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
                     selectedConversation?.id === conv.id
-                      ? "bg-[#f0f0f0]"
-                      : "hover:bg-[#f8f8f8]"
+                      ? "bg-blue-50"
+                      : "hover:bg-muted/50"
                   }`}
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarColor(conv.visitor_name || "V")}`}>
                     <span className="text-xs font-semibold text-white">
                       {(conv.visitor_name || "V").charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium" style={{ color: "#1c1c1d" }}>
+                      <span className="text-sm font-medium text-foreground truncate">
                         {conv.visitor_name || "Visitor"}
                       </span>
-                      <span className="text-[11px] text-muted-foreground">
-                        {formatDistanceToNow(new Date(conv.last_message_at), {
-                          addSuffix: false,
-                          locale: enUS,
-                        })}
+                      <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
+                        {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
                       </span>
                     </div>
-                    <p className="truncate text-xs text-muted-foreground mt-0.5">
-                      {conv.last_message || "New conversation"}
-                    </p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <MessageCircle className="h-3 w-3 text-muted-foreground shrink-0" />
+                      <p className="truncate text-xs text-muted-foreground">
+                        {conv.last_message || "New conversation"}
+                      </p>
+                    </div>
                   </div>
                   {conv.unread_count > 0 && (
                     <span className="mt-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
@@ -253,180 +256,86 @@ const ConversationsPanel = () => {
         </ScrollArea>
       </div>
 
-      {/* Chat area */}
+      {/* Column 3: Chat area */}
       <div className="flex flex-1 flex-col bg-background">
         {selectedConversation ? (
           <>
-            {/* Chat header */}
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                  <span className="text-xs font-semibold text-white">
-                    {(selectedConversation.visitor_name || "V").charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold" style={{ color: "#1c1c1d" }}>
-                    {selectedConversation.visitor_name || "Visitor"}
-                  </h3>
-                  <p className="text-[11px] text-muted-foreground">
-                    Started{" "}
-                    {format(new Date(selectedConversation.created_at), "MMM d, h:mm a")}
-                  </p>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowDetails(!showDetails)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Details
-                <ChevronRight className={`ml-1 h-4 w-4 transition-transform ${showDetails ? "rotate-180" : ""}`} />
-              </Button>
+              <h3 className="text-sm font-semibold text-foreground">
+                {selectedConversation.visitor_name || "Visitor"}
+              </h3>
+              <button className="rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
+                <MoreVertical className="h-4 w-4" />
+              </button>
             </div>
-
-            {/* Messages + Details split */}
-            <div className="flex flex-1 overflow-hidden">
-              {/* Messages */}
-              <div className="flex flex-1 flex-col">
-                <ScrollArea className="flex-1 px-5 py-4">
-                  <div className="space-y-3">
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`flex ${message.sender_type === "owner" ? "justify-end" : "justify-start"}`}
-                      >
+            <ScrollArea className="flex-1 px-5 py-4">
+              <div className="space-y-4">
+                {messages.map((message, idx) => {
+                  const showDate = idx === 0 || format(new Date(message.created_at), "yyyy-MM-dd") !== format(new Date(messages[idx - 1].created_at), "yyyy-MM-dd");
+                  return (
+                    <div key={message.id}>
+                      {showDate && (
+                        <div className="flex justify-center my-3">
+                          <span className="text-xs text-muted-foreground">
+                            {format(new Date(message.created_at), "MMM d, h:mm a")}
+                          </span>
+                        </div>
+                      )}
+                      <div className={`flex items-end gap-2 ${message.sender_type === "owner" ? "justify-end" : "justify-start"}`}>
+                        {message.sender_type === "visitor" && (
+                          <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarColor(selectedConversation.visitor_name || "V")}`}>
+                            <span className="text-[10px] font-semibold text-white">
+                              {(selectedConversation.visitor_name || "V").charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
                         <div
-                          className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
+                          className={`max-w-[70%] rounded-2xl px-4 py-2.5 ${
                             message.sender_type === "owner"
-                              ? "rounded-tr-md bg-primary text-primary-foreground"
-                              : "rounded-tl-md bg-muted"
+                              ? "bg-blue-500 text-white rounded-br-md"
+                              : "bg-muted rounded-bl-md"
                           }`}
                         >
                           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                          <p
-                            className={`mt-1 text-[10px] ${
-                              message.sender_type === "owner"
-                                ? "text-primary-foreground/60"
-                                : "text-muted-foreground"
-                            }`}
-                          >
-                            {format(new Date(message.created_at), "h:mm a")}
-                          </p>
                         </div>
+                        {message.sender_type === "owner" && (
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500">
+                            <MessageCircle className="h-3.5 w-3.5 text-white" />
+                          </div>
+                        )}
                       </div>
-                    ))}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </ScrollArea>
-
-                {/* Input */}
-                <div className="border-t border-border px-5 py-3">
-                  <div className="flex items-center gap-2">
-                    <Input
-                      placeholder="Type a message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSendMessage();
-                        }
-                      }}
-                      className="flex-1 rounded-xl"
-                    />
-                    <Button
-                      onClick={handleSendMessage}
-                      disabled={!newMessage.trim()}
-                      size="icon"
-                      className="shrink-0 rounded-xl"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                      <p className={`text-[10px] text-muted-foreground mt-1 ${message.sender_type === "owner" ? "text-right mr-9" : "ml-9"}`}>
+                        {format(new Date(message.created_at), "h:mm a")}
+                      </p>
+                    </div>
+                  );
+                })}
+                <div ref={messagesEndRef} />
               </div>
-
-              {/* Details panel */}
-              {showDetails && (
-                <div className="w-72 shrink-0 border-l border-border bg-[#fafafa] overflow-y-auto">
-                  <div className="p-5 space-y-6">
-                    <h4 className="text-sm font-semibold" style={{ color: "#1c1c1d" }}>
-                      Details
-                    </h4>
-
-                    {/* Visitor info */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
-                          <span className="text-sm font-semibold text-white">
-                            {(selectedConversation.visitor_name || "V").charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium" style={{ color: "#1c1c1d" }}>
-                            {selectedConversation.visitor_name || "Visitor"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {selectedConversation.visitor_id.slice(0, 12)}...
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Status */}
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-                        Status
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-green-500" />
-                        <span className="text-sm text-foreground">Active</span>
-                      </div>
-                    </div>
-
-                    {/* Channel */}
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-                        Channel
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4" style={{ color: "#5b5b65" }} />
-                        <span className="text-sm text-foreground">Web Chat</span>
-                      </div>
-                    </div>
-
-                    {/* Conversation ID */}
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-                        ID
-                      </p>
-                      <p className="text-xs text-muted-foreground font-mono break-all">
-                        {selectedConversation.id}
-                      </p>
-                    </div>
-
-                    {/* Created */}
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-                        Created
-                      </p>
-                      <p className="text-sm text-foreground">
-                        {format(new Date(selectedConversation.created_at), "MMM d, yyyy h:mm a")}
-                      </p>
-                    </div>
-
-                    {/* Messages count */}
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-                        Messages
-                      </p>
-                      <p className="text-sm text-foreground">{messages.length}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+            </ScrollArea>
+            <div className="border-t border-border px-5 py-3">
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Type a message..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  className="flex-1 rounded-xl border-border"
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim()}
+                  size="icon"
+                  className="shrink-0 rounded-xl bg-blue-500 hover:bg-blue-600"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </>
         ) : (
@@ -434,15 +343,112 @@ const ConversationsPanel = () => {
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
               <MessageCircle className="h-8 w-8 text-muted-foreground/50" />
             </div>
-            <h2 className="mt-4 text-lg font-semibold" style={{ color: "#1c1c1d" }}>
-              Select a conversation
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Choose from the list to view messages
-            </p>
+            <h2 className="mt-4 text-lg font-semibold text-foreground">Select a conversation</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Choose from the list to view messages</p>
           </div>
         )}
       </div>
+
+      {/* Column 4: Details panel */}
+      {selectedConversation && (
+        <div className="flex w-72 shrink-0 flex-col border-l border-border bg-background">
+          {/* Tabs */}
+          <div className="flex border-b border-border">
+            <button
+              onClick={() => setDetailsTab("details")}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                detailsTab === "details"
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Details
+            </button>
+            <button
+              onClick={() => setDetailsTab("activity")}
+              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                detailsTab === "activity"
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Customer Activity
+            </button>
+          </div>
+
+          <ScrollArea className="flex-1">
+            {detailsTab === "details" ? (
+              <div className="p-5 space-y-5">
+                {/* Status */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Status</span>
+                  <span className="text-sm text-foreground">Active</span>
+                </div>
+
+                {/* Assignee */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Assignee</span>
+                  <span className="text-sm text-foreground">—</span>
+                </div>
+
+                {/* ID */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">ID</span>
+                  <span className="text-xs text-muted-foreground font-mono truncate max-w-[140px]">
+                    {selectedConversation.id.slice(0, 18)}...
+                  </span>
+                </div>
+
+                {/* Channel */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Channel</span>
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-sm text-foreground">Web Chat</span>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-border" />
+
+                {/* AI overview */}
+                <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
+                  <span>AI overview</span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </button>
+
+                <div className="border-t border-border" />
+
+                {/* Customer info */}
+                <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
+                  <span>Customer info</span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </button>
+
+                <div className="border-t border-border" />
+
+                {/* Extra info */}
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Created</span>
+                    <span className="text-xs text-foreground">
+                      {format(new Date(selectedConversation.created_at), "MMM d, yyyy")}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Messages</span>
+                    <span className="text-xs text-foreground">{messages.length}</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-8 text-center">
+                <p className="text-sm text-muted-foreground">No activity recorded</p>
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+      )}
     </div>
   );
 };
