@@ -149,8 +149,8 @@ interface BuilderSidebarProps {
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
-  builderView: "home" | "editor";
-  onBuilderViewChange: (view: "home" | "editor") => void;
+  builderView: "home" | "editor" | "conversations";
+  onBuilderViewChange: (view: "home" | "editor" | "conversations") => void;
 }
 
 const BuilderSidebar = ({ 
@@ -663,7 +663,8 @@ const BuilderSidebar = ({
             <SidebarItem
               icon={MessageCircle}
               label="Conversations"
-              onClick={() => navigate("/chats")}
+              active={builderView === "conversations"}
+              onClick={() => onBuilderViewChange("conversations")}
             />
             <SidebarItem
               icon={Phone}
