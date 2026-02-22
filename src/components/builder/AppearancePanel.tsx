@@ -36,19 +36,6 @@ const AppearancePanel = ({
       <div className="flex-1 overflow-y-auto px-8 py-8">
         {activeTab === "general" && (
           <div className="max-w-xl space-y-8">
-            {/* Name */}
-            <div>
-              <label className="mb-3 block text-sm font-medium text-foreground">Name</label>
-              <Input
-                value={contactName}
-                onChange={(e) => onContactNameChange(e.target.value)}
-                placeholder="AI Agent"
-                className="h-12 rounded-xl border-border bg-background text-sm"
-              />
-            </div>
-
-            <div className="border-t border-border" />
-
             {/* Logo */}
             <div>
               <label className="mb-3 block text-base font-semibold text-foreground">Logo</label>
@@ -106,6 +93,19 @@ const AppearancePanel = ({
                 onChange={(e) => onSayHelloChange(e.target.value)}
                 placeholder="Hello, nice to see you here 👋"
                 className="h-12 rounded-xl border-border bg-muted/50 text-sm"
+              />
+            </div>
+
+            <div className="border-t border-border" />
+
+            {/* Name */}
+            <div>
+              <label className="mb-3 block text-sm font-medium text-foreground">Name</label>
+              <Input
+                value={contactName}
+                onChange={(e) => onContactNameChange(e.target.value)}
+                placeholder="AI Agent"
+                className="h-12 rounded-xl border-border bg-background text-sm"
               />
             </div>
 
