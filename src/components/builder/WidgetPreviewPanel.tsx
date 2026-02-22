@@ -2378,7 +2378,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {showBranding && (
-                <div className="flex items-center justify-center gap-1 py-2 shrink-0">
+                <div className={`flex items-center justify-center gap-1 py-2 shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                   <span className={`text-[10px] ${isLight ? "text-slate-400" : "text-white/30"}`}>Powered by</span>
                   <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 w-auto -ml-1.5 ${isLight ? "opacity-40" : "opacity-30 invert"}`} />
                 </div>
