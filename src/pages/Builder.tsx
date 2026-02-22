@@ -15,8 +15,8 @@ import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
-import OnboardingSurveyDialog from "@/components/builder/OnboardingSurveyDialog";
 import OnboardingWebsiteStep from "@/components/builder/OnboardingWebsiteStep";
+import OnboardingTrainStep from "@/components/builder/OnboardingTrainStep";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -32,7 +32,7 @@ const Builder = () => {
 
   // Onboarding for first-time users
   const isNewUser = searchParams.get("onboarding") === "true";
-  const [showSurvey, setShowSurvey] = useState(false);
+  const [showTrainStep, setShowTrainStep] = useState(false);
   const [showWebsiteStep, setShowWebsiteStep] = useState(false);
   
 
@@ -200,29 +200,25 @@ const Builder = () => {
       }, { onConflict: "user_id" });
     }
     setShowWebsiteStep(false);
-    setShowSurvey(true);
+    setShowTrainStep(true);
   };
 
   const handleWebsiteStepSkip = () => {
     setShowWebsiteStep(false);
-    setShowSurvey(true);
+    setShowTrainStep(true);
   };
 
-  // Handle survey completion
-  const handleSurveyComplete = async (answers: { businessType: string; mainGoal: string; monthlyVisitors: string }) => {
-    setShowSurvey(false);
+  // Handle train step completion
+  const handleTrainStepNext = () => {
+    setShowTrainStep(false);
     // Remove onboarding param from URL
     searchParams.delete("onboarding");
     setSearchParams(searchParams, { replace: true });
-    if (user) {
-      const isSkipped = !answers.businessType && !answers.mainGoal && !answers.monthlyVisitors;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (supabase.from("user_activity_logs") as any).insert({
-        user_id: user.id,
-        event_type: isSkipped ? "survey_skipped" : "survey_completed",
-        metadata: answers,
-      });
-    }
+  };
+
+  const handleTrainStepBack = () => {
+    setShowTrainStep(false);
+    setShowWebsiteStep(true);
   };
 
 
@@ -446,11 +442,13 @@ const Builder = () => {
         />
       )}
 
-      {/* Onboarding survey for first-time users */}
-      <OnboardingSurveyDialog
-        open={showSurvey && !showWebsiteStep}
-        onComplete={handleSurveyComplete}
-      />
+      {/* Onboarding: train step (full-page) */}
+      {showTrainStep && (
+        <OnboardingTrainStep
+          onNext={handleTrainStepNext}
+          onBack={handleTrainStepBack}
+        />
+      )}
     </div>
   );
 };
