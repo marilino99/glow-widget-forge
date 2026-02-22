@@ -741,7 +741,7 @@ const WidgetPreviewPanel = ({
         )}
 
         {/* Preview content area */}
-        <div className="relative flex-1 overflow-hidden bg-muted/30">
+        <div className="relative flex-1 overflow-hidden" style={{ backgroundColor: '#f2f3f4' }}>
           {isLoading ? (/* Loading state */
             <div className="flex h-full items-center justify-center">
               <div className="flex flex-col items-center gap-3">
