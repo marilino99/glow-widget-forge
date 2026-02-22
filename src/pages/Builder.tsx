@@ -310,18 +310,18 @@ const Builder = () => {
           {/* Workspace selector */}
           <Popover>
             <PopoverTrigger asChild>
-              <button className="flex w-[calc(100%+0.5rem)] items-center gap-3 rounded-xl border border-border bg-background -ml-2 pl-2 pr-3 py-1.5 text-left transition-colors hover:bg-[#f0f0f0]">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40">
+              <button className="flex w-[calc(100%+0.5rem)] items-center gap-3 rounded-xl border border-border bg-background -ml-2 pl-2 pr-3 py-1 text-left transition-colors hover:bg-[#f0f0f0]">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40">
                   {config?.logo ? (
-                    <img src={config.logo} alt="" className="h-6 w-6 rounded-full object-cover" />
+                    <img src={config.logo} alt="" className="h-4.5 w-4.5 rounded-full object-cover" />
                   ) : config?.websiteUrl ? (
                     <img
                       src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
                       alt=""
-                      className="h-6 w-6 rounded-full object-cover bg-muted"
+                      className="h-4.5 w-4.5 rounded-full object-cover bg-muted"
                     />
                   ) : (
-                    <div className="h-5 w-5 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                    <div className="h-4 w-4 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
                   )}
                 </div>
                 <span className="flex-1 truncate text-sm font-medium text-foreground">
