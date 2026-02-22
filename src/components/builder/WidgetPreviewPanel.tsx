@@ -1455,10 +1455,9 @@ const WidgetPreviewPanel = ({
 
                 {/* Powered by */}
                 {showBranding && (
-                <div className={`py-2 text-center`}>
-                  <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/50"}`}>
-                     Powered by <span className="font-medium">Widjet</span>
-                  </span>
+                <div className="flex items-center justify-center gap-1 py-2">
+                  <span className="text-[10px] text-slate-300">Powered by</span>
+                  <img src={widjetLogoNavbar} alt="Widjet" className="h-4 w-auto opacity-40 -ml-1.5" />
                 </div>
                 )}
               </div>) : showContactPage ? (/* Contact Page View */
@@ -1539,10 +1538,9 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {showBranding && (
-                <div className={`py-2 text-center shrink-0`}>
-                  <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                     Powered by <span className="font-medium">Widjet</span>
-                  </span>
+                <div className="flex items-center justify-center gap-1 py-2 shrink-0">
+                  <span className="text-[10px] text-slate-300">Powered by</span>
+                  <img src={widjetLogoNavbar} alt="Widjet" className="h-4 w-auto opacity-40 -ml-1.5" />
                 </div>
                 )}
               </div>) : showShareFeedback ? (/* Share Feedback Form View */
@@ -1777,10 +1775,9 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {showBranding && (
-                <div className={`py-2 text-center shrink-0`}>
-                  <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                     Powered by <span className="font-medium">Widjet</span>
-                  </span>
+                <div className="flex items-center justify-center gap-1 py-2 shrink-0">
+                  <span className="text-[10px] text-slate-300">Powered by</span>
+                  <img src={widjetLogoNavbar} alt="Widjet" className="h-4 w-auto opacity-40 -ml-1.5" />
                 </div>
                 )}
               </div>) : showReportBug ? (/* Report Bug Form View */
@@ -2026,10 +2023,9 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {showBranding && (
-                <div className={`py-2 text-center shrink-0`}>
-                  <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                     Powered by <span className="font-medium">Widjet</span>
-                  </span>
+                <div className="flex items-center justify-center gap-1 py-2 shrink-0">
+                  <span className="text-[10px] text-slate-300">Powered by</span>
+                  <img src={widjetLogoNavbar} alt="Widjet" className="h-4 w-auto opacity-40 -ml-1.5" />
                 </div>
                 )}
               </div>) : (/* Home View */
@@ -2382,10 +2378,9 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {showBranding && (
-                <div className={`py-2 text-center shrink-0 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                  <span className={`text-xs ${isLight ? "text-slate-900" : widgetSubtext}`}>
-                    Powered by <span className="font-medium">Widjet</span>
-                  </span>
+                <div className="flex items-center justify-center gap-1 py-2 shrink-0">
+                  <span className="text-[10px] text-slate-300">Powered by</span>
+                  <img src={widjetLogoNavbar} alt="Widjet" className="h-4 w-auto opacity-40 -ml-1.5" />
                 </div>
                 )}
               </div>)}
