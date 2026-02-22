@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ImageIcon } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 
 interface AppearancePanelProps {
   contactName: string;
@@ -10,6 +10,8 @@ interface AppearancePanelProps {
   onLogoChange: (logo: string | null) => void;
   widgetColor: string;
   onWidgetColorChange: (color: string) => void;
+  sayHello: string;
+  onSayHelloChange: (text: string) => void;
   onSave: () => void;
   activeTab: string;
 }
@@ -21,20 +23,12 @@ const AppearancePanel = ({
   onLogoChange,
   widgetColor,
   onWidgetColorChange,
+  sayHello,
+  onSayHelloChange,
   onSave,
   activeTab,
 }: AppearancePanelProps) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      onLogoChange(ev.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="flex h-full flex-col">
@@ -57,29 +51,62 @@ const AppearancePanel = ({
 
             {/* Logo */}
             <div>
-              <label className="mb-3 block text-sm font-medium text-foreground">Logo</label>
-              <div className="flex items-start gap-4">
-                {logo && (
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border bg-muted/30">
-                    <img src={logo} alt="Logo" className="h-full w-full object-cover" />
-                  </div>
-                )}
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex h-32 flex-1 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/20 transition-colors hover:border-primary/40 hover:bg-muted/40"
+              <label className="mb-3 block text-base font-semibold text-foreground">Logo</label>
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/30"
+                  onClick={() => !logo && logoInputRef.current?.click()}
                 >
-                  <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
-                  <span className="text-sm text-muted-foreground">Click to upload or drag and drop</span>
-                  <span className="text-xs text-muted-foreground/60">SVG, PNG, JPG or GIF (max. 1000x1000 px)</span>
-                </button>
+                  {logo ? (
+                    <img src={logo} alt="Logo" className="h-full w-full rounded-lg object-cover" />
+                  ) : (
+                    <ImagePlus className="h-6 w-6 text-muted-foreground" />
+                  )}
+                </div>
+                {logo ? (
+                  <Button variant="secondary" size="sm" onClick={() => onLogoChange(null)}>
+                    Remove
+                  </Button>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => logoInputRef.current?.click()}
+                    className="bg-foreground text-background hover:bg-foreground/90"
+                  >
+                    Upload
+                  </Button>
+                )}
                 <input
-                  ref={fileInputRef}
+                  ref={logoInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={handleLogoUpload}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => onLogoChange(reader.result as string);
+                      reader.readAsDataURL(file);
+                    }
+                  }}
                   className="hidden"
                 />
               </div>
+            </div>
+
+            <div className="border-t border-border" />
+
+            {/* Say hello */}
+            <div>
+              <label className="mb-3 block text-base font-semibold text-foreground">
+                Say hello <span className="text-destructive">*</span>
+              </label>
+              <Input
+                value={sayHello}
+                onChange={(e) => onSayHelloChange(e.target.value)}
+                placeholder="Hello, nice to see you here 👋"
+                className="h-12 rounded-xl border-border bg-muted/50 text-sm"
+              />
             </div>
 
             <div className="border-t border-border" />
@@ -93,12 +120,10 @@ const AppearancePanel = ({
                   onChange={(e) => onWidgetColorChange(e.target.value)}
                   className="h-12 w-36 rounded-xl border-border bg-background font-mono text-sm"
                 />
-                <div className="relative">
-                  <div
-                    className="h-8 w-8 cursor-pointer rounded-full border-2 border-background shadow-md"
-                    style={{ backgroundColor: widgetColor }}
-                  />
-                </div>
+                <div
+                  className="h-8 w-8 cursor-pointer rounded-full border-2 border-background shadow-md"
+                  style={{ backgroundColor: widgetColor }}
+                />
               </div>
             </div>
 
