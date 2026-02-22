@@ -227,8 +227,8 @@ Deno.serve(async (req) => {
       .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
       .wj-nav-item.inactive{color:\${textSub}}
       .wj-nav-item svg{width:20px;height:20px}
-      #wj-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};background:${bgMain}}
-      #wj-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
+      #wj-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};background:\${bgMain}}
+      #wj-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
       #wj-home-view{display:flex;flex-direction:column;flex:1;min-height:0}
       #wj-chat-view{display:none;flex-direction:column;flex:1;min-height:0;background:\${dark ? '#000' : '#fff'}}
       #wj-chat-view.open{display:flex}
@@ -264,8 +264,8 @@ Deno.serve(async (req) => {
       #wj-emoji-picker.open{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
       .wj-emoji{border:none;background:transparent;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:background .15s}
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
-      #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};border-top:1px solid ${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
-      #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
+      #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};border-top:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
     \` : \`
       #wj-root{position:fixed;bottom:20px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s,opacity .2s;background:\${color.bg};overflow:hidden}
@@ -350,8 +350,8 @@ Deno.serve(async (req) => {
       .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
       .wj-nav-item.inactive{color:\${textSub}}
       .wj-nav-item svg{width:20px;height:20px}
-      #wj-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};background:${bgMain}}
-      #wj-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
+      #wj-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};background:\${bgMain}}
+      #wj-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
       #wj-home-view{display:flex;flex-direction:column;flex:1;min-height:0}
       #wj-chat-view{display:none;flex-direction:column;flex:1;min-height:0;background:\${dark ? '#000' : '#fff'}}
       #wj-chat-view.open{display:flex}
@@ -394,8 +394,8 @@ Deno.serve(async (req) => {
       #wj-emoji-picker.open{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
       .wj-emoji{border:none;background:transparent;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:background .15s}
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
-      #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
-      #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
+      #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
+      #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
     \`;
     d.head.appendChild(style);
 
@@ -445,8 +445,8 @@ Deno.serve(async (req) => {
         #wj-bb-send:hover{background:\${dark ? '#52525b' : '#cbd5e1'}}
         #wj-bb-send.active{background:\${color.bg};color:#fff}
         #wj-bb-input-box button svg{width:16px;height:16px}
-        #wj-bb-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px;font-size:10px;color:${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
-        #wj-bb-powered img{height:16px;width:auto;margin-left:-6px;${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
+        #wj-bb-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
+        #wj-bb-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
         #wj-bb-collapsed{pointer-events:auto}
         #wj-bb-collapsed.hidden{display:none}
         @keyframes wj-bb-fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
