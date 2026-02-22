@@ -1063,10 +1063,8 @@ const WidgetPreviewPanel = ({
                       </div>
                     </div>
                     {/* Bottom controls */}
-                    <div className="flex items-center justify-between px-4 pb-3">
+                    <div className="flex items-center justify-end px-4 pb-3">
                       <div className="flex items-center gap-1.5">
-                        <Sparkle className="h-3.5 w-3.5" style={{ color: actualHexColor }} />
-                        <span className="text-xs text-slate-400">{contactName}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <button
