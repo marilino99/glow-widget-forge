@@ -26,12 +26,12 @@ const SidebarItem = ({
     <button
       onClick={onClick}
       className={`flex w-full items-center justify-between rounded-xl -ml-2 pl-2 pr-3 py-1.5 text-left transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02] ${
-        active ? "text-primary" : ""
+        active ? "bg-[#f0f0f0]" : ""
       }`}
     >
       <div className="flex items-center gap-3">
-        <Icon className="h-[18px] w-[18px]" style={{ color: active ? undefined : "#5b5b65" }} />
-        <span className={`text-sm ${active ? "text-primary font-medium" : ""}`} style={active ? undefined : { color: "#5b5b65" }}>{label}</span>
+        <Icon className="h-[18px] w-[18px]" style={{ color: active ? "#1c1c1d" : "#5b5b65" }} />
+        <span className={`text-sm ${active ? "font-medium" : ""}`} style={{ color: active ? "#1c1c1d" : "#5b5b65" }}>{label}</span>
         {badge && (
           <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide" style={{ backgroundColor: 'rgba(217, 70, 239, 0.12)', color: '#D946EF' }}>
             {badge}
