@@ -594,6 +594,14 @@ const Builder = () => {
                   onOfferHelpChange={(help) => updateConfig({ offerHelp: help })}
                   onSave={() => saveConfig({})}
                   activeTab={appearanceTab}
+                  whatsappEnabled={config.whatsappEnabled ?? false}
+                  onWhatsappToggle={(enabled) => saveConfig({ whatsappEnabled: enabled })}
+                  faqEnabled={config.faqEnabled}
+                  onFaqToggle={(enabled) => saveConfig({ faqEnabled: enabled })}
+                  reportBugsEnabled={reportBugsEnabled}
+                  onReportBugsChange={setReportBugsEnabled}
+                  shareFeedbackEnabled={shareFeedbackEnabled}
+                  onShareFeedbackChange={setShareFeedbackEnabled}
                 />
               </div>
               <div className="w-[420px] shrink-0 overflow-hidden border-l border-border bg-[#f8f8f8]">

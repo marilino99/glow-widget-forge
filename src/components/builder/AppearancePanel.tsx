@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const avatars = [
@@ -56,6 +57,15 @@ interface AppearancePanelProps {
   onSave: () => void;
   onCancel?: () => void;
   activeTab: string;
+  // Home screen toggles
+  whatsappEnabled: boolean;
+  onWhatsappToggle: (enabled: boolean) => void;
+  faqEnabled: boolean;
+  onFaqToggle: (enabled: boolean) => void;
+  reportBugsEnabled: boolean;
+  onReportBugsChange: (enabled: boolean) => void;
+  shareFeedbackEnabled: boolean;
+  onShareFeedbackChange: (enabled: boolean) => void;
 }
 
 const presetColors = [
@@ -92,6 +102,14 @@ const AppearancePanel = ({
   onSave,
   onCancel,
   activeTab,
+  whatsappEnabled,
+  onWhatsappToggle,
+  faqEnabled,
+  onFaqToggle,
+  reportBugsEnabled,
+  onReportBugsChange,
+  shareFeedbackEnabled,
+  onShareFeedbackChange,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -553,8 +571,80 @@ const AppearancePanel = ({
         )}
 
         {activeTab === "home-screen" && (
-          <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">
-            Home Screen settings coming soon
+          <div className="max-w-xs mx-auto space-y-1">
+            <p className="mb-3 text-xs text-muted-foreground">Toggle sections visible on the widget home screen.</p>
+
+            {/* WhatsApp */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <MessageCircle className="h-4 w-4 text-green-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">WhatsApp</p>
+                  <p className="text-[11px] text-muted-foreground">Quick contact button</p>
+                </div>
+              </div>
+              <Switch checked={whatsappEnabled} onCheckedChange={onWhatsappToggle} />
+            </div>
+
+            {/* FAQs */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <HelpCircle className="h-4 w-4 text-blue-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">FAQs</p>
+                  <p className="text-[11px] text-muted-foreground">Frequently asked questions</p>
+                </div>
+              </div>
+              <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+            </div>
+
+            {/* Custom Links */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <Link2 className="h-4 w-4 text-purple-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Custom Links</p>
+                  <p className="text-[11px] text-muted-foreground">External URL cards</p>
+                </div>
+              </div>
+              <div className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Sidebar</div>
+            </div>
+
+            {/* Product Carousel */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <ShoppingBag className="h-4 w-4 text-orange-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Product Carousel</p>
+                  <p className="text-[11px] text-muted-foreground">Showcase products</p>
+                </div>
+              </div>
+              <div className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Sidebar</div>
+            </div>
+
+            {/* Report Bugs */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <Bug className="h-4 w-4 text-red-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Report Bugs</p>
+                  <p className="text-[11px] text-muted-foreground">Let visitors report issues</p>
+                </div>
+              </div>
+              <Switch checked={reportBugsEnabled} onCheckedChange={onReportBugsChange} />
+            </div>
+
+            {/* Share Feedback */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <Star className="h-4 w-4 text-yellow-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Share Feedback</p>
+                  <p className="text-[11px] text-muted-foreground">Collect user feedback</p>
+                </div>
+              </div>
+              <Switch checked={shareFeedbackEnabled} onCheckedChange={onShareFeedbackChange} />
+            </div>
           </div>
         )}
 
