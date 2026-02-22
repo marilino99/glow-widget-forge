@@ -652,7 +652,7 @@ const BuilderSidebar = ({
       <div className="flex-1 overflow-hidden px-4 py-3">
         
         {/* Home */}
-        <div className="mb-4">
+        <div className="mb-4 -mt-1">
           <div className="space-y-0.5">
             <SidebarItem
               icon={Home}
