@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Minus, Home, MessageCircle, HelpCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 
 interface OnboardingBrandStepProps {
   onNext: () => void;
@@ -9,6 +11,23 @@ interface OnboardingBrandStepProps {
   extractedLogo?: string | null;
   extractedColor?: string | null;
 }
+
+// Color helpers (matching WidgetPreviewPanel)
+const isLightColor = (hex: string): boolean => {
+  const num = parseInt(hex.slice(1), 16);
+  const r = num >> 16;
+  const g = (num >> 8) & 0x00ff;
+  const b = num & 0x0000ff;
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5;
+};
+
+const darkenHex = (hex: string, percent: number = 10): string => {
+  const num = parseInt(hex.slice(1), 16);
+  const r = Math.max(0, (num >> 16) - Math.round(2.55 * percent));
+  const g = Math.max(0, ((num >> 8) & 0x00ff) - Math.round(2.55 * percent));
+  const b = Math.max(0, (num & 0x0000ff) - Math.round(2.55 * percent));
+  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+};
 
 const OnboardingBrandStep = ({
   onNext,
@@ -31,7 +50,6 @@ const OnboardingBrandStep = ({
   ]);
   const [logoPreview, setLogoPreview] = useState<string | null>(extractedLogo);
 
-  // Update when extracted branding arrives asynchronously
   useEffect(() => {
     if (extractedLogo && !logoPreview) setLogoPreview(extractedLogo);
   }, [extractedLogo]);
@@ -52,6 +70,10 @@ const OnboardingBrandStep = ({
   const removeSuggestion = (index: number) => {
     setSuggestions(suggestions.filter((_, i) => i !== index));
   };
+
+  // Widget preview derived values
+  const buttonTextColor = isLightColor(brandColor) ? "text-slate-900" : "text-white";
+  const darkerColor = darkenHex(brandColor, 15);
 
   return (
     <div
@@ -102,7 +124,6 @@ const OnboardingBrandStep = ({
 
           {/* Logo + Brand name row */}
           <div className="flex gap-8 mb-6">
-            {/* Logo upload */}
             <div>
               <p className="text-sm font-medium text-[#1a1a2e] mb-2">Logo</p>
               <label className="flex h-28 w-28 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-[#d4d8e8] bg-[#f8f9fc] overflow-hidden hover:border-[#7c3aed] transition-colors">
@@ -115,7 +136,6 @@ const OnboardingBrandStep = ({
               </label>
             </div>
 
-            {/* Brand name + color */}
             <div className="flex-1 space-y-4">
               <div>
                 <p className="text-sm font-medium text-[#1a1a2e] mb-2">Brand name</p>
@@ -202,68 +222,110 @@ const OnboardingBrandStep = ({
           </div>
         </div>
 
-        {/* Right: Chat preview */}
-        <div className="w-[380px] shrink-0 flex flex-col">
-          <div className="rounded-2xl bg-white border border-[#eaedf5] shadow-sm flex-1 flex flex-col overflow-hidden">
-            {/* Chat header */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-[#eaedf5]">
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-full text-white text-sm font-bold overflow-hidden"
-                style={{ backgroundColor: brandColor }}
-              >
-                {logoPreview ? (
-                  <img src={logoPreview} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  brandName.charAt(0).toUpperCase()
+        {/* Right: Widget Preview (matching builder popup) */}
+        <div className="w-[380px] shrink-0 flex flex-col items-center justify-center">
+          <div className="w-[350px]">
+            {/* Widget popup container */}
+            <div
+              className="flex flex-col h-[540px] overflow-hidden rounded-2xl shadow-2xl"
+              style={{ backgroundColor: "#f8f8f8" }}
+            >
+              {/* Scrollable content */}
+              <div className="flex-1 overflow-y-auto relative" style={{ backgroundColor: "#f8f8f8" }}>
+                {/* Gradient overlay */}
+                <div
+                  className="pointer-events-none absolute inset-x-0 top-0 h-64 z-0"
+                  style={{
+                    background: `linear-gradient(180deg, ${brandColor}70 0%, ${brandColor}38 45%, transparent 100%)`,
+                  }}
+                />
+
+                {/* Header */}
+                <div className="relative overflow-hidden px-6 py-5 z-[1]">
+                  <div
+                    className="absolute -right-8 -top-8 h-32 w-32 rounded-full blur-2xl"
+                    style={{
+                      background: `radial-gradient(circle, ${brandColor}45, ${brandColor}18)`,
+                    }}
+                  />
+                  <button className="absolute right-4 top-4 text-slate-400 hover:opacity-80">
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  {logoPreview && (
+                    <img src={logoPreview} alt="Logo" className="relative h-8 w-auto object-contain mb-3" />
+                  )}
+                  <h3 className="relative text-2xl font-bold text-slate-900 whitespace-pre-line max-w-[70%] break-words">
+                    {welcomeMessage.split("\n")[0] || "Hello! 👋"}
+                  </h3>
+                </div>
+
+                {/* Contact section */}
+                <div className="mx-4 rounded-xl p-4 bg-white z-[1] relative">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+                      {brandName?.charAt(0)?.toUpperCase() || "?"}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-slate-500">{brandName || "AI Agent"}</p>
+                      <p className="text-sm text-slate-900">Write to us</p>
+                    </div>
+                  </div>
+                  <Button
+                    className={`mt-3 w-full ${buttonTextColor}`}
+                    style={{ backgroundColor: brandColor }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = darkerColor)}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = brandColor)}
+                  >
+                    <Sparkles className="h-4 w-4 mr-1.5" />
+                    Contact us
+                  </Button>
+                </div>
+
+                {/* FAQ Section */}
+                {suggestedEnabled && suggestions.filter((s) => s.trim()).length > 0 && (
+                  <div className="px-4 pb-4 mt-4" style={{ backgroundColor: "#f8f8f8" }}>
+                    <div className="rounded-2xl p-4 bg-white">
+                      <div className="mb-3 flex items-center gap-2">
+                        <HelpCircle className="h-4 w-4 text-slate-500" />
+                        <span className="text-sm font-medium text-slate-900">Quick answers</span>
+                      </div>
+                      <div className="space-y-1">
+                        {suggestions
+                          .filter((s) => s.trim())
+                          .map((s, i) => (
+                            <button
+                              key={i}
+                              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-100"
+                            >
+                              <span className="font-medium">{s}</span>
+                              <ArrowRight className="h-3.5 w-3.5 text-slate-400" />
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
-              <div>
-                <p className="text-sm font-semibold text-[#1a1a2e]">{brandName || "AI Agent"}</p>
-                <p className="text-xs text-[#8a8fa8]">Active now</p>
-              </div>
-            </div>
 
-            {/* Chat body */}
-            <div className="flex-1 flex flex-col justify-between p-5">
-              <div>
-                {/* Bot message */}
-                <div className="flex items-end gap-2 mb-2">
-                  <div
-                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white text-[10px] font-bold overflow-hidden"
-                    style={{ backgroundColor: brandColor }}
-                  >
-                    {logoPreview ? (
-                      <img src={logoPreview} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      brandName.charAt(0).toUpperCase()
-                    )}
-                  </div>
-                  <div className="rounded-2xl rounded-bl-md bg-[#f0f2f5] px-4 py-3 max-w-[240px]">
-                    <p className="text-sm text-[#1a1a2e] whitespace-pre-line leading-relaxed">
-                      {welcomeMessage}
-                    </p>
-                  </div>
+              {/* Bottom nav */}
+              <div className="px-4 pb-1 pt-3 shrink-0" style={{ backgroundColor: "#f8f8f8" }}>
+                <div className="flex rounded-2xl backdrop-blur-md bg-white/70 shadow-sm">
+                  <button className="flex flex-1 flex-col items-center gap-1 py-3 text-slate-900">
+                    <Home className="h-5 w-5" />
+                    <span className="text-xs">Home</span>
+                  </button>
+                  <button className="flex flex-1 flex-col items-center gap-1 py-3 text-slate-400">
+                    <MessageCircle className="h-5 w-5" />
+                    <span className="text-xs">Contact</span>
+                  </button>
                 </div>
-                <p className="text-[10px] text-[#b0b4c8] ml-9">1 min ago</p>
               </div>
 
-              {/* Suggested questions */}
-              {suggestedEnabled && suggestions.length > 0 && (
-                <div className="flex flex-col items-end gap-2 mt-4">
-                  {suggestions.map((s, i) => (
-                    <button
-                      key={i}
-                      className="rounded-full border px-4 py-2 text-xs font-medium transition-colors"
-                      style={{
-                        borderColor: brandColor,
-                        color: brandColor,
-                      }}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              )}
+              {/* Powered by */}
+              <div className="flex items-center justify-center gap-1 py-2 shrink-0" style={{ backgroundColor: "#f8f8f8" }}>
+                <span className="text-[10px] text-slate-400">Powered by</span>
+                <img src={widjetLogoNavbar} alt="Widjet" className="h-4 w-auto -ml-1.5 opacity-40" />
+              </div>
             </div>
           </div>
         </div>
