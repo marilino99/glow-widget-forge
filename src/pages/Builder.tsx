@@ -606,6 +606,7 @@ const Builder = () => {
                   onAddFaqItem={addFaqItem}
                   onUpdateFaqItem={updateFaqItem}
                   onDeleteFaqItem={deleteFaqItem}
+                  onReorderFaqItems={reorderFaqItems}
                   reportBugsEnabled={reportBugsEnabled}
                   onReportBugsChange={setReportBugsEnabled}
                   shareFeedbackEnabled={shareFeedbackEnabled}
