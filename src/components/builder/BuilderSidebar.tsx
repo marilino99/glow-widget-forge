@@ -672,7 +672,7 @@ const BuilderSidebar = ({
           </div>
         </div>
         {/* Provide help section */}
-        <div className="mb-4">
+        <div className="mb-6">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
             Support customer
           </p>
@@ -717,7 +717,7 @@ const BuilderSidebar = ({
         </div>
 
         {/* Customize look section */}
-        <div className="mb-4">
+        <div className="mb-6">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
             Customize look
           </p>
@@ -744,7 +744,7 @@ const BuilderSidebar = ({
         </div>
 
         {/* Boost sales section */}
-        <div className="mb-4">
+        <div className="mb-6">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
             Boost sales
           </p>
@@ -759,7 +759,7 @@ const BuilderSidebar = ({
         </div>
 
         {/* Build trust section */}
-        <div className="mb-4">
+        <div className="mb-6">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
             Build trust
           </p>
