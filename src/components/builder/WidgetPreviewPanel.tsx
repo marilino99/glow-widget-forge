@@ -953,7 +953,7 @@ const WidgetPreviewPanel = ({
             ) : isBottomBarExpanded ? (
               /* Expanded bottom bar with chat */
               <>
-                <div className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none" style={{ background: isLight ? 'linear-gradient(to top, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0) 100%)' : 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0) 100%)' }} />
+                <div className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none" style={{ background: `linear-gradient(to top, ${actualHexColor}30 0%, ${actualHexColor}15 40%, transparent 100%)` }} />
                 <div
                   className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[540px] px-4 animate-widget-expand`}
                 >
@@ -1092,7 +1092,7 @@ const WidgetPreviewPanel = ({
               /* Expanded: show bottom bar */
               <>
                 {/* Full-width horizontal glow behind the bar */}
-                <div className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none" style={{ background: isLight ? 'linear-gradient(to top, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0) 100%)' : 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0) 100%)' }} />
+                <div className="absolute bottom-0 left-0 right-0 h-20 z-10 pointer-events-none" style={{ background: `linear-gradient(to top, ${actualHexColor}30 0%, ${actualHexColor}15 40%, transparent 100%)` }} />
                 <div
                   className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[540px] px-4 ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`}
                 >

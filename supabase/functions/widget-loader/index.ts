@@ -406,7 +406,7 @@ Deno.serve(async (req) => {
         @keyframes wj-btn-pop{0%{transform:scale(0.5);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
         #wj-btn{display:none}
         #wj-pop{display:none}
-        #wj-bb-glow{position:fixed;bottom:0;left:0;right:0;height:80px;pointer-events:none;background:linear-gradient(to top, \${dark ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.55)'} 0%, \${dark ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.25)'} 40%, transparent 100%)}
+        #wj-bb-glow{position:fixed;bottom:0;left:0;right:0;height:80px;pointer-events:none;background:linear-gradient(to top, \${color.bg}30 0%, \${color.bg}15 40%, transparent 100%)}
         #wj-bb-wrap{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:100%;max-width:540px;padding:0 16px;box-sizing:border-box;pointer-events:auto;z-index:2147483648}
         #wj-bb-bar{display:flex;align-items:center;gap:12px;border-radius:9999px;padding:14px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.15);border:1px solid \${color.bg};background:\${dark ? '#18181b' : '#fff'};cursor:pointer}
         #wj-bb-bar input{flex:1;border:none;outline:none;background:transparent;font-size:16px;color:\${dark ? '#a1a1aa' : '#94a3b8'};cursor:pointer}
