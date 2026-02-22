@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink } from "lucide-react";
 import { FaqItemData } from "@/types/faqItem";
+import { CustomLinkData } from "@/types/customLink";
+import { ProductCardData } from "@/types/productCard";
 import { supabase } from "@/integrations/supabase/client";
 
 const avatars = [
@@ -76,6 +78,17 @@ interface AppearancePanelProps {
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
   onShareFeedbackChange: (enabled: boolean) => void;
+  // Custom Links
+  customLinks: CustomLinkData[];
+  onAddCustomLink: (name: string, url: string) => void;
+  onUpdateCustomLink: (id: string, updates: Partial<Pick<CustomLinkData, "name" | "url">>) => void;
+  onDeleteCustomLink: (id: string) => void;
+  onReorderCustomLinks: (reordered: CustomLinkData[]) => void;
+  // Product Carousel
+  productCards: ProductCardData[];
+  onAddProductCard: (card: ProductCardData) => void;
+  onUpdateProductCard: (id: string, updates: Partial<ProductCardData>) => void;
+  onDeleteProductCard: (id: string) => void;
 }
 
 const presetColors = [
@@ -129,6 +142,15 @@ const AppearancePanel = ({
   onReportBugsChange,
   shareFeedbackEnabled,
   onShareFeedbackChange,
+  customLinks,
+  onAddCustomLink,
+  onUpdateCustomLink,
+  onDeleteCustomLink,
+  onReorderCustomLinks,
+  productCards,
+  onAddProductCard,
+  onUpdateProductCard,
+  onDeleteProductCard,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -695,27 +717,124 @@ const AppearancePanel = ({
             </div>
 
             {/* Custom Links */}
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-              <div className="flex items-center gap-2.5">
-                <Link2 className="h-4 w-4 text-purple-500" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Custom Links</p>
-                  <p className="text-[11px] text-muted-foreground">External URL cards</p>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <Link2 className="h-4 w-4 text-purple-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Custom Links</p>
+                    <p className="text-[11px] text-muted-foreground">External URL cards</p>
+                  </div>
                 </div>
+                <span className="text-[11px] text-muted-foreground">{customLinks.length} links</span>
               </div>
-              <div className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Sidebar</div>
+              <div className="border-t border-border px-3 py-2.5 space-y-2">
+                {customLinks.map((link, idx) => (
+                  <div
+                    key={link.id}
+                    className="flex items-start gap-1.5 group"
+                    draggable
+                    onDragStart={(e) => { e.dataTransfer.setData("link-idx", String(idx)); }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const fromIdx = parseInt(e.dataTransfer.getData("link-idx"), 10);
+                      if (!isNaN(fromIdx) && fromIdx !== idx) {
+                        const newLinks = [...customLinks];
+                        const [moved] = newLinks.splice(fromIdx, 1);
+                        newLinks.splice(idx, 0, moved);
+                        onReorderCustomLinks(newLinks);
+                      }
+                    }}
+                  >
+                    <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
+                      <GripVertical className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <Input
+                        value={link.name}
+                        onChange={(e) => onUpdateCustomLink(link.id, { name: e.target.value })}
+                        placeholder="Link name"
+                        className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                      />
+                      <Input
+                        value={link.url}
+                        onChange={(e) => onUpdateCustomLink(link.id, { url: e.target.value })}
+                        placeholder="https://..."
+                        className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                      />
+                    </div>
+                    <button
+                      onClick={() => onDeleteCustomLink(link.id)}
+                      className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => onAddCustomLink("", "")}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add link
+                </button>
+              </div>
             </div>
 
             {/* Product Carousel */}
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-              <div className="flex items-center gap-2.5">
-                <ShoppingBag className="h-4 w-4 text-orange-500" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Product Carousel</p>
-                  <p className="text-[11px] text-muted-foreground">Showcase products</p>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <ShoppingBag className="h-4 w-4 text-orange-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Product Carousel</p>
+                    <p className="text-[11px] text-muted-foreground">Showcase products</p>
+                  </div>
                 </div>
+                <span className="text-[11px] text-muted-foreground">{productCards.length} products</span>
               </div>
-              <div className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Sidebar</div>
+              <div className="border-t border-border px-3 py-2.5 space-y-2">
+                {productCards.map((card) => (
+                  <div key={card.id} className="flex items-start gap-1.5 group">
+                    <div className="flex-1 space-y-1">
+                      <Input
+                        value={card.title}
+                        onChange={(e) => onUpdateProductCard(card.id, { title: e.target.value })}
+                        placeholder="Product title"
+                        className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                      />
+                      <div className="flex gap-1">
+                        <Input
+                          value={card.price || ""}
+                          onChange={(e) => onUpdateProductCard(card.id, { price: e.target.value })}
+                          placeholder="Price"
+                          className="h-7 w-20 rounded-md border-border bg-muted/50 text-xs"
+                        />
+                        <Input
+                          value={card.productUrl || ""}
+                          onChange={(e) => onUpdateProductCard(card.id, { productUrl: e.target.value })}
+                          placeholder="Product URL"
+                          className="h-7 flex-1 rounded-md border-border bg-muted/50 text-xs"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => onDeleteProductCard(card.id)}
+                      className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false })}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add product
+                </button>
+              </div>
             </div>
 
             {/* Report Bugs */}
