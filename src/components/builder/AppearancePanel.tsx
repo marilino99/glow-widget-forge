@@ -665,7 +665,7 @@ const AppearancePanel = ({
                         <Input
                           value={item.answer}
                           onChange={(e) => onUpdateFaqItem(item.id, { answer: e.target.value })}
-                          placeholder="Answer (optional, AI auto-replies)"
+                          placeholder="Enter the answer..."
                           className="h-7 rounded-md border-border bg-muted/50 text-xs"
                         />
                       </div>
