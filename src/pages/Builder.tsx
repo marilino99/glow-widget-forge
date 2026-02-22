@@ -602,6 +602,10 @@ const Builder = () => {
                   onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
                   faqEnabled={config.faqEnabled}
                   onFaqToggle={(enabled) => saveConfig({ faqEnabled: enabled })}
+                  faqItems={faqItems}
+                  onAddFaqItem={addFaqItem}
+                  onUpdateFaqItem={updateFaqItem}
+                  onDeleteFaqItem={deleteFaqItem}
                   reportBugsEnabled={reportBugsEnabled}
                   onReportBugsChange={setReportBugsEnabled}
                   shareFeedbackEnabled={shareFeedbackEnabled}

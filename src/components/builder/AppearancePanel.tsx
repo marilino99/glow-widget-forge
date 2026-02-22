@@ -5,7 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2 } from "lucide-react";
+import { FaqItemData } from "@/types/faqItem";
 import { supabase } from "@/integrations/supabase/client";
 
 const avatars = [
@@ -66,6 +67,10 @@ interface AppearancePanelProps {
   onWhatsappNumberChange: (number: string) => void;
   faqEnabled: boolean;
   onFaqToggle: (enabled: boolean) => void;
+  faqItems: FaqItemData[];
+  onAddFaqItem: (item: FaqItemData) => void;
+  onUpdateFaqItem: (id: string, updates: Partial<FaqItemData>) => void;
+  onDeleteFaqItem: (id: string) => void;
   reportBugsEnabled: boolean;
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
@@ -114,6 +119,10 @@ const AppearancePanel = ({
   onWhatsappNumberChange,
   faqEnabled,
   onFaqToggle,
+  faqItems,
+  onAddFaqItem,
+  onUpdateFaqItem,
+  onDeleteFaqItem,
   reportBugsEnabled,
   onReportBugsChange,
   shareFeedbackEnabled,
@@ -615,15 +624,52 @@ const AppearancePanel = ({
             </div>
 
             {/* FAQs */}
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-              <div className="flex items-center gap-2.5">
-                <HelpCircle className="h-4 w-4 text-blue-500" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">FAQs</p>
-                  <p className="text-[11px] text-muted-foreground">Frequently asked questions</p>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <HelpCircle className="h-4 w-4 text-blue-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">FAQs</p>
+                    <p className="text-[11px] text-muted-foreground">Frequently asked questions</p>
+                  </div>
                 </div>
+                <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
               </div>
-              <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+              {faqEnabled && (
+                <div className="border-t border-border px-3 py-2.5 space-y-2">
+                  {faqItems.map((item, idx) => (
+                    <div key={item.id} className="flex items-start gap-2">
+                      <div className="flex-1 space-y-1">
+                        <Input
+                          value={item.question}
+                          onChange={(e) => onUpdateFaqItem(item.id, { question: e.target.value })}
+                          placeholder={`Question ${idx + 1}`}
+                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                        />
+                        <Input
+                          value={item.answer}
+                          onChange={(e) => onUpdateFaqItem(item.id, { answer: e.target.value })}
+                          placeholder="Answer (optional, AI auto-replies)"
+                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                        />
+                      </div>
+                      <button
+                        onClick={() => onDeleteFaqItem(item.id)}
+                        className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => onAddFaqItem({ id: crypto.randomUUID(), question: "", answer: "", sortOrder: faqItems.length })}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add question
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Custom Links */}
