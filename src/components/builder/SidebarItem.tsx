@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SidebarItemProps {
   icon: LucideIcon;
@@ -10,6 +11,7 @@ interface SidebarItemProps {
   onToggle?: (value: boolean) => void;
   onClick?: () => void;
   active?: boolean;
+  miniMode?: boolean;
 }
 
 const SidebarItem = ({
@@ -21,7 +23,30 @@ const SidebarItem = ({
   onToggle,
   onClick,
   active,
+  miniMode,
 }: SidebarItemProps) => {
+  if (miniMode) {
+    return (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onClick}
+              className={`flex w-full items-center justify-center rounded-xl py-2 transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02] ${
+                active ? "bg-[#f0f0f0]" : ""
+              }`}
+            >
+              <Icon className="h-[18px] w-[18px]" style={{ color: active ? "#1c1c1d" : "#5b5b65" }} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right" sideOffset={8}>
+            <p>{label}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
   return (
     <button
       onClick={onClick}

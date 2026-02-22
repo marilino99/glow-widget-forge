@@ -152,6 +152,7 @@ interface BuilderSidebarProps {
   initialHasGoogleBusiness?: boolean;
   builderView: "home" | "editor" | "conversations";
   onBuilderViewChange: (view: "home" | "editor" | "conversations") => void;
+  isMiniSidebar?: boolean;
 }
 
 const BuilderSidebar = ({ 
@@ -242,6 +243,7 @@ const BuilderSidebar = ({
   initialHasGoogleBusiness,
   builderView,
   onBuilderViewChange,
+  isMiniSidebar,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -650,7 +652,7 @@ const BuilderSidebar = ({
 
   return (
     <div className="flex h-full flex-col bg-[#fafafa]">
-      <div className="flex-1 overflow-hidden px-4 py-3">
+      <div className={`flex-1 overflow-hidden ${isMiniSidebar ? 'px-1.5' : 'px-4'} py-3`}>
         
         {/* Home */}
         <div className="mb-6 -mt-3">
@@ -660,130 +662,155 @@ const BuilderSidebar = ({
               label="Home"
               active={builderView === "home"}
               onClick={() => onBuilderViewChange("home")}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={MessageCircle}
               label="Conversations"
               active={builderView === "conversations"}
               onClick={() => onBuilderViewChange("conversations")}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={Phone}
               label="Contacts"
+              miniMode={isMiniSidebar}
             />
           </div>
         </div>
         {/* Provide help section */}
         <div className="mb-6">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-            Support customer
-          </p>
+          {!isMiniSidebar && (
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+              Support customer
+            </p>
+          )}
+          {isMiniSidebar && <div className="border-t border-border mb-2" />}
           <div className="space-y-0.5">
             <SidebarItem
               icon={MessageSquare}
               label="Contact card"
               onClick={() => handleSelectWidget("contact-card")}
               active={activeWidget === "contact-card"}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={Phone}
               label="WhatsApp"
-              hasToggle
+              hasToggle={!isMiniSidebar}
               toggleValue={whatsappEnabled}
               onToggle={onWhatsappToggle}
               onClick={() => handleSelectWidget("whatsapp")}
               active={activeWidget === "whatsapp"}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={HelpCircle}
               label="FAQ"
-              hasToggle
+              hasToggle={!isMiniSidebar}
               toggleValue={faqEnabled}
               onToggle={onFaqToggle}
               onClick={() => handleSelectWidget("faq")}
               active={activeWidget === "faq"}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={Link2}
               label="Custom links"
               onClick={() => handleSelectWidget("custom-links")}
               active={activeWidget === "custom-links"}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={Bot}
               label="AI Chatbot"
               onClick={() => handleSelectWidget("chatbot")}
               active={activeWidget === "chatbot"}
+              miniMode={isMiniSidebar}
             />
           </div>
         </div>
 
         {/* Customize look section */}
         <div className="mb-6">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-            Customize look
-          </p>
+          {!isMiniSidebar && (
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+              Customize look
+            </p>
+          )}
+          {isMiniSidebar && <div className="border-t border-border mb-2" />}
           <div className="space-y-0.5">
             <SidebarItem
               icon={Palette}
               label="Theme & colors"
               onClick={() => handleSelectWidget("theme-colors")}
               active={activeWidget === "theme-colors"}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={LayoutTemplate}
               label="Templates"
               onClick={() => handleSelectWidget("templates")}
               active={activeWidget === "templates"}
+              miniMode={isMiniSidebar}
             />
             <SidebarItem
               icon={Maximize2}
               label="Size & position"
               onClick={() => handleSelectWidget("size-position")}
               active={activeWidget === "size-position"}
+              miniMode={isMiniSidebar}
             />
           </div>
         </div>
 
         {/* Boost sales section */}
         <div className="mb-6">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-            Boost sales
-          </p>
+          {!isMiniSidebar && (
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+              Boost sales
+            </p>
+          )}
+          {isMiniSidebar && <div className="border-t border-border mb-2" />}
           <div className="space-y-0.5">
             <SidebarItem
               icon={LayoutGrid}
               label="Product carousel"
               onClick={() => handleSelectWidget("product-carousel")}
               active={activeWidget === "product-carousel"}
+              miniMode={isMiniSidebar}
             />
           </div>
         </div>
 
         {/* Build trust section */}
         <div className="mb-6">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-            Build trust
-          </p>
+          {!isMiniSidebar && (
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+              Build trust
+            </p>
+          )}
+          {isMiniSidebar && <div className="border-t border-border mb-2" />}
           <div className="space-y-0.5">
             <SidebarItem
               icon={Instagram}
               label="Instagram UGC"
-              hasToggle
+              hasToggle={!isMiniSidebar}
               toggleValue={instagramEnabled}
               onToggle={onInstagramToggle}
               onClick={() => handleSelectWidget("instagram")}
               active={activeWidget === "instagram"}
+              miniMode={isMiniSidebar}
             />
           </div>
         </div>
       </div>
 
       {/* Bottom account section */}
-      <div className="shrink-0 px-3 py-2">
+      <div className={`shrink-0 py-2 ${isMiniSidebar ? 'px-1.5' : 'px-3'}`}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02]">
+            <button className={`flex w-full items-center rounded-xl py-2 text-left transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] ${isMiniSidebar ? 'justify-center px-0' : 'gap-3 px-2'}`}>
               {userAvatarUrl ? (
                 <img src={userAvatarUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
               ) : (
@@ -791,10 +818,12 @@ const BuilderSidebar = ({
                   {userInitial}
                 </div>
               )}
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-medium text-foreground truncate">{userDisplayName || userEmail || "Account"}</span>
-                <span className="text-xs text-muted-foreground">{isPro ? "Pro" : "Free"}</span>
-              </div>
+              {!isMiniSidebar && (
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-medium text-foreground truncate">{userDisplayName || userEmail || "Account"}</span>
+                  <span className="text-xs text-muted-foreground">{isPro ? "Pro" : "Free"}</span>
+                </div>
+              )}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="top" className="w-[calc(288px-24px)] rounded-2xl p-2">
