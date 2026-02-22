@@ -398,7 +398,7 @@ const AppearancePanel = ({
                 className="min-h-[60px] resize-none rounded-lg border-border bg-muted/50 text-sm"
               />
               <div className="mt-3">
-                <Label className="text-xs font-medium text-muted-foreground">Button text</Label>
+                <Label className="text-sm font-semibold text-foreground">Button text</Label>
                 <Input
                   value={ctaText}
                   onChange={(e) => onCtaTextChange(e.target.value)}
