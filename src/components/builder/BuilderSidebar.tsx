@@ -755,13 +755,6 @@ const BuilderSidebar = ({
               onClick={() => handleSelectWidget("product-carousel")}
               active={activeWidget === "product-carousel"}
             />
-            <SidebarItem
-              icon={BarChart3}
-              label="Metrics"
-              badge={isPro ? undefined : "PRO"}
-              onClick={() => isPro ? handleSelectWidget("metrics") : onUpgrade()}
-              active={activeWidget === "metrics"}
-            />
           </div>
         </div>
 
