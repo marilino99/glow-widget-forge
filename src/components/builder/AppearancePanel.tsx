@@ -102,7 +102,7 @@ const AppearancePanel = ({
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {activeTab === "general" && (
-          <div className="max-w-sm space-y-5">
+          <div className="max-w-xs space-y-4">
             {/* Logo */}
             <div>
               <label className="mb-2 block text-sm font-semibold text-foreground">Logo</label>
@@ -194,7 +194,7 @@ const AppearancePanel = ({
 
               {avatarTab === "gallery" && (
                 <div className="rounded-xl bg-muted/60 p-2">
-                  <div className="max-h-[120px] overflow-y-auto grid grid-cols-8 gap-1.5 p-1.5">
+                  <div className="max-h-[100px] overflow-y-auto grid grid-cols-6 gap-1 p-1">
                     {avatars.map((avatar, index) => (
                       <button
                         key={index}
