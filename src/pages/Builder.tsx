@@ -18,6 +18,7 @@ import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import OnboardingWebsiteStep from "@/components/builder/OnboardingWebsiteStep";
 import OnboardingTrainStep from "@/components/builder/OnboardingTrainStep";
 import OnboardingBrandStep from "@/components/builder/OnboardingBrandStep";
+import OnboardingTestStep from "@/components/builder/OnboardingTestStep";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -35,6 +36,7 @@ const Builder = () => {
   const isNewUser = searchParams.get("onboarding") === "true";
   const [showTrainStep, setShowTrainStep] = useState(false);
   const [showBrandStep, setShowBrandStep] = useState(false);
+  const [showTestStep, setShowTestStep] = useState(false);
   const [showWebsiteStep, setShowWebsiteStep] = useState(false);
   
 
@@ -224,14 +226,24 @@ const Builder = () => {
   // Handle brand step completion
   const handleBrandStepNext = () => {
     setShowBrandStep(false);
-    // Remove onboarding param from URL
-    searchParams.delete("onboarding");
-    setSearchParams(searchParams, { replace: true });
+    setShowTestStep(true);
   };
 
   const handleBrandStepBack = () => {
     setShowBrandStep(false);
     setShowTrainStep(true);
+  };
+
+  // Handle test step completion
+  const handleTestStepNext = () => {
+    setShowTestStep(false);
+    searchParams.delete("onboarding");
+    setSearchParams(searchParams, { replace: true });
+  };
+
+  const handleTestStepBack = () => {
+    setShowTestStep(false);
+    setShowBrandStep(true);
   };
 
 
@@ -468,6 +480,14 @@ const Builder = () => {
         <OnboardingBrandStep
           onNext={handleBrandStepNext}
           onBack={handleBrandStepBack}
+        />
+      )}
+
+      {/* Onboarding: test step (full-page) */}
+      {showTestStep && (
+        <OnboardingTestStep
+          onNext={handleTestStepNext}
+          onBack={handleTestStepBack}
         />
       )}
     </div>
