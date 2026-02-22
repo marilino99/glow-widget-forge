@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText, Mail, CalendarDays } from "lucide-react";
+import successCoachImg from "@/assets/success-coach.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -202,9 +203,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Your Success Coach</h2>
           <div className="rounded-2xl border border-border bg-background p-6">
             <div className="flex items-center gap-4 mb-5">
-              <div className="h-14 w-14 shrink-0 rounded-full border-2 border-[#e0a030] bg-muted flex items-center justify-center text-lg font-bold text-muted-foreground">
-                W
-              </div>
+              <img src={successCoachImg} alt="Success Coach" className="h-14 w-14 shrink-0 rounded-full object-cover border-2 border-[#e0a030]" />
               <div>
                 <p className="text-base font-semibold text-foreground">Widjet Team</p>
                 <p className="text-sm text-muted-foreground">support@getwidjet.com</p>
