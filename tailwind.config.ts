@@ -93,15 +93,11 @@ export default {
         "widget-expand": {
           "0%": {
             opacity: "0",
-            transform: "translateY(12px) scale(0.98)",
-          },
-          "50%": {
-            opacity: "1",
-            transform: "translateY(-1px) scale(1.002)",
+            transform: "translateY(8px)",
           },
           "100%": {
             opacity: "1",
-            transform: "translateY(0) scale(1)",
+            transform: "translateY(0)",
           },
         },
         "button-pop": {
@@ -129,7 +125,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "widget-collapse": "widget-collapse 0.25s cubic-bezier(0.4, 0, 0.6, 1) forwards",
-        "widget-expand": "widget-expand 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+        "widget-expand": "widget-expand 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
         "button-pop": "button-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "rainbow-spin": "rainbow-spin 8s linear infinite",
       },
