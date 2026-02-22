@@ -398,6 +398,12 @@ Deno.serve(async (req) => {
       var bbStyle = d.createElement('style');
       bbStyle.textContent = \`
         #wj-root{position:fixed;bottom:0;left:0;right:0;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+        #wj-bb-launcher{position:fixed;bottom:20px;${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:${color.bg};overflow:hidden;pointer-events:auto;z-index:2147483648}
+        #wj-bb-launcher:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+        #wj-bb-launcher.visible{display:flex;animation:wj-btn-pop .4s cubic-bezier(0.34,1.56,0.64,1)}
+        #wj-bb-launcher svg{width:24px;height:24px}
+        #wj-bb-launcher img{width:100%;height:100%;object-fit:cover}
+        @keyframes wj-btn-pop{0%{transform:scale(0.5);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
         #wj-btn{display:none}
         #wj-pop{display:none}
         #wj-bb-glow{position:fixed;bottom:0;left:0;right:0;height:80px;pointer-events:none;background:linear-gradient(to top, \${dark ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.55)'} 0%, \${dark ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.25)'} 40%, transparent 100%)}
@@ -529,6 +535,16 @@ Deno.serve(async (req) => {
 
       bbExpanded.appendChild(bbChat);
 
+      // Launcher button (tondolino) - shown when bar is closed
+      var bbLauncher = d.createElement('button');
+      bbLauncher.id = 'wj-bb-launcher';
+      if (buttonLogo) {
+        bbLauncher.innerHTML = '<img src="' + esc(buttonLogo) + '" alt="Widget"/>';
+      } else {
+        bbLauncher.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+      }
+      root.appendChild(bbLauncher);
+
       root.appendChild(bbCollapsed);
       root.appendChild(bbExpanded);
 
@@ -547,21 +563,37 @@ Deno.serve(async (req) => {
       trackEvent('impression');
 
       // Event handlers
+      function showLauncher() {
+        bbLauncher.classList.add('visible');
+      }
+      function hideLauncher() {
+        bbLauncher.classList.remove('visible');
+      }
+
+      bbLauncher.onclick = function() {
+        hideLauncher();
+        bbCollapsed.classList.remove('hidden');
+      };
+
       bbBar.onclick = function() { openExpandedChat(); };
       bbBar.querySelector('#wj-bb-bar-expand').onclick = function(e) { e.stopPropagation(); openExpandedChat(); };
       bbBar.querySelector('#wj-bb-bar-close').onclick = function(e) {
         e.stopPropagation();
         bbCollapsed.classList.add('hidden');
+        showLauncher();
       };
       bbBar.querySelector('#wj-bb-bar-mic').onclick = function(e) { e.stopPropagation(); };
 
       bbChat.querySelector('#wj-bb-minimize').onclick = function() { closeExpandedChat(); };
       bbChat.querySelector('#wj-bb-close').onclick = function() {
-        closeExpandedChat();
+        bbExpanded.classList.remove('open');
         bbCollapsed.classList.add('hidden');
+        stopPolling();
+        showLauncher();
       };
 
       function openExpandedChat() {
+        hideLauncher();
         bbCollapsed.classList.add('hidden');
         bbExpanded.classList.add('open');
         bbPills.style.display = 'none';
