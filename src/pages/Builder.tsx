@@ -311,19 +311,21 @@ const Builder = () => {
           <Popover>
             <PopoverTrigger asChild>
               <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background pl-2 pr-3 py-1.5 text-left transition-colors hover:bg-[#f0f0f0]">
-                {config?.logo ? (
-                  <img src={config.logo} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
-                ) : config?.websiteUrl ? (
-                  <img
-                    src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
-                    alt=""
-                    className="h-7 w-7 shrink-0 rounded-full object-cover bg-muted"
-                  />
-                ) : (
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
-                    W
-                  </div>
-                )}
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40">
+                  {config?.logo ? (
+                    <img src={config.logo} alt="" className="h-6 w-6 rounded-full object-cover" />
+                  ) : config?.websiteUrl ? (
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                      alt=""
+                      className="h-6 w-6 rounded-full object-cover bg-muted"
+                    />
+                  ) : (
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-[10px] font-semibold">
+                      W
+                    </div>
+                  )}
+                </div>
                 <span className="flex-1 truncate text-sm font-medium text-foreground">
                   {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
                 </span>
@@ -340,19 +342,21 @@ const Builder = () => {
               <div className="space-y-1">
                 {/* Current widget - selected */}
                 <div className="flex items-center gap-3 rounded-xl bg-primary/5 px-3 py-2.5 border border-primary/10">
-                  {config?.logo ? (
-                    <img src={config.logo} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
-                  ) : config?.websiteUrl ? (
-                    <img
-                      src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
-                      alt=""
-                      className="h-8 w-8 shrink-0 rounded-full object-cover bg-muted"
-                    />
-                  ) : (
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
-                      W
-                    </div>
-                  )}
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40">
+                    {config?.logo ? (
+                      <img src={config.logo} alt="" className="h-7 w-7 rounded-full object-cover" />
+                    ) : config?.websiteUrl ? (
+                      <img
+                        src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                        alt=""
+                        className="h-7 w-7 rounded-full object-cover bg-muted"
+                      />
+                    ) : (
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
+                        W
+                      </div>
+                    )}
+                  </div>
                   <span className="flex-1 truncate text-sm font-medium text-foreground">
                     {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
                   </span>
