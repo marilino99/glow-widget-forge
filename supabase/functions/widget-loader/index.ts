@@ -82,6 +82,7 @@ Deno.serve(async (req) => {
       color = colors[wc] || colors.blue;
     }
     var dark = cfg.widget_theme === 'dark';
+    var widgetType = cfg.widget_type || 'popup';
     var solid = cfg.background_type === 'solid';
     var gradient = cfg.background_type === 'gradient';
     var bgImage = cfg.background_image || '';
@@ -392,6 +393,54 @@ Deno.serve(async (req) => {
     \`;
     d.head.appendChild(style);
 
+    // Bottom bar CSS (added when widget_type is bottom-bar)
+    if (widgetType === 'bottom-bar') {
+      var bbStyle = d.createElement('style');
+      bbStyle.textContent = \`
+        #wj-root{position:fixed;bottom:0;left:0;right:0;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+        #wj-btn{display:none}
+        #wj-pop{display:none}
+        #wj-bb-glow{position:fixed;bottom:0;left:0;right:0;height:80px;pointer-events:none;background:linear-gradient(to top, \${dark ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.55)'} 0%, \${dark ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.25)'} 40%, transparent 100%)}
+        #wj-bb-wrap{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:100%;max-width:540px;padding:0 16px;box-sizing:border-box;pointer-events:auto;z-index:2147483648}
+        #wj-bb-bar{display:flex;align-items:center;gap:12px;border-radius:9999px;padding:14px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.15);border:1px solid \${color.bg};background:\${dark ? '#18181b' : '#fff'};cursor:pointer}
+        #wj-bb-bar input{flex:1;border:none;outline:none;background:transparent;font-size:16px;color:\${dark ? '#a1a1aa' : '#94a3b8'};cursor:pointer}
+        #wj-bb-bar input::placeholder{color:\${dark ? '#a1a1aa' : '#94a3b8'}}
+        #wj-bb-icons{display:flex;align-items:center;gap:6px;flex-shrink:0}
+        #wj-bb-icons button{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? '#a1a1aa' : '#94a3b8'};transition:background .15s}
+        #wj-bb-icons button:hover{background:\${dark ? '#27272a' : '#f1f5f9'}}
+        #wj-bb-icons button svg{width:16px;height:16px}
+        #wj-bb-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;pointer-events:auto}
+        .wj-bb-pill{display:inline-flex;border-radius:9999px;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid \${dark ? '#3f3f46' : '#f1f5f9'};background:\${dark ? '#18181b' : '#fff'};cursor:pointer;transition:all .15s;font-size:14px;font-weight:500;color:\${dark ? '#d4d4d8' : '#475569'}}
+        .wj-bb-pill:hover{background:\${dark ? '#27272a' : '#f8fafc'};box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+        #wj-bb-expanded{display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:100%;max-width:540px;padding:0 16px;box-sizing:border-box;pointer-events:auto;z-index:2147483648}
+        #wj-bb-expanded.open{display:block;animation:wj-expand .35s cubic-bezier(0,0,0.2,1)}
+        #wj-bb-chat{border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.2);border:1px solid \${color.bg};background:\${dark ? '#18181b' : '#fff'}}
+        #wj-bb-controls{display:flex;align-items:center;justify-content:flex-end;padding:8px 12px 0}
+        #wj-bb-controls button{width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? '#a1a1aa' : '#94a3b8'};transition:background .15s}
+        #wj-bb-controls button:hover{background:\${dark ? '#27272a' : '#f1f5f9'}}
+        #wj-bb-controls button svg{width:14px;height:14px}
+        #wj-bb-msgs{overflow-y:auto;padding:12px 16px;max-height:280px;min-height:120px}
+        #wj-bb-input{padding:12px 16px}
+        #wj-bb-input-box{display:flex;align-items:center;gap:8px;border-radius:9999px;border:1px solid \${dark ? '#3f3f46' : '#e2e8f0'};padding:8px 16px;background:\${dark ? '#27272a' : '#f8fafc'};transition:border-color .2s}
+        #wj-bb-input-box:focus-within{border-color:\${color.bg}}
+        #wj-bb-input-box input{flex:1;border:none;outline:none;background:transparent;font-size:14px;color:\${dark ? '#fff' : '#0f172a'}}
+        #wj-bb-input-box input::placeholder{color:\${dark ? '#71717a' : '#94a3b8'}}
+        #wj-bb-input-box button{width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;transition:all .15s}
+        #wj-bb-mic{color:\${dark ? '#a1a1aa' : '#94a3b8'}}
+        #wj-bb-mic:hover{color:\${dark ? '#d4d4d8' : '#475569'}}
+        #wj-bb-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
+        #wj-bb-send{background:\${dark ? '#3f3f46' : '#e2e8f0'};color:\${dark ? '#a1a1aa' : '#64748b'}}
+        #wj-bb-send:hover{background:\${dark ? '#52525b' : '#cbd5e1'}}
+        #wj-bb-send.active{background:\${color.bg};color:#fff}
+        #wj-bb-input-box button svg{width:16px;height:16px}
+        #wj-bb-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:10px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
+        #wj-bb-collapsed{pointer-events:auto}
+        #wj-bb-collapsed.hidden{display:none}
+        @keyframes wj-bb-fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+      \`;
+      d.head.appendChild(bbStyle);
+    }
+
     // Inject custom CSS if provided
     if (customCss) {
       var customStyle = d.createElement('style');
@@ -402,6 +451,263 @@ Deno.serve(async (req) => {
     var root = d.createElement('div');
     root.id = 'wj-root';
 
+    if (widgetType === 'bottom-bar') {
+      // ============ BOTTOM BAR LAYOUT ============
+      var bbCollapsed = d.createElement('div');
+      bbCollapsed.id = 'wj-bb-collapsed';
+
+      // Glow
+      var bbGlow = d.createElement('div');
+      bbGlow.id = 'wj-bb-glow';
+      bbCollapsed.appendChild(bbGlow);
+
+      // FAQ pills container
+      var bbPillsWrap = d.createElement('div');
+      bbPillsWrap.id = 'wj-bb-wrap';
+      bbPillsWrap.style.bottom = '80px';
+      var bbPills = d.createElement('div');
+      bbPills.id = 'wj-bb-pills';
+      bbPills.style.display = 'none';
+      if (faqEnabled && faqs.length > 0) {
+        faqs.forEach(function(faq) {
+          var pill = d.createElement('div');
+          pill.className = 'wj-bb-pill';
+          pill.textContent = faq.question;
+          pill.style.animation = 'wj-bb-fadeIn 0.4s ease-out forwards';
+          pill.style.opacity = '0';
+          pill.onclick = function() {
+            bbPills.style.display = 'none';
+            openExpandedChat();
+            sendBBMessage(faq.question);
+          };
+          bbPills.appendChild(pill);
+        });
+      }
+      bbPillsWrap.appendChild(bbPills);
+      bbCollapsed.appendChild(bbPillsWrap);
+
+      // Bar
+      var bbBarWrap = d.createElement('div');
+      bbBarWrap.id = 'wj-bb-wrap';
+      var bbBar = d.createElement('div');
+      bbBar.id = 'wj-bb-bar';
+      bbBar.innerHTML = '<input type="text" readonly placeholder="' + esc(hello) + '"/><div id="wj-bb-icons"><button id="wj-bb-bar-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-bb-bar-expand"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button><button id="wj-bb-bar-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+      bbBarWrap.appendChild(bbBar);
+      bbCollapsed.appendChild(bbBarWrap);
+
+      // Expanded chat
+      var bbExpanded = d.createElement('div');
+      bbExpanded.id = 'wj-bb-expanded';
+      var bbChat = d.createElement('div');
+      bbChat.id = 'wj-bb-chat';
+
+      // Controls (minimize + close at top right)
+      bbChat.innerHTML = '<div id="wj-bb-controls"><button id="wj-bb-minimize"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button><button id="wj-bb-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+
+      // Messages area
+      var bbMsgs = d.createElement('div');
+      bbMsgs.id = 'wj-bb-msgs';
+      var welcomeBubbleAvatar = avatar
+        ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>'
+        : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>';
+      bbMsgs.innerHTML = '<div style="display:flex;align-items:flex-start;gap:8px">' + welcomeBubbleAvatar + '<div style="padding:10px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(tr.welcomeMessage) + '</div></div>';
+      bbChat.appendChild(bbMsgs);
+
+      // Input area
+      var bbInputArea = d.createElement('div');
+      bbInputArea.id = 'wj-bb-input';
+      bbInputArea.innerHTML = '<div id="wj-bb-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-bb-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-bb-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div>';
+      bbChat.appendChild(bbInputArea);
+
+      // Powered by
+      if (showBranding) {
+        var bbPowered = d.createElement('div');
+        bbPowered.id = 'wj-bb-powered';
+        bbPowered.innerHTML = 'Powered by <span style="font-weight:500">Widjet</span>';
+        bbChat.appendChild(bbPowered);
+      }
+
+      bbExpanded.appendChild(bbChat);
+
+      root.appendChild(bbCollapsed);
+      root.appendChild(bbExpanded);
+
+      // Show FAQ pills after 5s
+      if (faqEnabled && faqs.length > 0) {
+        setTimeout(function() {
+          bbPills.style.display = 'flex';
+          var pills = bbPills.querySelectorAll('.wj-bb-pill');
+          pills.forEach(function(p, i) {
+            p.style.animationDelay = (i * 150) + 'ms';
+          });
+        }, 5000);
+      }
+
+      // Track impression
+      trackEvent('impression');
+
+      // Event handlers
+      bbBar.onclick = function() { openExpandedChat(); };
+      bbBar.querySelector('#wj-bb-bar-expand').onclick = function(e) { e.stopPropagation(); openExpandedChat(); };
+      bbBar.querySelector('#wj-bb-bar-close').onclick = function(e) {
+        e.stopPropagation();
+        bbCollapsed.classList.add('hidden');
+      };
+      bbBar.querySelector('#wj-bb-bar-mic').onclick = function(e) { e.stopPropagation(); };
+
+      bbChat.querySelector('#wj-bb-minimize').onclick = function() { closeExpandedChat(); };
+      bbChat.querySelector('#wj-bb-close').onclick = function() {
+        closeExpandedChat();
+        bbCollapsed.classList.add('hidden');
+      };
+
+      function openExpandedChat() {
+        bbCollapsed.classList.add('hidden');
+        bbExpanded.classList.add('open');
+        bbPills.style.display = 'none';
+        startPolling();
+        trackEvent('click');
+      }
+
+      function closeExpandedChat() {
+        bbExpanded.classList.remove('open');
+        bbCollapsed.classList.remove('hidden');
+        stopPolling();
+      }
+
+      // Chat input handling
+      var bbChatInput = bbInputArea.querySelector('input');
+      var bbSendBtn = bbInputArea.querySelector('#wj-bb-send');
+      var bbMicBtn = bbInputArea.querySelector('#wj-bb-mic');
+
+      function updateBBSend() {
+        if (bbChatInput.value.trim()) {
+          bbSendBtn.classList.add('active');
+        } else {
+          bbSendBtn.classList.remove('active');
+        }
+      }
+
+      function sendBBMessage(text) {
+        if (!text || !text.trim()) return;
+        var msg = text.trim();
+        var tempId = 'temp_' + Date.now();
+        renderBBMessage({ id: tempId, sender_type: 'visitor', content: msg });
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', u + '/functions/v1/send-chat-message', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState !== 4) return;
+          if (xhr.status === 200) {
+            try {
+              var res = JSON.parse(xhr.responseText);
+              if (res.visitorToken) { visitorToken = res.visitorToken; localStorage.setItem('wj_visitor_token', visitorToken); }
+              if (res.messageId) { renderedMessageIds[res.messageId] = true; lastMessageId = res.messageId; }
+            } catch(e) {}
+          }
+        };
+        xhr.send(JSON.stringify({ widgetId: id, visitorId: visitorId, visitorToken: visitorToken, message: msg, visitorName: 'Visitor' }));
+      }
+
+      function renderBBMessage(msg) {
+        if (renderedMessageIds[msg.id]) return;
+        renderedMessageIds[msg.id] = true;
+        var bubble = d.createElement('div');
+        if (msg.sender_type === 'visitor') {
+          bubble.style.cssText = 'display:flex;justify-content:flex-end;margin-top:12px';
+          bubble.innerHTML = '<div style="padding:10px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
+        } else {
+          bubble.style.cssText = 'display:flex;align-items:flex-start;gap:8px;margin-top:12px';
+          bubble.innerHTML = welcomeBubbleAvatar + '<div style="padding:10px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:70%">' + esc(msg.content) + '</div>';
+        }
+        bbMsgs.appendChild(bubble);
+        lastMessageId = msg.id;
+        bbMsgs.scrollTop = bbMsgs.scrollHeight;
+      }
+
+      bbSendBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var msg = bbChatInput.value.trim();
+        if (!msg) return;
+        sendBBMessage(msg);
+        bbChatInput.value = '';
+        updateBBSend();
+      };
+
+      bbChatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); bbSendBtn.onclick(e); }
+      });
+      bbChatInput.addEventListener('input', updateBBSend);
+
+      // Voice for bottom bar
+      var bbRecognition = null;
+      var SpeechRecognition2 = w.SpeechRecognition || w.webkitSpeechRecognition;
+      if (SpeechRecognition2 && bbMicBtn) {
+        bbMicBtn.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (bbRecognition) { bbRecognition.stop(); return; }
+          try {
+            var r = new SpeechRecognition2();
+            r.lang = lang || 'en';
+            r.interimResults = true;
+            r.continuous = false;
+            bbRecognition = r;
+            var ft = bbChatInput.value;
+            r.onresult = function(ev) {
+              var interim = '';
+              for (var i = ev.resultIndex; i < ev.results.length; i++) {
+                if (ev.results[i].isFinal) ft += ev.results[i][0].transcript;
+                else interim += ev.results[i][0].transcript;
+              }
+              bbChatInput.value = ft + interim;
+              updateBBSend();
+            };
+            r.onend = function() { bbRecognition = null; bbMicBtn.classList.remove('listening'); };
+            r.onerror = function() { bbRecognition = null; bbMicBtn.classList.remove('listening'); };
+            bbMicBtn.classList.add('listening');
+            r.start();
+          } catch(err) {}
+        };
+      }
+
+      // Polling (shared variables)
+      var visitorId = localStorage.getItem('wj_visitor_id');
+      if (!visitorId) { visitorId = 'v_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now(); localStorage.setItem('wj_visitor_id', visitorId); }
+      var visitorToken = localStorage.getItem('wj_visitor_token') || '';
+      var lastMessageId = null;
+      var pollInterval = null;
+      var renderedMessageIds = {};
+
+      function pollMessages() {
+        var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
+        if (lastMessageId) pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', pollUrl, true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState !== 4 || xhr.status !== 200) return;
+          try {
+            var res = JSON.parse(xhr.responseText);
+            if (res.messages && res.messages.length > 0) {
+              res.messages.forEach(function(msg) { renderBBMessage(msg); });
+            }
+          } catch(e) {}
+        };
+        xhr.send();
+      }
+      function startPolling() { if (pollInterval) return; pollMessages(); pollInterval = setInterval(pollMessages, 3000); }
+      function stopPolling() { if (pollInterval) { clearInterval(pollInterval); pollInterval = null; } }
+
+      d.body.appendChild(root);
+
+      // Inject custom JS
+      if (customJs) { try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
+      return;
+    }
+
+    // ============ POPUP LAYOUT (existing code) ============
     var pop = d.createElement('div');
     pop.id = 'wj-pop';
 
@@ -504,7 +810,6 @@ Deno.serve(async (req) => {
         item.querySelector('.wj-faq-q').onclick = function() {
           var hasAnswer = (faq.answer || '').trim().length > 0;
           if (!hasAnswer) {
-            // No answer set: open chat and send the question
             homeView.classList.add('hidden');
             chatView.classList.add('open');
             startPolling();
@@ -684,10 +989,8 @@ Deno.serve(async (req) => {
       var msgs = chatView.querySelector('#wj-chat-msgs');
       msgs.innerHTML = '<div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div>';
       chatMenu.classList.remove('open');
-      // Reset tracking state so cleared messages don't come back
       renderedMessageIds = {};
       lastMessageId = null;
-      // Notify backend to mark conversation as cleared
       if (visitorToken) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', u + '/functions/v1/clear-chat', true);
@@ -744,15 +1047,11 @@ Deno.serve(async (req) => {
       localStorage.setItem('wj_visitor_id', visitorId);
     }
 
-    // Retrieve visitor token (server-generated, proves ownership of visitor session)
     var visitorToken = localStorage.getItem('wj_visitor_token') || '';
-
-    // Track last message ID for polling
     var lastMessageId = null;
     var pollInterval = null;
     var renderedMessageIds = {};
 
-    // Update send button style based on input
     function updateSendButton() {
       if (chatInput && chatSendBtn) {
         if (chatInput.value.trim()) {
@@ -763,16 +1062,13 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Render a message bubble
     function renderMessage(msg) {
       if (renderedMessageIds[msg.id]) return;
       renderedMessageIds[msg.id] = true;
-      
       var bubble = d.createElement('div');
       bubble.style.cssText = msg.sender_type === 'visitor' 
         ? 'display:flex;justify-content:flex-end;margin-top:12px'
         : 'display:flex;align-items:flex-start;gap:12px;margin-top:12px';
-      
       if (msg.sender_type === 'visitor') {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
@@ -783,13 +1079,11 @@ Deno.serve(async (req) => {
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
 
-    // Poll for new messages
     function pollMessages() {
       var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
       if (lastMessageId) {
         pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
       }
-      
       var xhr = new XMLHttpRequest();
       xhr.open('GET', pollUrl, true);
       xhr.onreadystatechange = function() {
@@ -808,14 +1102,12 @@ Deno.serve(async (req) => {
       xhr.send();
     }
 
-    // Start polling when chat view opens
     function startPolling() {
       if (pollInterval) return;
-      pollMessages(); // Initial fetch
-      pollInterval = setInterval(pollMessages, 3000); // Poll every 3 seconds
+      pollMessages();
+      pollInterval = setInterval(pollMessages, 3000);
     }
 
-    // Stop polling when chat view closes
     function stopPolling() {
       if (pollInterval) {
         clearInterval(pollInterval);
@@ -823,7 +1115,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Send a specific text as a visitor message (used by FAQ pills)
     function sendMessageText(text) {
       if (!text || !text.trim()) return;
       var msg = text.trim();
@@ -863,18 +1154,13 @@ Deno.serve(async (req) => {
       if (!chatInput) return;
       var msg = chatInput.value.trim();
       if (!msg) return;
-      
-      // Create temporary message object
       var tempId = 'temp_' + Date.now();
       var tempMsg = { id: tempId, sender_type: 'visitor', content: msg };
       renderMessage(tempMsg);
-      
-      // Clear input and update button
       chatInput.value = '';
       updateSendButton();
       if (emojiPicker) emojiPicker.classList.remove('open');
 
-      // Send message to backend
       var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
@@ -903,7 +1189,6 @@ Deno.serve(async (req) => {
       }));
     }
 
-    // Send on button click
     if (chatSendBtn) {
       chatSendBtn.onclick = function(e) {
         e.preventDefault();
@@ -912,7 +1197,6 @@ Deno.serve(async (req) => {
       };
     }
 
-    // Send on Enter key and update button on input
     if (chatInput) {
       chatInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
@@ -923,7 +1207,6 @@ Deno.serve(async (req) => {
       chatInput.addEventListener('input', updateSendButton);
     }
 
-    // Emoji picker toggle
     if (chatEmojiBtn && emojiPicker) {
       chatEmojiBtn.onclick = function(e) {
         e.preventDefault();
@@ -932,7 +1215,6 @@ Deno.serve(async (req) => {
       };
     }
 
-    // Emoji selection
     if (emojiPicker && chatInput) {
       var emojiButtons = emojiPicker.querySelectorAll('.wj-emoji');
       emojiButtons.forEach(function(btn) {
@@ -946,7 +1228,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Voice dictation (Speech Recognition)
     var wjRecognition = null;
     if (chatMicBtn && chatInput) {
       var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
