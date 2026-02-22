@@ -313,8 +313,24 @@ const Builder = () => {
               <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
             </button>
           </div>
-          {/* Workspace selector */}
-          {!isMiniSidebar && (
+          {/* Workspace selector / mini icon */}
+          {isMiniSidebar ? (
+            <div className="mt-3 flex justify-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background">
+                {config?.logo ? (
+                  <img src={config.logo} alt="" className="h-5 w-5 rounded-full object-cover" />
+                ) : config?.websiteUrl ? (
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                    alt=""
+                    className="h-5 w-5 rounded-full object-cover bg-muted"
+                  />
+                ) : (
+                  <div className="h-4 w-4 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                )}
+              </div>
+            </div>
+          ) : (
             <div className="mt-3">
               <Popover>
                 <PopoverTrigger asChild>
@@ -346,7 +362,6 @@ const Builder = () => {
                     </button>
                   </div>
                   <div className="space-y-1">
-                    {/* Current widget - selected */}
                     <div className="flex items-center gap-3 rounded-xl bg-primary/5 px-3 py-2.5 border border-primary/10">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40">
                         {config?.logo ? (
