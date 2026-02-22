@@ -181,8 +181,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                   key={integration.name}
                   className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 opacity-60"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-muted/40">
-                    <integration.icon className="h-6 w-6 text-muted-foreground" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-muted/40">
+                    <integration.icon className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">{integration.name}</p>
