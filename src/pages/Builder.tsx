@@ -14,6 +14,7 @@ import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import BuilderHome from "@/components/builder/BuilderHome";
+import ConversationsPanel from "@/components/builder/ConversationsPanel";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
@@ -91,7 +92,7 @@ const Builder = () => {
     isLoading: isLoadingCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderView] = useState<"home" | "editor">("home");
+  const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations">("home");
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   
@@ -472,6 +473,8 @@ const Builder = () => {
       <div className="flex flex-1 flex-col">
         {builderView === "home" ? (
           <BuilderHome isPro={plan === "pro"} userName={config.contactName !== "Support" ? config.contactName : null} />
+        ) : builderView === "conversations" ? (
+          <ConversationsPanel />
         ) : (
           <>
             {/* Right header with actions */}
@@ -483,18 +486,7 @@ const Builder = () => {
                 </div>
               )}
               
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="relative gap-2 text-muted-foreground hover:text-foreground"
-                onClick={() => navigate("/chats")}
-              >
-                <MessageCircle className="h-5 w-5" />
-                {hasUnread && (
-                  <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
-                )}
-                <span className="hidden sm:inline">Chat</span>
-              </Button>
+              
               <AddToWebsiteDialog widgetId={config.id || undefined} />
             </div>
             <div className="flex-1 overflow-hidden">
