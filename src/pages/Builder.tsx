@@ -316,7 +316,10 @@ const Builder = () => {
           {/* Workspace selector / mini icon */}
           {isMiniSidebar ? (
             <div className="mt-3 flex justify-center">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background">
+              <button
+                onClick={() => setIsMiniSidebar(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02]"
+              >
                 {config?.logo ? (
                   <img src={config.logo} alt="" className="h-5 w-5 rounded-full object-cover" />
                 ) : config?.websiteUrl ? (
@@ -328,7 +331,7 @@ const Builder = () => {
                 ) : (
                   <div className="h-4 w-4 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
                 )}
-              </div>
+              </button>
             </div>
           ) : (
             <div className="mt-3">
