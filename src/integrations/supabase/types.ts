@@ -360,6 +360,7 @@ export type Database = {
           chatbot_instructions: string | null
           contact_name: string
           created_at: string
+          cta_text: string | null
           custom_css: string | null
           custom_js: string | null
           faq_enabled: boolean
@@ -399,6 +400,7 @@ export type Database = {
           chatbot_instructions?: string | null
           contact_name?: string
           created_at?: string
+          cta_text?: string | null
           custom_css?: string | null
           custom_js?: string | null
           faq_enabled?: boolean
@@ -438,6 +440,7 @@ export type Database = {
           chatbot_instructions?: string | null
           contact_name?: string
           created_at?: string
+          cta_text?: string | null
           custom_css?: string | null
           custom_js?: string | null
           faq_enabled?: boolean

@@ -124,6 +124,7 @@ Deno.serve(async (req) => {
         google_business_rating: config.google_business_rating ?? null,
         google_business_ratings_total: config.google_business_ratings_total ?? null,
         google_business_url: config.google_business_url || null,
+        cta_text: config.cta_text || "Contact us",
       }),
       { headers: corsHeaders }
     );
