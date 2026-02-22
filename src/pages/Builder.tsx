@@ -543,15 +543,55 @@ const Builder = () => {
         ) : builderView === "contacts" ? (
           <ContactsPanel />
         ) : builderView === "appearance" ? (
-          <AppearancePanel
-            contactName={config.contactName}
-            onContactNameChange={(name) => updateConfig({ contactName: name })}
-            logo={config.logo}
-            onLogoChange={(logo) => updateConfig({ logo })}
-            widgetColor={config.widgetColor}
-            onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
-            onSave={() => saveConfig({})}
-          />
+          <div className="flex h-full">
+            <div className="flex-1 overflow-hidden border-r border-border">
+              <AppearancePanel
+                contactName={config.contactName}
+                onContactNameChange={(name) => updateConfig({ contactName: name })}
+                logo={config.logo}
+                onLogoChange={(logo) => updateConfig({ logo })}
+                widgetColor={config.widgetColor}
+                onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
+                onSave={() => saveConfig({})}
+              />
+            </div>
+            <div className="w-[420px] shrink-0 overflow-hidden bg-[#f8f8f8]">
+              <WidgetPreviewPanel 
+                activeWidget={activeWidget}
+                selectedAvatar={config.selectedAvatar} 
+                faqEnabled={config.faqEnabled}
+                contactName={config.contactName}
+                offerHelp={config.offerHelp}
+                widgetTheme={config.widgetTheme}
+                widgetColor={config.widgetColor}
+                buttonLogo={config.buttonLogo}
+                backgroundType={config.backgroundType}
+                backgroundImage={config.backgroundImage}
+                logo={config.logo}
+                productCards={previewProductCards}
+                sayHello={config.sayHello}
+                language={config.language}
+                faqItems={faqItems}
+                instagramEnabled={config.instagramEnabled}
+                instagramPosts={instagramPosts}
+                websiteUrl={config.websiteUrl}
+                whatsappEnabled={config.whatsappEnabled}
+                whatsappCountryCode={config.whatsappCountryCode}
+                whatsappNumber={config.whatsappNumber}
+                customLinks={customLinks}
+                localPreviewLinks={localPreviewLinks}
+                reportBugsEnabled={reportBugsEnabled}
+                shareFeedbackEnabled={shareFeedbackEnabled}
+                widgetId={config.id || undefined}
+                googleBusiness={googleBusiness}
+                customCss={livePreviewCss ?? config.customCss}
+                customJs={livePreviewJs ?? config.customJs}
+                showBranding={config.showBranding}
+                widgetPosition={config.widgetPosition}
+                widgetType={config.widgetType}
+              />
+            </div>
+          </div>
         ) : (
           <>
             {/* Right header with actions */}
