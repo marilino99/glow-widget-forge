@@ -41,6 +41,7 @@ const Builder = () => {
   const [showWebsiteStep, setShowWebsiteStep] = useState(false);
   const [showSurveyDialog, setShowSurveyDialog] = useState(false);
   const [onboardingWebsiteUrl, setOnboardingWebsiteUrl] = useState("");
+  const [extractedBranding, setExtractedBranding] = useState<{ logo: string | null; color: string | null }>({ logo: null, color: null });
   
 
   // Check if user already completed or skipped the survey
@@ -198,13 +199,26 @@ const Builder = () => {
 
   // Handle website step completion
   const handleWebsiteStepNext = async (websiteUrl: string) => {
+    const formattedUrl = websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`;
     if (user && websiteUrl) {
       // Save website URL to config
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase.from("widget_configurations") as any).upsert({
         user_id: user.id,
-        website_url: websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`,
+        website_url: formattedUrl,
       }, { onConflict: "user_id" });
+
+      // Extract branding (logo, color) in background
+      supabase.functions.invoke('extract-branding', {
+        body: { url: formattedUrl }
+      }).then(({ data, error }) => {
+        if (!error && data?.success) {
+          setExtractedBranding({
+            logo: data.logo || null,
+            color: data.primaryColor || data.widgetColor || null,
+          });
+        }
+      });
     }
     setOnboardingWebsiteUrl(websiteUrl);
     setShowWebsiteStep(false);
@@ -486,6 +500,8 @@ const Builder = () => {
         <OnboardingBrandStep
           onNext={handleBrandStepNext}
           onBack={handleBrandStepBack}
+          extractedLogo={extractedBranding.logo}
+          extractedColor={extractedBranding.color}
         />
       )}
 

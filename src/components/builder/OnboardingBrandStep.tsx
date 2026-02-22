@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload, X } from "lucide-react";
 
 interface OnboardingBrandStepProps {
@@ -6,6 +6,8 @@ interface OnboardingBrandStepProps {
   onBack: () => void;
   totalSteps?: number;
   currentStep?: number;
+  extractedLogo?: string | null;
+  extractedColor?: string | null;
 }
 
 const OnboardingBrandStep = ({
@@ -13,9 +15,11 @@ const OnboardingBrandStep = ({
   onBack,
   totalSteps = 4,
   currentStep = 3,
+  extractedLogo = null,
+  extractedColor = null,
 }: OnboardingBrandStepProps) => {
   const [brandName, setBrandName] = useState("AI Agent");
-  const [brandColor, setBrandColor] = useState("#2970fe");
+  const [brandColor, setBrandColor] = useState(extractedColor || "#2970fe");
   const [welcomeMessage, setWelcomeMessage] = useState(
     "Welcome! 👋\nI'm AI Agent's AI Agent, here to assist with any questions you have. How can I help you today?"
   );
@@ -25,7 +29,16 @@ const OnboardingBrandStep = ({
     "How do I request a return?",
     "I have another question",
   ]);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(extractedLogo);
+
+  // Update when extracted branding arrives asynchronously
+  useEffect(() => {
+    if (extractedLogo && !logoPreview) setLogoPreview(extractedLogo);
+  }, [extractedLogo]);
+
+  useEffect(() => {
+    if (extractedColor && brandColor === "#2970fe") setBrandColor(extractedColor);
+  }, [extractedColor]);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
