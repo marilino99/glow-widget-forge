@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import BuilderHome from "@/components/builder/BuilderHome";
 import ConversationsPanel from "@/components/builder/ConversationsPanel";
+import ContactsPanel from "@/components/builder/ContactsPanel";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
@@ -92,7 +93,7 @@ const Builder = () => {
     isLoading: isLoadingCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations">("home");
+  const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations" | "contacts">("home");
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   
@@ -513,7 +514,7 @@ const Builder = () => {
             builderView={builderView}
             onBuilderViewChange={(view) => {
               setBuilderView(view);
-              if (view === "conversations") setIsMiniSidebar(true);
+              if (view === "conversations" || view === "contacts") setIsMiniSidebar(true);
             }}
             isMiniSidebar={isMiniSidebar}
           />
@@ -536,6 +537,8 @@ const Builder = () => {
           <BuilderHome isPro={plan === "pro"} userName={config.contactName !== "Support" ? config.contactName : null} />
         ) : builderView === "conversations" ? (
           <ConversationsPanel />
+        ) : builderView === "contacts" ? (
+          <ContactsPanel />
         ) : (
           <>
             {/* Right header with actions */}
