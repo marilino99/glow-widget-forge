@@ -57,6 +57,8 @@ interface AppearancePanelProps {
   onSelectAvatar: (avatar: string | null) => void;
   offerHelp: string;
   onOfferHelpChange: (help: string) => void;
+  ctaText: string;
+  onCtaTextChange: (text: string) => void;
   onSave: () => void;
   onCancel?: () => void;
   activeTab: string;
@@ -122,6 +124,8 @@ const AppearancePanel = ({
   onSelectAvatar,
   offerHelp,
   onOfferHelpChange,
+  ctaText,
+  onCtaTextChange,
   onSave,
   onCancel,
   activeTab,
@@ -162,7 +166,7 @@ const AppearancePanel = ({
   // Track initial values for dirty detection
   const [initialValues, setInitialValues] = useState({
     contactName, logo, widgetColor, widgetTheme, backgroundType, backgroundImage,
-    sayHello, selectedAvatar, offerHelp,
+    sayHello, selectedAvatar, offerHelp, ctaText,
   });
 
   const hasChanges =
@@ -174,18 +178,18 @@ const AppearancePanel = ({
     backgroundImage !== initialValues.backgroundImage ||
     sayHello !== initialValues.sayHello ||
     selectedAvatar !== initialValues.selectedAvatar ||
-    offerHelp !== initialValues.offerHelp;
+    offerHelp !== initialValues.offerHelp ||
+    ctaText !== initialValues.ctaText;
 
   const handleSave = () => {
     onSave();
     setInitialValues({
       contactName, logo, widgetColor, widgetTheme, backgroundType, backgroundImage,
-      sayHello, selectedAvatar, offerHelp,
+      sayHello, selectedAvatar, offerHelp, ctaText,
     });
   };
 
   const handleCancel = () => {
-    // Restore all values to initial
     onContactNameChange(initialValues.contactName);
     onLogoChange(initialValues.logo);
     onWidgetColorChange(initialValues.widgetColor);
@@ -195,6 +199,7 @@ const AppearancePanel = ({
     onSayHelloChange(initialValues.sayHello);
     onSelectAvatar(initialValues.selectedAvatar);
     onOfferHelpChange(initialValues.offerHelp);
+    onCtaTextChange(initialValues.ctaText);
     onCancel?.();
   };
 
@@ -392,8 +397,16 @@ const AppearancePanel = ({
                 onChange={(e) => onOfferHelpChange(e.target.value)}
                 className="min-h-[60px] resize-none rounded-lg border-border bg-muted/50 text-sm"
               />
+              <div className="mt-3">
+                <Label className="text-xs font-medium text-muted-foreground">Button text</Label>
+                <Input
+                  value={ctaText}
+                  onChange={(e) => onCtaTextChange(e.target.value)}
+                  placeholder="Contact us"
+                  className="mt-1 h-8 rounded-lg border-border bg-muted/50 text-sm"
+                />
+              </div>
             </div>
-
             <div className="border-t border-border" />
 
             {/* Pick theme and color */}

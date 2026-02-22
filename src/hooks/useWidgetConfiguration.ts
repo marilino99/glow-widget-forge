@@ -38,6 +38,7 @@ export interface WidgetConfiguration {
   googleBusinessRatingsTotal: number | null;
   googleBusinessUrl: string | null;
   googleBusinessPlaceId: string | null;
+  ctaText: string;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -75,6 +76,7 @@ const defaultConfig: WidgetConfiguration = {
   googleBusinessRatingsTotal: null,
   googleBusinessUrl: null,
   googleBusinessPlaceId: null,
+  ctaText: "Contact us",
 };
 
 export const useWidgetConfiguration = () => {
@@ -139,6 +141,7 @@ export const useWidgetConfiguration = () => {
             googleBusinessRatingsTotal: (data as any).google_business_ratings_total ?? null,
             googleBusinessUrl: (data as any).google_business_url || null,
             googleBusinessPlaceId: (data as any).google_business_place_id || null,
+            ctaText: (data as any).cta_text || "Contact us",
           });
         }
       } catch (error) {
@@ -198,6 +201,7 @@ export const useWidgetConfiguration = () => {
           google_business_ratings_total: updatedConfig.googleBusinessRatingsTotal,
           google_business_url: updatedConfig.googleBusinessUrl,
           google_business_place_id: updatedConfig.googleBusinessPlaceId,
+          cta_text: updatedConfig.ctaText,
         }, {
           onConflict: "user_id"
         })

@@ -596,6 +596,8 @@ const Builder = () => {
                   onSelectAvatar={(avatar) => updateConfig({ selectedAvatar: avatar })}
                   offerHelp={config.offerHelp}
                   onOfferHelpChange={(help) => updateConfig({ offerHelp: help })}
+                  ctaText={config.ctaText}
+                  onCtaTextChange={(text) => updateConfig({ ctaText: text })}
                   onSave={() => saveConfig({})}
                   activeTab={appearanceTab}
                   whatsappEnabled={config.whatsappEnabled ?? false}
@@ -660,6 +662,7 @@ const Builder = () => {
                   showBranding={config.showBranding}
                   widgetPosition={config.widgetPosition}
                   widgetType={config.widgetType}
+                  ctaText={config.ctaText}
                   minimal
                 />
               </div>

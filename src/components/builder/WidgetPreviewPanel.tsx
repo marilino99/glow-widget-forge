@@ -48,6 +48,7 @@ interface WidgetPreviewPanelProps {
   widgetPosition?: "left" | "right";
   widgetType?: "popup" | "bottom-bar";
   minimal?: boolean;
+  ctaText?: string;
 }
 
 // Check if a color is a hex value
@@ -212,6 +213,7 @@ const WidgetPreviewPanel = ({
   widgetPosition = "right",
   widgetType = "popup",
   minimal = false,
+  ctaText,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -2096,7 +2098,7 @@ const WidgetPreviewPanel = ({
                       onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
                       onClick={() => setShowChat(true)}
                     >
-                      {t.contactUs}
+                      {ctaText || t.contactUs}
                     </Button>
                     {/* WhatsApp Button */}
                     {whatsappEnabled && (
