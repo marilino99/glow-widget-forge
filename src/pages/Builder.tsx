@@ -92,6 +92,10 @@ const Builder = () => {
   const {
     links: customLinks,
     isLoading: isLoadingCustomLinks,
+    addLink: addCustomLink,
+    updateLink: updateCustomLink,
+    deleteLink: deleteCustomLink,
+    reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance">("home");
@@ -611,6 +615,15 @@ const Builder = () => {
                   onReportBugsChange={setReportBugsEnabled}
                   shareFeedbackEnabled={shareFeedbackEnabled}
                   onShareFeedbackChange={setShareFeedbackEnabled}
+                  customLinks={customLinks}
+                  onAddCustomLink={addCustomLink}
+                  onUpdateCustomLink={updateCustomLink}
+                  onDeleteCustomLink={deleteCustomLink}
+                  onReorderCustomLinks={reorderCustomLinks}
+                  productCards={productCards}
+                  onAddProductCard={handleAddProductCard}
+                  onUpdateProductCard={handleUpdateProductCard}
+                  onDeleteProductCard={handleDeleteProductCard}
                 />
               </div>
               <div className="w-[420px] shrink-0 overflow-hidden border-l border-border bg-[#f8f8f8]">
