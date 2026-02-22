@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { Link2, FileText, MessageCircleQuestion, FilePlus2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link2, FileText, MessageCircleQuestion, FilePlus2, Globe, Check, Loader2 } from "lucide-react";
 
 interface OnboardingTrainStepProps {
   onNext: () => void;
   onBack: () => void;
   totalSteps?: number;
   currentStep?: number;
+  scrapedPages?: string[];
 }
 
 type Tab = "url" | "document" | "faq";
@@ -15,14 +16,61 @@ const OnboardingTrainStep = ({
   onBack,
   totalSteps = 4,
   currentStep = 2,
+  scrapedPages = [],
 }: OnboardingTrainStepProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("url");
+  const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set());
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Auto-select all scraped pages on mount
+  useEffect(() => {
+    if (scrapedPages.length > 0) {
+      setSelectedPages(new Set(scrapedPages));
+      // Simulate brief processing animation
+      setIsProcessing(true);
+      const timer = setTimeout(() => setIsProcessing(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [scrapedPages]);
+
+  const togglePage = (url: string) => {
+    setSelectedPages((prev) => {
+      const next = new Set(prev);
+      if (next.has(url)) {
+        next.delete(url);
+      } else {
+        next.add(url);
+      }
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (selectedPages.size === scrapedPages.length) {
+      setSelectedPages(new Set());
+    } else {
+      setSelectedPages(new Set(scrapedPages));
+    }
+  };
+
+  // Extract a readable path label from URL
+  const getPageLabel = (url: string) => {
+    try {
+      const u = new URL(url);
+      const path = u.pathname === "/" ? "Homepage" : u.pathname.replace(/\/$/, "");
+      return path === "Homepage" ? path : path;
+    } catch {
+      return url;
+    }
+  };
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: "url", label: "Add website URL", icon: <Link2 className="h-4 w-4" /> },
     { key: "document", label: "Upload document", icon: <FileText className="h-4 w-4" /> },
     { key: "faq", label: "Add FAQs", icon: <MessageCircleQuestion className="h-4 w-4" /> },
   ];
+
+  const hasPages = scrapedPages.length > 0;
 
   return (
     <div
@@ -64,7 +112,7 @@ const OnboardingTrainStep = ({
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col items-center px-6 pt-4">
+      <div className="flex flex-1 flex-col items-center px-6 pt-4 overflow-hidden">
         <h1 className="text-3xl font-bold text-[#1a1a2e] mb-4 text-center">
           Train your AI agent
         </h1>
@@ -77,39 +125,111 @@ const OnboardingTrainStep = ({
         {/* Tabs */}
         <div className="flex w-full max-w-3xl gap-3 mb-6">
           {tabs.map((tab) => {
-            const isActive = activeTab === tab.key;
+            const isTabActive = activeTab === tab.key;
+            const badge = tab.key === "url" && hasPages ? scrapedPages.length : null;
             return (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className="flex flex-1 items-center justify-center gap-2.5 rounded-xl border-2 px-4 py-3.5 text-[14px] font-medium transition-all"
+                className="flex flex-1 items-center justify-center gap-2.5 rounded-xl border-2 px-4 py-3.5 text-[14px] font-medium transition-all relative"
                 style={{
-                  backgroundColor: isActive ? "#f3f0ff" : "#fff",
-                  borderColor: isActive ? "#7c3aed" : "#e0e3ef",
-                  color: isActive ? "#7c3aed" : "#6a6f88",
+                  backgroundColor: isTabActive ? "#f3f0ff" : "#fff",
+                  borderColor: isTabActive ? "#7c3aed" : "#e0e3ef",
+                  color: isTabActive ? "#7c3aed" : "#6a6f88",
                 }}
               >
                 {tab.icon}
                 {tab.label}
+                {badge !== null && (
+                  <span className="ml-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#7c3aed] px-1.5 text-[11px] font-bold text-white">
+                    {badge}
+                  </span>
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* Empty state card */}
-        <div className="flex w-full max-w-3xl flex-1 items-center justify-center rounded-2xl bg-[#f8f9fc] border border-[#eaedf5] min-h-[280px]">
-          <div className="flex flex-col items-center gap-3 text-center px-6">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white border border-[#eaedf5]">
-              <FilePlus2 className="h-6 w-6 text-[#c0c4d8]" />
+        {/* Content area */}
+        {activeTab === "url" && hasPages ? (
+          <div className="flex w-full max-w-3xl flex-1 flex-col rounded-2xl bg-white border border-[#eaedf5] overflow-hidden min-h-0">
+            {/* Header row */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-[#eaedf5] shrink-0">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={toggleAll}
+                  className="flex h-5 w-5 items-center justify-center rounded border-2 transition-colors"
+                  style={{
+                    borderColor: selectedPages.size === scrapedPages.length ? "#7c3aed" : "#d1d5db",
+                    backgroundColor: selectedPages.size === scrapedPages.length ? "#7c3aed" : "transparent",
+                  }}
+                >
+                  {selectedPages.size === scrapedPages.length && (
+                    <Check className="h-3 w-3 text-white" />
+                  )}
+                </button>
+                <span className="text-sm font-medium text-[#1a1a2e]">
+                  {selectedPages.size} of {scrapedPages.length} pages selected
+                </span>
+              </div>
+              {isProcessing && (
+                <div className="flex items-center gap-2 text-[#7c3aed]">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-xs font-medium">Fetching pages...</span>
+                </div>
+              )}
             </div>
-            <p className="text-lg font-semibold text-[#1a1a2e]">
-              Add your first training source
-            </p>
-            <p className="max-w-xs text-sm text-[#8a8fa8] leading-relaxed">
-              Start by adding URLs, documents, and frequently asked questions.
-            </p>
+
+            {/* Page list */}
+            <div className="flex-1 overflow-y-auto px-2 py-2">
+              {scrapedPages.map((pageUrl) => {
+                const isSelected = selectedPages.has(pageUrl);
+                const label = getPageLabel(pageUrl);
+                return (
+                  <button
+                    key={pageUrl}
+                    onClick={() => togglePage(pageUrl)}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[#f8f9fc] group"
+                  >
+                    <div
+                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
+                      style={{
+                        borderColor: isSelected ? "#7c3aed" : "#d1d5db",
+                        backgroundColor: isSelected ? "#7c3aed" : "transparent",
+                      }}
+                    >
+                      {isSelected && <Check className="h-3 w-3 text-white" />}
+                    </div>
+                    <Globe className="h-4 w-4 shrink-0 text-[#b0b4c8]" />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="text-sm font-medium text-[#1a1a2e] truncate">
+                        {label}
+                      </span>
+                      <span className="text-xs text-[#8a8fa8] truncate">
+                        {pageUrl}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        ) : (
+          /* Empty state card */
+          <div className="flex w-full max-w-3xl flex-1 items-center justify-center rounded-2xl bg-[#f8f9fc] border border-[#eaedf5] min-h-[280px]">
+            <div className="flex flex-col items-center gap-3 text-center px-6">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white border border-[#eaedf5]">
+                <FilePlus2 className="h-6 w-6 text-[#c0c4d8]" />
+              </div>
+              <p className="text-lg font-semibold text-[#1a1a2e]">
+                Add your first training source
+              </p>
+              <p className="max-w-xs text-sm text-[#8a8fa8] leading-relaxed">
+                Start by adding URLs, documents, and frequently asked questions.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Bottom bar */}
