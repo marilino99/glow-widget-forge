@@ -511,7 +511,10 @@ const Builder = () => {
             initialGoogleReviewsEnabled={config.googleReviewsEnabled}
             initialHasGoogleBusiness={!!config.googleBusinessName}
             builderView={builderView}
-            onBuilderViewChange={setBuilderView}
+            onBuilderViewChange={(view) => {
+              setBuilderView(view);
+              if (view === "conversations") setIsMiniSidebar(true);
+            }}
             isMiniSidebar={isMiniSidebar}
           />
         </div>
