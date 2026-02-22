@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText } from "lucide-react";
+import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText, Mail, CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -193,6 +193,40 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Success Coach */}
+        <div>
+          <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Your Success Coach</h2>
+          <div className="rounded-2xl border border-border bg-background p-6">
+            <div className="flex items-center gap-4 mb-5">
+              <div className="h-14 w-14 shrink-0 rounded-full border-2 border-[#e0a030] bg-muted flex items-center justify-center text-lg font-bold text-muted-foreground">
+                W
+              </div>
+              <div>
+                <p className="text-base font-semibold text-foreground">Widjet Team</p>
+                <p className="text-sm text-muted-foreground">support@widjet.io</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <a
+                href="mailto:support@widjet.io"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <Mail className="h-4 w-4" style={{ color: "#5b5b65" }} />
+                Contact Us
+              </a>
+              <a
+                href="https://cal.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <CalendarDays className="h-4 w-4" style={{ color: "#5b5b65" }} />
+                Book a Call
+              </a>
             </div>
           </div>
         </div>
