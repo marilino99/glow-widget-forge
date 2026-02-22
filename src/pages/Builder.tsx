@@ -290,7 +290,7 @@ const Builder = () => {
       {/* Left sidebar - full height */}
       <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
-        <div className="group flex h-14 shrink-0 items-center justify-between px-4 bg-gradient-to-br from-[hsl(260,30%,97%)] to-[hsl(270,40%,94%)]">
+        <div className="group flex h-14 shrink-0 items-center justify-between px-4 bg-[#fafafa]">
           <button
             onClick={() => window.location.reload()}
             className="flex items-center"
