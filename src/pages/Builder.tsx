@@ -40,6 +40,7 @@ const Builder = () => {
   const [showTestStep, setShowTestStep] = useState(false);
   const [showWebsiteStep, setShowWebsiteStep] = useState(false);
   const [showSurveyDialog, setShowSurveyDialog] = useState(false);
+  const [scrapedPages, setScrapedPages] = useState<string[]>([]);
   
 
   // Check if user already completed or skipped the survey
@@ -196,7 +197,7 @@ const Builder = () => {
   }, []);
 
   // Handle website step completion
-  const handleWebsiteStepNext = async (websiteUrl: string) => {
+  const handleWebsiteStepNext = async (websiteUrl: string, pages: string[] = []) => {
     if (user && websiteUrl) {
       // Save website URL to config
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -205,6 +206,7 @@ const Builder = () => {
         website_url: websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`,
       }, { onConflict: "user_id" });
     }
+    setScrapedPages(pages);
     setShowWebsiteStep(false);
     setShowTrainStep(true);
   };
@@ -475,6 +477,7 @@ const Builder = () => {
         <OnboardingTrainStep
           onNext={handleTrainStepNext}
           onBack={handleTrainStepBack}
+          scrapedPages={scrapedPages}
         />
       )}
 
