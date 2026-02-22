@@ -102,7 +102,7 @@ const AppearancePanel = ({
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {activeTab === "general" && (
-          <div className="max-w-xs space-y-4">
+          <div className="max-w-xs mx-auto space-y-4">
             {/* Logo */}
             <div>
               <label className="mb-2 block text-sm font-semibold text-foreground">Logo</label>
