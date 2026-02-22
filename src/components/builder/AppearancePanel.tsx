@@ -264,7 +264,7 @@ const AppearancePanel = ({
                 placeholder="Write to us"
                 value={offerHelp}
                 onChange={(e) => onOfferHelpChange(e.target.value)}
-                className="min-h-[90px] resize-none rounded-lg border-border bg-muted/50 text-sm"
+                className="min-h-[60px] resize-none rounded-lg border-border bg-muted/50 text-sm"
               />
             </div>
 
