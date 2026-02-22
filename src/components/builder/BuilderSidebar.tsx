@@ -31,6 +31,7 @@ import {
   ChevronRight,
   Bot,
   LayoutTemplate,
+  Home,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -645,7 +646,16 @@ const BuilderSidebar = ({
     <div className="flex h-full flex-col bg-[#fafafa]">
       <div className="flex-1 overflow-hidden px-4 py-3">
         
-
+        {/* Home */}
+        <div className="mb-4">
+          <div className="space-y-0.5">
+            <SidebarItem
+              icon={Home}
+              label="Home"
+              active={true}
+            />
+          </div>
+        </div>
         {/* Provide help section */}
         <div className="mb-4">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
