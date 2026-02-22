@@ -100,12 +100,12 @@ const AppearancePanel = ({
   return (
     <div className="flex h-full flex-col">
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-8 py-8">
+      <div className="flex-1 overflow-y-auto px-6 py-6">
         {activeTab === "general" && (
-          <div className="max-w-xl space-y-8">
+          <div className="max-w-sm space-y-5">
             {/* Logo */}
             <div>
-              <label className="mb-3 block text-base font-semibold text-foreground">Logo</label>
+              <label className="mb-2 block text-sm font-semibold text-foreground">Logo</label>
               <div className="flex items-center gap-3">
                 <div
                   className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/30"
@@ -152,14 +152,14 @@ const AppearancePanel = ({
 
             {/* Say hello */}
             <div>
-              <label className="mb-3 block text-base font-semibold text-foreground">
+              <label className="mb-2 block text-sm font-semibold text-foreground">
                 Say hello <span className="text-destructive">*</span>
               </label>
               <Input
                 value={sayHello}
                 onChange={(e) => onSayHelloChange(e.target.value)}
                 placeholder="Hello, nice to see you here 👋"
-                className="h-12 rounded-xl border-border bg-muted/50 text-sm"
+                className="h-10 rounded-lg border-border bg-muted/50 text-sm"
               />
             </div>
 
@@ -167,14 +167,14 @@ const AppearancePanel = ({
 
             {/* Name */}
             <div>
-              <label className="mb-3 block text-base font-semibold text-foreground">
+              <label className="mb-2 block text-sm font-semibold text-foreground">
                 Name <span className="text-destructive">*</span>
               </label>
               <Input
                 value={contactName}
                 onChange={(e) => onContactNameChange(e.target.value)}
                 placeholder="AI Agent"
-                className="h-12 rounded-xl border-border bg-background text-sm"
+                className="h-10 rounded-lg border-border bg-background text-sm"
               />
             </div>
 
@@ -182,8 +182,8 @@ const AppearancePanel = ({
 
             {/* Pick avatar */}
             <div>
-              <div className="mb-4 flex items-center gap-4">
-                <Label className="text-base font-semibold text-foreground">Pick avatar</Label>
+              <div className="mb-3 flex items-center gap-3">
+                <Label className="text-sm font-semibold text-foreground">Pick avatar</Label>
                 <Tabs value={avatarTab} onValueChange={setAvatarTab}>
                   <TabsList className="h-9 bg-muted">
                     <TabsTrigger value="gallery" className="text-sm">Gallery</TabsTrigger>
@@ -229,14 +229,14 @@ const AppearancePanel = ({
                       </Button>
                     </div>
                   ) : isUploading ? (
-                    <div className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center">
+                    <div className="rounded-lg border-2 border-dashed border-border bg-muted/30 p-5 text-center">
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                         <p className="text-sm text-muted-foreground">Uploading...</p>
                       </div>
                     </div>
                   ) : (
-                    <div className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => avatarInputRef.current?.click()}>
+                    <div className="rounded-lg border-2 border-dashed border-border bg-muted/30 p-5 text-center cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => avatarInputRef.current?.click()}>
                       <div className="flex flex-col items-center gap-2">
                         <Upload className="h-6 w-6 text-muted-foreground" />
                         <p className="text-sm text-muted-foreground">Click to upload an image</p>
@@ -252,8 +252,8 @@ const AppearancePanel = ({
 
             {/* Offer help */}
             <div>
-              <div className="mb-3 flex items-center justify-between">
-                <Label className="text-base font-semibold text-foreground">
+              <div className="mb-2 flex items-center justify-between">
+                <Label className="text-sm font-semibold text-foreground">
                   Offer help <span className="text-destructive">*</span>
                 </Label>
                 <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted">
@@ -264,7 +264,7 @@ const AppearancePanel = ({
                 placeholder="Write to us"
                 value={offerHelp}
                 onChange={(e) => onOfferHelpChange(e.target.value)}
-                className="min-h-[120px] resize-none rounded-xl border-border bg-muted/50"
+                className="min-h-[90px] resize-none rounded-lg border-border bg-muted/50 text-sm"
               />
             </div>
 
@@ -272,12 +272,12 @@ const AppearancePanel = ({
 
             {/* Brand color */}
             <div>
-              <label className="mb-3 block text-base font-semibold text-foreground">Brand color</label>
+              <label className="mb-2 block text-sm font-semibold text-foreground">Brand color</label>
               <div className="flex items-center gap-3">
                 <Input
                   value={widgetColor}
                   onChange={(e) => onWidgetColorChange(e.target.value)}
-                  className="h-12 w-36 rounded-xl border-border bg-background font-mono text-sm"
+                  className="h-10 w-32 rounded-lg border-border bg-background font-mono text-sm"
                 />
                 <div
                   className="h-8 w-8 cursor-pointer rounded-full border-2 border-background shadow-md"
@@ -316,8 +316,8 @@ const AppearancePanel = ({
       </div>
 
       {/* Footer with Save */}
-      <div className="shrink-0 px-8 py-4 flex justify-end">
-        <Button onClick={onSave} className="rounded-xl px-8">
+      <div className="shrink-0 px-6 py-3 flex justify-end">
+        <Button onClick={onSave} className="rounded-lg px-6">
           Save
         </Button>
       </div>
