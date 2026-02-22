@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link2, FileText, MessageCircleQuestion, FilePlus2, Globe, Check, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface OnboardingTrainStepProps {
   onNext: () => void;
   onBack: () => void;
   totalSteps?: number;
   currentStep?: number;
-  scrapedPages?: string[];
+  websiteUrl?: string;
 }
 
 type Tab = "url" | "document" | "faq";
@@ -16,49 +17,87 @@ const OnboardingTrainStep = ({
   onBack,
   totalSteps = 4,
   currentStep = 2,
-  scrapedPages = [],
+  websiteUrl = "",
 }: OnboardingTrainStepProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("url");
+  const [pages, setPages] = useState<string[]>([]);
   const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set());
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [displayedCount, setDisplayedCount] = useState(0);
+  const allPagesRef = useRef<string[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Auto-select all scraped pages on mount
+  // Start fetching pages when component mounts with a websiteUrl
   useEffect(() => {
-    if (scrapedPages.length > 0) {
-      setSelectedPages(new Set(scrapedPages));
-      // Simulate brief processing animation
-      setIsProcessing(true);
-      const timer = setTimeout(() => setIsProcessing(false), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [scrapedPages]);
+    if (!websiteUrl) return;
+
+    const fetchPages = async () => {
+      setIsScanning(true);
+      try {
+        const { data, error } = await supabase.functions.invoke("scrape-sitemap", {
+          body: { url: websiteUrl },
+        });
+
+        if (error || !data?.success) {
+          console.error("Sitemap scrape failed:", error || data?.error);
+          // Fallback: just add the URL itself
+          const fallback = websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`;
+          allPagesRef.current = [fallback];
+        } else {
+          allPagesRef.current = data.links || [];
+        }
+
+        // Animate pages appearing one by one
+        setDisplayedCount(0);
+        let idx = 0;
+        timerRef.current = setInterval(() => {
+          idx++;
+          if (idx >= allPagesRef.current.length) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setIsScanning(false);
+            setDisplayedCount(allPagesRef.current.length);
+            setPages([...allPagesRef.current]);
+            setSelectedPages(new Set(allPagesRef.current));
+            return;
+          }
+          setDisplayedCount(idx);
+          setPages(allPagesRef.current.slice(0, idx));
+          setSelectedPages(new Set(allPagesRef.current.slice(0, idx)));
+        }, 120);
+      } catch (err) {
+        console.error("Scrape error:", err);
+        setIsScanning(false);
+      }
+    };
+
+    fetchPages();
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [websiteUrl]);
 
   const togglePage = (url: string) => {
     setSelectedPages((prev) => {
       const next = new Set(prev);
-      if (next.has(url)) {
-        next.delete(url);
-      } else {
-        next.add(url);
-      }
+      if (next.has(url)) next.delete(url);
+      else next.add(url);
       return next;
     });
   };
 
   const toggleAll = () => {
-    if (selectedPages.size === scrapedPages.length) {
+    if (selectedPages.size === pages.length) {
       setSelectedPages(new Set());
     } else {
-      setSelectedPages(new Set(scrapedPages));
+      setSelectedPages(new Set(pages));
     }
   };
 
-  // Extract a readable path label from URL
   const getPageLabel = (url: string) => {
     try {
       const u = new URL(url);
-      const path = u.pathname === "/" ? "Homepage" : u.pathname.replace(/\/$/, "");
-      return path === "Homepage" ? path : path;
+      return u.pathname === "/" ? "Homepage" : u.pathname.replace(/\/$/, "");
     } catch {
       return url;
     }
@@ -70,14 +109,13 @@ const OnboardingTrainStep = ({
     { key: "faq", label: "Add FAQs", icon: <MessageCircleQuestion className="h-4 w-4" /> },
   ];
 
-  const hasPages = scrapedPages.length > 0;
+  const hasPages = pages.length > 0;
 
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col"
       style={{
-        background:
-          "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
+        background: "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
       }}
     >
       {/* Stepper */}
@@ -126,7 +164,7 @@ const OnboardingTrainStep = ({
         <div className="flex w-full max-w-3xl gap-3 mb-6">
           {tabs.map((tab) => {
             const isTabActive = activeTab === tab.key;
-            const badge = tab.key === "url" && hasPages ? scrapedPages.length : null;
+            const badge = tab.key === "url" && hasPages ? pages.length : null;
             return (
               <button
                 key={tab.key}
@@ -151,28 +189,32 @@ const OnboardingTrainStep = ({
         </div>
 
         {/* Content area */}
-        {activeTab === "url" && hasPages ? (
+        {activeTab === "url" && (hasPages || isScanning) ? (
           <div className="flex w-full max-w-3xl flex-1 flex-col rounded-2xl bg-white border border-[#eaedf5] overflow-hidden min-h-0">
             {/* Header row */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-[#eaedf5] shrink-0">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={toggleAll}
-                  className="flex h-5 w-5 items-center justify-center rounded border-2 transition-colors"
-                  style={{
-                    borderColor: selectedPages.size === scrapedPages.length ? "#7c3aed" : "#d1d5db",
-                    backgroundColor: selectedPages.size === scrapedPages.length ? "#7c3aed" : "transparent",
-                  }}
-                >
-                  {selectedPages.size === scrapedPages.length && (
-                    <Check className="h-3 w-3 text-white" />
-                  )}
-                </button>
+                {hasPages && (
+                  <button
+                    onClick={toggleAll}
+                    className="flex h-5 w-5 items-center justify-center rounded border-2 transition-colors"
+                    style={{
+                      borderColor: selectedPages.size === pages.length && pages.length > 0 ? "#7c3aed" : "#d1d5db",
+                      backgroundColor: selectedPages.size === pages.length && pages.length > 0 ? "#7c3aed" : "transparent",
+                    }}
+                  >
+                    {selectedPages.size === pages.length && pages.length > 0 && (
+                      <Check className="h-3 w-3 text-white" />
+                    )}
+                  </button>
+                )}
                 <span className="text-sm font-medium text-[#1a1a2e]">
-                  {selectedPages.size} of {scrapedPages.length} pages selected
+                  {isScanning
+                    ? `Scanning... ${pages.length} pages found`
+                    : `${selectedPages.size} of ${pages.length} pages selected`}
                 </span>
               </div>
-              {isProcessing && (
+              {isScanning && (
                 <div className="flex items-center gap-2 text-[#7c3aed]">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-xs font-medium">Fetching pages...</span>
@@ -182,34 +224,39 @@ const OnboardingTrainStep = ({
 
             {/* Page list */}
             <div className="flex-1 overflow-y-auto px-2 py-2">
-              {scrapedPages.map((pageUrl) => {
+              {pages.map((pageUrl, index) => {
                 const isSelected = selectedPages.has(pageUrl);
                 const label = getPageLabel(pageUrl);
                 return (
-                  <button
+                  <div
                     key={pageUrl}
-                    onClick={() => togglePage(pageUrl)}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[#f8f9fc] group"
+                    className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+                    style={{ animationDelay: `${index * 40}ms`, animationFillMode: "backwards" }}
                   >
-                    <div
-                      className="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
-                      style={{
-                        borderColor: isSelected ? "#7c3aed" : "#d1d5db",
-                        backgroundColor: isSelected ? "#7c3aed" : "transparent",
-                      }}
+                    <button
+                      onClick={() => togglePage(pageUrl)}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[#f8f9fc]"
                     >
-                      {isSelected && <Check className="h-3 w-3 text-white" />}
-                    </div>
-                    <Globe className="h-4 w-4 shrink-0 text-[#b0b4c8]" />
-                    <div className="flex flex-col min-w-0 flex-1">
-                      <span className="text-sm font-medium text-[#1a1a2e] truncate">
-                        {label}
-                      </span>
-                      <span className="text-xs text-[#8a8fa8] truncate">
-                        {pageUrl}
-                      </span>
-                    </div>
-                  </button>
+                      <div
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
+                        style={{
+                          borderColor: isSelected ? "#7c3aed" : "#d1d5db",
+                          backgroundColor: isSelected ? "#7c3aed" : "transparent",
+                        }}
+                      >
+                        {isSelected && <Check className="h-3 w-3 text-white" />}
+                      </div>
+                      <Globe className="h-4 w-4 shrink-0 text-[#b0b4c8]" />
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-sm font-medium text-[#1a1a2e] truncate">
+                          {label}
+                        </span>
+                        <span className="text-xs text-[#8a8fa8] truncate">
+                          {pageUrl}
+                        </span>
+                      </div>
+                    </button>
+                  </div>
                 );
               })}
             </div>
