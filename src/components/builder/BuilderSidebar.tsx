@@ -655,23 +655,12 @@ const BuilderSidebar = ({
         {/* Home */}
         <div className="mb-6 -mt-3">
           <div className="space-y-0.5">
-            <div className="group flex items-center">
-              <div className="flex-1">
-                <SidebarItem
-                  icon={Home}
-                  label="Home"
-                  active={builderView === "home"}
-                  onClick={() => onBuilderViewChange("home")}
-                />
-              </div>
-              <button
-                onClick={onCollapseSidebar}
-                className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02] opacity-0 group-hover:opacity-100"
-                title="Chiudi sidebar"
-              >
-                <ChevronsLeft className="h-5 w-5 text-muted-foreground" />
-              </button>
-            </div>
+            <SidebarItem
+              icon={Home}
+              label="Home"
+              active={builderView === "home"}
+              onClick={() => onBuilderViewChange("home")}
+            />
             <SidebarItem
               icon={MessageCircle}
               label="Conversations"
