@@ -1,24 +1,36 @@
 
-## Clicking a FAQ Pill Opens the Chat with the Question
+# Fix: Animazione apertura bottom bar senza movimento laterale
 
-Currently, clicking a FAQ pill only sets `expandedFaqId` and hides the pills, but nothing visible happens because the expanded FAQ accordion is inside the home view, not the chat view.
+## Problema
+L'animazione di apertura della bottom bar usa `scale()` su un elemento centrato con `left:50%; transform:translateX(-50%)`. Il cambio di scala combinato con il centramento causa uno spostamento orizzontale visibile (va a destra e torna a sinistra).
 
-### What will change
+## Soluzione
+Rimuovere il `scale()` dall'animazione e usare solo un fade-in con un leggero slide-up. Risultato: apertura fluida e diretta, senza movimenti laterali.
 
-When a user clicks a FAQ pill above the bottom bar:
-1. The pills will disappear
-2. The chat view will open (`setShowChat(true)`)
-3. The clicked question will be sent as a user message to the chat
-4. The AI will respond with an answer, just like a normal chat message
+**Nuova animazione:**
+- 0%: opacity 0, translateY(8px)
+- 100%: opacity 1, translateY(0)
+- Durata: 0.35s, easing smooth
 
-### Technical details
+## File da modificare
 
-**File: `src/components/builder/WidgetPreviewPanel.tsx`**
+### 1. `supabase/functions/widget-loader/index.ts`
+- Linea ~155 (popup iframe): aggiornare `@keyframes wj-expand` rimuovendo scale
+- Linea ~276 (popup standard): stessa modifica
+- Linea ~422: aggiornare durata animazione su `#wj-bb-expanded.open`
 
-- Update the FAQ pill `onClick` handler (around line 859) to:
-  - Call `setShowChat(true)` to open the chat view
-  - Call `handleSendChatMessage(faq.question)` to send the question and get an AI response
-  - Call `setShowFaqPills(false)` to hide the pills
-  - Remove the `setExpandedFaqId(faq.id)` call since we no longer need the accordion behavior
+Nuovo keyframe:
+```
+@keyframes wj-expand{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+```
+Animazione: `.35s cubic-bezier(0.16,1,0.3,1)`
 
-- The existing `handleSendChatMessage` function already handles sending the message and displaying the AI response with typing indicators, so no other changes are needed.
+### 2. `tailwind.config.ts`
+- Aggiornare il keyframe `widget-expand` rimuovendo scale
+- Aggiornare la durata dell'animazione
+
+### 3. `src/components/builder/WidgetPreviewPanel.tsx`
+- Nessuna modifica necessaria (usa le classi Tailwind che verranno aggiornate)
+
+## Dettagli tecnici
+Il problema nasce perche `transform: scale(0.98) translateY(12px)` sovrascrive il `translateX(-50%)` usato per centrare l'elemento. Senza scale, il `translateX(-50%)` resta invariato durante l'animazione e non c'e nessun movimento orizzontale.
