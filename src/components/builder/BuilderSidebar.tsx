@@ -32,10 +32,7 @@ import {
   Bot,
   LayoutTemplate,
   Home,
-  PanelLeftClose,
-  PanelLeft,
 } from "lucide-react";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -267,7 +264,6 @@ const BuilderSidebar = ({
   const [showTemplatesPanel, setShowTemplatesPanel] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Load user profile (avatar + name)
   useEffect(() => {
@@ -652,109 +648,132 @@ const BuilderSidebar = ({
   const userInitial = userEmail?.charAt(0).toUpperCase() || "U";
 
   return (
-    <TooltipProvider delayDuration={0}>
-    <div className={`flex h-full flex-col bg-[#fafafa] transition-all duration-200 ${sidebarCollapsed ? "w-14" : ""}`}>
-      <div className={`flex-1 overflow-hidden py-3 ${sidebarCollapsed ? "px-2" : "px-4"}`}>
+    <div className="flex h-full flex-col bg-[#fafafa]">
+      <div className="flex-1 overflow-hidden px-4 py-3">
         
         {/* Home */}
         <div className="mb-6 -mt-3">
           <div className="space-y-0.5">
-            <div className="flex items-center justify-between">
-              <SidebarItem
-                icon={Home}
-                label="Home"
-                active={builderView === "home"}
-                onClick={() => onBuilderViewChange("home")}
-                collapsed={sidebarCollapsed}
-              />
-              {!sidebarCollapsed && (
-                <button
-                  onClick={() => setSidebarCollapsed(true)}
-                  className="rounded-md p-1 text-muted-foreground hover:bg-[#f0f0f0] hover:text-foreground transition-colors"
-                  title="Collapse sidebar"
-                >
-                  <PanelLeftClose className="h-4 w-4" />
-                </button>
-              )}
-              {sidebarCollapsed && (
-                <button
-                  onClick={() => setSidebarCollapsed(false)}
-                  className="rounded-md p-1 text-muted-foreground hover:bg-[#f0f0f0] hover:text-foreground transition-colors -ml-2"
-                  title="Expand sidebar"
-                >
-                  <PanelLeft className="h-4 w-4" />
-                </button>
-              )}
-            </div>
+            <SidebarItem
+              icon={Home}
+              label="Home"
+              active={builderView === "home"}
+              onClick={() => onBuilderViewChange("home")}
+            />
             <SidebarItem
               icon={MessageCircle}
               label="Conversations"
               active={builderView === "conversations"}
               onClick={() => onBuilderViewChange("conversations")}
-              collapsed={sidebarCollapsed}
             />
             <SidebarItem
               icon={Phone}
               label="Contacts"
-              collapsed={sidebarCollapsed}
             />
           </div>
         </div>
         {/* Provide help section */}
         <div className="mb-6">
-          {!sidebarCollapsed && (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-              Support customer
-            </p>
-          )}
-          {sidebarCollapsed && <div className="my-2 border-t border-border" />}
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+            Support customer
+          </p>
           <div className="space-y-0.5">
-            <SidebarItem icon={MessageSquare} label="Contact card" onClick={() => handleSelectWidget("contact-card")} active={activeWidget === "contact-card"} collapsed={sidebarCollapsed} />
-            <SidebarItem icon={Phone} label="WhatsApp" hasToggle toggleValue={whatsappEnabled} onToggle={onWhatsappToggle} onClick={() => handleSelectWidget("whatsapp")} active={activeWidget === "whatsapp"} collapsed={sidebarCollapsed} />
-            <SidebarItem icon={HelpCircle} label="FAQ" hasToggle toggleValue={faqEnabled} onToggle={onFaqToggle} onClick={() => handleSelectWidget("faq")} active={activeWidget === "faq"} collapsed={sidebarCollapsed} />
-            <SidebarItem icon={Link2} label="Custom links" onClick={() => handleSelectWidget("custom-links")} active={activeWidget === "custom-links"} collapsed={sidebarCollapsed} />
-            <SidebarItem icon={Bot} label="AI Chatbot" onClick={() => handleSelectWidget("chatbot")} active={activeWidget === "chatbot"} collapsed={sidebarCollapsed} />
+            <SidebarItem
+              icon={MessageSquare}
+              label="Contact card"
+              onClick={() => handleSelectWidget("contact-card")}
+              active={activeWidget === "contact-card"}
+            />
+            <SidebarItem
+              icon={Phone}
+              label="WhatsApp"
+              hasToggle
+              toggleValue={whatsappEnabled}
+              onToggle={onWhatsappToggle}
+              onClick={() => handleSelectWidget("whatsapp")}
+              active={activeWidget === "whatsapp"}
+            />
+            <SidebarItem
+              icon={HelpCircle}
+              label="FAQ"
+              hasToggle
+              toggleValue={faqEnabled}
+              onToggle={onFaqToggle}
+              onClick={() => handleSelectWidget("faq")}
+              active={activeWidget === "faq"}
+            />
+            <SidebarItem
+              icon={Link2}
+              label="Custom links"
+              onClick={() => handleSelectWidget("custom-links")}
+              active={activeWidget === "custom-links"}
+            />
+            <SidebarItem
+              icon={Bot}
+              label="AI Chatbot"
+              onClick={() => handleSelectWidget("chatbot")}
+              active={activeWidget === "chatbot"}
+            />
           </div>
         </div>
 
         {/* Customize look section */}
         <div className="mb-6">
-          {!sidebarCollapsed && (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-              Customize look
-            </p>
-          )}
-          {sidebarCollapsed && <div className="my-2 border-t border-border" />}
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+            Customize look
+          </p>
           <div className="space-y-0.5">
-            <SidebarItem icon={Palette} label="Theme & colors" onClick={() => handleSelectWidget("theme-colors")} active={activeWidget === "theme-colors"} collapsed={sidebarCollapsed} />
-            <SidebarItem icon={LayoutTemplate} label="Templates" onClick={() => handleSelectWidget("templates")} active={activeWidget === "templates"} collapsed={sidebarCollapsed} />
-            <SidebarItem icon={Maximize2} label="Size & position" onClick={() => handleSelectWidget("size-position")} active={activeWidget === "size-position"} collapsed={sidebarCollapsed} />
+            <SidebarItem
+              icon={Palette}
+              label="Theme & colors"
+              onClick={() => handleSelectWidget("theme-colors")}
+              active={activeWidget === "theme-colors"}
+            />
+            <SidebarItem
+              icon={LayoutTemplate}
+              label="Templates"
+              onClick={() => handleSelectWidget("templates")}
+              active={activeWidget === "templates"}
+            />
+            <SidebarItem
+              icon={Maximize2}
+              label="Size & position"
+              onClick={() => handleSelectWidget("size-position")}
+              active={activeWidget === "size-position"}
+            />
           </div>
         </div>
 
         {/* Boost sales section */}
         <div className="mb-6">
-          {!sidebarCollapsed && (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-              Boost sales
-            </p>
-          )}
-          {sidebarCollapsed && <div className="my-2 border-t border-border" />}
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+            Boost sales
+          </p>
           <div className="space-y-0.5">
-            <SidebarItem icon={LayoutGrid} label="Product carousel" onClick={() => handleSelectWidget("product-carousel")} active={activeWidget === "product-carousel"} collapsed={sidebarCollapsed} />
+            <SidebarItem
+              icon={LayoutGrid}
+              label="Product carousel"
+              onClick={() => handleSelectWidget("product-carousel")}
+              active={activeWidget === "product-carousel"}
+            />
           </div>
         </div>
 
         {/* Build trust section */}
         <div className="mb-6">
-          {!sidebarCollapsed && (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-              Build trust
-            </p>
-          )}
-          {sidebarCollapsed && <div className="my-2 border-t border-border" />}
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
+            Build trust
+          </p>
           <div className="space-y-0.5">
-            <SidebarItem icon={Instagram} label="Instagram UGC" hasToggle toggleValue={instagramEnabled} onToggle={onInstagramToggle} onClick={() => handleSelectWidget("instagram")} active={activeWidget === "instagram"} collapsed={sidebarCollapsed} />
+            <SidebarItem
+              icon={Instagram}
+              label="Instagram UGC"
+              hasToggle
+              toggleValue={instagramEnabled}
+              onToggle={onInstagramToggle}
+              onClick={() => handleSelectWidget("instagram")}
+              active={activeWidget === "instagram"}
+            />
           </div>
         </div>
       </div>
@@ -771,12 +790,10 @@ const BuilderSidebar = ({
                   {userInitial}
                 </div>
               )}
-              {!sidebarCollapsed && (
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-medium text-foreground truncate">{userDisplayName || userEmail || "Account"}</span>
-                  <span className="text-xs text-muted-foreground">{isPro ? "Pro" : "Free"}</span>
-                </div>
-              )}
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-medium text-foreground truncate">{userDisplayName || userEmail || "Account"}</span>
+                <span className="text-xs text-muted-foreground">{isPro ? "Pro" : "Free"}</span>
+              </div>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="top" className="w-[calc(288px-24px)] rounded-2xl p-2">
@@ -874,7 +891,6 @@ const BuilderSidebar = ({
         onNameChange={setUserDisplayName}
       />
     </div>
-    </TooltipProvider>
   );
 };
 
