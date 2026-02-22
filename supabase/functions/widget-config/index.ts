@@ -111,7 +111,6 @@ Deno.serve(async (req) => {
         chatbot_enabled: config.chatbot_enabled ?? true,
         chatbot_instructions: config.chatbot_instructions || "",
         ai_provider: config.ai_provider || "google",
-        ai_api_key: config.ai_api_key || "",
         product_cards: productCards || [],
         faq_items: faqItems || [],
         instagram_posts: instagramPosts || [],
