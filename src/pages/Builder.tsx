@@ -321,9 +321,7 @@ const Builder = () => {
                       className="h-6 w-6 rounded-full object-cover bg-muted"
                     />
                   ) : (
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-[10px] font-semibold">
-                      W
-                    </div>
+                    <div className="h-6 w-6 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
                   )}
                 </div>
                 <span className="flex-1 truncate text-sm font-medium text-foreground">
@@ -352,9 +350,7 @@ const Builder = () => {
                         className="h-7 w-7 rounded-full object-cover bg-muted"
                       />
                     ) : (
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
-                        W
-                      </div>
+                      <div className="h-7 w-7 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
                     )}
                   </div>
                   <span className="flex-1 truncate text-sm font-medium text-foreground">
