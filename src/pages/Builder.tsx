@@ -321,7 +321,7 @@ const Builder = () => {
                       className="h-6 w-6 rounded-full object-cover bg-muted"
                     />
                   ) : (
-                    <div className="h-6 w-6 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                    <div className="h-5 w-5 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
                   )}
                 </div>
                 <span className="flex-1 truncate text-sm font-medium text-foreground">
@@ -350,7 +350,7 @@ const Builder = () => {
                         className="h-7 w-7 rounded-full object-cover bg-muted"
                       />
                     ) : (
-                      <div className="h-7 w-7 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                      <div className="h-6 w-6 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
                     )}
                   </div>
                   <span className="flex-1 truncate text-sm font-medium text-foreground">
