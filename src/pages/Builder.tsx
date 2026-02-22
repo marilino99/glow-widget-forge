@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
+import BuilderHome from "@/components/builder/BuilderHome";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
@@ -90,6 +91,7 @@ const Builder = () => {
     isLoading: isLoadingCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
+  const [builderView, setBuilderView] = useState<"home" | "editor">("home");
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   
@@ -450,6 +452,8 @@ const Builder = () => {
             onWidgetTypeChange={(type) => saveConfig({ widgetType: type })}
             initialGoogleReviewsEnabled={config.googleReviewsEnabled}
             initialHasGoogleBusiness={!!config.googleBusinessName}
+            builderView={builderView}
+            onBuilderViewChange={setBuilderView}
           />
         </div>
       </div>
@@ -466,65 +470,71 @@ const Builder = () => {
 
       {/* Right panel - full height */}
       <div className="flex flex-1 flex-col">
-        {/* Right header with actions */}
-        <div className="flex h-14 shrink-0 items-center justify-end border-b border-border px-4">
-          {isSaving && (
-            <div className="flex items-center gap-2 text-muted-foreground mr-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-sm">Saving...</span>
+        {builderView === "home" ? (
+          <BuilderHome isPro={plan === "pro"} userName={config.contactName !== "Support" ? config.contactName : null} />
+        ) : (
+          <>
+            {/* Right header with actions */}
+            <div className="flex h-14 shrink-0 items-center justify-end border-b border-border px-4">
+              {isSaving && (
+                <div className="flex items-center gap-2 text-muted-foreground mr-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">Saving...</span>
+                </div>
+              )}
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative gap-2 text-muted-foreground hover:text-foreground"
+                onClick={() => navigate("/chats")}
+              >
+                <MessageCircle className="h-5 w-5" />
+                {hasUnread && (
+                  <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
+                )}
+                <span className="hidden sm:inline">Chat</span>
+              </Button>
+              <AddToWebsiteDialog widgetId={config.id || undefined} />
             </div>
-          )}
-          
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="relative gap-2 text-muted-foreground hover:text-foreground"
-            onClick={() => navigate("/chats")}
-          >
-            <MessageCircle className="h-5 w-5" />
-            {hasUnread && (
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
-            )}
-            <span className="hidden sm:inline">Chat</span>
-          </Button>
-          <AddToWebsiteDialog widgetId={config.id || undefined} />
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <WidgetPreviewPanel 
-            activeWidget={activeWidget}
-            selectedAvatar={config.selectedAvatar} 
-            faqEnabled={config.faqEnabled}
-            contactName={config.contactName}
-            offerHelp={config.offerHelp}
-            widgetTheme={config.widgetTheme}
-            widgetColor={config.widgetColor}
-            buttonLogo={config.buttonLogo}
-            backgroundType={config.backgroundType}
-            backgroundImage={config.backgroundImage}
-            logo={config.logo}
-            productCards={previewProductCards}
-            sayHello={config.sayHello}
-            language={config.language}
-            faqItems={faqItems}
-            instagramEnabled={config.instagramEnabled}
-            instagramPosts={instagramPosts}
-            websiteUrl={config.websiteUrl}
-            whatsappEnabled={config.whatsappEnabled}
-            whatsappCountryCode={config.whatsappCountryCode}
-            whatsappNumber={config.whatsappNumber}
-            customLinks={customLinks}
-            localPreviewLinks={localPreviewLinks}
-            reportBugsEnabled={reportBugsEnabled}
-            shareFeedbackEnabled={shareFeedbackEnabled}
-            widgetId={config.id || undefined}
-            googleBusiness={googleBusiness}
-            customCss={livePreviewCss ?? config.customCss}
-            customJs={livePreviewJs ?? config.customJs}
-            showBranding={config.showBranding}
-            widgetPosition={config.widgetPosition}
-            widgetType={config.widgetType}
-          />
-        </div>
+            <div className="flex-1 overflow-hidden">
+              <WidgetPreviewPanel 
+                activeWidget={activeWidget}
+                selectedAvatar={config.selectedAvatar} 
+                faqEnabled={config.faqEnabled}
+                contactName={config.contactName}
+                offerHelp={config.offerHelp}
+                widgetTheme={config.widgetTheme}
+                widgetColor={config.widgetColor}
+                buttonLogo={config.buttonLogo}
+                backgroundType={config.backgroundType}
+                backgroundImage={config.backgroundImage}
+                logo={config.logo}
+                productCards={previewProductCards}
+                sayHello={config.sayHello}
+                language={config.language}
+                faqItems={faqItems}
+                instagramEnabled={config.instagramEnabled}
+                instagramPosts={instagramPosts}
+                websiteUrl={config.websiteUrl}
+                whatsappEnabled={config.whatsappEnabled}
+                whatsappCountryCode={config.whatsappCountryCode}
+                whatsappNumber={config.whatsappNumber}
+                customLinks={customLinks}
+                localPreviewLinks={localPreviewLinks}
+                reportBugsEnabled={reportBugsEnabled}
+                shareFeedbackEnabled={shareFeedbackEnabled}
+                widgetId={config.id || undefined}
+                googleBusiness={googleBusiness}
+                customCss={livePreviewCss ?? config.customCss}
+                customJs={livePreviewJs ?? config.customJs}
+                showBranding={config.showBranding}
+                widgetPosition={config.widgetPosition}
+                widgetType={config.widgetType}
+              />
+            </div>
+          </>
+        )}
       </div>
 
       {/* Upgrade overlay */}
