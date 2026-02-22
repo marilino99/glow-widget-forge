@@ -43,6 +43,10 @@ interface AppearancePanelProps {
   onWidgetColorChange: (color: string) => void;
   widgetTheme: "light" | "dark";
   onWidgetThemeChange: (theme: "light" | "dark") => void;
+  backgroundType: "solid" | "gradient" | "image";
+  onBackgroundTypeChange: (type: "solid" | "gradient" | "image") => void;
+  backgroundImage: string | null;
+  onBackgroundImageChange: (image: string | null) => void;
   sayHello: string;
   onSayHelloChange: (text: string) => void;
   selectedAvatar: string | null;
@@ -74,6 +78,10 @@ const AppearancePanel = ({
   onWidgetColorChange,
   widgetTheme,
   onWidgetThemeChange,
+  backgroundType,
+  onBackgroundTypeChange,
+  backgroundImage,
+  onBackgroundImageChange,
   sayHello,
   onSayHelloChange,
   selectedAvatar,
@@ -392,6 +400,111 @@ const AppearancePanel = ({
                   />
                 </button>
               </div>
+            </div>
+
+            {/* Background */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-foreground">Background</label>
+              <p className="mb-3 text-xs text-muted-foreground">Choose the widget header background style.</p>
+              <div className="space-y-2">
+                {/* Solid */}
+                <button
+                  onClick={() => onBackgroundTypeChange("solid")}
+                  className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all ${
+                    backgroundType === "solid"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground/40"
+                  }`}
+                >
+                  <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                    backgroundType === "solid" ? "border-primary" : "border-muted-foreground/40"
+                  }`}>
+                    {backgroundType === "solid" && <div className="h-2 w-2 rounded-full bg-primary" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-foreground">Solid</span>
+                    <span className="ml-1.5 text-xs text-muted-foreground italic">(Theme color as background)</span>
+                  </div>
+                </button>
+
+                {/* Gradient */}
+                <button
+                  onClick={() => onBackgroundTypeChange("gradient")}
+                  className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all ${
+                    backgroundType === "gradient"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground/40"
+                  }`}
+                >
+                  <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                    backgroundType === "gradient" ? "border-primary" : "border-muted-foreground/40"
+                  }`}>
+                    {backgroundType === "gradient" && <div className="h-2 w-2 rounded-full bg-primary" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-foreground">Gradient</span>
+                    <span className="ml-1.5 text-xs text-muted-foreground italic">(Auto-generated from theme color)</span>
+                  </div>
+                </button>
+
+                {/* Image */}
+                <button
+                  onClick={() => onBackgroundTypeChange("image")}
+                  className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all ${
+                    backgroundType === "image"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground/40"
+                  }`}
+                >
+                  <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                    backgroundType === "image" ? "border-primary" : "border-muted-foreground/40"
+                  }`}>
+                    {backgroundType === "image" && <div className="h-2 w-2 rounded-full bg-primary" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-foreground">Image</span>
+                    <span className="ml-1.5 text-xs text-muted-foreground italic">(720×600 custom image)</span>
+                  </div>
+                </button>
+              </div>
+
+              {/* Image upload area - shown only when "image" is selected */}
+              {backgroundType === "image" && (
+                <div className="mt-3">
+                  {backgroundImage ? (
+                    <div className="flex items-center gap-3">
+                      <img src={backgroundImage} alt="Background" className="h-12 w-16 rounded-lg object-cover border border-border" />
+                      <Button variant="secondary" size="sm" onClick={() => onBackgroundImageChange(null)}>
+                        Remove
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        id="bg-image-upload"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => onBackgroundImageChange(reader.result as string);
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor="bg-image-upload"
+                        className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-sm text-muted-foreground hover:bg-muted/50 transition-colors"
+                      >
+                        <Upload className="h-4 w-4" />
+                        Upload image
+                      </label>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="border-t border-border" />

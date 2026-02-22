@@ -582,6 +582,10 @@ const Builder = () => {
                   onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
                   widgetTheme={config.widgetTheme}
                   onWidgetThemeChange={(theme) => updateConfig({ widgetTheme: theme })}
+                  backgroundType={config.backgroundType as "solid" | "gradient" | "image"}
+                  onBackgroundTypeChange={(type) => updateConfig({ backgroundType: type })}
+                  backgroundImage={config.backgroundImage}
+                  onBackgroundImageChange={(image) => updateConfig({ backgroundImage: image })}
                   sayHello={config.sayHello}
                   onSayHelloChange={(sayHello) => updateConfig({ sayHello })}
                   selectedAvatar={config.selectedAvatar}
