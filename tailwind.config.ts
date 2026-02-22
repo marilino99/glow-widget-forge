@@ -93,18 +93,11 @@ export default {
         "widget-expand": {
           "0%": {
             opacity: "0",
-            transform: "translateY(24px) scale(0.97)",
+            transform: "translateY(12px) scale(0.98)",
           },
-          "40%": {
-            opacity: "0.7",
-            transform: "translateY(6px) scale(0.995)",
-          },
-          "70%": {
+          "50%": {
             opacity: "1",
-            transform: "translateY(-2px) scale(1.005)",
-          },
-          "85%": {
-            transform: "translateY(0.5px) scale(1)",
+            transform: "translateY(-1px) scale(1.002)",
           },
           "100%": {
             opacity: "1",
@@ -136,7 +129,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "widget-collapse": "widget-collapse 0.25s cubic-bezier(0.4, 0, 0.6, 1) forwards",
-        "widget-expand": "widget-expand 0.6s cubic-bezier(0.22, 0.61, 0.36, 1)",
+        "widget-expand": "widget-expand 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
         "button-pop": "button-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "rainbow-spin": "rainbow-spin 8s linear infinite",
       },
