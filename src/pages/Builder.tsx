@@ -290,19 +290,41 @@ const Builder = () => {
       {/* Left sidebar - full height */}
       <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
-        <div className="group flex h-14 shrink-0 items-center justify-between px-4 bg-[#fafafa]">
-          <button
-            onClick={() => window.location.reload()}
-            className="flex items-center"
-          >
-            <img src={widjetLogoNavbar} className="h-8 w-auto -ml-2.5" alt="Widjet logo" />
-          </button>
-          <button
-            onClick={() => setIsSidebarCollapsed(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[hsl(0_0%_93%)] hover:scale-[1.02] opacity-0 group-hover:opacity-100"
-            title="Chiudi sidebar"
-          >
-            <ChevronsLeft className="h-5 w-5 text-muted-foreground" />
+        <div className="shrink-0 bg-[#fafafa] px-4 pt-3 pb-2 space-y-3">
+          <div className="group flex items-center justify-between">
+            <button
+              onClick={() => window.location.reload()}
+              className="flex items-center"
+            >
+              <img src={widjetLogoNavbar} className="h-8 w-auto -ml-2.5" alt="Widjet logo" />
+            </button>
+            <button
+              onClick={() => setIsSidebarCollapsed(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02] opacity-0 group-hover:opacity-100"
+              title="Chiudi sidebar"
+            >
+              <ChevronsLeft className="h-5 w-5 text-muted-foreground" />
+            </button>
+          </div>
+          {/* Workspace selector */}
+          <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background px-3 py-2.5 text-left transition-colors hover:bg-muted/50">
+            {config?.logo ? (
+              <img src={config.logo} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
+            ) : config?.websiteUrl ? (
+              <img
+                src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                alt=""
+                className="h-7 w-7 shrink-0 rounded-full object-cover bg-muted"
+              />
+            ) : (
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
+                W
+              </div>
+            )}
+            <span className="flex-1 truncate text-sm font-medium text-foreground">
+              {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
+            </span>
+            <ChevronsRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
           </button>
         </div>
         {/* Sidebar content */}
