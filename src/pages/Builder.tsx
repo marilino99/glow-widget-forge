@@ -514,7 +514,7 @@ const Builder = () => {
             builderView={builderView}
             onBuilderViewChange={(view) => {
               setBuilderView(view);
-              if (view === "conversations" || view === "contacts") setIsMiniSidebar(true);
+              if (view === "conversations") setIsMiniSidebar(true);
             }}
             isMiniSidebar={isMiniSidebar}
           />
