@@ -1123,13 +1123,11 @@ const WidgetPreviewPanel = ({
                     style={{ cursor: 'pointer', border: `1px solid ${actualHexColor}` }}
                     onClick={() => setIsBottomBarExpanded(true)}
                   >
-                    <Sparkle className="h-3.5 w-3.5 shrink-0" style={{ color: actualHexColor }} />
-                    <TypewriterText
-                      texts={[
-                        sayHello || "Curious how we could help? — ask me anything!",
-                        ...faqItems.map((faq) => faq.question),
-                      ]}
-                      className="flex-1 text-base text-slate-400 truncate"
+                    <input
+                      type="text"
+                      readOnly
+                      placeholder={sayHello || "Ask me anything..."}
+                      className="flex-1 text-base text-slate-400 bg-transparent border-none outline-none cursor-pointer truncate"
                     />
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors" onClick={(e) => e.stopPropagation()}>
