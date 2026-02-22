@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImagePlus, Upload, Loader2, Sparkles } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const avatars = [
@@ -41,6 +41,8 @@ interface AppearancePanelProps {
   onLogoChange: (logo: string | null) => void;
   widgetColor: string;
   onWidgetColorChange: (color: string) => void;
+  widgetTheme: "light" | "dark";
+  onWidgetThemeChange: (theme: "light" | "dark") => void;
   sayHello: string;
   onSayHelloChange: (text: string) => void;
   selectedAvatar: string | null;
@@ -51,6 +53,18 @@ interface AppearancePanelProps {
   activeTab: string;
 }
 
+const presetColors = [
+  { name: "gray", hex: "#E5E5E5" },
+  { name: "purple", hex: "#8B5CF6" },
+  { name: "blue", hex: "#3B82F6" },
+  { name: "cyan", hex: "#06B6D4" },
+  { name: "green", hex: "#22C55E" },
+  { name: "yellow", hex: "#EAB308" },
+  { name: "orange", hex: "#F97316" },
+  { name: "red", hex: "#EF4444" },
+  { name: "pink", hex: "#EC4899" },
+];
+
 const AppearancePanel = ({
   contactName,
   onContactNameChange,
@@ -58,6 +72,8 @@ const AppearancePanel = ({
   onLogoChange,
   widgetColor,
   onWidgetColorChange,
+  widgetTheme,
+  onWidgetThemeChange,
   sayHello,
   onSayHelloChange,
   selectedAvatar,
@@ -71,6 +87,8 @@ const AppearancePanel = ({
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarTab, setAvatarTab] = useState("gallery");
   const [isUploading, setIsUploading] = useState(false);
+  const [showCustomColor, setShowCustomColor] = useState(false);
+  const colorInputRef = useRef<HTMLInputElement>(null);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -270,19 +288,109 @@ const AppearancePanel = ({
 
             <div className="border-t border-border" />
 
-            {/* Brand color */}
+            {/* Pick theme and color */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-foreground">Brand color</label>
-              <div className="flex items-center gap-3">
-                <Input
-                  value={widgetColor}
-                  onChange={(e) => onWidgetColorChange(e.target.value)}
-                  className="h-10 w-32 rounded-lg border-border bg-background font-mono text-sm"
-                />
-                <div
-                  className="h-8 w-8 cursor-pointer rounded-full border-2 border-background shadow-md"
-                  style={{ backgroundColor: widgetColor }}
-                />
+              <label className="mb-3 block text-sm font-semibold text-foreground">Pick theme and color</label>
+              
+              {/* Theme cards */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {/* Light */}
+                <button
+                  onClick={() => onWidgetThemeChange("light")}
+                  className={`relative overflow-hidden rounded-xl border-2 transition-all ${
+                    widgetTheme === "light" ? "border-foreground" : "border-border hover:border-muted-foreground/50"
+                  }`}
+                >
+                  <div className="bg-[#f4f4f5] p-3 pb-2">
+                    <div className="rounded-lg bg-white p-2.5 shadow-sm">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="h-3 w-3 rounded-full bg-muted" />
+                        <div className="h-2 w-16 rounded-full bg-muted" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <div className="h-1.5 w-full rounded-full bg-muted/70" />
+                        <div className="h-1.5 w-3/4 rounded-full bg-muted/70" />
+                      </div>
+                    </div>
+                  </div>
+                  {widgetTheme === "light" && (
+                    <div className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background">
+                      <Check className="h-3 w-3" />
+                    </div>
+                  )}
+                  <p className="py-1.5 text-center text-xs font-medium text-foreground">Light</p>
+                </button>
+
+                {/* Dark */}
+                <button
+                  onClick={() => onWidgetThemeChange("dark")}
+                  className={`relative overflow-hidden rounded-xl border-2 transition-all ${
+                    widgetTheme === "dark" ? "border-foreground" : "border-border hover:border-muted-foreground/50"
+                  }`}
+                >
+                  <div className="bg-[#f4f4f5] p-3 pb-2">
+                    <div className="rounded-lg bg-[#1e293b] p-2.5 shadow-sm">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="h-3 w-3 rounded-full bg-cyan-400" />
+                        <div className="h-2 w-16 rounded-full bg-slate-600" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <div className="h-1.5 w-full rounded-full bg-slate-600" />
+                        <div className="h-1.5 w-3/4 rounded-full bg-slate-600" />
+                      </div>
+                    </div>
+                  </div>
+                  {widgetTheme === "dark" && (
+                    <div className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background">
+                      <Check className="h-3 w-3" />
+                    </div>
+                  )}
+                  <p className="py-1.5 text-center text-xs font-medium text-foreground">Dark</p>
+                </button>
+              </div>
+
+              {/* Color circles */}
+              <div className="flex flex-wrap gap-2">
+                {presetColors.map((c) => {
+                  const isSelected = widgetColor.toLowerCase() === c.hex.toLowerCase() || widgetColor === c.name;
+                  return (
+                    <button
+                      key={c.name}
+                      onClick={() => onWidgetColorChange(c.hex)}
+                      className={`relative h-9 w-9 rounded-full transition-all ${
+                        isSelected ? "ring-2 ring-foreground ring-offset-2" : "hover:scale-110"
+                      }`}
+                      style={{ backgroundColor: c.hex }}
+                    >
+                      {isSelected && (
+                        <Check className="absolute inset-0 m-auto h-4 w-4 text-white drop-shadow-md" />
+                      )}
+                    </button>
+                  );
+                })}
+                {/* Custom color picker */}
+                <button
+                  onClick={() => colorInputRef.current?.click()}
+                  className={`relative h-9 w-9 rounded-full border-2 border-border transition-all hover:scale-110 overflow-hidden ${
+                    !presetColors.some(c => c.hex.toLowerCase() === widgetColor.toLowerCase() || c.name === widgetColor)
+                      ? "ring-2 ring-foreground ring-offset-2"
+                      : ""
+                  }`}
+                  style={{
+                    background: "conic-gradient(from 0deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0, #f44336)",
+                  }}
+                >
+                  <div className="absolute inset-[3px] rounded-full bg-background flex items-center justify-center">
+                    <Pipette className="h-3.5 w-3.5 text-muted-foreground" />
+                  </div>
+                  <input
+                    ref={colorInputRef}
+                    type="color"
+                    value={widgetColor.startsWith("#") ? widgetColor : "#3B82F6"}
+                    onChange={(e) => onWidgetColorChange(e.target.value)}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  />
+                </button>
               </div>
             </div>
 

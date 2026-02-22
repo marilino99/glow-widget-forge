@@ -580,6 +580,8 @@ const Builder = () => {
                   onLogoChange={(logo) => updateConfig({ logo })}
                   widgetColor={config.widgetColor}
                   onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
+                  widgetTheme={config.widgetTheme}
+                  onWidgetThemeChange={(theme) => updateConfig({ widgetTheme: theme })}
                   sayHello={config.sayHello}
                   onSayHelloChange={(sayHello) => updateConfig({ sayHello })}
                   selectedAvatar={config.selectedAvatar}
