@@ -96,6 +96,7 @@ const Builder = () => {
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance">("home");
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
+  const [appearanceTab, setAppearanceTab] = useState("general");
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   
   
@@ -543,54 +544,83 @@ const Builder = () => {
         ) : builderView === "contacts" ? (
           <ContactsPanel />
         ) : builderView === "appearance" ? (
-          <div className="flex h-full">
-            <div className="flex-1 overflow-hidden border-r border-border">
-              <AppearancePanel
-                contactName={config.contactName}
-                onContactNameChange={(name) => updateConfig({ contactName: name })}
-                logo={config.logo}
-                onLogoChange={(logo) => updateConfig({ logo })}
-                widgetColor={config.widgetColor}
-                onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
-                onSave={() => saveConfig({})}
-              />
+          <div className="flex h-full flex-col">
+            {/* Full-width header */}
+            <div className="shrink-0 border-b border-border px-8 pt-8 pb-0">
+              <h1 className="text-2xl font-bold text-foreground">Appearance</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Adjust the appearance of your chat widget to match your website's style.
+              </p>
+              <div className="mt-6 flex gap-0">
+                {["General", "Home Screen", "Chat", "Widget button", "Visibility"].map((tab) => {
+                  const tabValue = tab.toLowerCase().replace(/ /g, "-");
+                  return (
+                    <button
+                      key={tabValue}
+                      onClick={() => setAppearanceTab(tabValue)}
+                      className={`relative px-4 pb-3 pt-1 text-sm font-medium transition-colors ${
+                        appearanceTab === tabValue
+                          ? "text-primary border-b-2 border-primary"
+                          : "text-muted-foreground border-b-2 border-transparent hover:text-foreground"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <div className="w-[420px] shrink-0 overflow-hidden bg-[#f8f8f8]">
-              <WidgetPreviewPanel 
-                activeWidget={activeWidget}
-                selectedAvatar={config.selectedAvatar} 
-                faqEnabled={config.faqEnabled}
-                contactName={config.contactName}
-                offerHelp={config.offerHelp}
-                widgetTheme={config.widgetTheme}
-                widgetColor={config.widgetColor}
-                buttonLogo={config.buttonLogo}
-                backgroundType={config.backgroundType}
-                backgroundImage={config.backgroundImage}
-                logo={config.logo}
-                productCards={previewProductCards}
-                sayHello={config.sayHello}
-                language={config.language}
-                faqItems={faqItems}
-                instagramEnabled={config.instagramEnabled}
-                instagramPosts={instagramPosts}
-                websiteUrl={config.websiteUrl}
-                whatsappEnabled={config.whatsappEnabled}
-                whatsappCountryCode={config.whatsappCountryCode}
-                whatsappNumber={config.whatsappNumber}
-                customLinks={customLinks}
-                localPreviewLinks={localPreviewLinks}
-                reportBugsEnabled={reportBugsEnabled}
-                shareFeedbackEnabled={shareFeedbackEnabled}
-                widgetId={config.id || undefined}
-                googleBusiness={googleBusiness}
-                customCss={livePreviewCss ?? config.customCss}
-                customJs={livePreviewJs ?? config.customJs}
-                showBranding={config.showBranding}
-                widgetPosition={config.widgetPosition}
-                widgetType={config.widgetType}
-                minimal
-              />
+            {/* Split content */}
+            <div className="flex flex-1 overflow-hidden">
+              <div className="flex-1 overflow-hidden">
+                <AppearancePanel
+                  contactName={config.contactName}
+                  onContactNameChange={(name) => updateConfig({ contactName: name })}
+                  logo={config.logo}
+                  onLogoChange={(logo) => updateConfig({ logo })}
+                  widgetColor={config.widgetColor}
+                  onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
+                  onSave={() => saveConfig({})}
+                  activeTab={appearanceTab}
+                />
+              </div>
+              <div className="w-[420px] shrink-0 overflow-hidden border-l border-border bg-[#f8f8f8]">
+                <WidgetPreviewPanel 
+                  activeWidget={activeWidget}
+                  selectedAvatar={config.selectedAvatar} 
+                  faqEnabled={config.faqEnabled}
+                  contactName={config.contactName}
+                  offerHelp={config.offerHelp}
+                  widgetTheme={config.widgetTheme}
+                  widgetColor={config.widgetColor}
+                  buttonLogo={config.buttonLogo}
+                  backgroundType={config.backgroundType}
+                  backgroundImage={config.backgroundImage}
+                  logo={config.logo}
+                  productCards={previewProductCards}
+                  sayHello={config.sayHello}
+                  language={config.language}
+                  faqItems={faqItems}
+                  instagramEnabled={config.instagramEnabled}
+                  instagramPosts={instagramPosts}
+                  websiteUrl={config.websiteUrl}
+                  whatsappEnabled={config.whatsappEnabled}
+                  whatsappCountryCode={config.whatsappCountryCode}
+                  whatsappNumber={config.whatsappNumber}
+                  customLinks={customLinks}
+                  localPreviewLinks={localPreviewLinks}
+                  reportBugsEnabled={reportBugsEnabled}
+                  shareFeedbackEnabled={shareFeedbackEnabled}
+                  widgetId={config.id || undefined}
+                  googleBusiness={googleBusiness}
+                  customCss={livePreviewCss ?? config.customCss}
+                  customJs={livePreviewJs ?? config.customJs}
+                  showBranding={config.showBranding}
+                  widgetPosition={config.widgetPosition}
+                  widgetType={config.widgetType}
+                  minimal
+                />
+              </div>
             </div>
           </div>
         ) : (

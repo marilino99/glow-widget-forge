@@ -1,9 +1,7 @@
 import { useState, useRef } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ImageIcon } from "lucide-react";
-import ColorPicker from "./ColorPicker";
 
 interface AppearancePanelProps {
   contactName: string;
@@ -13,6 +11,7 @@ interface AppearancePanelProps {
   widgetColor: string;
   onWidgetColorChange: (color: string) => void;
   onSave: () => void;
+  activeTab: string;
 }
 
 const AppearancePanel = ({
@@ -23,8 +22,8 @@ const AppearancePanel = ({
   widgetColor,
   onWidgetColorChange,
   onSave,
+  activeTab,
 }: AppearancePanelProps) => {
-  const [activeTab, setActiveTab] = useState("general");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,31 +38,6 @@ const AppearancePanel = ({
 
   return (
     <div className="flex h-full flex-col">
-      {/* Header */}
-      <div className="shrink-0 border-b border-border px-8 pt-8 pb-0">
-        <h1 className="text-2xl font-bold text-foreground">Appearance</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Adjust the appearance of your chat widget to match your website's style.
-        </p>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
-          <TabsList className="h-auto w-full justify-start gap-0 rounded-none border-b border-transparent bg-transparent p-0">
-            {["General", "Home Screen", "Chat", "Widget button", "Visibility"].map((tab) => {
-              const tabValue = tab.toLowerCase().replace(/ /g, "-");
-              return (
-                <TabsTrigger
-                  key={tabValue}
-                  value={tabValue}
-                  className="relative rounded-none border-b-2 border-transparent bg-transparent px-4 pb-3 pt-1 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none"
-                >
-                  {tab}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-        </Tabs>
-      </div>
-
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-8 py-8">
         {activeTab === "general" && (
