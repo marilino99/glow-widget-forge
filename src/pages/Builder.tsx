@@ -17,6 +17,7 @@ import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import OnboardingWebsiteStep from "@/components/builder/OnboardingWebsiteStep";
 import OnboardingTrainStep from "@/components/builder/OnboardingTrainStep";
+import OnboardingBrandStep from "@/components/builder/OnboardingBrandStep";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -33,6 +34,7 @@ const Builder = () => {
   // Onboarding for first-time users
   const isNewUser = searchParams.get("onboarding") === "true";
   const [showTrainStep, setShowTrainStep] = useState(false);
+  const [showBrandStep, setShowBrandStep] = useState(false);
   const [showWebsiteStep, setShowWebsiteStep] = useState(false);
   
 
@@ -211,14 +213,25 @@ const Builder = () => {
   // Handle train step completion
   const handleTrainStepNext = () => {
     setShowTrainStep(false);
-    // Remove onboarding param from URL
-    searchParams.delete("onboarding");
-    setSearchParams(searchParams, { replace: true });
+    setShowBrandStep(true);
   };
 
   const handleTrainStepBack = () => {
     setShowTrainStep(false);
     setShowWebsiteStep(true);
+  };
+
+  // Handle brand step completion
+  const handleBrandStepNext = () => {
+    setShowBrandStep(false);
+    // Remove onboarding param from URL
+    searchParams.delete("onboarding");
+    setSearchParams(searchParams, { replace: true });
+  };
+
+  const handleBrandStepBack = () => {
+    setShowBrandStep(false);
+    setShowTrainStep(true);
   };
 
 
@@ -447,6 +460,14 @@ const Builder = () => {
         <OnboardingTrainStep
           onNext={handleTrainStepNext}
           onBack={handleTrainStepBack}
+        />
+      )}
+
+      {/* Onboarding: brand step (full-page) */}
+      {showBrandStep && (
+        <OnboardingBrandStep
+          onNext={handleBrandStepNext}
+          onBack={handleBrandStepBack}
         />
       )}
     </div>
