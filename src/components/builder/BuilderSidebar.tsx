@@ -685,7 +685,6 @@ const BuilderSidebar = ({
               Support customer
             </p>
           )}
-          {isMiniSidebar && <div className="border-t border-border mb-2" />}
           <div className="space-y-0.5">
             <SidebarItem
               icon={MessageSquare}
@@ -738,7 +737,6 @@ const BuilderSidebar = ({
               Customize look
             </p>
           )}
-          {isMiniSidebar && <div className="border-t border-border mb-2" />}
           <div className="space-y-0.5">
             <SidebarItem
               icon={Palette}
@@ -771,7 +769,6 @@ const BuilderSidebar = ({
               Boost sales
             </p>
           )}
-          {isMiniSidebar && <div className="border-t border-border mb-2" />}
           <div className="space-y-0.5">
             <SidebarItem
               icon={LayoutGrid}
@@ -790,7 +787,7 @@ const BuilderSidebar = ({
               Build trust
             </p>
           )}
-          {isMiniSidebar && <div className="border-t border-border mb-2" />}
+          
           <div className="space-y-0.5">
             <SidebarItem
               icon={Instagram}
