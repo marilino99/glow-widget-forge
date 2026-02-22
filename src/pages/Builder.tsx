@@ -308,7 +308,7 @@ const Builder = () => {
             )}
             <button
               onClick={() => setIsMiniSidebar(!isMiniSidebar)}
-              className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[#f0f0f0] -mr-1 -ml-2"
+              className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[#f0f0f0] -mr-1 -ml-4"
               title={isMiniSidebar ? "Espandi sidebar" : "Riduci sidebar"}
             >
               <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
