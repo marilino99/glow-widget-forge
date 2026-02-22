@@ -654,6 +654,15 @@ const BuilderSidebar = ({
               label="Home"
               active={true}
             />
+            <SidebarItem
+              icon={MessageCircle}
+              label="Conversations"
+              onClick={() => navigate("/chats")}
+            />
+            <SidebarItem
+              icon={Phone}
+              label="Contacts"
+            />
           </div>
         </div>
         {/* Provide help section */}
