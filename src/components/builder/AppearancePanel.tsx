@@ -54,6 +54,7 @@ interface AppearancePanelProps {
   offerHelp: string;
   onOfferHelpChange: (help: string) => void;
   onSave: () => void;
+  onCancel?: () => void;
   activeTab: string;
 }
 
@@ -89,6 +90,7 @@ const AppearancePanel = ({
   offerHelp,
   onOfferHelpChange,
   onSave,
+  onCancel,
   activeTab,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -97,6 +99,45 @@ const AppearancePanel = ({
   const [isUploading, setIsUploading] = useState(false);
   const [showCustomColor, setShowCustomColor] = useState(false);
   const colorInputRef = useRef<HTMLInputElement>(null);
+
+  // Track initial values for dirty detection
+  const [initialValues, setInitialValues] = useState({
+    contactName, logo, widgetColor, widgetTheme, backgroundType, backgroundImage,
+    sayHello, selectedAvatar, offerHelp,
+  });
+
+  const hasChanges =
+    contactName !== initialValues.contactName ||
+    logo !== initialValues.logo ||
+    widgetColor !== initialValues.widgetColor ||
+    widgetTheme !== initialValues.widgetTheme ||
+    backgroundType !== initialValues.backgroundType ||
+    backgroundImage !== initialValues.backgroundImage ||
+    sayHello !== initialValues.sayHello ||
+    selectedAvatar !== initialValues.selectedAvatar ||
+    offerHelp !== initialValues.offerHelp;
+
+  const handleSave = () => {
+    onSave();
+    setInitialValues({
+      contactName, logo, widgetColor, widgetTheme, backgroundType, backgroundImage,
+      sayHello, selectedAvatar, offerHelp,
+    });
+  };
+
+  const handleCancel = () => {
+    // Restore all values to initial
+    onContactNameChange(initialValues.contactName);
+    onLogoChange(initialValues.logo);
+    onWidgetColorChange(initialValues.widgetColor);
+    onWidgetThemeChange(initialValues.widgetTheme);
+    onBackgroundTypeChange(initialValues.backgroundType);
+    onBackgroundImageChange(initialValues.backgroundImage);
+    onSayHelloChange(initialValues.sayHello);
+    onSelectAvatar(initialValues.selectedAvatar);
+    onOfferHelpChange(initialValues.offerHelp);
+    onCancel?.();
+  };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -536,12 +577,17 @@ const AppearancePanel = ({
         )}
       </div>
 
-      {/* Footer with Save */}
-      <div className="shrink-0 px-6 py-3 flex justify-end">
-        <Button onClick={onSave} className="rounded-lg px-6">
-          Save
-        </Button>
-      </div>
+      {/* Footer with Save/Cancel - only shown when changes exist */}
+      {hasChanges && (
+        <div className="shrink-0 border-t border-border px-6 py-3 flex justify-end gap-2">
+          <Button variant="outline" onClick={handleCancel} className="rounded-lg px-5">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} className="rounded-lg px-6">
+            Save
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
