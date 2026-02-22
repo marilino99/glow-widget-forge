@@ -596,6 +596,10 @@ const Builder = () => {
                   activeTab={appearanceTab}
                   whatsappEnabled={config.whatsappEnabled ?? false}
                   onWhatsappToggle={(enabled) => saveConfig({ whatsappEnabled: enabled })}
+                  whatsappCountryCode={config.whatsappCountryCode ?? "+39"}
+                  onWhatsappCountryCodeChange={(code) => updateConfig({ whatsappCountryCode: code })}
+                  whatsappNumber={config.whatsappNumber ?? ""}
+                  onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
                   faqEnabled={config.faqEnabled}
                   onFaqToggle={(enabled) => saveConfig({ faqEnabled: enabled })}
                   reportBugsEnabled={reportBugsEnabled}

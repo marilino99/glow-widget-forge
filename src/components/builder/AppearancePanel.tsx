@@ -60,6 +60,10 @@ interface AppearancePanelProps {
   // Home screen toggles
   whatsappEnabled: boolean;
   onWhatsappToggle: (enabled: boolean) => void;
+  whatsappCountryCode: string;
+  onWhatsappCountryCodeChange: (code: string) => void;
+  whatsappNumber: string;
+  onWhatsappNumberChange: (number: string) => void;
   faqEnabled: boolean;
   onFaqToggle: (enabled: boolean) => void;
   reportBugsEnabled: boolean;
@@ -104,6 +108,10 @@ const AppearancePanel = ({
   activeTab,
   whatsappEnabled,
   onWhatsappToggle,
+  whatsappCountryCode,
+  onWhatsappCountryCodeChange,
+  whatsappNumber,
+  onWhatsappNumberChange,
   faqEnabled,
   onFaqToggle,
   reportBugsEnabled,
@@ -575,15 +583,35 @@ const AppearancePanel = ({
             <p className="mb-3 text-xs text-muted-foreground">Toggle sections visible on the widget home screen.</p>
 
             {/* WhatsApp */}
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-              <div className="flex items-center gap-2.5">
-                <MessageCircle className="h-4 w-4 text-green-500" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">WhatsApp</p>
-                  <p className="text-[11px] text-muted-foreground">Quick contact button</p>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <MessageCircle className="h-4 w-4 text-green-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">WhatsApp</p>
+                    <p className="text-[11px] text-muted-foreground">Quick contact button</p>
+                  </div>
                 </div>
+                <Switch checked={whatsappEnabled} onCheckedChange={onWhatsappToggle} />
               </div>
-              <Switch checked={whatsappEnabled} onCheckedChange={onWhatsappToggle} />
+              {whatsappEnabled && (
+                <div className="border-t border-border px-3 py-2.5 space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      value={whatsappCountryCode}
+                      onChange={(e) => onWhatsappCountryCodeChange(e.target.value)}
+                      placeholder="+39"
+                      className="h-8 w-16 rounded-md border-border bg-muted/50 text-xs text-center"
+                    />
+                    <Input
+                      value={whatsappNumber}
+                      onChange={(e) => onWhatsappNumberChange(e.target.value.replace(/\D/g, ""))}
+                      placeholder="Phone number"
+                      className="h-8 flex-1 rounded-md border-border bg-muted/50 text-xs"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* FAQs */}
