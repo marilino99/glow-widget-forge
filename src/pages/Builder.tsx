@@ -8,7 +8,8 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
@@ -307,25 +308,59 @@ const Builder = () => {
             </button>
           </div>
           {/* Workspace selector */}
-          <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background px-3 py-2.5 text-left transition-colors hover:bg-muted/50">
-            {config?.logo ? (
-              <img src={config.logo} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
-            ) : config?.websiteUrl ? (
-              <img
-                src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
-                alt=""
-                className="h-7 w-7 shrink-0 rounded-full object-cover bg-muted"
-              />
-            ) : (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
-                W
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background px-3 py-2.5 text-left transition-colors hover:bg-muted/50">
+                {config?.logo ? (
+                  <img src={config.logo} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
+                ) : config?.websiteUrl ? (
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                    alt=""
+                    className="h-7 w-7 shrink-0 rounded-full object-cover bg-muted"
+                  />
+                ) : (
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
+                    W
+                  </div>
+                )}
+                <span className="flex-1 truncate text-sm font-medium text-foreground">
+                  {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
+                </span>
+                <ChevronsRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="start" side="bottom" className="w-[calc(288px-32px)] rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
+                <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                  <Plus className="h-4 w-4" />
+                </button>
               </div>
-            )}
-            <span className="flex-1 truncate text-sm font-medium text-foreground">
-              {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
-            </span>
-            <ChevronsRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
-          </button>
+              <div className="space-y-1">
+                {/* Current widget - selected */}
+                <div className="flex items-center gap-3 rounded-xl bg-primary/5 px-3 py-2.5 border border-primary/10">
+                  {config?.logo ? (
+                    <img src={config.logo} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
+                  ) : config?.websiteUrl ? (
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                      alt=""
+                      className="h-8 w-8 shrink-0 rounded-full object-cover bg-muted"
+                    />
+                  ) : (
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-semibold">
+                      W
+                    </div>
+                  )}
+                  <span className="flex-1 truncate text-sm font-medium text-foreground">
+                    {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
+                  </span>
+                  <Check className="h-4 w-4 shrink-0 text-primary" />
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         {/* Sidebar content */}
         <div className="flex-1 overflow-hidden">
