@@ -660,16 +660,18 @@ const AppearancePanel = ({
                           value={item.question}
                           onChange={(e) => onUpdateFaqItem(item.id, { question: e.target.value })}
                           placeholder={`Question ${idx + 1}`}
-                          className="min-h-[28px] resize-none rounded-md border-border bg-muted/50 text-xs py-1.5 px-2"
+                          className="min-h-[28px] resize-none overflow-hidden rounded-md border-border bg-muted/50 text-xs py-1.5 px-2 break-words whitespace-pre-wrap"
                           rows={1}
+                          ref={(el) => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }}
                           onInput={(e) => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
                         />
                         <Textarea
                           value={item.answer}
                           onChange={(e) => onUpdateFaqItem(item.id, { answer: e.target.value })}
                           placeholder="Enter the answer..."
-                          className="min-h-[28px] resize-none rounded-md border-border bg-muted/50 text-xs py-1.5 px-2"
+                          className="min-h-[28px] resize-none overflow-hidden rounded-md border-border bg-muted/50 text-xs py-1.5 px-2 break-words whitespace-pre-wrap"
                           rows={1}
+                          ref={(el) => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }}
                           onInput={(e) => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
                         />
                       </div>
