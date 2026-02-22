@@ -310,7 +310,7 @@ const Builder = () => {
           {/* Workspace selector */}
           <Popover>
             <PopoverTrigger asChild>
-              <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background -ml-2 pl-2 pr-3 py-1 text-left transition-colors hover:bg-[#f0f0f0]">
+              <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background -ml-2 pl-2 pr-3 py-1.5 text-left transition-colors hover:bg-[#f0f0f0]">
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40">
                   {config?.logo ? (
                     <img src={config.logo} alt="" className="h-4.5 w-4.5 rounded-full object-cover" />
