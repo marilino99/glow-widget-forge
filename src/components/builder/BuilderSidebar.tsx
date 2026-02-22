@@ -740,12 +740,6 @@ const BuilderSidebar = ({
               onClick={() => handleSelectWidget("size-position")}
               active={activeWidget === "size-position"}
             />
-            <SidebarItem
-              icon={Code}
-              label="Injection code"
-              onClick={() => handleSelectWidget("injection-code")}
-              active={activeWidget === "injection-code"}
-            />
           </div>
         </div>
 
