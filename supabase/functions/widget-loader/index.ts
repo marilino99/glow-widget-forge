@@ -398,7 +398,7 @@ Deno.serve(async (req) => {
       var bbStyle = d.createElement('style');
       bbStyle.textContent = \`
         #wj-root{position:fixed;bottom:0;left:0;right:0;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;pointer-events:none}
-        #wj-bb-launcher{position:fixed;bottom:20px;${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:${color.bg};overflow:hidden;pointer-events:auto;z-index:2147483648}
+        #wj-bb-launcher{position:fixed;bottom:20px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s;background:\${color.bg};overflow:hidden;pointer-events:auto;z-index:2147483648}
         #wj-bb-launcher:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.2)}
         #wj-bb-launcher.visible{display:flex;animation:wj-btn-pop .4s cubic-bezier(0.34,1.56,0.64,1)}
         #wj-bb-launcher svg{width:24px;height:24px}
