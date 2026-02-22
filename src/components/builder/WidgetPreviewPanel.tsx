@@ -957,6 +957,23 @@ const WidgetPreviewPanel = ({
                   className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[540px] px-4 animate-widget-expand`}
                 >
                   <div className="flex flex-col rounded-2xl bg-white shadow-xl overflow-hidden" style={{ border: `1px solid ${actualHexColor}` }}>
+                    {/* Top-right controls */}
+                    <div className="flex items-center justify-end px-3 pt-2">
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => setIsBottomBarExpanded(false)}
+                          className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
+                        >
+                          <Minimize2 className="h-3.5 w-3.5 text-slate-400" />
+                        </button>
+                        <button
+                          onClick={() => { setIsBottomBarExpanded(false); handleCollapse(); }}
+                          className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
+                        >
+                          <X className="h-3.5 w-3.5 text-slate-400" />
+                        </button>
+                      </div>
+                    </div>
                     {/* Chat messages area */}
                     <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col max-h-[280px] min-h-[120px]">
                       {/* Welcome message */}
@@ -1062,25 +1079,8 @@ const WidgetPreviewPanel = ({
                         </button>
                       </div>
                     </div>
-                    {/* Bottom controls */}
-                    <div className="flex items-center justify-end px-4 pb-3">
-                      <div className="flex items-center gap-1.5">
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setIsBottomBarExpanded(false)}
-                          className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-                        >
-                          <Minimize2 className="h-3.5 w-3.5 text-slate-400" />
-                        </button>
-                        <button
-                          onClick={() => { setIsBottomBarExpanded(false); handleCollapse(); }}
-                          className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-                        >
-                          <X className="h-3.5 w-3.5 text-slate-400" />
-                        </button>
-                      </div>
-                    </div>
+                    {/* Bottom spacing */}
+                    <div className="pb-3" />
                   </div>
                 </div>
               </>
