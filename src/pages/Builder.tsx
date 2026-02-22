@@ -325,7 +325,7 @@ const Builder = () => {
                   )}
                 </div>
                 <span className="flex-1 truncate text-sm font-medium text-foreground">
-                  {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
+                  {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '').split('.')[0] + ' widget' : config?.contactName ? config.contactName + ' widget' : 'My Widget'}
                 </span>
                 <ChevronsRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
               </button>
@@ -354,7 +354,7 @@ const Builder = () => {
                     )}
                   </div>
                   <span className="flex-1 truncate text-sm font-medium text-foreground">
-                    {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '') : config?.contactName || 'My Widget'}
+                    {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '').split('.')[0] + ' widget' : config?.contactName ? config.contactName + ' widget' : 'My Widget'}
                   </span>
                   <Check className="h-4 w-4 shrink-0 text-primary" />
                 </div>
