@@ -262,6 +262,42 @@ export type Database = {
         }
         Relationships: []
       }
+      training_sources: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          source_type: string
+          status: string
+          title: string
+          updated_at: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          source_type?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          source_type?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_activity_logs: {
         Row: {
           created_at: string

@@ -23,6 +23,7 @@ const OnboardingTrainStep = ({
   const [pages, setPages] = useState<string[]>([]);
   const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set());
   const [isScanning, setIsScanning] = useState(false);
+  const [isTraining, setIsTraining] = useState(false);
   const [displayedCount, setDisplayedCount] = useState(0);
   const allPagesRef = useRef<string[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -283,15 +284,37 @@ const OnboardingTrainStep = ({
       <div className="flex items-center justify-end gap-3 px-10 py-8">
         <button
           onClick={onBack}
-          className="rounded-xl border border-[#e0e3ef] bg-white px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc]"
+          disabled={isTraining}
+          className="rounded-xl border border-[#e0e3ef] bg-white px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc] disabled:opacity-50"
         >
           Back
         </button>
         <button
-          onClick={onNext}
-          className="rounded-xl bg-[#7c3aed] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
+          onClick={async () => {
+            if (selectedPages.size > 0 && !isTraining) {
+              setIsTraining(true);
+              try {
+                await supabase.functions.invoke("scrape-training-content", {
+                  body: { urls: Array.from(selectedPages) },
+                });
+              } catch (err) {
+                console.error("Training scrape error:", err);
+              }
+              setIsTraining(false);
+            }
+            onNext();
+          }}
+          disabled={isTraining}
+          className="rounded-xl bg-[#7c3aed] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9] disabled:opacity-50 flex items-center gap-2"
         >
-          Next
+          {isTraining ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Training...
+            </>
+          ) : (
+            "Next"
+          )}
         </button>
       </div>
     </div>
