@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     // Get widget config with chatbot settings
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key")
+      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key, user_id")
       .eq("id", widgetId)
       .single();
 
@@ -49,6 +49,21 @@ Deno.serve(async (req) => {
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Fetch training sources for this user
+    const { data: trainingSources } = await supabase
+      .from("training_sources")
+      .select("title, content, source_type")
+      .eq("user_id", config.user_id)
+      .eq("status", "scraped")
+      .limit(20);
+
+    // Fetch FAQ items for this user
+    const { data: faqItems } = await supabase
+      .from("faq_items")
+      .select("question, answer")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
 
     if (!config.chatbot_enabled) {
       return new Response(
@@ -79,63 +94,42 @@ Deno.serve(async (req) => {
       parts: [{ text: msg.content }],
     }));
 
-    const widjetKnowledgeBase = `
-## What is Widjet
-Widjet is a customizable widget that you can add to any website with a simple copy-paste of a code snippet. It helps businesses engage with their website visitors through multiple features.
+    // Build knowledge base from training sources
+    let knowledgeBase = "";
 
-## Main Features
-- **Live Chat**: Real-time messaging between visitors and the site owner. Visitors can ask questions and get responses.
-- **AI Chatbot**: Automatic AI-powered responses to visitor questions (that's you!).
-- **FAQ Section**: A built-in accordion with frequently asked questions that the owner can customize.
-- **Product Cards**: A carousel of product cards with images, prices, promo badges, and links.
-- **Instagram Feed**: Display Instagram posts directly inside the widget.
-- **WhatsApp Integration**: A button that opens a WhatsApp conversation with the business.
-- **Custom Links**: Add custom buttons/links to the widget (e.g., booking pages, social media).
-- **Google Reviews**: Show Google reviews inside the widget.
-- **Contact Card**: Displays the business name, avatar, and a welcome message.
+    if (trainingSources && trainingSources.length > 0) {
+      knowledgeBase += "\n## Website Knowledge Base\n";
+      for (const source of trainingSources) {
+        // Limit each source to keep prompt manageable
+        const content = source.content.substring(0, 3000);
+        knowledgeBase += `\n### ${source.title}\n${content}\n`;
+      }
+    }
 
-## How to Install
-1. Go to the Widjet builder and customize your widget.
-2. Click "Add to website" to get the embed code.
-3. Copy and paste the code snippet into your website's HTML, just before the closing </body> tag.
-4. The widget will appear on your site immediately.
-It works on any website: WordPress, Shopify, Wix, custom HTML, and more.
-
-## Customization
-From the Widjet builder you can:
-- Change colors and theme (light/dark)
-- Upload your logo and avatar
-- Set a welcome message
-- Enable/disable individual features (FAQ, Instagram, WhatsApp, etc.)
-- Add product cards, FAQ items, Instagram posts
-- Choose the widget language
-- Add custom CSS and JavaScript for advanced customization
-
-## Pricing
-- **Free plan**: Basic features with Widjet branding.
-- **Pro plan**: All features, no branding, priority support.
-Visit the Widjet website for current pricing details.
-
-## Support
-If a visitor has a question you cannot answer, suggest they leave a message in the chat so the site owner can reply, or tell them to contact support at the Widjet website.
-`;
+    if (faqItems && faqItems.length > 0) {
+      knowledgeBase += "\n## Frequently Asked Questions\n";
+      for (const faq of faqItems) {
+        knowledgeBase += `\n**Q: ${faq.question}**\nA: ${faq.answer}\n`;
+      }
+    }
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
 
-    const systemInstruction = `You are the official Widjet assistant named "${config.contact_name || "Support"}".
+    const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
 Language: ALWAYS respond in ${config.language || "en"}.
 
-${widjetKnowledgeBase}
+${knowledgeBase}
 ${additionalInstructions}
 
 STRICT RULES:
-- You can ONLY answer questions about Widjet and its features.
-- If someone asks about anything unrelated to Widjet, politely decline and say you can only help with Widjet-related topics.
+- Use the knowledge base above to answer questions about the business, its products, services, and FAQ.
+- If the knowledge base contains relevant information, use it to give accurate, helpful answers.
+- If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat.
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max unless more detail is needed).
-- Do not make up information. If you don't know, say so and suggest contacting support.`;
+- Do not make up information. Only use what's in the knowledge base.`;
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;
