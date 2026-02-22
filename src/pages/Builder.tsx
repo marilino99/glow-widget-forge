@@ -16,6 +16,7 @@ import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
 import OnboardingSurveyDialog from "@/components/builder/OnboardingSurveyDialog";
+import OnboardingWebsiteStep from "@/components/builder/OnboardingWebsiteStep";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -29,9 +30,10 @@ const Builder = () => {
   const { user, signOut } = useAuth();
   const { config, isLoading, isSaving, saveConfig, updateConfig } = useWidgetConfiguration();
 
-  // Onboarding dialogs for first-time users
+  // Onboarding for first-time users
   const isNewUser = searchParams.get("onboarding") === "true";
   const [showSurvey, setShowSurvey] = useState(false);
+  const [showWebsiteStep, setShowWebsiteStep] = useState(false);
   
 
   // Check if user already completed or skipped the survey
@@ -44,7 +46,7 @@ const Builder = () => {
         .in("event_type", ["survey_completed", "survey_skipped"])
         .limit(1);
       if (!data || data.length === 0) {
-        setShowSurvey(true);
+        setShowWebsiteStep(true);
       }
     };
     checkSurvey();
@@ -186,6 +188,25 @@ const Builder = () => {
     setLivePreviewCss(css);
     setLivePreviewJs(js);
   }, []);
+
+  // Handle website step completion
+  const handleWebsiteStepNext = async (websiteUrl: string) => {
+    if (user && websiteUrl) {
+      // Save website URL to config
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from("widget_configurations") as any).upsert({
+        user_id: user.id,
+        website_url: websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`,
+      }, { onConflict: "user_id" });
+    }
+    setShowWebsiteStep(false);
+    setShowSurvey(true);
+  };
+
+  const handleWebsiteStepSkip = () => {
+    setShowWebsiteStep(false);
+    setShowSurvey(true);
+  };
 
   // Handle survey completion
   const handleSurveyComplete = async (answers: { businessType: string; mainGoal: string; monthlyVisitors: string }) => {
@@ -417,9 +438,17 @@ const Builder = () => {
         />
       )}
 
+      {/* Onboarding: website step (full-page) */}
+      {showWebsiteStep && (
+        <OnboardingWebsiteStep
+          onNext={handleWebsiteStepNext}
+          onSkip={handleWebsiteStepSkip}
+        />
+      )}
+
       {/* Onboarding survey for first-time users */}
       <OnboardingSurveyDialog
-        open={showSurvey}
+        open={showSurvey && !showWebsiteStep}
         onComplete={handleSurveyComplete}
       />
     </div>
