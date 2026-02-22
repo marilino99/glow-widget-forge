@@ -316,22 +316,54 @@ const Builder = () => {
           {/* Workspace selector / mini icon */}
           {isMiniSidebar ? (
             <div className="mt-3 flex justify-center">
-              <button
-                onClick={() => setIsMiniSidebar(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02]"
-              >
-                {config?.logo ? (
-                  <img src={config.logo} alt="" className="h-5 w-5 rounded-full object-cover" />
-                ) : config?.websiteUrl ? (
-                  <img
-                    src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
-                    alt=""
-                    className="h-5 w-5 rounded-full object-cover bg-muted"
-                  />
-                ) : (
-                  <div className="h-4 w-4 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
-                )}
-              </button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02]"
+                  >
+                    {config?.logo ? (
+                      <img src={config.logo} alt="" className="h-5 w-5 rounded-full object-cover" />
+                    ) : config?.websiteUrl ? (
+                      <img
+                        src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                        alt=""
+                        className="h-5 w-5 rounded-full object-cover bg-muted"
+                      />
+                    ) : (
+                      <div className="h-4 w-4 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                    )}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="start" side="right" sideOffset={12} className="w-64 rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
+                    <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-3 rounded-xl bg-primary/5 px-3 py-2.5 border border-primary/10">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40">
+                        {config?.logo ? (
+                          <img src={config.logo} alt="" className="h-7 w-7 rounded-full object-cover" />
+                        ) : config?.websiteUrl ? (
+                          <img
+                            src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                            alt=""
+                            className="h-7 w-7 rounded-full object-cover bg-muted"
+                          />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                        )}
+                      </div>
+                      <span className="flex-1 truncate text-sm font-medium text-foreground">
+                        {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '').split('.')[0] + ' widget' : config?.contactName ? config.contactName + ' widget' : 'My Widget'}
+                      </span>
+                      <Check className="h-4 w-4 shrink-0 text-primary" />
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           ) : (
             <div className="mt-3">
