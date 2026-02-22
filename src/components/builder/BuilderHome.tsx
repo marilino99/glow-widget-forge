@@ -207,12 +207,12 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
               </div>
               <div>
                 <p className="text-base font-semibold text-foreground">Widjet Team</p>
-                <p className="text-sm text-muted-foreground">support@widjet.io</p>
+                <p className="text-sm text-muted-foreground">support@getwidjet.com</p>
               </div>
             </div>
             <div className="flex gap-3">
               <a
-                href="mailto:support@widjet.io"
+                href="mailto:support@getwidjet.com"
                 className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
               >
                 <Mail className="h-4 w-4" style={{ color: "#5b5b65" }} />
