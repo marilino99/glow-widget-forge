@@ -16,6 +16,7 @@ import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import BuilderHome from "@/components/builder/BuilderHome";
 import ConversationsPanel from "@/components/builder/ConversationsPanel";
 import ContactsPanel from "@/components/builder/ContactsPanel";
+import AppearancePanel from "@/components/builder/AppearancePanel";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
@@ -93,7 +94,7 @@ const Builder = () => {
     isLoading: isLoadingCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations" | "contacts">("home");
+  const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance">("home");
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
   
@@ -541,6 +542,16 @@ const Builder = () => {
           <ConversationsPanel />
         ) : builderView === "contacts" ? (
           <ContactsPanel />
+        ) : builderView === "appearance" ? (
+          <AppearancePanel
+            contactName={config.contactName}
+            onContactNameChange={(name) => updateConfig({ contactName: name })}
+            logo={config.logo}
+            onLogoChange={(logo) => updateConfig({ logo })}
+            widgetColor={config.widgetColor}
+            onWidgetColorChange={(color) => updateConfig({ widgetColor: color })}
+            onSave={() => saveConfig({})}
+          />
         ) : (
           <>
             {/* Right header with actions */}

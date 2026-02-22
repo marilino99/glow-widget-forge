@@ -150,8 +150,8 @@ interface BuilderSidebarProps {
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
-  builderView: "home" | "editor" | "conversations" | "contacts";
-  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts") => void;
+  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance";
+  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance") => void;
   isMiniSidebar?: boolean;
 }
 
@@ -688,6 +688,13 @@ const BuilderSidebar = ({
             </p>
           )}
           <div className="space-y-0.5">
+            <SidebarItem
+              icon={Palette}
+              label="Appearance"
+              active={builderView === "appearance"}
+              onClick={() => onBuilderViewChange("appearance")}
+              miniMode={isMiniSidebar}
+            />
             <SidebarItem
               icon={MessageSquare}
               label="Contact card"
