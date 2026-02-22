@@ -461,6 +461,7 @@ Deno.serve(async (req) => {
       // ============ BOTTOM BAR LAYOUT ============
       var bbCollapsed = d.createElement('div');
       bbCollapsed.id = 'wj-bb-collapsed';
+      bbCollapsed.classList.add('hidden');
 
       // Glow
       var bbGlow = d.createElement('div');
@@ -548,19 +549,24 @@ Deno.serve(async (req) => {
       root.appendChild(bbCollapsed);
       root.appendChild(bbExpanded);
 
-      // Show FAQ pills after 5s
-      if (faqEnabled && faqs.length > 0) {
-        setTimeout(function() {
-          bbPills.style.display = 'flex';
-          var pills = bbPills.querySelectorAll('.wj-bb-pill');
-          pills.forEach(function(p, i) {
-            p.style.animationDelay = (i * 150) + 'ms';
-          });
-        }, 5000);
+      // Show FAQ pills after bar becomes visible (delayed by 3s)
+      function showFaqPills() {
+        if (faqEnabled && faqs.length > 0) {
+          setTimeout(function() {
+            bbPills.style.display = 'flex';
+            var pills = bbPills.querySelectorAll('.wj-bb-pill');
+            pills.forEach(function(p, i) {
+              p.style.animationDelay = (i * 150) + 'ms';
+            });
+          }, 3000);
+        }
       }
 
       // Track impression
       trackEvent('impression');
+
+      // Start closed: show only the launcher icon
+      showLauncher();
 
       // Event handlers
       function showLauncher() {
@@ -573,6 +579,7 @@ Deno.serve(async (req) => {
       bbLauncher.onclick = function() {
         hideLauncher();
         bbCollapsed.classList.remove('hidden');
+        showFaqPills();
       };
 
       bbBar.onclick = function() { openExpandedChat(); };
