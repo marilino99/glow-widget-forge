@@ -75,10 +75,10 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(1) + "%" : "0%";
 
   const metricCards = [
-    { icon: Eye, label: "Impressions", value: impressions, color: "hsl(270, 70%, 55%)" },
-    { icon: MousePointerClick, label: "Clicks", value: clicks, color: "hsl(220, 80%, 55%)" },
-    { icon: TrendingUp, label: "CTR", value: ctr, color: "hsl(150, 60%, 45%)" },
-    { icon: MessageSquareText, label: "Conversations", value: conversations, color: "hsl(25, 90%, 55%)" },
+    { icon: Eye, label: "Impressions", value: impressions, color: "#5b5b65" },
+    { icon: MousePointerClick, label: "Clicks", value: clicks, color: "#5b5b65" },
+    { icon: TrendingUp, label: "CTR", value: ctr, color: "#5b5b65" },
+    { icon: MessageSquareText, label: "Conversations", value: conversations, color: "#5b5b65" },
   ];
 
   const integrations = [
@@ -100,8 +100,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
 
         {/* Metrics cards */}
         <div>
-          <h2 className="mb-4 text-lg font-semibold text-foreground">Performance</h2>
-          <p className="mb-4 text-xs text-muted-foreground">Last 30 days</p>
+          <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Performance</h2>
+          <p className="mb-4 text-xs" style={{ color: "#5b5b65" }}>Last 30 days</p>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {metricCards.map((metric) => (
               <div
@@ -133,11 +133,11 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Quick metrics */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold text-foreground">Quick insights</h2>
+            <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Quick insights</h2>
             <div className="space-y-3">
               <div className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(270,70%,55%)]/10">
-                  <Eye className="h-5 w-5 text-[hsl(270,70%,55%)]" />
+               <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: "rgba(91,91,101,0.1)" }}>
+                  <Eye className="h-5 w-5" style={{ color: "#5b5b65" }} />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-foreground">Widget status</p>
@@ -148,8 +148,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                 <div className={`h-2.5 w-2.5 rounded-full ${impressions > 0 ? "bg-green-500" : "bg-muted-foreground/30"}`} />
               </div>
               <div className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(25,90%,55%)]/10">
-                  <MessageSquareText className="h-5 w-5 text-[hsl(25,90%,55%)]" />
+               <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: "rgba(91,91,101,0.1)" }}>
+                  <MessageSquareText className="h-5 w-5" style={{ color: "#5b5b65" }} />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-foreground">Unread conversations</p>
@@ -159,8 +159,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                 </div>
               </div>
               <div className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(150,60%,45%)]/10">
-                  <TrendingUp className="h-5 w-5 text-[hsl(150,60%,45%)]" />
+               <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: "rgba(91,91,101,0.1)" }}>
+                  <TrendingUp className="h-5 w-5" style={{ color: "#5b5b65" }} />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-foreground">Engagement rate</p>
@@ -174,7 +174,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
 
           {/* Integrations */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold text-foreground">Integrations</h2>
+            <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Integrations</h2>
             <div className="space-y-3">
               {integrations.map((integration) => (
                 <div
