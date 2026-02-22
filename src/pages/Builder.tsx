@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { Button } from "@/components/ui/button";
@@ -124,6 +124,7 @@ const Builder = () => {
   const [livePreviewJs, setLivePreviewJs] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMiniSidebar, setIsMiniSidebar] = useState(false);
   const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   
   // Track initial typography values for cancel functionality
@@ -292,71 +293,84 @@ const Builder = () => {
   return (
     <div className="flex h-screen bg-background">
       {/* Left sidebar - full height */}
-      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isPanelOpen ? 'w-96' : 'w-72'}`}>
+      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar header with logo */}
-        <div className="shrink-0 bg-[#fafafa] px-4 pt-3 pb-2 space-y-3">
-          <div className="flex items-center">
+        <div className={`shrink-0 bg-[#fafafa] pt-3 pb-2 ${isMiniSidebar ? 'px-2' : 'px-4'}`}>
+          <div className={`flex items-center ${isMiniSidebar ? 'justify-center' : 'justify-between'}`}>
+            {!isMiniSidebar && (
+              <button
+                onClick={() => window.location.reload()}
+                className="flex items-center"
+              >
+                <img src={widjetLogoNavbar} className="h-8 w-auto -ml-2.5" alt="Widjet logo" />
+              </button>
+            )}
             <button
-              onClick={() => window.location.reload()}
-              className="flex items-center"
+              onClick={() => setIsMiniSidebar(!isMiniSidebar)}
+              className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[#f0f0f0]"
+              title={isMiniSidebar ? "Espandi sidebar" : "Riduci sidebar"}
             >
-              <img src={widjetLogoNavbar} className="h-8 w-auto -ml-2.5" alt="Widjet logo" />
+              <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
             </button>
           </div>
           {/* Workspace selector */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background -ml-2 pl-2 pr-3 py-1.5 text-left transition-colors hover:bg-[#f0f0f0]">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40">
-                  {config?.logo ? (
-                    <img src={config.logo} alt="" className="h-4.5 w-4.5 rounded-full object-cover" />
-                  ) : config?.websiteUrl ? (
-                    <img
-                      src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
-                      alt=""
-                      className="h-4.5 w-4.5 rounded-full object-cover bg-muted"
-                    />
-                  ) : (
-                    <div className="h-4 w-4 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
-                  )}
-                </div>
-                <span className="flex-1 truncate text-sm font-medium text-foreground">
-                  {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '').split('.')[0] + ' widget' : config?.contactName ? config.contactName + ' widget' : 'My Widget'}
-                </span>
-                <ChevronsRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="start" side="bottom" className="w-[calc(288px-32px)] rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
-                <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="space-y-1">
-                {/* Current widget - selected */}
-                <div className="flex items-center gap-3 rounded-xl bg-primary/5 px-3 py-2.5 border border-primary/10">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40">
-                    {config?.logo ? (
-                      <img src={config.logo} alt="" className="h-7 w-7 rounded-full object-cover" />
-                    ) : config?.websiteUrl ? (
-                      <img
-                        src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
-                        alt=""
-                        className="h-7 w-7 rounded-full object-cover bg-muted"
-                      />
-                    ) : (
-                      <div className="h-6 w-6 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
-                    )}
+          {!isMiniSidebar && (
+            <div className="mt-3">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background -ml-2 pl-2 pr-3 py-1.5 text-left transition-colors hover:bg-[#f0f0f0]">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40">
+                      {config?.logo ? (
+                        <img src={config.logo} alt="" className="h-4.5 w-4.5 rounded-full object-cover" />
+                      ) : config?.websiteUrl ? (
+                        <img
+                          src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                          alt=""
+                          className="h-4.5 w-4.5 rounded-full object-cover bg-muted"
+                        />
+                      ) : (
+                        <div className="h-4 w-4 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                      )}
+                    </div>
+                    <span className="flex-1 truncate text-sm font-medium text-foreground">
+                      {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '').split('.')[0] + ' widget' : config?.contactName ? config.contactName + ' widget' : 'My Widget'}
+                    </span>
+                    <ChevronsRight className="h-4 w-4 shrink-0 text-muted-foreground rotate-90" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="start" side="bottom" className="w-[calc(288px-32px)] rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
+                    <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                      <Plus className="h-4 w-4" />
+                    </button>
                   </div>
-                  <span className="flex-1 truncate text-sm font-medium text-foreground">
-                    {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '').split('.')[0] + ' widget' : config?.contactName ? config.contactName + ' widget' : 'My Widget'}
-                  </span>
-                  <Check className="h-4 w-4 shrink-0 text-primary" />
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+                  <div className="space-y-1">
+                    {/* Current widget - selected */}
+                    <div className="flex items-center gap-3 rounded-xl bg-primary/5 px-3 py-2.5 border border-primary/10">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40">
+                        {config?.logo ? (
+                          <img src={config.logo} alt="" className="h-7 w-7 rounded-full object-cover" />
+                        ) : config?.websiteUrl ? (
+                          <img
+                            src={`https://www.google.com/s2/favicons?domain=${new URL(config.websiteUrl).hostname}&sz=64`}
+                            alt=""
+                            className="h-7 w-7 rounded-full object-cover bg-muted"
+                          />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, #f9a825, #ef6c00, #d84315, #bf360c)' }} />
+                        )}
+                      </div>
+                      <span className="flex-1 truncate text-sm font-medium text-foreground">
+                        {config?.websiteUrl ? new URL(config.websiteUrl).hostname.replace('www.', '').split('.')[0] + ' widget' : config?.contactName ? config.contactName + ' widget' : 'My Widget'}
+                      </span>
+                      <Check className="h-4 w-4 shrink-0 text-primary" />
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
         </div>
         {/* Sidebar content */}
         <div className="flex-1 overflow-hidden">
@@ -448,6 +462,7 @@ const Builder = () => {
             initialHasGoogleBusiness={!!config.googleBusinessName}
             builderView={builderView}
             onBuilderViewChange={setBuilderView}
+            isMiniSidebar={isMiniSidebar}
           />
         </div>
       </div>
