@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2 } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical } from "lucide-react";
 import { FaqItemData } from "@/types/faqItem";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -71,6 +71,7 @@ interface AppearancePanelProps {
   onAddFaqItem: (item: FaqItemData) => void;
   onUpdateFaqItem: (id: string, updates: Partial<FaqItemData>) => void;
   onDeleteFaqItem: (id: string) => void;
+  onReorderFaqItems: (fromIndex: number, toIndex: number) => void;
   reportBugsEnabled: boolean;
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
@@ -123,6 +124,7 @@ const AppearancePanel = ({
   onAddFaqItem,
   onUpdateFaqItem,
   onDeleteFaqItem,
+  onReorderFaqItems,
   reportBugsEnabled,
   onReportBugsChange,
   shareFeedbackEnabled,
@@ -638,7 +640,21 @@ const AppearancePanel = ({
               {faqEnabled && (
                 <div className="border-t border-border px-3 py-2.5 space-y-2">
                   {faqItems.map((item, idx) => (
-                    <div key={item.id} className="flex items-start gap-2">
+                    <div
+                      key={item.id}
+                      className="flex items-start gap-1.5 group"
+                      draggable
+                      onDragStart={(e) => { e.dataTransfer.setData("faq-idx", String(idx)); }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const fromIdx = parseInt(e.dataTransfer.getData("faq-idx"), 10);
+                        if (!isNaN(fromIdx) && fromIdx !== idx) onReorderFaqItems(fromIdx, idx);
+                      }}
+                    >
+                      <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
+                        <GripVertical className="h-3.5 w-3.5" />
+                      </div>
                       <div className="flex-1 space-y-1">
                         <Input
                           value={item.question}
