@@ -194,7 +194,7 @@ const AppearancePanel = ({
 
               {avatarTab === "gallery" && (
                 <div className="rounded-xl bg-muted/60 p-2">
-                  <div className="max-h-[148px] overflow-y-auto grid grid-cols-5 gap-2 p-2">
+                  <div className="max-h-[120px] overflow-y-auto grid grid-cols-8 gap-1.5 p-1.5">
                     {avatars.map((avatar, index) => (
                       <button
                         key={index}
