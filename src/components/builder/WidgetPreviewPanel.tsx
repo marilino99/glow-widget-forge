@@ -12,6 +12,7 @@ import { GoogleBusinessData } from "./GoogleReviewsPanel";
 import { getTranslations } from "@/lib/translations";
 import TypewriterText from "./TypewriterText";
 import SocialProofTooltip from "./SocialProofTooltip";
+import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 
 interface WidgetPreviewPanelProps {
   activeWidget?: string | null;
@@ -1079,8 +1080,11 @@ const WidgetPreviewPanel = ({
                         </button>
                       </div>
                     </div>
-                    {/* Bottom spacing */}
-                    <div className="pb-3" />
+                    {/* Branding */}
+                    <div className="flex items-center justify-center gap-1.5 py-2.5">
+                      <img src={widjetLogoNavbar} alt="Widjet" className="h-3.5 w-auto opacity-40" />
+                      <span className="text-[10px] text-slate-300">Powered by Widjet</span>
+                    </div>
                   </div>
                 </div>
               </>
