@@ -656,17 +656,21 @@ const AppearancePanel = ({
                         <GripVertical className="h-3.5 w-3.5" />
                       </div>
                       <div className="flex-1 space-y-1">
-                        <Input
+                        <Textarea
                           value={item.question}
                           onChange={(e) => onUpdateFaqItem(item.id, { question: e.target.value })}
                           placeholder={`Question ${idx + 1}`}
-                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                          className="min-h-[28px] resize-none rounded-md border-border bg-muted/50 text-xs py-1.5 px-2"
+                          rows={1}
+                          onInput={(e) => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
                         />
-                        <Input
+                        <Textarea
                           value={item.answer}
                           onChange={(e) => onUpdateFaqItem(item.id, { answer: e.target.value })}
                           placeholder="Enter the answer..."
-                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                          className="min-h-[28px] resize-none rounded-md border-border bg-muted/50 text-xs py-1.5 px-2"
+                          rows={1}
+                          onInput={(e) => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
                         />
                       </div>
                       <button
