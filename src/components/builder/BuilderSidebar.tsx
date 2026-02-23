@@ -700,17 +700,17 @@ const BuilderSidebar = ({
         <div className="mb-6 -mt-3">
           <div className="space-y-0.5">
             <SidebarItem
-              icon={Home}
-              label="Home"
-              active={builderView === "home"}
-              onClick={() => onBuilderViewChange("home")}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
               icon={MessageCircle}
               label="Conversations"
               active={builderView === "conversations"}
               onClick={() => onBuilderViewChange("conversations")}
+              miniMode={isMiniSidebar}
+            />
+            <SidebarItem
+              icon={Home}
+              label="Home"
+              active={builderView === "home"}
+              onClick={() => onBuilderViewChange("home")}
               miniMode={isMiniSidebar}
             />
             <SidebarItem
