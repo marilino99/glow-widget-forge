@@ -38,7 +38,7 @@ const Hero = () => {
           <motion.div custom={0} initial="hidden" animate="visible" variants={fadeUp} className="mb-4">
             <span className="wow-pill">
               <Sparkles className="h-3.5 w-3.5" />
-              {t("hero.badge")}
+              Setup in 2 minutes
             </span>
           </motion.div>
 
@@ -64,9 +64,6 @@ const Hero = () => {
                 {t("hero.note1")}<br />{t("hero.note2")}
               </span>
             </div>
-            <span className="wow-pill" style={{ background: 'linear-gradient(135deg, hsl(270,80%,50%), hsl(250,85%,60%))', color: '#fff', padding: '0 20px', height: '38px', fontSize: '13px', letterSpacing: '0.12em', textTransform: 'uppercase' as const }}>
-              ⚡ Setup in 2 minutes
-            </span>
           </motion.div>
         </div>
 
