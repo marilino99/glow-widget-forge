@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -34,6 +34,7 @@ import {
   LayoutTemplate,
   Home,
   ChevronsLeft,
+  CreditCard,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -271,6 +272,23 @@ const BuilderSidebar = ({
   const [showTemplatesPanel, setShowTemplatesPanel] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
+  const [responseCount, setResponseCount] = useState(0);
+
+  // Load response count
+  useEffect(() => {
+    const loadResponseCount = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      // Count bot messages in conversations owned by this user
+      const { count } = await supabase
+        .from("chat_messages")
+        .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
+        .eq("sender_type", "bot")
+        .eq("conversations.widget_owner_id", user.id);
+      setResponseCount(count ?? 0);
+    };
+    loadResponseCount();
+  }, []);
 
   // Load user profile (avatar + name)
   useEffect(() => {
@@ -729,6 +747,28 @@ const BuilderSidebar = ({
       <div className={`shrink-0 ${isMiniSidebar ? 'px-1.5' : 'px-3'} pb-2`}>
         <AddToWebsiteDialog widgetId={widgetId} fullWidth={!isMiniSidebar} />
       </div>
+
+      {/* Usage overview */}
+      {!isMiniSidebar && (
+        <div className={`shrink-0 px-3 pb-2`}>
+          <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">{isPro ? "Pro" : "Free"}</span>
+            </div>
+            <div className="text-sm text-foreground">
+              <span className="font-semibold">{responseCount.toLocaleString()}</span>
+              <span className="text-muted-foreground"> / {isPro ? "10,000" : "100"} responses</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full rounded-full bg-primary transition-all duration-500"
+                style={{ width: `${Math.min((responseCount / (isPro ? 10000 : 100)) * 100, 100)}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bottom account section */}
       <div className={`shrink-0 py-2 ${isMiniSidebar ? 'px-1.5' : 'px-3'}`}>
