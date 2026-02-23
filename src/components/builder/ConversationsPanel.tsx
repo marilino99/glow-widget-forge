@@ -43,10 +43,10 @@ interface ChatMessage {
 type FilterType = "all" | "assign_to_me" | "unassigned" | "resolved" | "deleted";
 
 const FILTER_ITEMS: { key: FilterType; label: string; icon: React.ReactNode; color: string }[] = [
+  { key: "all", label: "All conversations", icon: <Users className="h-4 w-4" />, color: "text-blue-600" },
   { key: "assign_to_me", label: "Assign to me", icon: <Inbox className="h-4 w-4" />, color: "text-blue-500" },
   { key: "unassigned", label: "Unassigned", icon: <Hand className="h-4 w-4" />, color: "text-yellow-500" },
   { key: "resolved", label: "Resolved", icon: <CheckSquare className="h-4 w-4" />, color: "text-green-500" },
-  { key: "all", label: "All conversations", icon: <Users className="h-4 w-4" />, color: "text-blue-600" },
 ];
 
 const ConversationsPanel = () => {
