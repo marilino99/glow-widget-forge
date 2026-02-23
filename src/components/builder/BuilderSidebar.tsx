@@ -684,7 +684,7 @@ const BuilderSidebar = ({
         {/* Provide help section */}
         <div className="mb-6">
           {!isMiniSidebar && (
-            <p className="mb-2 text-xs font-medium tracking-wider" style={{ color: "#5b5b65" }}>
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#787880" }}>
               Product
             </p>
           )}
