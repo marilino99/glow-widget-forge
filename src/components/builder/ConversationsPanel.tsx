@@ -49,7 +49,13 @@ const FILTER_ITEMS: { key: FilterType; label: string; icon: React.ReactNode; col
   { key: "resolved", label: "Resolved", icon: <CheckSquare className="h-4 w-4" />, color: "text-green-500" },
 ];
 
-const ConversationsPanel = () => {
+interface ConversationsPanelProps {
+  isAtLimit?: boolean;
+  isPro?: boolean;
+  onUpgrade?: () => void;
+}
+
+const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: ConversationsPanelProps) => {
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
@@ -159,7 +165,23 @@ const ConversationsPanel = () => {
   };
 
   return (
-    <div className="flex flex-1 overflow-hidden bg-background">
+    <div className="relative flex flex-1 overflow-hidden bg-background">
+      {/* AI Limit Banner */}
+      {isAtLimit && !isPro && (
+        <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between bg-red-50 border-b border-red-200 px-5 py-2.5">
+          <p className="text-sm text-red-700">
+            AI responses are exhausted for this month. Upgrade to continue automatic replies.
+          </p>
+          {onUpgrade && (
+            <button
+              onClick={onUpgrade}
+              className="shrink-0 rounded-lg bg-purple-600 px-3 py-1 text-xs font-medium text-white hover:bg-purple-700 transition-colors"
+            >
+              Upgrade
+            </button>
+          )}
+        </div>
+      )}
       {/* Column 1: Filter sidebar */}
       <div className="flex w-52 shrink-0 flex-col border-r border-border bg-background">
         <div className="px-5 py-4">

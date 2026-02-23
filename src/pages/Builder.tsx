@@ -65,7 +65,7 @@ const Builder = () => {
     checkSurvey();
   }, [isNewUser, user]);
   const { hasUnread } = useUnreadMessages();
-  const { plan, subscriptionEnd, startCheckout } = useSubscription();
+  const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
   const { 
     productCards, 
     isLoading: isLoadingCards, 
@@ -526,6 +526,10 @@ const Builder = () => {
             }}
             isMiniSidebar={isMiniSidebar}
             widgetId={config.id || undefined}
+            aiResponsesThisMonth={aiResponsesThisMonth}
+            aiResponseLimit={aiResponseLimit}
+            isApproachingLimit={isApproachingLimit}
+            isAtLimit={isAtLimit}
           />
         </div>
       </div>
@@ -545,7 +549,7 @@ const Builder = () => {
         {builderView === "home" ? (
           <BuilderHome isPro={plan === "pro"} userName={config.contactName !== "Support" ? config.contactName : null} />
         ) : builderView === "conversations" ? (
-          <ConversationsPanel />
+          <ConversationsPanel isAtLimit={isAtLimit} isPro={plan === "pro"} onUpgrade={() => setShowUpgradeOverlay(true)} />
         ) : builderView === "contacts" ? (
           <ContactsPanel />
         ) : builderView === "appearance" ? (

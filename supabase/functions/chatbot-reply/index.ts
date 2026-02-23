@@ -1,10 +1,50 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import Stripe from "https://esm.sh/stripe@18.5.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+const FREE_LIMIT = 100;
+const PRO_LIMIT = 10000;
+
+async function getMonthlyAiCount(supabase: any, userId: string): Promise<number> {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  const { count } = await supabase
+    .from("chat_messages")
+    .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
+    .eq("is_ai_response", true)
+    .eq("conversations.widget_owner_id", userId)
+    .gte("created_at", startOfMonth);
+
+  return count ?? 0;
+}
+
+async function getUserPlan(userId: string, supabase: any): Promise<"free" | "pro"> {
+  const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+  if (!stripeKey) return "free";
+
+  // Get user email
+  const { data: userData } = await supabase.auth.admin.getUserById(userId);
+  const email = userData?.user?.email;
+  if (!email) return "free";
+
+  const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+  const customers = await stripe.customers.list({ email, limit: 1 });
+  if (customers.data.length === 0) return "free";
+
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customers.data[0].id,
+    status: "active",
+    limit: 1,
+  });
+
+  return subscriptions.data.length > 0 ? "pro" : "free";
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,14 +65,6 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const geminiApiKey = Deno.env.get("GOOGLE_GEMINI_API_KEY");
 
-    if (!geminiApiKey) {
-      console.error("GOOGLE_GEMINI_API_KEY not configured");
-      return new Response(
-        JSON.stringify({ error: "AI not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get widget config with chatbot settings
@@ -43,27 +75,11 @@ Deno.serve(async (req) => {
       .single();
 
     if (configError || !config) {
-      console.error("Widget config not found:", configError);
       return new Response(
         JSON.stringify({ error: "Widget not found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    // Fetch training sources for this user
-    const { data: trainingSources } = await supabase
-      .from("training_sources")
-      .select("title, content, source_type")
-      .eq("user_id", config.user_id)
-      .eq("status", "scraped")
-      .limit(20);
-
-    // Fetch FAQ items for this user
-    const { data: faqItems } = await supabase
-      .from("faq_items")
-      .select("question, answer")
-      .eq("user_id", config.user_id)
-      .order("sort_order", { ascending: true });
 
     if (!config.chatbot_enabled) {
       return new Response(
@@ -71,6 +87,54 @@ Deno.serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // === LIMIT CHECK ===
+    const monthlyCount = await getMonthlyAiCount(supabase, config.user_id);
+    const plan = await getUserPlan(config.user_id, supabase);
+    const limit = plan === "pro" ? PRO_LIMIT : FREE_LIMIT;
+
+    if (monthlyCount >= limit) {
+      // Insert fallback message instead of AI response
+      const fallbackMessages: Record<string, string> = {
+        it: "L'assistente non è al momento disponibile. Lascia un messaggio e ti risponderemo il prima possibile.",
+        en: "The assistant is currently unavailable. Leave a message and we'll get back to you as soon as possible.",
+        es: "El asistente no está disponible en este momento. Deja un mensaje y te responderemos lo antes posible.",
+        fr: "L'assistant n'est pas disponible pour le moment. Laissez un message et nous vous répondrons dès que possible.",
+        de: "Der Assistent ist derzeit nicht verfügbar. Hinterlassen Sie eine Nachricht und wir melden uns so schnell wie möglich.",
+      };
+      const fallbackMessage = fallbackMessages[config.language] || fallbackMessages.en;
+
+      await supabase.from("chat_messages").insert({
+        conversation_id: conversationId,
+        sender_type: "owner",
+        content: fallbackMessage,
+        is_ai_response: true,
+      });
+
+      await supabase.from("conversations").update({
+        last_message: fallbackMessage,
+        last_message_at: new Date().toISOString(),
+      }).eq("id", conversationId);
+
+      return new Response(
+        JSON.stringify({ success: true, limited: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    // === END LIMIT CHECK ===
+
+    if (!geminiApiKey && !config.ai_api_key) {
+      return new Response(
+        JSON.stringify({ error: "AI not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Fetch training sources and FAQ items
+    const [{ data: trainingSources }, { data: faqItems }] = await Promise.all([
+      supabase.from("training_sources").select("title, content, source_type").eq("user_id", config.user_id).eq("status", "scraped").limit(20),
+      supabase.from("faq_items").select("question, answer").eq("user_id", config.user_id).order("sort_order", { ascending: true }),
+    ]);
 
     // Get last 20 messages for context
     const { data: messages, error: msgError } = await supabase
@@ -81,7 +145,6 @@ Deno.serve(async (req) => {
       .limit(20);
 
     if (msgError) {
-      console.error("Error fetching messages:", msgError);
       return new Response(
         JSON.stringify({ error: "Failed to fetch messages" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -94,18 +157,14 @@ Deno.serve(async (req) => {
       parts: [{ text: msg.content }],
     }));
 
-    // Build knowledge base from training sources
+    // Build knowledge base
     let knowledgeBase = "";
-
     if (trainingSources && trainingSources.length > 0) {
       knowledgeBase += "\n## Website Knowledge Base\n";
       for (const source of trainingSources) {
-        // Limit each source to keep prompt manageable
-        const content = source.content.substring(0, 3000);
-        knowledgeBase += `\n### ${source.title}\n${content}\n`;
+        knowledgeBase += `\n### ${source.title}\n${source.content.substring(0, 3000)}\n`;
       }
     }
-
     if (faqItems && faqItems.length > 0) {
       knowledgeBase += "\n## Frequently Asked Questions\n";
       for (const faq of faqItems) {
@@ -137,21 +196,18 @@ STRICT RULES:
     const effectiveApiKey = userApiKey || geminiApiKey;
 
     if (!effectiveApiKey) {
-      console.error("No AI API key available");
       return new Response(
         JSON.stringify({ error: "AI not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    let aiReply: string | undefined;
+
     if (aiProvider === "openai" && userApiKey) {
-      // Call OpenAI API
       const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userApiKey}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${userApiKey}` },
         body: JSON.stringify({
           model: "gpt-4o-mini",
           messages: [
@@ -176,23 +232,17 @@ STRICT RULES:
       }
 
       const openaiData = await openaiResponse.json();
-      var aiReply = openaiData?.choices?.[0]?.message?.content;
+      aiReply = openaiData?.choices?.[0]?.message?.content;
     } else {
-      // Call Google Gemini API
       const geminiResponse = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveApiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            system_instruction: {
-              parts: [{ text: systemInstruction }],
-            },
+            system_instruction: { parts: [{ text: systemInstruction }] },
             contents: conversationHistory,
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 500,
-            },
+            generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
           }),
         }
       );
@@ -207,43 +257,35 @@ STRICT RULES:
       }
 
       const geminiData = await geminiResponse.json();
-      var aiReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+      aiReply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
     }
 
     if (!aiReply) {
-      console.error("No AI reply generated");
       return new Response(
         JSON.stringify({ error: "No AI response generated" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Save the AI reply as an owner message
-    const { error: insertError } = await supabase
-      .from("chat_messages")
-      .insert({
-        conversation_id: conversationId,
-        sender_type: "owner",
-        content: aiReply.trim(),
-        is_ai_response: true,
-      });
+    // Save the AI reply
+    const { error: insertError } = await supabase.from("chat_messages").insert({
+      conversation_id: conversationId,
+      sender_type: "owner",
+      content: aiReply.trim(),
+      is_ai_response: true,
+    });
 
     if (insertError) {
-      console.error("Error saving AI reply:", insertError);
       return new Response(
         JSON.stringify({ error: "Failed to save reply" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Update conversation last message
-    await supabase
-      .from("conversations")
-      .update({
-        last_message: aiReply.trim(),
-        last_message_at: new Date().toISOString(),
-      })
-      .eq("id", conversationId);
+    await supabase.from("conversations").update({
+      last_message: aiReply.trim(),
+      last_message_at: new Date().toISOString(),
+    }).eq("id", conversationId);
 
     return new Response(
       JSON.stringify({ success: true }),

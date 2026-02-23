@@ -157,9 +157,13 @@ interface BuilderSidebarProps {
   onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance") => void;
   isMiniSidebar?: boolean;
   widgetId?: string;
+  aiResponsesThisMonth: number;
+  aiResponseLimit: number;
+  isApproachingLimit: boolean;
+  isAtLimit: boolean;
 }
 
-const BuilderSidebar = ({ 
+const BuilderSidebar = ({
   onSelectWidget, 
   activeWidget, 
   selectedAvatar, 
@@ -249,6 +253,10 @@ const BuilderSidebar = ({
   onBuilderViewChange,
   isMiniSidebar,
   widgetId,
+  aiResponsesThisMonth,
+  aiResponseLimit,
+  isApproachingLimit,
+  isAtLimit,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -272,43 +280,6 @@ const BuilderSidebar = ({
   const [showTemplatesPanel, setShowTemplatesPanel] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
-  const [responseCount, setResponseCount] = useState(0);
-
-  // Load response count + realtime subscription
-  useEffect(() => {
-    let userId: string | null = null;
-
-    const loadResponseCount = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      userId = user.id;
-      const { count } = await supabase
-        .from("chat_messages")
-        .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
-        .eq("is_ai_response", true)
-        .eq("conversations.widget_owner_id", user.id);
-      setResponseCount(count ?? 0);
-    };
-    loadResponseCount();
-
-    // Listen for new AI responses in realtime
-    const channel = supabase
-      .channel("response-counter")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "chat_messages" },
-        (payload) => {
-          if (payload.new && (payload.new as any).is_ai_response === true) {
-            loadResponseCount();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
 
   // Load user profile (avatar + name)
   useEffect(() => {
@@ -777,15 +748,32 @@ const BuilderSidebar = ({
               <span className="text-sm font-medium text-foreground">{isPro ? "Pro" : "Free"}</span>
             </div>
             <div className="text-sm text-foreground">
-              <span className="font-semibold">{responseCount.toLocaleString()}</span>
-              <span className="text-muted-foreground"> / {isPro ? "10,000" : "100"} responses</span>
+              <span className="font-semibold">{aiResponsesThisMonth.toLocaleString()}</span>
+              <span className="text-muted-foreground"> / {aiResponseLimit.toLocaleString()} responses</span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full rounded-full bg-primary transition-all duration-500"
-                style={{ width: `${Math.min((responseCount / (isPro ? 10000 : 100)) * 100, 100)}%` }}
+                className={`h-full rounded-full transition-all duration-500 ${
+                  isAtLimit ? "bg-red-500" : isApproachingLimit ? "bg-yellow-500" : "bg-green-500"
+                }`}
+                style={{ width: `${Math.min((aiResponsesThisMonth / aiResponseLimit) * 100, 100)}%` }}
               />
             </div>
+            {isAtLimit && !isPro && (
+              <button
+                onClick={onUpgrade}
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-purple-700 transition-colors"
+              >
+                <Sparkles className="h-3 w-3" />
+                Upgrade to unlock more
+              </button>
+            )}
+            {isApproachingLimit && !isAtLimit && !isPro && (
+              <p className="text-xs text-yellow-600">
+                You're running low on AI responses.{" "}
+                <button onClick={onUpgrade} className="underline font-medium hover:text-yellow-700">Upgrade</button>
+              </p>
+            )}
           </div>
         </div>
       )}
