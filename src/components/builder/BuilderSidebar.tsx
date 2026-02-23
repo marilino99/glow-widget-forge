@@ -696,26 +696,6 @@ const BuilderSidebar = ({
               miniMode={isMiniSidebar}
             />
             <SidebarItem
-              icon={Phone}
-              label="WhatsApp"
-              hasToggle={!isMiniSidebar}
-              toggleValue={whatsappEnabled}
-              onToggle={onWhatsappToggle}
-              onClick={() => handleSelectWidget("whatsapp")}
-              active={activeWidget === "whatsapp"}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
-              icon={HelpCircle}
-              label="FAQ"
-              hasToggle={!isMiniSidebar}
-              toggleValue={faqEnabled}
-              onToggle={onFaqToggle}
-              onClick={() => handleSelectWidget("faq")}
-              active={activeWidget === "faq"}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
               icon={Link2}
               label="Custom links"
               onClick={() => handleSelectWidget("custom-links")}
