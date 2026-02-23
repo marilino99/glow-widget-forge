@@ -285,20 +285,20 @@ const BuilderSidebar = ({
       const { count } = await supabase
         .from("chat_messages")
         .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
-        .eq("sender_type", "owner")
+        .eq("is_ai_response", true)
         .eq("conversations.widget_owner_id", user.id);
       setResponseCount(count ?? 0);
     };
     loadResponseCount();
 
-    // Listen for new owner/bot messages in realtime
+    // Listen for new AI responses in realtime
     const channel = supabase
       .channel("response-counter")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "chat_messages" },
         (payload) => {
-          if (payload.new && (payload.new as any).sender_type === "owner") {
+          if (payload.new && (payload.new as any).is_ai_response === true) {
             loadResponseCount();
           }
         }
