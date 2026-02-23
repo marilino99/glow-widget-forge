@@ -637,6 +637,8 @@ const Builder = () => {
                   onReorderInstagramPosts={reorderInstagramPosts}
                   widgetPosition={config.widgetPosition}
                   onWidgetPositionChange={(position) => saveConfig({ widgetPosition: position })}
+                  buttonLogo={config.buttonLogo}
+                  onButtonLogoChange={(logo) => saveConfig({ buttonLogo: logo })}
                 />
               </div>
               <div className="w-[420px] shrink-0 overflow-hidden border-l border-border bg-[#f8f8f8]">

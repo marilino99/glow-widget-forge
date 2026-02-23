@@ -106,6 +106,8 @@ interface AppearancePanelProps {
   // Widget button
   widgetPosition: "left" | "right";
   onWidgetPositionChange: (position: "left" | "right") => void;
+  buttonLogo: string | null;
+  onButtonLogoChange: (logo: string | null) => void;
 }
 
 const presetColors = [
@@ -181,6 +183,8 @@ const AppearancePanel = ({
   onReorderInstagramPosts,
   widgetPosition,
   onWidgetPositionChange,
+  buttonLogo,
+  onButtonLogoChange,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -993,6 +997,54 @@ const AppearancePanel = ({
 
         {activeTab === "widget-button" && (
           <div className="flex-1 p-6 space-y-0">
+            {/* Logo */}
+            <div className="pb-8">
+              <h3 className="text-base font-semibold text-foreground">Logo</h3>
+              <div className="mt-4 flex items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-muted/30 overflow-hidden">
+                  {buttonLogo ? (
+                    <img src={buttonLogo} alt="Button logo" className="h-full w-full object-cover" />
+                  ) : (
+                    <ImagePlus className="h-6 w-6 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="button-logo-upload"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        onButtonLogoChange(ev.target?.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                  <label
+                    htmlFor="button-logo-upload"
+                    className="flex cursor-pointer items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Upload
+                  </label>
+                  {buttonLogo && (
+                    <button
+                      onClick={() => onButtonLogoChange(null)}
+                      className="flex items-center gap-1 rounded-full border border-border px-3 py-2 text-sm text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-border" />
+
             {/* Button position */}
             <div className="pb-8">
               <h3 className="text-base font-semibold text-foreground">Button position</h3>
