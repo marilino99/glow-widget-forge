@@ -715,13 +715,6 @@ const BuilderSidebar = ({
           )}
           <div className="space-y-0.5">
             <SidebarItem
-              icon={Palette}
-              label="Theme & colors"
-              onClick={() => handleSelectWidget("theme-colors")}
-              active={activeWidget === "theme-colors"}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
               icon={LayoutTemplate}
               label="Templates"
               onClick={() => handleSelectWidget("templates")}
@@ -733,24 +726,6 @@ const BuilderSidebar = ({
               label="Size & position"
               onClick={() => handleSelectWidget("size-position")}
               active={activeWidget === "size-position"}
-              miniMode={isMiniSidebar}
-            />
-          </div>
-        </div>
-
-        {/* Boost sales section */}
-        <div className="mb-6">
-          {!isMiniSidebar && (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-              Boost sales
-            </p>
-          )}
-          <div className="space-y-0.5">
-            <SidebarItem
-              icon={LayoutGrid}
-              label="Product carousel"
-              onClick={() => handleSelectWidget("product-carousel")}
-              active={activeWidget === "product-carousel"}
               miniMode={isMiniSidebar}
             />
           </div>
