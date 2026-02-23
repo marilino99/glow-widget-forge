@@ -860,6 +860,23 @@ const AppearancePanel = ({
                           className="h-7 flex-1 rounded-md border-border bg-muted/50 text-xs"
                         />
                       </div>
+                    </div>
+                    <button
+                      onClick={() => onDeleteProductCard(card.id)}
+                      className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false })}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add product
+                </button>
+              </div>
             </div>
 
             {/* Instagram UGC */}
@@ -920,23 +937,6 @@ const AppearancePanel = ({
                   </button>
                 </div>
               )}
-            </div>
-                    <button
-                      onClick={() => onDeleteProductCard(card.id)}
-                      className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  onClick={() => onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false })}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                >
-                  <Plus className="h-3 w-3" />
-                  Add product
-                </button>
-              </div>
             </div>
 
             {/* Report Bugs */}
