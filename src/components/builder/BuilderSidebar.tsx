@@ -274,12 +274,14 @@ const BuilderSidebar = ({
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
   const [responseCount, setResponseCount] = useState(0);
 
-  // Load response count
+  // Load response count + realtime subscription
   useEffect(() => {
+    let userId: string | null = null;
+
     const loadResponseCount = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      // Count bot messages in conversations owned by this user
+      userId = user.id;
       const { count } = await supabase
         .from("chat_messages")
         .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
@@ -288,6 +290,24 @@ const BuilderSidebar = ({
       setResponseCount(count ?? 0);
     };
     loadResponseCount();
+
+    // Listen for new bot messages in realtime
+    const channel = supabase
+      .channel("response-counter")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "chat_messages" },
+        (payload) => {
+          if (payload.new && (payload.new as any).sender_type === "bot") {
+            setResponseCount((prev) => prev + 1);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Load user profile (avatar + name)
