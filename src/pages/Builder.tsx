@@ -525,6 +525,7 @@ const Builder = () => {
               if (wasConversations && view === "contacts") setIsMiniSidebar(false);
             }}
             isMiniSidebar={isMiniSidebar}
+            widgetId={config.id || undefined}
           />
         </div>
       </div>
