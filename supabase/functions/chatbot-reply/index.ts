@@ -225,6 +225,7 @@ STRICT RULES:
         conversation_id: conversationId,
         sender_type: "owner",
         content: aiReply.trim(),
+        is_ai_response: true,
       });
 
     if (insertError) {

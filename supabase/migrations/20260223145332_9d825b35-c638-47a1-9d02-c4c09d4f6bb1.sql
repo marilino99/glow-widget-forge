@@ -1,0 +1,1 @@
+ALTER TABLE public.chat_messages ADD COLUMN is_ai_response boolean NOT NULL DEFAULT false;
