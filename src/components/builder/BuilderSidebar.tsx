@@ -58,6 +58,7 @@ import InjectionCodePanel from "./InjectionCodePanel";
 import SettingsDialog from "./SettingsDialog";
 import ChatbotPanel from "./ChatbotPanel";
 import TemplatesPanel, { WidgetTemplate } from "./TemplatesPanel";
+import AddToWebsiteDialog from "./AddToWebsiteDialog";
 import { ProductCardData } from "@/types/productCard";
 import { FaqItemData } from "@/types/faqItem";
 import { InstagramPostData } from "@/types/instagramPost";
@@ -154,6 +155,7 @@ interface BuilderSidebarProps {
   builderView: "home" | "editor" | "conversations" | "contacts" | "appearance";
   onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance") => void;
   isMiniSidebar?: boolean;
+  widgetId?: string;
 }
 
 const BuilderSidebar = ({ 
@@ -245,6 +247,7 @@ const BuilderSidebar = ({
   builderView,
   onBuilderViewChange,
   isMiniSidebar,
+  widgetId,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -720,6 +723,11 @@ const BuilderSidebar = ({
           </div>
         </div>
 
+      </div>
+
+      {/* Publish button */}
+      <div className={`shrink-0 ${isMiniSidebar ? 'px-1.5' : 'px-3'} pb-2`}>
+        <AddToWebsiteDialog widgetId={widgetId} fullWidth={!isMiniSidebar} />
       </div>
 
       {/* Bottom account section */}
