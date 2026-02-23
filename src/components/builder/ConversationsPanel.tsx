@@ -69,7 +69,17 @@ const ConversationsPanel = () => {
         .select("*")
         .eq("widget_owner_id", user.id)
         .order("last_message_at", { ascending: false });
-      if (!error && data) setConversations(data);
+      if (!error && data) {
+        setConversations((prev) => {
+          // Detect new conversations not in the previous list
+          const prevIds = new Set(prev.map((c) => c.id));
+          const newConv = data.find((c) => !prevIds.has(c.id));
+          if (newConv && prev.length > 0) {
+            setSelectedConversation(newConv);
+          }
+          return data;
+        });
+      }
       setLoading(false);
     };
     fetchConversations();
