@@ -598,12 +598,6 @@ const BuilderSidebar = ({
     );
   }
 
-  // Show Size & Position panel
-  if (showSizePositionPanel) {
-    return (
-      <SizePositionPanel onBack={handleBackFromSizePosition} widgetPosition={widgetPosition} onWidgetPositionChange={onWidgetPositionChange} />
-    );
-  }
 
   // Show Injection Code panel
   if (showInjectionCodePanel) {
@@ -720,13 +714,6 @@ const BuilderSidebar = ({
               label="Templates"
               onClick={() => handleSelectWidget("templates")}
               active={activeWidget === "templates"}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
-              icon={Maximize2}
-              label="Size & position"
-              onClick={() => handleSelectWidget("size-position")}
-              active={activeWidget === "size-position"}
               miniMode={isMiniSidebar}
             />
           </div>
