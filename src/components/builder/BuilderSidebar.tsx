@@ -756,27 +756,6 @@ const BuilderSidebar = ({
           </div>
         </div>
 
-        {/* Build trust section */}
-        <div className="mb-6">
-          {!isMiniSidebar && (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-              Build trust
-            </p>
-          )}
-          
-          <div className="space-y-0.5">
-            <SidebarItem
-              icon={Instagram}
-              label="Instagram UGC"
-              hasToggle={!isMiniSidebar}
-              toggleValue={instagramEnabled}
-              onToggle={onInstagramToggle}
-              onClick={() => handleSelectWidget("instagram")}
-              active={activeWidget === "instagram"}
-              miniMode={isMiniSidebar}
-            />
-          </div>
-        </div>
       </div>
 
       {/* Bottom account section */}
