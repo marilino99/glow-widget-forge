@@ -703,17 +703,6 @@ const BuilderSidebar = ({
               active={activeWidget === "chatbot"}
               miniMode={isMiniSidebar}
             />
-          </div>
-        </div>
-
-        {/* Customize look section */}
-        <div className="mb-6">
-          {!isMiniSidebar && (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "#5b5b65" }}>
-              Customize look
-            </p>
-          )}
-          <div className="space-y-0.5">
             <SidebarItem
               icon={LayoutTemplate}
               label="Templates"
