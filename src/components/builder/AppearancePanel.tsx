@@ -80,6 +80,8 @@ interface AppearancePanelProps {
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
   onShareFeedbackChange: (enabled: boolean) => void;
+  forwardEmail: string;
+  onForwardEmailChange: (email: string) => void;
   // Custom Links
   customLinks: CustomLinkData[];
   onAddCustomLink: (name: string, url: string) => void;
@@ -146,6 +148,8 @@ const AppearancePanel = ({
   onReportBugsChange,
   shareFeedbackEnabled,
   onShareFeedbackChange,
+  forwardEmail,
+  onForwardEmailChange,
   customLinks,
   onAddCustomLink,
   onUpdateCustomLink,
@@ -166,7 +170,7 @@ const AppearancePanel = ({
   // Track initial values for dirty detection
   const [initialValues, setInitialValues] = useState({
     contactName, logo, widgetColor, widgetTheme, backgroundType, backgroundImage,
-    sayHello, selectedAvatar, offerHelp, ctaText,
+    sayHello, selectedAvatar, offerHelp, ctaText, forwardEmail,
   });
 
   const hasChanges =
@@ -179,13 +183,14 @@ const AppearancePanel = ({
     sayHello !== initialValues.sayHello ||
     selectedAvatar !== initialValues.selectedAvatar ||
     offerHelp !== initialValues.offerHelp ||
-    ctaText !== initialValues.ctaText;
+    ctaText !== initialValues.ctaText ||
+    forwardEmail !== initialValues.forwardEmail;
 
   const handleSave = () => {
     onSave();
     setInitialValues({
       contactName, logo, widgetColor, widgetTheme, backgroundType, backgroundImage,
-      sayHello, selectedAvatar, offerHelp, ctaText,
+      sayHello, selectedAvatar, offerHelp, ctaText, forwardEmail,
     });
   };
 
@@ -200,6 +205,7 @@ const AppearancePanel = ({
     onSelectAvatar(initialValues.selectedAvatar);
     onOfferHelpChange(initialValues.offerHelp);
     onCtaTextChange(initialValues.ctaText);
+    onForwardEmailChange(initialValues.forwardEmail);
     onCancel?.();
   };
 
@@ -872,6 +878,20 @@ const AppearancePanel = ({
                 </div>
               </div>
               <Switch checked={shareFeedbackEnabled} onCheckedChange={onShareFeedbackChange} />
+            </div>
+
+            {/* Forward form inquiries to */}
+            <div className="mt-4">
+              <Label className="mb-2 block text-sm font-semibold text-foreground">
+                Forward form inquires to <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                type="email"
+                value={forwardEmail}
+                onChange={(e) => onForwardEmailChange(e.target.value)}
+                placeholder="your@email.com"
+                className="rounded-xl"
+              />
             </div>
           </div>
         )}
