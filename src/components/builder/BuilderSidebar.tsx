@@ -696,13 +696,6 @@ const BuilderSidebar = ({
               miniMode={isMiniSidebar}
             />
             <SidebarItem
-              icon={MessageSquare}
-              label="Contact card"
-              onClick={() => handleSelectWidget("contact-card")}
-              active={activeWidget === "contact-card"}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
               icon={Phone}
               label="WhatsApp"
               hasToggle={!isMiniSidebar}
