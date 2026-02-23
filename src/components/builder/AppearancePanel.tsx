@@ -679,56 +679,63 @@ const AppearancePanel = ({
                 <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
               </div>
               {faqEnabled && (
-                <div className="border-t border-border px-3 py-2.5 space-y-2">
-                  {faqItems.map((item, idx) => (
-                    <div
-                      key={item.id}
-                      className="flex items-start gap-1.5 group"
-                      draggable
-                      onDragStart={(e) => { e.dataTransfer.setData("faq-idx", String(idx)); }}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const fromIdx = parseInt(e.dataTransfer.getData("faq-idx"), 10);
-                        if (!isNaN(fromIdx) && fromIdx !== idx) onReorderFaqItems(fromIdx, idx);
-                      }}
-                    >
-                      <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
-                        <GripVertical className="h-3.5 w-3.5" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <Textarea
+                <div className="border-t border-border px-3 py-3 space-y-3">
+                  {faqItems.map((item, idx) => {
+                    const ordinal = idx === 0 ? "1st" : idx === 1 ? "2nd" : idx === 2 ? "3rd" : `${idx + 1}th`;
+                    return (
+                      <div
+                        key={item.id}
+                        className="rounded-xl border border-border bg-card p-4"
+                        draggable
+                        onDragStart={(e) => { e.dataTransfer.setData("faq-idx", String(idx)); }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const fromIdx = parseInt(e.dataTransfer.getData("faq-idx"), 10);
+                          if (!isNaN(fromIdx) && fromIdx !== idx) onReorderFaqItems(fromIdx, idx);
+                        }}
+                      >
+                        {/* Header row: grip + ordinal + "Question" + delete */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="cursor-grab text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                            <GripVertical className="h-4 w-4" />
+                          </div>
+                          <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">{ordinal}</span>
+                          <span className="text-sm font-semibold text-foreground">Question</span>
+                          <button
+                            onClick={() => onDeleteFaqItem(item.id)}
+                            className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                        {/* Question input */}
+                        <Input
                           value={item.question}
                           onChange={(e) => onUpdateFaqItem(item.id, { question: e.target.value })}
                           placeholder={`Question ${idx + 1}`}
-                          className="min-h-[28px] resize-none overflow-hidden rounded-md border-border bg-muted/50 text-xs py-1.5 px-2 break-words whitespace-pre-wrap"
-                          rows={1}
-                          ref={(el) => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }}
-                          onInput={(e) => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
+                          className="mb-3 rounded-xl border-border bg-muted/30 text-sm"
                         />
+                        {/* Answer label */}
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-semibold text-foreground">Answer</span>
+                          <Sparkles className="h-4 w-4 text-muted-foreground/50" />
+                        </div>
+                        {/* Answer textarea */}
                         <Textarea
                           value={item.answer}
                           onChange={(e) => onUpdateFaqItem(item.id, { answer: e.target.value })}
                           placeholder="Enter the answer..."
-                          className="min-h-[28px] resize-none overflow-hidden rounded-md border-border bg-muted/50 text-xs py-1.5 px-2 break-words whitespace-pre-wrap"
-                          rows={1}
-                          ref={(el) => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }}
-                          onInput={(e) => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
+                          className="min-h-[80px] resize-none rounded-xl border-border bg-muted/30 text-sm"
                         />
                       </div>
-                      <button
-                        onClick={() => onDeleteFaqItem(item.id)}
-                        className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                   <button
                     onClick={() => onAddFaqItem({ id: crypto.randomUUID(), question: "", answer: "", sortOrder: faqItems.length })}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="h-3.5 w-3.5" />
                     Add question
                   </button>
                 </div>
