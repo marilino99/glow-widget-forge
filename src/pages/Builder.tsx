@@ -628,6 +628,13 @@ const Builder = () => {
                   onAddProductCard={handleAddProductCard}
                   onUpdateProductCard={handleUpdateProductCard}
                   onDeleteProductCard={handleDeleteProductCard}
+                  instagramEnabled={config.instagramEnabled}
+                  onInstagramToggle={(enabled) => saveConfig({ instagramEnabled: enabled })}
+                  instagramPosts={instagramPosts}
+                  onAddInstagramPost={addInstagramPost}
+                  onUpdateInstagramPost={updateInstagramPost}
+                  onDeleteInstagramPost={deleteInstagramPost}
+                  onReorderInstagramPosts={reorderInstagramPosts}
                 />
               </div>
               <div className="w-[420px] shrink-0 overflow-hidden border-l border-border bg-[#f8f8f8]">
