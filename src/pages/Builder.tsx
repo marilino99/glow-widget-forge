@@ -617,6 +617,8 @@ const Builder = () => {
                   onReportBugsChange={setReportBugsEnabled}
                   shareFeedbackEnabled={shareFeedbackEnabled}
                   onShareFeedbackChange={setShareFeedbackEnabled}
+                  forwardEmail={config.forwardEmail}
+                  onForwardEmailChange={(email: string) => updateConfig({ forwardEmail: email })}
                   customLinks={customLinks}
                   onAddCustomLink={addCustomLink}
                   onUpdateCustomLink={updateCustomLink}
