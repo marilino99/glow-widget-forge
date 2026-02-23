@@ -1,36 +1,45 @@
 
-# Fix: Animazione apertura bottom bar senza movimento laterale
 
-## Problema
-L'animazione di apertura della bottom bar usa `scale()` su un elemento centrato con `left:50%; transform:translateX(-50%)`. Il cambio di scala combinato con il centramento causa uno spostamento orizzontale visibile (va a destra e torna a sinistra).
+# Sistema di Limite 100 Risposte AI Mensili
 
-## Soluzione
-Rimuovere il `scale()` dall'animazione e usare solo un fade-in con un leggero slide-up. Risultato: apertura fluida e diretta, senza movimenti laterali.
+## Panoramica
 
-**Nuova animazione:**
-- 0%: opacity 0, translateY(8px)
-- 100%: opacity 1, translateY(0)
-- Durata: 0.35s, easing smooth
+Implementare un sistema che blocca le risposte AI automatiche quando l'utente Free supera 100 risposte al mese, spingendolo a fare l'upgrade. Gli utenti Pro avranno un limite di 10.000 risposte.
 
-## File da modificare
+## Cosa cambia per l'utente
 
-### 1. `supabase/functions/widget-loader/index.ts`
-- Linea ~155 (popup iframe): aggiornare `@keyframes wj-expand` rimuovendo scale
-- Linea ~276 (popup standard): stessa modifica
-- Linea ~422: aggiornare durata animazione su `#wj-bb-expanded.open`
-
-Nuovo keyframe:
-```
-@keyframes wj-expand{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
-```
-Animazione: `.35s cubic-bezier(0.16,1,0.3,1)`
-
-### 2. `tailwind.config.ts`
-- Aggiornare il keyframe `widget-expand` rimuovendo scale
-- Aggiornare la durata dell'animazione
-
-### 3. `src/components/builder/WidgetPreviewPanel.tsx`
-- Nessuna modifica necessaria (usa le classi Tailwind che verranno aggiornate)
+- **0-69 risposte**: Tutto normale, nessun avviso
+- **70 risposte**: Banner discreto nella sidebar ("Hai usato il 70% delle risposte AI")
+- **90 risposte**: Warning visibile con CTA upgrade
+- **100+ risposte**: L'AI smette di rispondere. Il visitatore riceve un messaggio fallback tipo "L'assistente non e' disponibile, lascia un messaggio e ti rispondero'". Il proprietario vede un banner nel pannello Conversations
+- Il contatore si resetta automaticamente ogni mese
 
 ## Dettagli tecnici
-Il problema nasce perche `transform: scale(0.98) translateY(12px)` sovrascrive il `translateX(-50%)` usato per centrare l'elemento. Senza scale, il `translateX(-50%)` resta invariato durante l'animazione e non c'e nessun movimento orizzontale.
+
+### 1. Edge Function `chatbot-reply` (modifica)
+- Prima di generare la risposta AI, contare i messaggi `is_ai_response = true` dell'utente nel mese corrente
+- Se il conteggio >= limite (100 free / 10.000 pro), verificare il piano tramite Stripe
+- Se il limite e' superato: inserire un messaggio fallback invece della risposta AI, con flag `is_limit_message: true` o un contenuto specifico
+- Se sotto il limite: procedere normalmente
+
+### 2. Edge Function `check-subscription` (modifica)
+- Aggiungere nel response il conteggio mensile delle risposte AI (`ai_responses_this_month`)
+- Calcolare il conteggio filtrando `chat_messages` per `is_ai_response = true` e `created_at >= inizio mese corrente`
+
+### 3. Hook `useSubscription` (modifica)
+- Esporre `aiResponsesThisMonth` dallo stato
+- Calcolare `aiResponseLimit` (100 per free, 10000 per pro)
+- Esporre `isApproachingLimit` (>=70%) e `isAtLimit` (>=100%)
+
+### 4. Sidebar - Usage overview (modifica in `BuilderSidebar.tsx`)
+- Cambiare il conteggio da "totale storico" a "mensile" (filtrando per mese corrente)
+- Aggiungere colori progressivi alla barra: verde sotto il 70%, giallo al 70%, rosso al 90%
+- Aggiungere CTA "Upgrade" quando si avvicina al limite
+
+### 5. Banner nel pannello Conversations (`ConversationsPanel.tsx`)
+- Mostrare un banner in cima quando il limite e' raggiunto: "Le risposte AI sono esaurite per questo mese. Fai l'upgrade per continuare."
+
+### 6. Messaggio fallback per il visitatore
+- Quando il limite e' raggiunto, il widget mostra al visitatore: "L'assistente non e' al momento disponibile. Lascia un messaggio e ti risponderemo il prima possibile."
+- Questo messaggio viene salvato come messaggio `owner` nella conversazione
+
