@@ -52,15 +52,24 @@ const Hero = () => {
             {t("hero.subtitle")}
           </motion.p>
 
-          <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="mt-8 flex items-center gap-5">
-            <Button size="lg" className="h-14 gap-2 rounded-full px-10 text-base font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:bg-primary hover:scale-105 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple-500/40" asChild>
-              <a href="/signup">
-                {t("hero.cta")}
-                <ArrowRight className="h-4 w-4" />
-              </a>
-            </Button>
-            <span className="text-sm leading-tight text-muted-foreground">
-              {t("hero.note1")}<br />{t("hero.note2")}
+          <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="mt-8 flex flex-col items-start gap-4">
+            <div className="flex items-center gap-5">
+              <Button size="lg" className="h-14 gap-2 rounded-full px-10 text-base font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:bg-primary hover:scale-105 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple-500/40" asChild>
+                <a href="/signup">
+                  {t("hero.cta")}
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </Button>
+              <span className="text-sm leading-tight text-muted-foreground">
+                {t("hero.note1")}<br />{t("hero.note2")}
+              </span>
+            </div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-foreground/70">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+              </span>
+              Setup in 2 minutes
             </span>
           </motion.div>
         </div>
