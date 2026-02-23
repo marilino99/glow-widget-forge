@@ -1047,6 +1047,11 @@ Deno.serve(async (req) => {
           visitorToken: visitorToken
         }));
       }
+      // Generate new visitor ID so next message creates a new conversation
+      visitorId = 'v_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+      localStorage.setItem('wj_visitor_id', visitorId);
+      visitorToken = '';
+      localStorage.removeItem('wj_visitor_token');
     };
     // Download transcript
     chatView.querySelector('#wj-menu-download').onclick = function() {
