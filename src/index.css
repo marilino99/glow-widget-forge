@@ -138,53 +138,6 @@ All colors MUST be HSL.
   transform: translateY(-1px);
 }
 
-/* Animated gradient border - thin, thickens on hover */
-.wow-pill::before {
-  content: "";
-  position: absolute;
-  inset: -1.5px;
-  padding: 1.5px;
-  border-radius: inherit;
-  background: conic-gradient(
-    from var(--pill-glow-angle),
-    hsl(25, 95%, 55%) 0%,
-    hsl(340, 85%, 55%) 10%,
-    hsl(270, 80%, 58%) 20%,
-    hsl(220, 90%, 58%) 30%,
-    transparent 50%,
-    transparent 100%
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: -1;
-  animation: pillGlowRotate 4s linear infinite;
-  transition: inset 0.3s ease, padding 0.3s ease, background 0.4s ease, animation-duration 0.3s ease;
-}
-
-.wow-pill:hover::before {
-  inset: -2px;
-  padding: 2px;
-  animation-duration: 1.5s;
-  background: conic-gradient(
-    from var(--pill-glow-angle),
-    hsl(25, 95%, 55%),
-    hsl(340, 85%, 55%),
-    hsl(270, 80%, 58%),
-    hsl(220, 90%, 58%),
-    hsl(25, 95%, 55%)
-  );
-}
-
-/* Soft diffused glow behind */
-/* No outer glow */
-
-@keyframes pillGlowRotate {
-  to { --pill-glow-angle: 360deg; }
-}
 
 @keyframes ringRotate {
   to { --ring-angle: 360deg; }
