@@ -35,7 +35,17 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
     if (customers.data.length === 0) {
-      return new Response(JSON.stringify({ subscribed: false, plan: "free" }), {
+      // Count monthly AI responses even for free users
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const { count: aiCount } = await supabaseClient
+        .from("chat_messages")
+        .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
+        .eq("is_ai_response", true)
+        .eq("conversations.widget_owner_id", user.id)
+        .gte("created_at", startOfMonth);
+
+      return new Response(JSON.stringify({ subscribed: false, plan: "free", ai_responses_this_month: aiCount ?? 0 }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
@@ -66,10 +76,21 @@ serve(async (req) => {
       }
     }
 
+    // Count monthly AI responses
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const { count: aiCount } = await supabaseClient
+      .from("chat_messages")
+      .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
+      .eq("is_ai_response", true)
+      .eq("conversations.widget_owner_id", user.id)
+      .gte("created_at", startOfMonth);
+
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       plan: hasActiveSub ? "pro" : "free",
       subscription_end: subscriptionEnd,
+      ai_responses_this_month: aiCount ?? 0,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
