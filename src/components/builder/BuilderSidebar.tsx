@@ -696,13 +696,6 @@ const BuilderSidebar = ({
               miniMode={isMiniSidebar}
             />
             <SidebarItem
-              icon={Link2}
-              label="Custom links"
-              onClick={() => handleSelectWidget("custom-links")}
-              active={activeWidget === "custom-links"}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
               icon={Bot}
               label="AI Chatbot"
               onClick={() => handleSelectWidget("chatbot")}
