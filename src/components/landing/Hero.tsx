@@ -36,9 +36,8 @@ const Hero = () => {
       <div className="mx-auto flex max-w-7xl flex-col items-start gap-12 md:flex-row md:items-stretch md:gap-16">
         <div className="flex-1 flex flex-col justify-center text-left">
           <motion.div custom={0} initial="hidden" animate="visible" variants={fadeUp} className="mb-4">
-            <span className="wow-pill">
-              <Sparkles className="h-3.5 w-3.5" />
-              Setup in 2 minutes
+            <span className="wow-pill" style={{ background: 'hsl(270,80%,50%)', color: '#fff', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+              ⚡ Setup in 2 minutes
             </span>
           </motion.div>
 
