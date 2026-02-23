@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
   Phone,
+  Users,
   MessageCircle,
   HelpCircle,
   Link2,
@@ -672,7 +673,7 @@ const BuilderSidebar = ({
               miniMode={isMiniSidebar}
             />
             <SidebarItem
-              icon={Phone}
+              icon={Users}
               label="Contacts"
               active={builderView === "contacts"}
               onClick={() => onBuilderViewChange("contacts")}
