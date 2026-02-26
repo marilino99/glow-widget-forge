@@ -8,10 +8,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
+const detectCurrency = (): "EUR" | "USD" => {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    if (tz.startsWith("America/")) return "USD";
+  } catch {}
+  return "EUR";
+};
+
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [currency, setCurrency] = useState<"EUR" | "USD">("EUR");
+  const [currency, setCurrency] = useState<"EUR" | "USD">(detectCurrency);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const currencyRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
