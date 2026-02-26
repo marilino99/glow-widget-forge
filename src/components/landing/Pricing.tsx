@@ -128,13 +128,9 @@ const Pricing = () => {
                 <span className="relative z-10">{t("pricing.yearly")}</span>
               </button>
             </div>
-            <AnimatePresence>
-              {isAnnual && (
-                <motion.span initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="text-sm font-medium text-primary">
-                  {t("pricing.saveYearly")}
-                </motion.span>
-              )}
-            </AnimatePresence>
+            <span className={cn("text-sm font-medium transition-colors", isAnnual ? "text-primary" : "text-muted-foreground")}>
+              {t("pricing.saveYearly")}
+            </span>
           </div>
           <div className="relative" ref={currencyRef}>
             <button
