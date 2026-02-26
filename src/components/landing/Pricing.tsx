@@ -157,7 +157,7 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch">
+        <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch">
           {plans.map((plan, i) => {
             const price = currency === "EUR"
               ? (isAnnual ? plan.annualPriceEur : plan.monthlyPriceEur)
