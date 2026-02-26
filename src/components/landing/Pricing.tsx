@@ -200,9 +200,7 @@ const Pricing = () => {
                               {currencySymbol}{displayPrice}
                             </motion.span>
                           </AnimatePresence>
-                          {plan.monthlyPrice > 0 && (
-                            <span className={cn("text-sm", isHighlighted ? "text-white/50" : "text-muted-foreground")}>/month</span>
-                          )}
+                          <span className={cn("text-sm", isHighlighted ? "text-white/50" : "text-muted-foreground")}>{plan.monthlyPrice === 0 ? "/forever" : "/month"}</span>
                         </div>
                       </>
                     )}
