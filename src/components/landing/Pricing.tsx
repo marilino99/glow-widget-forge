@@ -52,8 +52,7 @@ const Pricing = () => {
       annualPriceEur: 15.50,
       description: t("pricing.pro.desc"),
       cta: t("pricing.pro.cta"),
-      highlighted: true,
-      badge: t("pricing.pro.badge"),
+      highlighted: false,
       featuresLabel: t("pricing.pro.featuresLabel"),
       features: [t("pricing.pro.f1"), t("pricing.pro.f2"), t("pricing.pro.f3"), t("pricing.pro.f4"), t("pricing.pro.f5"), t("pricing.pro.f6"), t("pricing.pro.f7"), t("pricing.pro.f8")],
       planKey: "starter",
@@ -66,7 +65,8 @@ const Pricing = () => {
       annualPriceEur: 38.50,
       description: t("pricing.biz.desc"),
       cta: t("pricing.biz.cta"),
-      highlighted: false,
+      highlighted: true,
+      badge: t("pricing.pro.badge"),
       featuresLabel: t("pricing.biz.featuresLabel"),
       features: [t("pricing.biz.f1"), t("pricing.biz.f2"), t("pricing.biz.f3"), t("pricing.biz.f4"), t("pricing.biz.f5"), t("pricing.biz.f6")],
       planKey: "business",
@@ -177,7 +177,7 @@ const Pricing = () => {
                 <div className="flex flex-col p-6 pb-0">
                   <div className="flex items-center gap-2">
                     <h3 className={cn("text-xl font-bold", isHighlighted ? "text-white" : "text-foreground")}>{plan.name}</h3>
-                    {plan.badge && <span className="rounded border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">{plan.badge}</span>}
+                    {"badge" in plan && plan.badge && <span className="rounded border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">{plan.badge}</span>}
                   </div>
                   <div className="h-[72px] flex flex-col justify-center">
                     {plan.planKey === "enterprise" ? (
