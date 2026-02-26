@@ -132,7 +132,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "pricing.pro.f7": "Widget size & position control",
     "pricing.pro.f8": "Team collaboration (coming soon)",
     "pricing.business.name": "Enterprise",
-    "pricing.business.desc": "For organizations with high-volume support & tailored integration needs",
+    "pricing.business.desc": "For organizations needing high-volume support & custom integrations",
     "pricing.business.cta": "Contact Sales",
     "pricing.business.featuresLabel": "Everything in Business",
     "pricing.business.f1": "Unlimited conversations",
