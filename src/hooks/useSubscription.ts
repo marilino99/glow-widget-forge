@@ -3,10 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 const FREE_LIMIT = 100;
+const STARTER_LIMIT = 500;
 const PRO_LIMIT = 10000;
 
 interface SubscriptionState {
-  plan: "free" | "pro";
+  plan: "free" | "starter" | "pro";
   subscribed: boolean;
   subscriptionEnd: string | null;
   aiResponsesThisMonth: number;
@@ -50,7 +51,7 @@ export const useSubscription = () => {
     checkSubscription();
   }, [checkSubscription]);
 
-  const aiResponseLimit = state.plan === "pro" ? PRO_LIMIT : FREE_LIMIT;
+  const aiResponseLimit = state.plan === "pro" ? PRO_LIMIT : state.plan === "starter" ? STARTER_LIMIT : FREE_LIMIT;
   const usagePercent = aiResponseLimit > 0 ? (state.aiResponsesThisMonth / aiResponseLimit) * 100 : 0;
   const isApproachingLimit = usagePercent >= 70;
   const isAtLimit = state.aiResponsesThisMonth >= aiResponseLimit;

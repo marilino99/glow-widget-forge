@@ -25,6 +25,18 @@ const Pricing = () => {
       highlighted: false,
       featuresLabel: t("pricing.free.featuresLabel"),
       features: [t("pricing.free.f1"), t("pricing.free.f2"), t("pricing.free.f3"), t("pricing.free.f4"), t("pricing.free.f5"), t("pricing.free.f6")],
+      planKey: "free",
+    },
+    {
+      name: t("pricing.starter.name"),
+      monthlyPrice: 7,
+      annualPrice: 5,
+      description: t("pricing.starter.desc"),
+      cta: t("pricing.starter.cta"),
+      highlighted: false,
+      featuresLabel: t("pricing.starter.featuresLabel"),
+      features: [t("pricing.starter.f1"), t("pricing.starter.f2"), t("pricing.starter.f3"), t("pricing.starter.f4"), t("pricing.starter.f5")],
+      planKey: "starter",
     },
     {
       name: t("pricing.pro.name"),
@@ -36,6 +48,7 @@ const Pricing = () => {
       badge: t("pricing.pro.badge"),
       featuresLabel: t("pricing.pro.featuresLabel"),
       features: [t("pricing.pro.f1"), t("pricing.pro.f2"), t("pricing.pro.f3"), t("pricing.pro.f4"), t("pricing.pro.f5"), t("pricing.pro.f6"), t("pricing.pro.f7"), t("pricing.pro.f8")],
+      planKey: "pro",
     },
     {
       name: t("pricing.business.name"),
@@ -46,10 +59,11 @@ const Pricing = () => {
       highlighted: false,
       featuresLabel: t("pricing.business.featuresLabel"),
       features: [t("pricing.business.f1"), t("pricing.business.f2"), t("pricing.business.f3"), t("pricing.business.f4"), t("pricing.business.f5"), t("pricing.business.f6")],
+      planKey: "business",
     },
   ];
 
-  const handleProCheckout = async () => {
+  const handlePaidCheckout = async (planKey: string) => {
     setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -58,7 +72,7 @@ const Pricing = () => {
         return;
       }
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { returnUrl: window.location.origin, billingInterval: isAnnual ? "year" : "month" },
+        body: { returnUrl: window.location.origin, billingInterval: isAnnual ? "year" : "month", plan: planKey },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
@@ -71,7 +85,7 @@ const Pricing = () => {
 
   return (
     <section id="pricing" className="px-6 py-24">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center">
           <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-6xl">
             {t("pricing.title")}{" "}
@@ -103,7 +117,7 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan, i) => {
             const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
             const isHighlighted = plan.highlighted;
@@ -135,10 +149,10 @@ const Pricing = () => {
                     </p>
                   </div>
                   <Button
-                    className={cn("relative z-10 mt-5 w-full rounded-lg font-semibold transition-all duration-300", isHighlighted ? "bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-[1.02]" : plan.name === t("pricing.free.name") || plan.name === t("pricing.business.name") ? "bg-background text-foreground border border-foreground hover:bg-muted" : "bg-foreground text-background hover:bg-foreground/90 border-0")}
+                    className={cn("relative z-10 mt-5 w-full rounded-lg font-semibold transition-all duration-300", isHighlighted ? "bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-[1.02]" : plan.planKey === "free" || plan.planKey === "business" ? "bg-background text-foreground border border-foreground hover:bg-muted" : "bg-foreground text-background hover:bg-foreground/90 border-0")}
                     size="lg"
-                    onClick={plan.name === t("pricing.free.name") ? () => navigate("/signup") : plan.name === t("pricing.pro.name") ? handleProCheckout : undefined}
-                    disabled={plan.name === t("pricing.pro.name") && loading}
+                    onClick={plan.planKey === "free" ? () => navigate("/signup") : plan.planKey === "starter" || plan.planKey === "pro" ? () => handlePaidCheckout(plan.planKey) : undefined}
+                    disabled={(plan.planKey === "starter" || plan.planKey === "pro") && loading}
                   >
                     {plan.cta}
                   </Button>
