@@ -59,6 +59,19 @@ const Pricing = () => {
       planKey: "starter",
     },
     {
+      name: t("pricing.biz.name"),
+      monthlyPrice: 49,
+      annualPrice: 39,
+      monthlyPriceEur: 48.50,
+      annualPriceEur: 38.50,
+      description: t("pricing.biz.desc"),
+      cta: t("pricing.biz.cta"),
+      highlighted: false,
+      featuresLabel: t("pricing.biz.featuresLabel"),
+      features: [t("pricing.biz.f1"), t("pricing.biz.f2"), t("pricing.biz.f3"), t("pricing.biz.f4"), t("pricing.biz.f5"), t("pricing.biz.f6")],
+      planKey: "business",
+    },
+    {
       name: t("pricing.business.name"),
       monthlyPrice: 99,
       annualPrice: 79,
@@ -69,7 +82,7 @@ const Pricing = () => {
       highlighted: false,
       featuresLabel: t("pricing.business.featuresLabel"),
       features: [t("pricing.business.f1"), t("pricing.business.f2"), t("pricing.business.f3"), t("pricing.business.f4"), t("pricing.business.f5"), t("pricing.business.f6")],
-      planKey: "business",
+      planKey: "enterprise",
     },
   ];
 
@@ -144,7 +157,7 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan, i) => {
             const price = currency === "EUR"
               ? (isAnnual ? plan.annualPriceEur : plan.monthlyPriceEur)
@@ -190,8 +203,8 @@ const Pricing = () => {
                   <Button
                     className={cn("relative z-10 mt-5 w-full rounded-lg font-semibold transition-all duration-300", isHighlighted ? "bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-[1.02]" : plan.planKey === "free" || plan.planKey === "business" ? "bg-background text-foreground border border-foreground hover:bg-muted" : "bg-foreground text-background hover:bg-foreground/90 border-0")}
                     size="lg"
-                    onClick={plan.planKey === "free" ? () => navigate("/signup") : plan.planKey === "starter" || plan.planKey === "pro" ? () => handlePaidCheckout(plan.planKey) : undefined}
-                    disabled={(plan.planKey === "starter" || plan.planKey === "pro") && loading}
+                    onClick={plan.planKey === "free" ? () => navigate("/signup") : plan.planKey === "starter" || plan.planKey === "business" ? () => handlePaidCheckout(plan.planKey) : undefined}
+                    disabled={(plan.planKey === "starter" || plan.planKey === "business") && loading}
                   >
                     {plan.cta}
                   </Button>
