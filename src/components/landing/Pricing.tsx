@@ -116,7 +116,7 @@ const Pricing = () => {
           </h2>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex items-center justify-between">
+        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="inline-flex items-center rounded-full border border-border bg-muted/50 p-1">
               <button onClick={() => setIsAnnual(false)} className={cn("relative rounded-full px-5 py-1.5 text-sm font-medium transition-colors", !isAnnual ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
