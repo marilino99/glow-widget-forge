@@ -157,7 +157,7 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch">
           {plans.map((plan, i) => {
             const price = currency === "EUR"
               ? (isAnnual ? plan.annualPriceEur : plan.monthlyPriceEur)
@@ -166,7 +166,7 @@ const Pricing = () => {
             const isHighlighted = plan.highlighted;
 
             const card = (
-              <motion.div key={plan.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }} className={cn("relative flex flex-col rounded-2xl border overflow-hidden", isHighlighted ? "bg-[hsl(220,20%,6%)] text-white border-transparent" : "border-border")}>
+              <motion.div key={plan.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }} className={cn("relative flex flex-col rounded-2xl border overflow-hidden h-full", isHighlighted ? "bg-[hsl(220,20%,6%)] text-white border-transparent" : "border-border")}>
                 {isHighlighted && (
                   <>
                     <motion.div className="pointer-events-none absolute -top-1/4 -left-1/4 h-[80%] w-[60%] rounded-full opacity-20 blur-[80px]" style={{ background: "hsl(270,70%,50%)" }} animate={{ x: [0, 50, 0], y: [0, 40, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
@@ -226,7 +226,7 @@ const Pricing = () => {
 
             if (isHighlighted) {
               return (
-                <div key={plan.name} className="relative rounded-2xl p-[2px]" style={{ background: "linear-gradient(135deg, hsla(270,80%,55%,1), hsla(330,80%,55%,1), hsla(25,95%,55%,1), hsla(190,80%,50%,1))", backgroundSize: "300% 300%", animation: "gradient-rotate 4s ease infinite" }}>
+                <div key={plan.name} className="relative rounded-2xl p-[2px] h-full" style={{ background: "linear-gradient(135deg, hsla(270,80%,55%,1), hsla(330,80%,55%,1), hsla(25,95%,55%,1), hsla(190,80%,50%,1))", backgroundSize: "300% 300%", animation: "gradient-rotate 4s ease infinite" }}>
                   {card}
                 </div>
               );
