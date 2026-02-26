@@ -194,7 +194,7 @@ const Pricing = () => {
                       </span>
                     ) : (
                       <>
-                        <div className="flex items-baseline gap-0">
+                        <div className="flex items-baseline gap-1.5">
                           <AnimatePresence mode="wait">
                             <motion.span key={`${price}-${currency}`} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
                               {currencySymbol}{displayPrice}
