@@ -49,7 +49,7 @@ const Pricing = () => {
       cta: t("pricing.free.cta"),
       highlighted: false,
       featuresLabel: t("pricing.free.featuresLabel"),
-      features: [t("pricing.free.f1"), t("pricing.free.f2"), t("pricing.free.f3"), t("pricing.free.f4"), t("pricing.free.f5"), t("pricing.free.f6"), t("pricing.free.f7"), t("pricing.free.f8")],
+      features: [t("pricing.free.f1"), t("pricing.free.f2"), t("pricing.free.f3"), t("pricing.free.f4"), t("pricing.free.f5"), t("pricing.free.f6"), t("pricing.free.f7"), t("pricing.free.f8"), t("pricing.free.f9")],
       planKey: "free",
     },
     {
