@@ -211,7 +211,7 @@ const Pricing = () => {
                 </div>
                 <div className={cn("mx-6 my-5 h-px", isHighlighted ? "bg-white/15" : "bg-border")} />
                 <div className="flex-1 px-6 pb-6">
-                  <p className={cn("mb-4 text-[10px] font-bold uppercase tracking-[0.15em]", isHighlighted ? "text-white/50" : "text-muted-foreground")}>{plan.featuresLabel}</p>
+                  <p className={cn("mb-4 text-sm", isHighlighted ? "text-white/50" : "text-muted-foreground")}>{plan.featuresLabel}</p>
                   <ul className="space-y-2.5">
                     {plan.features.map((feature) => (
                       <li key={feature} className={cn("flex items-start gap-2.5 text-sm", isHighlighted ? "text-white" : "text-foreground")}>
