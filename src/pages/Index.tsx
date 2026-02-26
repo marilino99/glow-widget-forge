@@ -95,12 +95,10 @@ const LandingContent = () => {
   );
 };
 
-const Index = () => {
-  return (
-    <LandingLanguageProvider>
-      <LandingContent />
-    </LandingLanguageProvider>
-  );
-};
+const Index = () => (
+  <LandingLanguageProvider>
+    <LandingContent />
+  </LandingLanguageProvider>
+);
 
 export default Index;
