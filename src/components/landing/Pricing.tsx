@@ -184,16 +184,24 @@ const Pricing = () => {
                     {plan.badge && <span className="rounded border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">{plan.badge}</span>}
                   </div>
                   <div className="h-[72px] flex flex-col justify-center">
-                    <div className="flex items-baseline gap-1">
-                      <AnimatePresence mode="wait">
-                        <motion.span key={`${price}-${currency}`} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
-                          {currencySymbol}{displayPrice}
-                        </motion.span>
-                      </AnimatePresence>
-                    </div>
-                    <p className={cn("mt-1 text-xs", isHighlighted ? "text-white/50" : "text-muted-foreground")}>
-                      {plan.monthlyPrice === 0 ? t("pricing.forever") : isAnnual ? t("pricing.billedYearly") : t("pricing.billedMonthly")}
-                    </p>
+                    {plan.planKey === "business" ? (
+                      <span className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
+                        Let's talk
+                      </span>
+                    ) : (
+                      <>
+                        <div className="flex items-baseline gap-1">
+                          <AnimatePresence mode="wait">
+                            <motion.span key={`${price}-${currency}`} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
+                              {currencySymbol}{displayPrice}
+                            </motion.span>
+                          </AnimatePresence>
+                        </div>
+                        <p className={cn("mt-1 text-xs", isHighlighted ? "text-white/50" : "text-muted-foreground")}>
+                          {plan.monthlyPrice === 0 ? t("pricing.forever") : isAnnual ? t("pricing.billedYearly") : t("pricing.billedMonthly")}
+                        </p>
+                      </>
+                    )}
                   </div>
                   <Button
                     className={cn("relative z-10 mt-5 w-full rounded-lg font-semibold transition-all duration-300", isHighlighted ? "bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-[1.02]" : plan.planKey === "free" || plan.planKey === "business" ? "bg-background text-foreground border border-foreground hover:bg-muted" : "bg-foreground text-background hover:bg-foreground/90 border-0")}
