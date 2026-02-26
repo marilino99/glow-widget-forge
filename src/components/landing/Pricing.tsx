@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,9 +11,25 @@ import { useLandingLang } from "@/contexts/LandingLanguageContext";
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currency, setCurrency] = useState<"EUR" | "USD">("EUR");
+  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const currencyRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useLandingLang();
+
+  const exchangeRate = currency === "EUR" ? 0.92 : 1;
+  const currencySymbol = currency === "EUR" ? "€" : "$";
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) {
+        setCurrencyOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const plans = [
     {
@@ -93,17 +109,8 @@ const Pricing = () => {
           </h2>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-2 text-sm text-foreground">
-            <Check className="h-4 w-4 text-primary" />
-            <span>{t("pricing.guarantee")}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            {isAnnual && (
-              <motion.span initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-primary">
-                {t("pricing.saveYearly")}
-              </motion.span>
-            )}
+        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <div className="inline-flex items-center rounded-full border border-border bg-muted/50 p-1">
               <button onClick={() => setIsAnnual(false)} className={cn("relative rounded-full px-5 py-1.5 text-sm font-medium transition-colors", !isAnnual ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
                 {!isAnnual && <motion.span layoutId="pricing-pill" className="absolute inset-0 rounded-full bg-foreground" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />}
@@ -114,12 +121,43 @@ const Pricing = () => {
                 <span className="relative z-10">{t("pricing.yearly")}</span>
               </button>
             </div>
+            <AnimatePresence>
+              {isAnnual && (
+                <motion.span initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="text-sm font-medium text-primary">
+                  {t("pricing.saveYearly")}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+          <div className="relative" ref={currencyRef}>
+            <button
+              onClick={() => setCurrencyOpen(!currencyOpen)}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span>{t("pricing.priceIn")}</span>
+              <span className="font-semibold text-foreground">{currency}</span>
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", currencyOpen && "rotate-180")} />
+            </button>
+            {currencyOpen && (
+              <div className="absolute right-0 top-full mt-1 rounded-lg border border-border bg-background shadow-lg z-20 overflow-hidden">
+                {(["EUR", "USD"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => { setCurrency(c); setCurrencyOpen(false); }}
+                    className={cn("block w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors", currency === c && "font-semibold text-foreground bg-muted")}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </motion.div>
 
         <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan, i) => {
-            const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+            const rawPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+            const price = rawPrice === 0 ? 0 : Math.round(rawPrice * exchangeRate);
             const isHighlighted = plan.highlighted;
 
             const card = (
@@ -140,7 +178,7 @@ const Pricing = () => {
                     <div className="flex items-baseline gap-1">
                       <AnimatePresence mode="wait">
                         <motion.span key={price} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
-                          ${price}
+                          {currencySymbol}{price}
                         </motion.span>
                       </AnimatePresence>
                     </div>
