@@ -128,7 +128,7 @@ const Pricing = () => {
                 <span className="relative z-10">{t("pricing.yearly")}</span>
               </button>
             </div>
-            <span className={cn("text-sm font-medium transition-colors", isAnnual ? "text-primary" : "text-muted-foreground")}>
+            <span className="text-sm font-medium text-primary">
               {t("pricing.saveYearly")}
             </span>
           </div>
