@@ -116,7 +116,7 @@ const Pricing = () => {
 
   return (
     <section id="pricing" className="px-6 py-24">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center">
           <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-6xl">
             {t("pricing.title")}{" "}
