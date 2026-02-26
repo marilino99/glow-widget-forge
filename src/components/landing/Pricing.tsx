@@ -18,7 +18,6 @@ const Pricing = () => {
   const { toast } = useToast();
   const { t } = useLandingLang();
 
-  const exchangeRate = currency === "EUR" ? 0.92 : 1;
   const currencySymbol = currency === "EUR" ? "€" : "$";
 
   useEffect(() => {
@@ -36,6 +35,8 @@ const Pricing = () => {
       name: t("pricing.free.name"),
       monthlyPrice: 0,
       annualPrice: 0,
+      monthlyPriceEur: 0,
+      annualPriceEur: 0,
       description: t("pricing.free.desc"),
       cta: t("pricing.free.cta"),
       highlighted: false,
@@ -47,6 +48,8 @@ const Pricing = () => {
       name: t("pricing.starter.name"),
       monthlyPrice: 7,
       annualPrice: 5,
+      monthlyPriceEur: 6.50,
+      annualPriceEur: 4.50,
       description: t("pricing.starter.desc"),
       cta: t("pricing.starter.cta"),
       highlighted: false,
@@ -58,6 +61,8 @@ const Pricing = () => {
       name: t("pricing.pro.name"),
       monthlyPrice: 19,
       annualPrice: 16,
+      monthlyPriceEur: 18.50,
+      annualPriceEur: 15.50,
       description: t("pricing.pro.desc"),
       cta: t("pricing.pro.cta"),
       highlighted: true,
@@ -70,6 +75,8 @@ const Pricing = () => {
       name: t("pricing.business.name"),
       monthlyPrice: 99,
       annualPrice: 79,
+      monthlyPriceEur: 98.50,
+      annualPriceEur: 78.50,
       description: t("pricing.business.desc"),
       cta: t("pricing.business.cta"),
       highlighted: false,
@@ -156,8 +163,10 @@ const Pricing = () => {
 
         <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan, i) => {
-            const rawPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
-            const price = rawPrice === 0 ? 0 : Math.round(rawPrice * exchangeRate);
+            const price = currency === "EUR"
+              ? (isAnnual ? plan.annualPriceEur : plan.monthlyPriceEur)
+              : (isAnnual ? plan.annualPrice : plan.monthlyPrice);
+            const displayPrice = price === 0 ? "0" : price % 1 === 0 ? String(price) : price.toFixed(2);
             const isHighlighted = plan.highlighted;
 
             const card = (
@@ -177,8 +186,8 @@ const Pricing = () => {
                   <div className="h-[72px] flex flex-col justify-center">
                     <div className="flex items-baseline gap-1">
                       <AnimatePresence mode="wait">
-                        <motion.span key={price} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
-                          {currencySymbol}{price}
+                        <motion.span key={`${price}-${currency}`} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
+                          {currencySymbol}{displayPrice}
                         </motion.span>
                       </AnimatePresence>
                     </div>
