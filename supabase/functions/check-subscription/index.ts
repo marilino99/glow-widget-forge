@@ -60,9 +60,17 @@ serve(async (req) => {
 
     const hasActiveSub = subscriptions.data.length > 0;
     let subscriptionEnd = null;
+    let plan = "free";
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
+      // Determine plan from product ID
+      const productId = subscription.items.data[0]?.price?.product;
+      if (productId === "prod_U36GQsirConMMK" || productId === "prod_U36Iuwp618AUVM") {
+        plan = "starter";
+      } else {
+        plan = "pro";
+      }
       try {
         const endTimestamp = subscription.current_period_end;
         if (endTimestamp) {
@@ -88,7 +96,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
-      plan: hasActiveSub ? "pro" : "free",
+      plan: plan,
       subscription_end: subscriptionEnd,
       ai_responses_this_month: aiCount ?? 0,
     }), {

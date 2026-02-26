@@ -38,10 +38,21 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
+    const plan = body.plan || "pro";
     const billingInterval = body.billingInterval || "month";
-    const priceId = billingInterval === "year"
-      ? "price_1T1N439qkctgdXPWJUIiKmGi"
-      : "price_1T1N439qkctgdXPWs0PudObs";
+    
+    const priceIds: Record<string, Record<string, string>> = {
+      starter: {
+        month: "price_1T504R9qkctgdXPW3MdCa3Mp",
+        year: "price_1T505i9qkctgdXPWv7rzxoGL",
+      },
+      pro: {
+        month: "price_1T1N439qkctgdXPWs0PudObs",
+        year: "price_1T1N439qkctgdXPWJUIiKmGi",
+      },
+    };
+
+    const priceId = priceIds[plan]?.[billingInterval] || priceIds.pro.month;
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
