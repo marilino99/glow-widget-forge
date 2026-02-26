@@ -200,7 +200,7 @@ const Pricing = () => {
                               {currencySymbol}{displayPrice}
                             </motion.span>
                           </AnimatePresence>
-                          <span className={cn("text-sm", isHighlighted ? "text-white/50" : "text-muted-foreground")}>{plan.monthlyPrice === 0 ? "/forever" : "/month"}</span>
+                          <span className={cn("text-sm", isHighlighted ? "text-white" : "text-foreground")}>{plan.monthlyPrice === 0 ? "/forever" : "/month"}</span>
                         </div>
                       </>
                     )}
