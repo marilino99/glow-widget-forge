@@ -180,7 +180,7 @@ const Pricing = () => {
                     {plan.badge && <span className="rounded border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">{plan.badge}</span>}
                   </div>
                   <div className="h-[72px] flex flex-col justify-center">
-                    {plan.planKey === "business" ? (
+                    {plan.planKey === "enterprise" ? (
                       <span className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
                         Let's talk
                       </span>
