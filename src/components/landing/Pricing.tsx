@@ -45,19 +45,6 @@ const Pricing = () => {
       planKey: "free",
     },
     {
-      name: t("pricing.starter.name"),
-      monthlyPrice: 7,
-      annualPrice: 5,
-      monthlyPriceEur: 6.50,
-      annualPriceEur: 4.50,
-      description: t("pricing.starter.desc"),
-      cta: t("pricing.starter.cta"),
-      highlighted: false,
-      featuresLabel: t("pricing.starter.featuresLabel"),
-      features: [t("pricing.starter.f1"), t("pricing.starter.f2"), t("pricing.starter.f3"), t("pricing.starter.f4"), t("pricing.starter.f5")],
-      planKey: "starter",
-    },
-    {
       name: t("pricing.pro.name"),
       monthlyPrice: 19,
       annualPrice: 16,
@@ -69,7 +56,7 @@ const Pricing = () => {
       badge: t("pricing.pro.badge"),
       featuresLabel: t("pricing.pro.featuresLabel"),
       features: [t("pricing.pro.f1"), t("pricing.pro.f2"), t("pricing.pro.f3"), t("pricing.pro.f4"), t("pricing.pro.f5"), t("pricing.pro.f6"), t("pricing.pro.f7"), t("pricing.pro.f8")],
-      planKey: "pro",
+      planKey: "starter",
     },
     {
       name: t("pricing.business.name"),
@@ -157,7 +144,7 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan, i) => {
             const price = currency === "EUR"
               ? (isAnnual ? plan.annualPriceEur : plan.monthlyPriceEur)
