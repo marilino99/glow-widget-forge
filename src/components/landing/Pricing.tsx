@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Check, CircleCheck } from "lucide-react";
+import { Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -163,7 +163,7 @@ const Pricing = () => {
                   <ul className="space-y-2.5">
                     {plan.features.map((feature) => (
                       <li key={feature} className={cn("flex items-start gap-2.5 text-sm", isHighlighted ? "text-white" : "text-foreground")}>
-                        {isHighlighted ? <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 fill-white text-[hsl(0,0%,15%)]" /> : <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 fill-muted-foreground/30 text-background" />}
+                        {isHighlighted ? <Check className="mt-0.5 h-4 w-4 shrink-0 text-white" /> : <Check className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />}
                         {feature}
                       </li>
                     ))}
