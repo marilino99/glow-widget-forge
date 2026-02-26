@@ -194,12 +194,15 @@ const Pricing = () => {
                       </span>
                     ) : (
                       <>
-                        <div className="flex items-baseline gap-1">
+                        <div className="flex items-baseline gap-1.5">
                           <AnimatePresence mode="wait">
                             <motion.span key={`${price}-${currency}`} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }} className={cn("text-4xl font-bold tracking-tight", isHighlighted ? "text-white" : "text-foreground")}>
                               {currencySymbol}{displayPrice}
                             </motion.span>
                           </AnimatePresence>
+                          {plan.monthlyPrice > 0 && (
+                            <span className={cn("text-sm", isHighlighted ? "text-white/50" : "text-muted-foreground")}>/month</span>
+                          )}
                         </div>
                         <p className={cn("mt-1 text-xs", isHighlighted ? "text-white/50" : "text-muted-foreground")}>
                           {plan.monthlyPrice === 0 ? t("pricing.forever") : isAnnual ? t("pricing.billedYearly") : t("pricing.billedMonthly")}
