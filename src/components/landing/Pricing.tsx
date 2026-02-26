@@ -118,12 +118,12 @@ const Pricing = () => {
 
         <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="inline-flex items-center rounded-full bg-[#f6f5f4] p-1.5">
-              <button onClick={() => setIsAnnual(false)} className={cn("relative rounded-full px-6 py-2 text-sm transition-colors", !isAnnual ? "font-bold text-foreground" : "font-medium text-muted-foreground hover:text-foreground")}>
+            <div className="inline-flex items-center rounded-full bg-[#f6f5f4] p-1">
+              <button onClick={() => setIsAnnual(false)} className={cn("relative rounded-full px-5 py-1 text-sm transition-colors", !isAnnual ? "font-bold text-foreground" : "font-medium text-muted-foreground hover:text-foreground")}>
                 {!isAnnual && <motion.span layoutId="pricing-pill" className="absolute inset-0 rounded-full bg-white shadow-sm" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />}
                 <span className="relative z-10">{t("pricing.monthly")}</span>
               </button>
-              <button onClick={() => setIsAnnual(true)} className={cn("relative rounded-full px-6 py-2 text-sm transition-colors", isAnnual ? "font-bold text-foreground" : "font-medium text-muted-foreground hover:text-foreground")}>
+              <button onClick={() => setIsAnnual(true)} className={cn("relative rounded-full px-5 py-1 text-sm transition-colors", isAnnual ? "font-bold text-foreground" : "font-medium text-muted-foreground hover:text-foreground")}>
                 {isAnnual && <motion.span layoutId="pricing-pill" className="absolute inset-0 rounded-full bg-white shadow-sm" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />}
                 <span className="relative z-10">{t("pricing.yearly")}</span>
               </button>
