@@ -116,20 +116,24 @@ const PricingComparison = ({
                   <div className="flex flex-col gap-1">
                     <span className="text-base font-bold text-foreground">{plan.name}</span>
                     {plan.planKey === "enterprise" ? (
-                      <span className="text-sm text-muted-foreground">Let's talk</span>
+                      <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        Contact us →
+                      </a>
                     ) : (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-sm font-bold text-foreground">{plan.price}</span>
-                        <span className="text-xs text-muted-foreground">{plan.suffix}</span>
-                      </div>
+                      <>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-sm font-bold text-foreground">{plan.price}</span>
+                          <span className="text-xs text-muted-foreground">{plan.suffix}</span>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="mt-1.5 w-full rounded-lg bg-foreground text-background hover:bg-foreground/90 text-sm font-semibold"
+                          onClick={() => handleCta(plan.planKey)}
+                        >
+                          {plan.cta}
+                        </Button>
+                      </>
                     )}
-                    <Button
-                      size="sm"
-                      className="mt-1.5 w-full rounded-lg bg-foreground text-background hover:bg-foreground/90 text-sm font-semibold"
-                      onClick={() => handleCta(plan.planKey)}
-                    >
-                      {plan.cta}
-                    </Button>
                   </div>
                 </th>
               ))}
