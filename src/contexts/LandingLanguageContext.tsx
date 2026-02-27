@@ -56,7 +56,7 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.demo": "Show me live demo",
 
     // Logos
-    "logos.heading": "Trusted by 200+ businesses worldwide",
+    "logos.heading": "Trusted by 100+ businesses worldwide",
 
     // Features
     "features.title1": "Everything you need,",
