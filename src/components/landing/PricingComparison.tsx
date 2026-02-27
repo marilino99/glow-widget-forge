@@ -98,8 +98,8 @@ const PricingComparison = ({ onCheckout }: { onCheckout: (planKey: string) => vo
 
       <div className="mt-8">
         <table className="w-full border-collapse">
-          <thead className="sticky top-0 z-10 bg-background">
-            <tr>
+          <thead className="sticky top-16 z-10">
+            <tr className="bg-background">
               <th className="w-[30%] pb-4 text-left" />
               {planHeaders.map((plan) => (
                 <th key={plan.planKey} className="w-[17.5%] pb-2 text-left align-top">
