@@ -77,9 +77,9 @@ const PricingComparison = () => {
       transition={{ duration: 0.5 }}
       className="mt-16"
     >
-      <h3 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+      <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-6xl">
         {t("compare.title")}
-      </h3>
+      </h2>
 
       <div className="mt-8 overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse">
