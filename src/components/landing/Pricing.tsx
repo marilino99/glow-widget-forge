@@ -242,7 +242,7 @@ const Pricing = () => {
           })}
         </div>
 
-        <PricingComparison onCheckout={handlePaidCheckout} />
+        <PricingComparison onCheckout={handlePaidCheckout} currencySymbol={currencySymbol} isAnnual={isAnnual} />
       </div>
     </section>
   );
