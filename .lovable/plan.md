@@ -1,29 +1,45 @@
 
 
-## Problem
+# Sistema di Limite 100 Risposte AI Mensili
 
-The sticky category headers ("Core", "Advanced", "Enterprise") are not working because:
+## Panoramica
 
-1. The navbar is **not** fixed or sticky -- it scrolls away normally. So `top-16` and `top-[7.5rem]` are incorrect values since there's nothing at the top of the viewport to account for.
-2. The `thead` (plan names row) should stick at `top-0`, and category headers should stick just below the thead height.
+Implementare un sistema che blocca le risposte AI automatiche quando l'utente Free supera 100 risposte al mese, spingendolo a fare l'upgrade. Gli utenti Pro avranno un limite di 10.000 risposte.
 
-## Solution
+## Cosa cambia per l'utente
 
-Replace the table-based layout with a div-based layout. CSS `position: sticky` on `<td>` elements inside `<table>` has inconsistent browser support (especially in Safari/WebKit). Converting to divs with CSS Grid will make sticky positioning work reliably.
+- **0-69 risposte**: Tutto normale, nessun avviso
+- **70 risposte**: Banner discreto nella sidebar ("Hai usato il 70% delle risposte AI")
+- **90 risposte**: Warning visibile con CTA upgrade
+- **100+ risposte**: L'AI smette di rispondere. Il visitatore riceve un messaggio fallback tipo "L'assistente non e' disponibile, lascia un messaggio e ti rispondero'". Il proprietario vede un banner nel pannello Conversations
+- Il contatore si resetta automaticamente ogni mese
 
-### Changes (single file: `PricingComparison.tsx`)
+## Dettagli tecnici
 
-1. **Replace `<table>` structure with divs using CSS Grid** (5 columns: label + 4 plans)
-2. **Plan header row**: a sticky div at `top-0` with `z-10` and `bg-background` containing the plan names, prices, and CTA buttons
-3. **Category header rows** (Core, Advanced, Enterprise): sticky divs at a calculated `top` value matching the header height (approx `top-[9rem]`), with `z-[5]` and `bg-background`
-4. **Feature rows**: standard grid rows with border-top styling
+### 1. Edge Function `chatbot-reply` (modifica)
+- Prima di generare la risposta AI, contare i messaggi `is_ai_response = true` dell'utente nel mese corrente
+- Se il conteggio >= limite (100 free / 10.000 pro), verificare il piano tramite Stripe
+- Se il limite e' superato: inserire un messaggio fallback invece della risposta AI, con flag `is_limit_message: true` o un contenuto specifico
+- Se sotto il limite: procedere normalmente
 
-This approach guarantees cross-browser sticky behavior since divs fully support `position: sticky` unlike table cells.
+### 2. Edge Function `check-subscription` (modifica)
+- Aggiungere nel response il conteggio mensile delle risposte AI (`ai_responses_this_month`)
+- Calcolare il conteggio filtrando `chat_messages` per `is_ai_response = true` e `created_at >= inizio mese corrente`
 
-### Technical Details
+### 3. Hook `useSubscription` (modifica)
+- Esporre `aiResponsesThisMonth` dallo stato
+- Calcolare `aiResponseLimit` (100 per free, 10000 per pro)
+- Esporre `isApproachingLimit` (>=70%) e `isAtLimit` (>=100%)
 
-- The outer container will use `display: grid` with `grid-template-columns: 30% repeat(4, 1fr)`
-- Each "row" becomes a set of grid items spanning across the columns
-- Category headers use `grid-column: 1 / -1` (span all columns) with `position: sticky`
-- Plan header section uses the same full-span sticky approach
-- All existing styling (colors, fonts, spacing) will be preserved
+### 4. Sidebar - Usage overview (modifica in `BuilderSidebar.tsx`)
+- Cambiare il conteggio da "totale storico" a "mensile" (filtrando per mese corrente)
+- Aggiungere colori progressivi alla barra: verde sotto il 70%, giallo al 70%, rosso al 90%
+- Aggiungere CTA "Upgrade" quando si avvicina al limite
+
+### 5. Banner nel pannello Conversations (`ConversationsPanel.tsx`)
+- Mostrare un banner in cima quando il limite e' raggiunto: "Le risposte AI sono esaurite per questo mese. Fai l'upgrade per continuare."
+
+### 6. Messaggio fallback per il visitatore
+- Quando il limite e' raggiunto, il widget mostra al visitatore: "L'assistente non e' al momento disponibile. Lascia un messaggio e ti risponderemo il prima possibile."
+- Questo messaggio viene salvato come messaggio `owner` nella conversazione
+

@@ -1,4 +1,5 @@
 import { Check, Minus } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -90,6 +91,7 @@ const PricingComparison = ({
   const handleCta = (planKey: string) => {
     if (planKey === "free") navigate("/signup");
     else if (planKey === "starter" || planKey === "business") onCheckout(planKey);
+    // enterprise: no action (contact sales)
   };
 
   return (
@@ -99,67 +101,68 @@ const PricingComparison = ({
       </h2>
 
       <div className="mt-8">
-        {/* Sticky plan header */}
-        <div
-          className="sticky top-0 z-10 bg-background grid pb-4"
-          style={{ gridTemplateColumns: "30% repeat(4, 1fr)" }}
-        >
-          <div />
-          {planHeaders.map((plan) => (
-            <div key={plan.planKey} className="pr-4 pt-4">
-              <div className="flex flex-col gap-1">
-                <span className="text-base font-bold text-foreground">{plan.name}</span>
-                {plan.planKey === "enterprise" ? (
-                  <a href="#" className="text-sm font-normal text-foreground hover:text-muted-foreground hover:underline underline-offset-4 transition-colors">
-                    Contact us →
-                  </a>
-                ) : (
-                  <>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-sm font-normal text-foreground">{plan.price}</span>
-                      <span className="text-sm font-normal text-[#78736f]">{plan.suffix}</span>
-                    </div>
-                    <Button
-                      size="sm"
-                      className="mt-1.5 w-full rounded-lg bg-foreground text-background hover:bg-foreground/90 text-sm font-semibold"
-                      onClick={() => handleCta(plan.planKey)}
-                    >
-                      {plan.cta}
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Categories and feature rows */}
-        {categories.map((cat) => (
-          <div key={cat.category}>
-            {/* Sticky category header */}
-            <div className="sticky top-[9rem] z-[5] bg-background pt-8 pb-3 text-sm font-medium text-muted-foreground">
-              {cat.category}
-            </div>
-
-            {/* Feature rows */}
-            {cat.rows.map((row) => (
-              <div
-                key={row.label}
-                className="grid border-t border-border"
-                style={{ gridTemplateColumns: "30% repeat(4, 1fr)" }}
-              >
-                <div className="py-3.5 pr-4 text-sm text-foreground">
-                  {row.label}
-                </div>
-                {row.values.map((val, vi) => (
-                  <div key={vi} className="py-3.5 text-center">
-                    {renderCell(val)}
+        <table className="w-full border-collapse">
+          <thead className="sticky top-16 z-10">
+            <tr className="bg-background">
+              <th className="w-[30%] pb-4 text-left" />
+              {planHeaders.map((plan) => (
+                <th key={plan.planKey} className="w-[17.5%] py-4 pr-4 text-left align-top bg-background">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-base font-bold text-foreground">{plan.name}</span>
+                    {plan.planKey === "enterprise" ? (
+                      <a href="#" className="text-sm font-normal text-foreground hover:text-muted-foreground hover:underline underline-offset-4 transition-colors">
+                        Contact us →
+                      </a>
+                    ) : (
+                      <>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-sm font-normal text-foreground">{plan.price}</span>
+                          <span className="text-sm font-normal text-[#78736f]">{plan.suffix}</span>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="mt-1.5 w-full rounded-lg bg-foreground text-background hover:bg-foreground/90 text-sm font-semibold"
+                          onClick={() => handleCta(plan.planKey)}
+                        >
+                          {plan.cta}
+                        </Button>
+                      </>
+                    )}
                   </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((cat) => (
+              <>
+                <tr key={`cat-${cat.category}`}>
+                  <td
+                    colSpan={5}
+                    className="sticky top-[7.5rem] z-[5] bg-background pt-8 pb-3 text-sm font-medium text-muted-foreground"
+                  >
+                    {cat.category}
+                  </td>
+                </tr>
+                {cat.rows.map((row) => (
+                  <tr
+                    key={row.label}
+                    className="border-t border-border"
+                  >
+                    <td className="py-3.5 pr-4 text-sm text-foreground">
+                      {row.label}
+                    </td>
+                    {row.values.map((val, vi) => (
+                      <td key={vi} className="py-3.5 text-center first:text-left">
+                        {renderCell(val)}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </div>
+              </>
             ))}
-          </div>
-        ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
