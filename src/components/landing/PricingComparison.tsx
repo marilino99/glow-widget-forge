@@ -132,8 +132,8 @@ const PricingComparison = ({
         <table className="w-full border-collapse">
           <thead className="sticky top-16 z-10">
             <tr className="bg-background">
-              <th className="w-[30%] py-4 text-left align-middle bg-background">
-                <span className="text-sm font-medium text-muted-foreground transition-all">
+              <th className="w-[30%] py-4 text-left align-top bg-background">
+                <span className="text-sm font-medium text-muted-foreground">
                   {categories[activeCategory]?.category}
                 </span>
               </th>
