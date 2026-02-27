@@ -1,6 +1,8 @@
 import { Check, Minus } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 type CellValue = boolean | string;
@@ -15,14 +17,21 @@ interface FeatureCategory {
   rows: FeatureRow[];
 }
 
-const PricingComparison = () => {
-  const { t } = useLandingLang();
+interface PlanHeader {
+  name: string;
+  cta: string;
+  planKey: string;
+}
 
-  const plans = [
-    t("pricing.free.name"),
-    t("pricing.pro.name"),
-    t("pricing.biz.name"),
-    t("pricing.business.name"),
+const PricingComparison = ({ onCheckout }: { onCheckout: (planKey: string) => void }) => {
+  const { t } = useLandingLang();
+  const navigate = useNavigate();
+
+  const planHeaders: PlanHeader[] = [
+    { name: t("pricing.free.name"), cta: t("pricing.free.cta"), planKey: "free" },
+    { name: t("pricing.pro.name"), cta: t("pricing.pro.cta"), planKey: "starter" },
+    { name: t("pricing.biz.name"), cta: t("pricing.biz.cta"), planKey: "business" },
+    { name: t("pricing.business.name"), cta: t("pricing.business.cta"), planKey: "enterprise" },
   ];
 
   const categories: FeatureCategory[] = [
@@ -69,6 +78,12 @@ const PricingComparison = () => {
     return <span className="text-sm text-foreground">{value}</span>;
   };
 
+  const handleCta = (planKey: string) => {
+    if (planKey === "free") navigate("/signup");
+    else if (planKey === "starter" || planKey === "business") onCheckout(planKey);
+    // enterprise: no action (contact sales)
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -83,14 +98,26 @@ const PricingComparison = () => {
 
       <div className="mt-8 overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse">
-          <thead>
+          <thead className="sticky top-0 z-10 bg-background">
             <tr>
               <th className="w-[30%] pb-4 text-left" />
-              {plans.map((plan) => (
-                <th key={plan} className="w-[17.5%] pb-4 text-left text-sm font-bold text-foreground">
-                  {plan}
+              {planHeaders.map((plan) => (
+                <th key={plan.planKey} className="w-[17.5%] pb-2 text-left align-top">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-sm font-bold text-foreground">{plan.name}</span>
+                    <Button
+                      size="sm"
+                      className="w-fit rounded-lg bg-foreground text-background hover:bg-foreground/90 text-xs font-semibold px-4"
+                      onClick={() => handleCta(plan.planKey)}
+                    >
+                      {plan.cta}
+                    </Button>
+                  </div>
                 </th>
               ))}
+            </tr>
+            <tr>
+              <td colSpan={5} className="h-px bg-border" />
             </tr>
           </thead>
           <tbody>
