@@ -102,8 +102,8 @@ const PricingComparison = ({ onCheckout }: { onCheckout: (planKey: string) => vo
             <tr className="bg-background">
               <th className="w-[30%] pb-4 text-left" />
               {planHeaders.map((plan) => (
-                <th key={plan.planKey} className="w-[17.5%] pb-2 text-left align-top">
-                  <div className="flex flex-col gap-2">
+                <th key={plan.planKey} className="w-[17.5%] py-4 text-left align-top">
+                  <div className="flex flex-col gap-2.5">
                     <span className="text-sm font-bold text-foreground">{plan.name}</span>
                     <Button
                       size="sm"
