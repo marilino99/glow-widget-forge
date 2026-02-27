@@ -21,17 +21,27 @@ interface PlanHeader {
   name: string;
   cta: string;
   planKey: string;
+  price: string;
+  suffix: string;
 }
 
-const PricingComparison = ({ onCheckout }: { onCheckout: (planKey: string) => void }) => {
+const PricingComparison = ({
+  onCheckout,
+  currencySymbol,
+  isAnnual,
+}: {
+  onCheckout: (planKey: string) => void;
+  currencySymbol: string;
+  isAnnual: boolean;
+}) => {
   const { t } = useLandingLang();
   const navigate = useNavigate();
 
   const planHeaders: PlanHeader[] = [
-    { name: t("pricing.free.name"), cta: t("pricing.free.cta"), planKey: "free" },
-    { name: t("pricing.pro.name"), cta: t("pricing.pro.cta"), planKey: "starter" },
-    { name: t("pricing.biz.name"), cta: t("pricing.biz.cta"), planKey: "business" },
-    { name: t("pricing.business.name"), cta: t("pricing.business.cta"), planKey: "enterprise" },
+    { name: t("pricing.free.name"), cta: t("pricing.free.cta"), planKey: "free", price: `${currencySymbol}0`, suffix: "forever" },
+    { name: t("pricing.pro.name"), cta: t("pricing.pro.cta"), planKey: "starter", price: `${currencySymbol}${currencySymbol === "€" ? (isAnnual ? "15" : "18") : (isAnnual ? "16" : "19")}`, suffix: "per month" },
+    { name: t("pricing.biz.name"), cta: t("pricing.biz.cta"), planKey: "business", price: `${currencySymbol}${currencySymbol === "€" ? (isAnnual ? "38" : "48") : (isAnnual ? "39" : "49")}`, suffix: "per month" },
+    { name: t("pricing.business.name"), cta: t("pricing.business.cta"), planKey: "enterprise", price: "", suffix: "" },
   ];
 
   const categories: FeatureCategory[] = [
@@ -102,12 +112,20 @@ const PricingComparison = ({ onCheckout }: { onCheckout: (planKey: string) => vo
             <tr className="bg-background">
               <th className="w-[30%] pb-4 text-left" />
               {planHeaders.map((plan) => (
-                <th key={plan.planKey} className="w-[17.5%] py-4 text-left align-top">
-                  <div className="flex flex-col gap-2.5">
-                    <span className="text-sm font-bold text-foreground">{plan.name}</span>
+                <th key={plan.planKey} className="w-[17.5%] py-4 pr-4 text-left align-top bg-background">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-base font-bold text-foreground">{plan.name}</span>
+                    {plan.planKey === "enterprise" ? (
+                      <span className="text-sm text-muted-foreground">Let's talk</span>
+                    ) : (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-sm font-bold text-foreground">{plan.price}</span>
+                        <span className="text-xs text-muted-foreground">{plan.suffix}</span>
+                      </div>
+                    )}
                     <Button
                       size="sm"
-                      className="w-fit rounded-lg bg-foreground text-background hover:bg-foreground/90 text-xs font-semibold px-4"
+                      className="mt-1.5 w-full rounded-lg bg-foreground text-background hover:bg-foreground/90 text-sm font-semibold"
                       onClick={() => handleCta(plan.planKey)}
                     >
                       {plan.cta}
