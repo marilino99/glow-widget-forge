@@ -142,10 +142,10 @@ const PricingComparison = ({
           <tbody>
             {categories.map((cat) => (
               <>
-                <tr key={`cat-${cat.category}`} className="sticky top-[7.5rem] z-[5] bg-background">
+                <tr key={`cat-${cat.category}`}>
                   <td
                     colSpan={5}
-                    className="pt-8 pb-3 text-sm font-medium text-muted-foreground"
+                    className="sticky top-[7.5rem] z-[5] bg-background pt-8 pb-3 text-sm font-medium text-muted-foreground"
                   >
                     {cat.category}
                   </td>
