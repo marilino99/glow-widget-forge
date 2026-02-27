@@ -242,7 +242,7 @@ const Pricing = () => {
           })}
         </div>
 
-        <PricingComparison />
+        <PricingComparison onCheckout={handlePaidCheckout} />
       </div>
     </section>
   );
