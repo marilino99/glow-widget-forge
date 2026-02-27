@@ -138,9 +138,6 @@ const PricingComparison = ({
                 </th>
               ))}
             </tr>
-            <tr>
-              <td colSpan={5} className="h-px bg-border" />
-            </tr>
           </thead>
           <tbody>
             {categories.map((cat) => (
