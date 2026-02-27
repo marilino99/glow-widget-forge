@@ -123,7 +123,7 @@ const PricingComparison = ({
                       <>
                         <div className="flex items-baseline gap-1">
                           <span className="text-sm font-normal text-foreground">{plan.price}</span>
-                          <span className="text-sm font-normal text-foreground">{plan.suffix}</span>
+                          <span className={`text-sm font-normal ${plan.suffix === "forever" ? "text-[#78736f]" : "text-foreground"}`}>{plan.suffix}</span>
                         </div>
                         <Button
                           size="sm"
