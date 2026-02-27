@@ -1,5 +1,6 @@
 import { Check, Minus } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +37,8 @@ const PricingComparison = ({
 }) => {
   const { t } = useLandingLang();
   const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState(0);
+  const categoryRefs = useRef<(HTMLTableRowElement | null)[]>([]);
 
   const planHeaders: PlanHeader[] = [
     { name: t("pricing.free.name"), cta: t("pricing.free.cta"), planKey: "free", price: `${currencySymbol}0`, suffix: "forever" },
@@ -82,6 +85,26 @@ const PricingComparison = ({
     },
   ];
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = categoryRefs.current.indexOf(entry.target as HTMLTableRowElement);
+            if (index !== -1) setActiveCategory(index);
+          }
+        });
+      },
+      { rootMargin: "-120px 0px -60% 0px", threshold: 0 }
+    );
+
+    categoryRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const renderCell = (value: CellValue) => {
     if (value === true) return <Check className="mx-auto h-4 w-4 text-foreground" />;
     if (value === false) return <Minus className="mx-auto h-4 w-4 text-muted-foreground/40" />;
@@ -91,7 +114,6 @@ const PricingComparison = ({
   const handleCta = (planKey: string) => {
     if (planKey === "free") navigate("/signup");
     else if (planKey === "starter" || planKey === "business") onCheckout(planKey);
-    // enterprise: no action (contact sales)
   };
 
   return (
@@ -110,7 +132,11 @@ const PricingComparison = ({
         <table className="w-full border-collapse">
           <thead className="sticky top-16 z-10">
             <tr className="bg-background">
-              <th className="w-[30%] pb-4 text-left" />
+              <th className="w-[30%] py-4 text-left align-middle bg-background">
+                <span className="text-sm font-medium text-muted-foreground transition-all">
+                  {categories[activeCategory]?.category}
+                </span>
+              </th>
               {planHeaders.map((plan) => (
                 <th key={plan.planKey} className="w-[17.5%] py-4 pr-4 text-left align-top bg-background">
                   <div className="flex flex-col gap-1">
@@ -140,15 +166,14 @@ const PricingComparison = ({
             </tr>
           </thead>
           <tbody>
-            {categories.map((cat) => (
+            {categories.map((cat, catIndex) => (
               <>
-                <tr key={`cat-${cat.category}`}>
-                  <td
-                    colSpan={5}
-                    className="pt-8 pb-3 text-sm font-medium text-muted-foreground"
-                  >
-                    {cat.category}
-                  </td>
+                <tr
+                  key={`cat-${cat.category}`}
+                  ref={(el) => { categoryRefs.current[catIndex] = el; }}
+                  className="h-0"
+                >
+                  <td colSpan={5} className="p-0" />
                 </tr>
                 {cat.rows.map((row) => (
                   <tr
