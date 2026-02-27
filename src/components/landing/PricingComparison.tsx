@@ -96,8 +96,8 @@ const PricingComparison = ({ onCheckout }: { onCheckout: (planKey: string) => vo
         {t("compare.title")}
       </h2>
 
-      <div className="mt-8 overflow-x-auto">
-        <table className="w-full min-w-[640px] border-collapse">
+      <div className="mt-8">
+        <table className="w-full border-collapse">
           <thead className="sticky top-0 z-10 bg-background">
             <tr>
               <th className="w-[30%] pb-4 text-left" />
