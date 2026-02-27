@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
+import PricingComparison from "./PricingComparison";
 
 const detectCurrency = (): "EUR" | "USD" => {
   try {
@@ -240,6 +241,8 @@ const Pricing = () => {
             return card;
           })}
         </div>
+
+        <PricingComparison />
       </div>
     </section>
   );
