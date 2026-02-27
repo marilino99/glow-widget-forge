@@ -116,14 +116,14 @@ const PricingComparison = ({
                   <div className="flex flex-col gap-1">
                     <span className="text-base font-bold text-foreground">{plan.name}</span>
                     {plan.planKey === "enterprise" ? (
-                      <a href="#" className="text-sm text-foreground hover:text-muted-foreground hover:underline underline-offset-4 transition-colors">
+                      <a href="#" className="text-sm font-normal text-foreground hover:text-muted-foreground hover:underline underline-offset-4 transition-colors">
                         Contact us →
                       </a>
                     ) : (
                       <>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-sm font-bold text-foreground">{plan.price}</span>
-                          <span className="text-xs text-muted-foreground">{plan.suffix}</span>
+                          <span className="text-sm font-normal text-foreground">{plan.price}</span>
+                          <span className="text-sm font-normal text-foreground">{plan.suffix}</span>
                         </div>
                         <Button
                           size="sm"
