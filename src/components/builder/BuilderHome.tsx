@@ -29,7 +29,7 @@ const COUNTRY_TO_CODE: Record<string, string> = {
 
 function countryToFlag(name: string): string {
   const code = COUNTRY_TO_CODE[name.trim()];
-  if (!code) return "";
+  if (!code) return "🌍";
   return String.fromCodePoint(...[...code].map((c) => 0x1f1e6 - 65 + c.charCodeAt(0)));
 }
 
