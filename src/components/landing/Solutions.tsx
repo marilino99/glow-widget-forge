@@ -227,7 +227,7 @@ const Solutions = () => {
 
                 <ul className="mt-6 space-y-2.5">
                   {active.bullets.map((b, i) => (
-                    <li key={i} className="flex items-center gap-2.5 text-sm text-foreground">
+                    <li key={i} className="flex items-center gap-2.5 text-sm" style={{ color: '#838383' }}>
                       <Check className="h-4 w-4 text-primary flex-shrink-0" />
                       {b}
                     </li>
