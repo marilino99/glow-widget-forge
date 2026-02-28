@@ -214,12 +214,8 @@ const Solutions = () => {
             className="rounded-3xl p-8 md:p-12 relative overflow-hidden"
             style={{
               background: 'linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 40%, hsl(260 60% 94%) 70%, hsl(270 70% 88%) 100%)',
-              boxShadow: '0 0 80px 20px hsl(270 70% 85% / 0.4), 0 0 160px 60px hsl(260 60% 90% / 0.2), 0 8px 32px -4px hsl(0 0% 0% / 0.06)',
             }}
           >
-            {/* Glow blobs */}
-            <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full opacity-40 blur-3xl" style={{ background: 'hsl(270 80% 75%)' }} />
-            <div className="pointer-events-none absolute -top-16 -left-16 h-48 w-48 rounded-full opacity-25 blur-3xl" style={{ background: 'hsl(260 70% 80%)' }} />
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
               <div className="flex-1 flex flex-col justify-center">
