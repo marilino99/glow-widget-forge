@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText, Mail, CalendarDays } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import successCoachImg from "@/assets/success-coach.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +15,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   const [clicks, setClicks] = useState(0);
   const [impressions, setImpressions] = useState(0);
   const [conversations, setConversations] = useState(0);
+  const [chatsByDay, setChatsByDay] = useState<{ date: string; chats: number }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const getGreeting = () => {
@@ -63,6 +65,30 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         setClicks(clicksRes.count ?? 0);
         setImpressions(impressionsRes.count ?? 0);
         setConversations(convsRes.count ?? 0);
+
+        // Fetch chats by day for the chart
+        const tenDaysAgo = new Date();
+        tenDaysAgo.setDate(tenDaysAgo.getDate() - 9);
+        const { data: convRows } = await supabase
+          .from("conversations")
+          .select("created_at")
+          .eq("widget_owner_id", user.id)
+          .gte("created_at", tenDaysAgo.toISOString())
+          .order("created_at", { ascending: true });
+
+        // Group by day
+        const dayMap: Record<string, number> = {};
+        for (let i = 0; i < 10; i++) {
+          const d = new Date(tenDaysAgo);
+          d.setDate(d.getDate() + i);
+          const key = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          dayMap[key] = 0;
+        }
+        (convRows || []).forEach((row) => {
+          const key = new Date(row.created_at!).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          if (key in dayMap) dayMap[key]++;
+        });
+        setChatsByDay(Object.entries(dayMap).map(([date, chats]) => ({ date, chats })));
       } catch (error) {
         console.error("Error fetching metrics:", error);
       } finally {
@@ -130,9 +156,38 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           </div>
         </div>
 
+        {/* Chats started chart */}
+        <div>
+          <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Chats started</h2>
+          <div className="rounded-2xl border border-border bg-background p-6">
+            <div className="h-[220px]">
+              {isLoading ? (
+                <div className="flex h-full items-center justify-center">
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chatsByDay} margin={{ top: 5, right: 5, bottom: 0, left: -20 }}>
+                    <defs>
+                      <linearGradient id="chatsFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#6366f1" stopOpacity={0.15} />
+                        <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#9ca3af" }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#9ca3af" }} allowDecimals={false} />
+                    <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e5e7eb", fontSize: 13 }} />
+                    <Area type="monotone" dataKey="chats" stroke="#6366f1" strokeWidth={2.5} fill="url(#chatsFill)" dot={false} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Bottom sections */}
         <div className="grid gap-8 lg:grid-cols-2">
-          {/* Quick metrics */}
+          {/* Quick insights */}
           <div>
             <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Quick insights</h2>
             <div className="space-y-3">
