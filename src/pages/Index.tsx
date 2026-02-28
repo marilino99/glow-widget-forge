@@ -12,6 +12,7 @@ import PlatformIntegrations from "@/components/landing/PlatformIntegrations";
 import Pricing from "@/components/landing/Pricing";
 import FAQs from "@/components/landing/FAQs";
 import Footer from "@/components/landing/Footer";
+import Solutions from "@/components/landing/Solutions";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const LandingContent = () => {
@@ -84,6 +85,7 @@ const LandingContent = () => {
             { id: "helix", description: "Helix Studio", image: "", className: "h-6 w-auto opacity-70" },
           ]}
         />
+        <Solutions />
         <Features />
         <DashboardPreview />
         <PlatformIntegrations />
