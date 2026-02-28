@@ -171,7 +171,6 @@ const Solutions = () => {
               style={activeTab === tab.id ? { borderColor: 'hsl(270, 80%, 50%)', backgroundColor: 'hsl(270, 80%, 96%)', color: 'hsl(270, 80%, 50%)' } : {}}
             >
               {labels[tab.id]}
-              {labels[tab.id]}
             </button>
           ))}
         </div>
