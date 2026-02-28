@@ -48,7 +48,7 @@ const DashboardPreview = () => {
 
             {/* Tabs - glassmorphic bar */}
             <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex justify-center">
-              <div className="flex w-full justify-between border-b border-white/10">
+              <div className="flex w-full justify-between border-b border-white/10 px-8 md:px-16">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
