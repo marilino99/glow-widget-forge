@@ -1,20 +1,31 @@
 
 
-## Fix Chart Line to Match Reference Image
+## Replicare esattamente le oscillazioni del grafico di riferimento
 
-The reference image shows a very specific wave pattern: the line has smooth, rounded S-curve "steps" -- each step consists of a gentle dip down followed by a rise to a higher level, like a staircase with smooth wave transitions. The line is also thicker and more uniform.
+### Analisi dell'immagine di riferimento
 
-### Changes to `src/components/landing/AIControl.tsx`
+L'immagine mostra un pattern molto specifico:
+- La linea parte quasi piatta in basso a sinistra con oscillazioni molto piccole
+- Le prime 2-3 onde sono piccole e ravvicinate (ampiezza ~5-8px)
+- Man mano che la linea sale verso destra, le onde diventano progressivamente piu ampie e piu distanziate
+- Ogni onda ha la forma di una "S" morbida: scende leggermente, poi risale a un livello piu alto
+- Circa 7-8 oscillazioni totali
+- La linea finisce in alto a destra con le onde piu grandi
 
-**Update the SVG path data** to replicate the stair-step wave pattern from the reference:
-- Each "step" is a smooth S-curve: the line plateaus briefly, dips slightly, then climbs to the next level
-- The oscillations are gentle and uniform in shape (same wave amplitude at each step)
-- The overall trend goes from bottom-left to top-right
-- Increase stroke width from 3 to 4 for a thicker, more prominent line matching the reference
+### Differenza rispetto alla versione attuale
 
-**Update the fill gradient** to better match the reference:
-- The fill in the reference is a light purple/lavender that fades to transparent at the bottom
-- Adjust fill gradient colors to use a purple tint matching the line gradient
+La versione attuale ha oscillazioni troppo uniformi in ampiezza e spaziatura. Il riferimento mostra chiaramente onde che crescono in dimensione da sinistra a destra.
 
-**New path design** using smooth cubic bezier curves that create uniform S-shaped steps, approximately 7-8 steps from left to right, each with the same wave shape but progressively higher.
+### Modifiche tecniche
+
+**File: `src/components/landing/AIControl.tsx`**
+
+Riscrivere il path SVG con queste caratteristiche:
+- Y iniziale: ~135 (quasi in fondo ma non del tutto)
+- Prime onde: ampiezza verticale di ~5px, larghezza ~40px
+- Onde centrali: ampiezza verticale di ~12-15px, larghezza ~50px  
+- Ultime onde: ampiezza verticale di ~18-22px, larghezza ~60px
+- Y finale: ~12 (quasi in cima)
+- Usare curve cubiche di Bezier per onde morbide e arrotondate
+- Aggiornare sia il path del fill che quello dello stroke
 
