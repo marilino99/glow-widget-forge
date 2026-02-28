@@ -14,7 +14,6 @@ import woocommerceLogo from "@/assets/logo-woocommerce.png";
 import telegramLogo from "@/assets/logo-telegram.png";
 import calendlyLogo from "@/assets/logo-calendly.png";
 import elevenlabsLogo from "@/assets/logo-elevenlabs.png";
-import insightsChart from "@/assets/insights-chart.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -189,7 +188,6 @@ const AIControl = () => {
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
             <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card3Title}</h3>
             <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card3Desc}</p>
-            <img src={insightsChart} alt="Analytics chart" className="mt-6 w-full rounded-2xl" />
           </motion.div>
         </div>
 
