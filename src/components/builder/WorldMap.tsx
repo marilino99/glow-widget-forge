@@ -182,7 +182,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full overflow-hidden">
       {/* Zoom controls */}
       <div className="absolute top-1 right-1 z-10 flex flex-col gap-1">
         <Button
@@ -214,7 +214,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
       </div>
 
       <div
-        className="w-full overflow-visible [&_figure]:!m-0 [&_figure]:!p-0 [&_svg]:!block"
+        className="w-full overflow-hidden [&_figure]:!m-0 [&_figure]:!p-0 [&_svg]:!block"
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
