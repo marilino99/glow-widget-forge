@@ -65,7 +65,7 @@ const Hero = () => {
             </div>
 
             {/* Social proof */}
-            <div className="flex items-center gap-0">
+            <div className="flex items-center gap-1.5">
               <div className="relative h-8 w-14">
                 <img src="https://i.pravatar.cc/80?img=11" alt="" className="absolute left-0 top-0 z-10 h-8 w-8 rounded-xl border-[1.5px] border-background bg-background object-cover shadow-sm" />
                 <img src="https://i.pravatar.cc/80?img=32" alt="" className="absolute left-3 top-0 z-20 h-8 w-8 rounded-xl border-[1.5px] border-background bg-background object-cover shadow-sm" />
