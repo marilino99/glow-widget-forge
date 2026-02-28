@@ -71,7 +71,7 @@ const Hero = () => {
                 <img src="https://i.pravatar.cc/80?img=32" alt="" className="absolute left-3 top-0 z-20 h-8 w-8 rounded-xl border-[1.5px] border-background bg-background object-cover shadow-sm" />
                 <img src="https://i.pravatar.cc/80?img=47" alt="" className="absolute left-6 top-0 z-30 h-8 w-8 rounded-xl border-[1.5px] border-background bg-background object-cover shadow-md" />
               </div>
-              <p className="text-base leading-relaxed md:text-lg" style={{ color: '#999999' }}>
+              <p className="text-sm leading-relaxed" style={{ color: '#999999' }}>
                 <span className="font-semibold text-foreground">200+ widgets</span> already published
               </p>
             </div>
