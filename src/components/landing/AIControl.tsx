@@ -93,27 +93,42 @@ const ChatConversationMockup = () => (
         <p className="text-sm text-[#2a2a2a]">Absolutely. Here are a few comfy essentials that pair well and could be a good starting point:</p>
       </div>
     </div>
-    {/* Product cards */}
-    <div className="grid grid-cols-2 gap-3">
-      {[
-        { name: "Deluxe Shirt", variant: "Blue - Medium", price: "€23.00", color: "#3b5eda" },
-        { name: "Essential Hoodie", variant: "Navy - Medium", price: "€43.00", color: "#1e2a4a" },
-      ].map((p, i) => (
-        <div key={i} className="rounded-xl border border-black/5 bg-[#f5f5f8] overflow-hidden">
-          <div className="h-24 flex items-center justify-center bg-[#ecedf2]">
-            <div className="h-14 w-14 rounded-lg" style={{ backgroundColor: p.color }} />
+    {/* Product cards + Buy now in white box */}
+    <div className="bg-white rounded-2xl p-4 shadow-sm space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        {[
+          { name: "Deluxe Shirt", variant: "Blue - Medium", price: "€23.00", brand: "Cartsy", svg: (
+            <svg viewBox="0 0 80 80" className="h-14 w-14">
+              <rect x="15" y="22" width="50" height="40" rx="4" fill="#3b5eda" />
+              <path d="M15 26 C15 22, 25 18, 40 18 C55 18, 65 22, 65 26" fill="#2d4ec7" />
+              <rect x="30" y="18" width="20" height="8" rx="4" fill="none" stroke="#2d4ec7" strokeWidth="3" />
+            </svg>
+          )},
+          { name: "Essential Hoodie", variant: "Black - Medium", price: "€43.00", brand: "Cartsy", svg: (
+            <svg viewBox="0 0 80 80" className="h-14 w-14">
+              <rect x="15" y="25" width="50" height="38" rx="4" fill="#1a1a1a" />
+              <path d="M15 29 C15 25, 25 20, 40 20 C55 20, 65 25, 65 29" fill="#111" />
+              <rect x="30" y="20" width="20" height="8" rx="4" fill="none" stroke="#111" strokeWidth="3" />
+              <path d="M33 30 Q40 38 47 30" fill="none" stroke="#333" strokeWidth="1.5" />
+            </svg>
+          )},
+        ].map((p, i) => (
+          <div key={i} className="rounded-xl border border-black/5 bg-[#f5f5f8] overflow-hidden">
+            <div className="h-24 flex items-center justify-center bg-[#ecedf2]">
+              {p.svg}
+            </div>
+            <div className="p-3 space-y-0.5">
+              <p className="text-xs font-semibold text-[#2a2a2a]">{p.name}</p>
+              <p className="text-[10px] text-[#888]">{p.variant}</p>
+              <p className="text-xs font-bold text-[#2a2a2a] mt-1">{p.price}</p>
+              <p className="text-[9px] text-[#aaa]">{p.brand}</p>
+            </div>
           </div>
-          <div className="p-3 space-y-0.5">
-            <p className="text-xs font-semibold text-[#2a2a2a]">{p.name}</p>
-            <p className="text-[10px] text-[#888]">{p.variant}</p>
-            <p className="text-xs font-bold text-[#2a2a2a] mt-1">{p.price}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-    {/* CTA */}
-    <div className="rounded-xl bg-[#f0f0f3] py-2.5 text-center">
-      <span className="text-sm font-semibold text-[#4a6cf7]">Buy now</span>
+        ))}
+      </div>
+      <div className="rounded-xl bg-[#f0f0f3] py-2.5 text-center">
+        <span className="text-sm font-semibold text-[#4a6cf7]">Buy now</span>
+      </div>
     </div>
   </div>
 );
