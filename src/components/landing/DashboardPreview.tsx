@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Users, Paintbrush, Bot, Zap, Check } from "lucide-react";
+import { MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
@@ -48,7 +48,7 @@ const DashboardPreview = () => {
 
             {/* Tabs - glassmorphic bar */}
             <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex justify-center">
-              <div className="inline-flex items-center gap-1 rounded-2xl border border-white/10 bg-white/[0.07] p-1.5 backdrop-blur-md overflow-x-auto max-w-full scrollbar-hide">
+              <div className="flex w-full justify-between border-b border-white/10">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
@@ -56,16 +56,14 @@ const DashboardPreview = () => {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
+                      className={`inline-flex items-center gap-2 pb-3 text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                         isActive
-                          ? "text-[#110c29] shadow-md backdrop-blur-sm border border-white/30"
-                          : "text-white/50 hover:text-white/80"
+                          ? "text-white border-b-2 border-white"
+                          : "text-white/50 hover:text-white/70"
                       }`}
-                      style={isActive ? { background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7))' } : undefined}
                     >
                       <Icon className="h-4 w-4" />
                       {labels[tab.id]}
-                      {isActive && <Check className="h-3.5 w-3.5 ml-0.5" />}
                     </button>
                   );
                 })}
