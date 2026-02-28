@@ -105,9 +105,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
 
     if (!hasValue) {
       return {
-        fill: "hsl(var(--muted) / 0.35)",
-        stroke: "hsl(var(--border))",
-        strokeWidth: 0.6,
+        fill: "#d1d5db",
+        stroke: "#e5e7eb",
+        strokeWidth: 0.5,
         cursor: "default",
       };
     }
@@ -126,14 +126,17 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
   };
 
   return (
-    <div className="w-full" style={{ maxHeight: 260 }}>
+    <div className="w-full overflow-hidden">
       <SvgWorldMap
         data={mapData}
         size="responsive"
-        color="hsl(var(--primary))"
+        color="#818cf8"
+        backgroundColor="transparent"
+        borderColor="#e5e7eb"
+        strokeOpacity={0.6}
         styleFunction={styleFunction}
-        tooltipBgColor="hsl(var(--popover))"
-        tooltipTextColor="hsl(var(--popover-foreground))"
+        tooltipBgColor="#1f2937"
+        tooltipTextColor="#f9fafb"
         tooltipTextFunction={({ countryName, countryValue }) =>
           countryValue && countryValue > 0 ? `${countryName}: ${countryValue} chat` : countryName
         }
