@@ -216,10 +216,10 @@ const Solutions = () => {
           >
             {/* Glow blobs */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
-              <div className="absolute -bottom-10 -left-10 h-[60%] w-[45%] rounded-full blur-[80px]" style={{ background: 'hsl(260 75% 78% / 0.6)' }} />
-              <div className="absolute -bottom-5 left-[30%] h-[50%] w-[35%] rounded-full blur-[70px]" style={{ background: 'hsl(280 65% 82% / 0.5)' }} />
-              <div className="absolute -bottom-8 right-[10%] h-[55%] w-[40%] rounded-full blur-[90px]" style={{ background: 'hsl(265 70% 76% / 0.55)' }} />
-              <div className="absolute bottom-[5%] right-[35%] h-[30%] w-[25%] rounded-full blur-[60px]" style={{ background: 'hsl(290 60% 85% / 0.4)' }} />
+              <motion.div animate={{ scale: [1, 1.15, 1], x: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-10 -left-10 h-[60%] w-[45%] rounded-full blur-[80px]" style={{ background: 'hsl(260 75% 78% / 0.6)' }} />
+              <motion.div animate={{ scale: [1, 1.1, 1], y: [0, -8, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute -bottom-5 left-[30%] h-[50%] w-[35%] rounded-full blur-[70px]" style={{ background: 'hsl(280 65% 82% / 0.5)' }} />
+              <motion.div animate={{ scale: [1, 1.2, 1], x: [0, -12, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute -bottom-8 right-[10%] h-[55%] w-[40%] rounded-full blur-[90px]" style={{ background: 'hsl(265 70% 76% / 0.55)' }} />
+              <motion.div animate={{ scale: [1, 1.18, 1], y: [0, 6, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="absolute bottom-[5%] right-[35%] h-[30%] w-[25%] rounded-full blur-[60px]" style={{ background: 'hsl(290 60% 85% / 0.4)' }} />
             </div>
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
