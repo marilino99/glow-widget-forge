@@ -159,25 +159,27 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         {/* Chats started chart */}
         <div>
           <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Chats started</h2>
-          <div className="rounded-2xl border border-border bg-background p-6">
-            <div className="h-[220px]">
+          <div className="rounded-2xl border border-border bg-background p-6 pb-4">
+            <div className="h-[200px]">
               {isLoading ? (
                 <div className="flex h-full items-center justify-center">
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chatsByDay} margin={{ top: 5, right: 5, bottom: 0, left: -20 }}>
+                  <AreaChart data={chatsByDay} margin={{ top: 10, right: 10, bottom: 0, left: 10 }}>
                     <defs>
                       <linearGradient id="chatsFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#6366f1" stopOpacity={0.15} />
-                        <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#818cf8" stopOpacity={0.18} />
+                        <stop offset="100%" stopColor="#818cf8" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#9ca3af" }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#9ca3af" }} allowDecimals={false} />
-                    <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e5e7eb", fontSize: 13 }} />
-                    <Area type="monotone" dataKey="chats" stroke="#6366f1" strokeWidth={2.5} fill="url(#chatsFill)" dot={false} />
+                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#b0b0b8" }} dy={12} />
+                    <Tooltip
+                      contentStyle={{ borderRadius: 14, border: "none", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", fontSize: 13, padding: "8px 14px" }}
+                      cursor={{ stroke: "#c7c7cf", strokeWidth: 1, strokeDasharray: "4 4" }}
+                    />
+                    <Area type="natural" dataKey="chats" stroke="#818cf8" strokeWidth={2} fill="url(#chatsFill)" dot={false} activeDot={{ r: 4, fill: "#818cf8", strokeWidth: 0 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               )}
