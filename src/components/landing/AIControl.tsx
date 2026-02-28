@@ -118,7 +118,7 @@ const AnalyticsMockup = () => (
 
 /* ── Tools data ── */
 const tools = [
-  { name: "Make", color: "#6d4aff", icon: "𝗠" },
+  { name: "Shopify", color: "#96BF48", icon: "🛍" },
   { name: "Zendesk", color: "#03363d", icon: "⌘" },
   { name: "Notion", color: "#000", icon: "𝗡" },
   { name: "Slack", color: "#4A154B", icon: "⌗" },
