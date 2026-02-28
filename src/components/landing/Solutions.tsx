@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, ShoppingBag, HelpCircle, BarChart3, Check, ArrowRight, Bot, Zap, Users, Headphones } from "lucide-react";
+import { MessageSquare, ShoppingBag, HelpCircle, BarChart3, Check, ArrowRight, Bot, Zap, Users, Headphones, Target } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
   { id: "support", icon: Headphones },
   { id: "sales", icon: ShoppingBag },
+  { id: "leadgen", icon: Target },
   { id: "selfservice", icon: HelpCircle },
   { id: "engagement", icon: Users },
 ] as const;
@@ -58,6 +59,18 @@ const tabContents: Record<string, Record<TabId, TabContent>> = {
         { icon: Users, text: "Contact Card provides direct access" },
       ],
     },
+    leadgen: {
+      title1: "Capture leads",
+      title2: "on autopilot",
+      description: "Turn every visit into a potential customer. Collect emails, qualify prospects, and grow your pipeline — without lifting a finger.",
+      bullets: ["Grow your email list effortlessly", "Qualify leads with AI", "Never miss a prospect"],
+      features: [
+        { icon: MessageSquare, text: "Chat Widget captures visitor info naturally" },
+        { icon: Bot, text: "AI Agent qualifies leads automatically" },
+        { icon: Target, text: "Smart CTAs trigger at the right moment" },
+        { icon: BarChart3, text: "Analytics tracks every conversion" },
+      ],
+    },
     engagement: {
       title1: "Keep visitors engaged,",
       title2: "longer",
@@ -108,6 +121,18 @@ const tabContents: Record<string, Record<TabId, TabContent>> = {
         { icon: Users, text: "La scheda contatto offre accesso diretto" },
       ],
     },
+    leadgen: {
+      title1: "Cattura lead",
+      title2: "in automatico",
+      description: "Trasforma ogni visita in un potenziale cliente. Raccogli email, qualifica i prospect e fai crescere la tua pipeline — senza muovere un dito.",
+      bullets: ["Fai crescere la tua mailing list", "Qualifica i lead con l'AI", "Non perdere mai un prospect"],
+      features: [
+        { icon: MessageSquare, text: "La chat raccoglie le info dei visitatori" },
+        { icon: Bot, text: "L'agente AI qualifica i lead automaticamente" },
+        { icon: Target, text: "Le CTA intelligenti si attivano al momento giusto" },
+        { icon: BarChart3, text: "Le analytics tracciano ogni conversione" },
+      ],
+    },
     engagement: {
       title1: "Tieni i visitatori coinvolti,",
       title2: "più a lungo",
@@ -124,10 +149,10 @@ const tabContents: Record<string, Record<TabId, TabContent>> = {
 };
 
 const tabLabels: Record<string, Record<TabId, string>> = {
-  en: { support: "Support", sales: "Sales", selfservice: "Self-Service", engagement: "Engagement" },
-  it: { support: "Supporto", sales: "Vendite", selfservice: "Self-Service", engagement: "Coinvolgimento" },
-  de: { support: "Support", sales: "Vertrieb", selfservice: "Self-Service", engagement: "Engagement" },
-  fr: { support: "Support", sales: "Ventes", selfservice: "Libre-service", engagement: "Engagement" },
+  en: { support: "Support", sales: "Sales", leadgen: "Lead Generation", selfservice: "Self-Service", engagement: "Engagement" },
+  it: { support: "Supporto", sales: "Vendite", leadgen: "Lead Generation", selfservice: "Self-Service", engagement: "Coinvolgimento" },
+  de: { support: "Support", sales: "Vertrieb", leadgen: "Lead-Generierung", selfservice: "Self-Service", engagement: "Engagement" },
+  fr: { support: "Support", sales: "Ventes", leadgen: "Génération de leads", selfservice: "Libre-service", engagement: "Engagement" },
 };
 
 const sectionTitle: Record<string, { before: string; accent: string; after: string; sub: string }> = {
