@@ -152,7 +152,7 @@ const Solutions = () => {
         {/* Section header */}
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
-            {title.before}<em className="italic text-primary">{title.accent}</em>{title.after}
+            {title.before}<em className="italic" style={{ color: 'hsl(270, 80%, 50%)' }}>{title.accent}</em>{title.after}
           </h2>
           <p className="mt-3 text-muted-foreground text-base md:text-lg">{title.sub}</p>
         </div>
