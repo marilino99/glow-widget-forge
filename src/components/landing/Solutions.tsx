@@ -221,7 +221,7 @@ const Solutions = () => {
                   <br />
                   <span style={{ color: '#838383' }}>{active.title2}</span>
                 </h3>
-                <p className="mt-4 text-muted-foreground text-sm md:text-base leading-relaxed max-w-md">
+                <p className="mt-4 text-sm md:text-base leading-relaxed max-w-md" style={{ color: '#202020' }}>
                   {active.description}
                 </p>
 
