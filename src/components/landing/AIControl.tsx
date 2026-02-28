@@ -182,7 +182,7 @@ const AIControl = () => {
         {/* Headline */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
-            {t.headline1}<em className="italic" style={{ color: "#c75a2a" }}>{t.headlineAccent}</em>{t.headline2}
+            {t.headline1}<em className="italic" style={{ color: "#7c3aed" }}>{t.headlineAccent}</em>{t.headline2}
           </h2>
         </motion.div>
 
