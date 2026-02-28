@@ -334,17 +334,17 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                 <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
               </div>
             ) : countryData.length === 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr,240px] gap-4 items-center">
-                <div className="flex items-center justify-center w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,280px] gap-6">
+                <div className="flex items-center justify-center">
                   <WorldMap countryData={[]} />
                 </div>
-                <div className="lg:border-l lg:border-border lg:pl-4 flex items-center">
+                <div className="lg:border-l lg:border-border lg:pl-6 flex items-center">
                   <p className="text-sm text-muted-foreground">No data available yet</p>
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr,240px] gap-4 items-center">
-                <div className="flex items-center justify-center w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,280px] gap-6">
+                <div className="flex items-center justify-center">
                   <WorldMap countryData={countryData} />
                 </div>
                 <div className="lg:border-l lg:border-border lg:pl-6 flex flex-col justify-center space-y-4">
