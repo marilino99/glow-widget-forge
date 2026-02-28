@@ -68,8 +68,8 @@ const Hero = () => {
             <div className="flex items-center gap-3">
               <div className="relative h-11 w-20">
                 <img src="https://i.pravatar.cc/80?img=47" alt="" className="absolute left-0 top-0 z-30 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-md" />
-                <img src="https://i.pravatar.cc/80?img=32" alt="" className="absolute left-3 top-0 z-20 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-sm origin-bottom-left rotate-[6deg]" />
-                <img src="https://i.pravatar.cc/80?img=11" alt="" className="absolute left-5 top-0 z-10 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-sm origin-bottom-left rotate-[12deg]" />
+                <img src="https://i.pravatar.cc/80?img=32" alt="" className="absolute left-3 top-0 z-20 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-sm" />
+                <img src="https://i.pravatar.cc/80?img=11" alt="" className="absolute left-5 top-0 z-10 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-sm" />
               </div>
               <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">200+</span> widgets already published
