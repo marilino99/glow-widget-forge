@@ -4,6 +4,7 @@ import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import wordpressLogo from "@/assets/logo-wordpress.png";
 import wixLogo from "@/assets/logo-wix-icon.png";
+import lovableLogo from "@/assets/logo-lovable.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -124,6 +125,7 @@ const tools = [
   { name: "Shopify", color: "#96BF48", icon: "", image: shopifyLogo },
   { name: "WordPress", color: "#21759B", icon: "", image: wordpressLogo },
   { name: "Wix", color: "#0C6EFC", icon: "", image: wixLogo },
+  { name: "Lovable", color: "#FF6B6B", icon: "", image: lovableLogo },
   { name: "Slack", color: "#4A154B", icon: "⌗" },
   { name: "Stripe", color: "#635BFF", icon: "S" },
   { name: "Salesforce", color: "#00A1E0", icon: "☁" },
