@@ -80,7 +80,7 @@ const ChatListMockup = () => (
 
 /* ── Mockup: Chat conversation ── */
 const ChatConversationMockup = () => (
-  <div className="mt-6 md:mt-0 space-y-4">
+  <div className="mt-6 md:mt-0 space-y-6">
     {/* User message */}
     <div className="flex justify-end">
       <div className="rounded-2xl rounded-tr-sm bg-[#4a6cf7] px-4 py-3 max-w-[85%]">
