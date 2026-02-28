@@ -189,8 +189,8 @@ const AIControl = () => {
               {[toolRow1, toolRow2].map((row, ri) => (
                 <div key={ri} className={`flex gap-2.5 ${ri === 1 ? 'ml-12' : ''}`}>
                   {row.map((tool) => (
-                    <span key={tool.name} className="inline-flex items-center gap-2.5 rounded-full bg-[#f4f4f5] px-3 py-2 text-sm font-semibold text-foreground whitespace-nowrap flex-shrink-0">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[11px] font-bold flex-shrink-0" style={{ color: tool.color }}>{tool.icon}</span>
+                    <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0" style={{ color: tool.color }}>{tool.icon}</span>
                       {tool.name}
                     </span>
                   ))}
