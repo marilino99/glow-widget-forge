@@ -164,7 +164,7 @@ const AIControl = () => {
         </motion.div>
 
         {/* Card 1 — Supervise */}
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#e8e5df" }}>
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div>
               <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card1Title}</h3>
