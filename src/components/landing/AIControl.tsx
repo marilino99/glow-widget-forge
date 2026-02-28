@@ -202,8 +202,15 @@ const AIControl = () => {
         {/* Cards 2 & 3 — Rules + Insights */}
         <div className="grid md:grid-cols-2 gap-6">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
-            <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card2Title}</h3>
-            <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card2Desc}</p>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm text-[#6b6760] mb-2">{t.card2Desc}</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-[#2a2a2a] tracking-tight">{t.card2Title}</h3>
+              </div>
+              <a href="/signup" className="flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-full bg-[#2a2a2a] hover:bg-[#1a1a1a] transition-colors">
+                <ArrowRight className="h-4 w-4 text-white" />
+              </a>
+            </div>
             <ChatConversationMockup />
           </motion.div>
 
