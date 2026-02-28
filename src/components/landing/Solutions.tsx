@@ -4,6 +4,7 @@ import { MessageSquare, ShoppingBag, HelpCircle, BarChart3, Check, ArrowRight, B
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import leadgenChat from "@/assets/leadgen-chat.png";
 import salesChat from "@/assets/sales-chat.png";
+import engagementChat from "@/assets/support-chat.png";
 
 const tabs = [
   { id: "support", icon: Headphones },
@@ -247,7 +248,7 @@ const Solutions = () => {
 
               {/* Right - feature cards or image */}
               <div className="flex-1 flex flex-col gap-3">
-                {activeTab === "leadgen" || activeTab === "sales" ? (
+                {activeTab === "leadgen" || activeTab === "sales" || activeTab === "engagement" ? (
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -255,8 +256,8 @@ const Solutions = () => {
                     className="flex items-center justify-center h-full"
                   >
                     <img
-                      src={activeTab === "leadgen" ? leadgenChat : salesChat}
-                      alt={activeTab === "leadgen" ? "AI chat capturing leads" : "AI chat recommending products"}
+                      src={activeTab === "leadgen" ? leadgenChat : activeTab === "sales" ? salesChat : engagementChat}
+                      alt={activeTab === "leadgen" ? "AI chat capturing leads" : activeTab === "sales" ? "AI chat recommending products" : "AI chat engagement"}
                       className="w-full max-w-[320px] rounded-2xl"
                     />
                   </motion.div>
