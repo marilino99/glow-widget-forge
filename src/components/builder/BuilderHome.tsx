@@ -1,6 +1,11 @@
-import { useEffect, useState } from "react";
-import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText, Mail, CalendarDays } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText, Mail, CalendarDays, CalendarIcon } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
+import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import successCoachImg from "@/assets/success-coach.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,6 +23,9 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   const [chartData, setChartData] = useState<Record<string, { date: string; value: number }[]>>({});
   const [activeChart, setActiveChart] = useState<"Conversations" | "Impressions" | "Clicks" | "CTR">("Conversations");
   const [isLoading, setIsLoading] = useState(true);
+  const [dateFrom, setDateFrom] = useState<Date>(subDays(new Date(), 9));
+  const [dateTo, setDateTo] = useState<Date>(new Date());
+  const [pickingFrom, setPickingFrom] = useState(false);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -29,6 +37,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   useEffect(() => {
     const fetchMetrics = async () => {
       if (!user) return;
+      setIsLoading(true);
 
       try {
         const { data: config } = await supabase
@@ -42,25 +51,28 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           return;
         }
 
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        const since = thirtyDaysAgo.toISOString();
+        const since = startOfDay(dateFrom).toISOString();
+        const until = new Date(startOfDay(dateTo).getTime() + 86400000 - 1).toISOString();
 
         const [clicksRes, impressionsRes, convsRes] = await Promise.all([
           (supabase.from("widget_events") as any)
             .select("id", { count: "exact", head: true })
             .eq("widget_id", config.id)
             .eq("event_type", "click")
-            .gte("created_at", since),
+            .gte("created_at", since)
+            .lte("created_at", until),
           (supabase.from("widget_events") as any)
             .select("id", { count: "exact", head: true })
             .eq("widget_id", config.id)
             .eq("event_type", "impression")
-            .gte("created_at", since),
+            .gte("created_at", since)
+            .lte("created_at", until),
           supabase
             .from("conversations")
             .select("id", { count: "exact", head: true })
-            .eq("widget_owner_id", user.id),
+            .eq("widget_owner_id", user.id)
+            .gte("created_at", since)
+            .lte("created_at", until),
         ]);
 
         setClicks(clicksRes.count ?? 0);
@@ -68,32 +80,26 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         setConversations(convsRes.count ?? 0);
 
         // Fetch daily data for charts
-        const tenDaysAgo = new Date();
-        tenDaysAgo.setDate(tenDaysAgo.getDate() - 9);
-        const tenDaysSince = tenDaysAgo.toISOString();
-
         const [convRows, eventRows] = await Promise.all([
           supabase
             .from("conversations")
             .select("created_at")
             .eq("widget_owner_id", user.id)
-            .gte("created_at", tenDaysSince)
+            .gte("created_at", since)
+            .lte("created_at", until)
             .order("created_at", { ascending: true }),
           (supabase.from("widget_events") as any)
             .select("created_at, event_type")
             .eq("widget_id", config.id)
             .in("event_type", ["click", "impression"])
-            .gte("created_at", tenDaysSince)
+            .gte("created_at", since)
+            .lte("created_at", until)
             .order("created_at", { ascending: true }),
         ]);
 
         // Build day map
-        const dayKeys: string[] = [];
-        for (let i = 0; i < 10; i++) {
-          const d = new Date(tenDaysAgo);
-          d.setDate(d.getDate() + i);
-          dayKeys.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
-        }
+        const days = eachDayOfInterval({ start: startOfDay(dateFrom), end: startOfDay(dateTo) });
+        const dayKeys = days.map((d) => format(d, "MMM d"));
 
         const makeEmpty = () => Object.fromEntries(dayKeys.map((k) => [k, 0]));
         const convsMap = makeEmpty();
@@ -101,11 +107,11 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         const impressionsMap = makeEmpty();
 
         (convRows.data || []).forEach((row: any) => {
-          const key = new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const key = format(new Date(row.created_at), "MMM d");
           if (key in convsMap) convsMap[key]++;
         });
         (eventRows.data || []).forEach((row: any) => {
-          const key = new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const key = format(new Date(row.created_at), "MMM d");
           if (row.event_type === "click" && key in clicksMap) clicksMap[key]++;
           if (row.event_type === "impression" && key in impressionsMap) impressionsMap[key]++;
         });
@@ -113,7 +119,6 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         const toArray = (map: Record<string, number>) =>
           Object.entries(map).map(([date, value]) => ({ date, value }));
 
-        // Compute CTR by day
         const ctrArray = dayKeys.map((key) => {
           const imp = impressionsMap[key] || 0;
           const clk = clicksMap[key] || 0;
@@ -134,7 +139,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
     };
 
     fetchMetrics();
-  }, [user]);
+  }, [user, dateFrom, dateTo]);
 
   const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(1) + "%" : "0%";
 
@@ -164,8 +169,44 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
 
         {/* Metrics cards */}
         <div>
-          <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Performance</h2>
-          <p className="mb-4 text-xs" style={{ color: "#5b5b65" }}>Last 30 days</p>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold" style={{ color: "#5b5b65" }}>Performance</h2>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="gap-2 text-sm font-normal text-muted-foreground">
+                  <CalendarIcon className="h-4 w-4" />
+                  {format(dateFrom, "MMM d, yyyy")} – {format(dateTo, "MMM d, yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                {pickingFrom ? (
+                  <div>
+                    <p className="px-3 pt-3 text-xs font-medium text-muted-foreground">End date</p>
+                    <Calendar
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={(d) => { if (d) { setDateTo(d); setPickingFrom(false); } }}
+                      disabled={(d) => d > new Date() || d < dateFrom}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <p className="px-3 pt-3 text-xs font-medium text-muted-foreground">Start date</p>
+                    <Calendar
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={(d) => { if (d) { setDateFrom(d); setPickingFrom(true); } }}
+                      disabled={(d) => d > new Date()}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
+          </div>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {metricCards.map((metric) => {
               const isClickable = metric.label === "Impressions" || metric.label === "Clicks" || metric.label === "Conversations" || metric.label === "CTR";
