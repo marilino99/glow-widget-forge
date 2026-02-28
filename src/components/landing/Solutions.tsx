@@ -212,8 +212,15 @@ const Solutions = () => {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="rounded-3xl p-8 md:p-12 relative overflow-hidden"
-            style={{ background: 'linear-gradient(to top, hsl(270 70% 85%) 0%, hsl(270 60% 92% / 0.6) 35%, #ffffff 65%), radial-gradient(ellipse 80% 50% at 20% 100%, hsl(260 70% 82% / 0.7) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 90%, hsl(280 65% 88% / 0.8) 0%, transparent 55%)' }}
+            style={{ background: '#ffffff', position: 'relative' }}
           >
+            {/* Glow blobs */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
+              <div className="absolute -bottom-10 -left-10 h-[60%] w-[45%] rounded-full blur-[80px]" style={{ background: 'hsl(260 75% 78% / 0.6)' }} />
+              <div className="absolute -bottom-5 left-[30%] h-[50%] w-[35%] rounded-full blur-[70px]" style={{ background: 'hsl(280 65% 82% / 0.5)' }} />
+              <div className="absolute -bottom-8 right-[10%] h-[55%] w-[40%] rounded-full blur-[90px]" style={{ background: 'hsl(265 70% 76% / 0.55)' }} />
+              <div className="absolute bottom-[5%] right-[35%] h-[30%] w-[25%] rounded-full blur-[60px]" style={{ background: 'hsl(290 60% 85% / 0.4)' }} />
+            </div>
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
               <div className="flex-1 flex flex-col justify-center">
