@@ -21,6 +21,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   const [impressions, setImpressions] = useState(0);
   const [conversations, setConversations] = useState(0);
   const [chartData, setChartData] = useState<Record<string, { date: string; value: number }[]>>({});
+  const [countryData, setCountryData] = useState<{ country: string; count: number }[]>([]);
   const [activeChart, setActiveChart] = useState<"Conversations" | "Impressions" | "Clicks" | "CTR">("Conversations");
   const [isLoading, setIsLoading] = useState(true);
   const [dateFrom, setDateFrom] = useState<Date>(subDays(new Date(), 9));
@@ -131,6 +132,29 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           Impressions: toArray(impressionsMap),
           CTR: ctrArray,
         });
+
+        // Fetch country data for conversations
+        const { data: countryRows } = await supabase
+          .from("conversations")
+          .select("country")
+          .eq("widget_owner_id", user.id)
+          .gte("created_at", since)
+          .lte("created_at", until) as any;
+
+        if (countryRows) {
+          const countMap: Record<string, number> = {};
+          countryRows.forEach((r: any) => {
+            const c = r.country || "Unknown";
+            countMap[c] = (countMap[c] || 0) + 1;
+          });
+          const sorted = Object.entries(countMap)
+            .map(([country, count]) => ({ country, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+          setCountryData(sorted);
+        } else {
+          setCountryData([]);
+        }
       } catch (error) {
         console.error("Error fetching metrics:", error);
       } finally {
@@ -297,6 +321,38 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                 </ResponsiveContainer>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Chats by country */}
+        <div>
+          <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Chats by country</h2>
+          <div className="rounded-2xl border border-border bg-background p-6">
+            {isLoading ? (
+              <div className="flex h-20 items-center justify-center">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : countryData.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No data available yet</p>
+            ) : (
+              <div className="space-y-4">
+                {countryData.map((item, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <span className="w-28 shrink-0 text-sm font-medium text-foreground truncate">{item.country}</span>
+                    <div className="flex-1 h-2 rounded-full bg-muted">
+                      <div
+                        className="h-2 rounded-full"
+                        style={{
+                          width: `${(item.count / countryData[0].count) * 100}%`,
+                          backgroundColor: "#818cf8",
+                        }}
+                      />
+                    </div>
+                    <span className="w-8 text-right text-sm font-semibold text-foreground">{item.count}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

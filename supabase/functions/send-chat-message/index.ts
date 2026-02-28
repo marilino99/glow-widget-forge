@@ -18,6 +18,24 @@ Deno.serve(async (req) => {
 
     const { widgetId, visitorId, message, visitorName, visitorToken } = await req.json();
 
+    // Detect country from IP for new conversations
+    let detectedCountry: string | null = null;
+    try {
+      const forwarded = req.headers.get("x-forwarded-for");
+      const ip = forwarded ? forwarded.split(",")[0].trim() : null;
+      if (ip && ip !== "127.0.0.1" && ip !== "::1") {
+        const geoRes = await fetch(`https://ipapi.co/${ip}/country_name/`);
+        if (geoRes.ok) {
+          const name = (await geoRes.text()).trim();
+          if (name && !name.startsWith("{") && name !== "Undefined") {
+            detectedCountry = name;
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Geo lookup failed:", e);
+    }
+
     if (!widgetId || !visitorId || !message || typeof message !== 'string') {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
@@ -68,6 +86,7 @@ Deno.serve(async (req) => {
           visitor_id: visitorId,
           visitor_name: visitorName || "Visitor",
           visitor_token: newVisitorToken,
+          country: detectedCountry,
           last_message: trimmedMessage,
           last_message_at: new Date().toISOString(),
           unread_count: 1,
