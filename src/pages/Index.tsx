@@ -8,7 +8,7 @@ import Hero from "@/components/landing/Hero";
 import { Logos3 } from "@/components/ui/logos3";
 import Features from "@/components/landing/Features";
 import DashboardPreview from "@/components/landing/DashboardPreview";
-import PlatformIntegrations from "@/components/landing/PlatformIntegrations";
+
 import Pricing from "@/components/landing/Pricing";
 import FAQs from "@/components/landing/FAQs";
 import Footer from "@/components/landing/Footer";
@@ -88,10 +88,8 @@ const LandingContent = () => {
         />
         <Solutions />
         <AIControl />
-        <PlatformIntegrations />
         <Features />
         <DashboardPreview />
-        <PlatformIntegrations />
         <Pricing />
         <FAQs />
         <Footer />
