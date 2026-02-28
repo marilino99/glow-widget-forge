@@ -207,13 +207,7 @@ const Solutions = () => {
         {/* Content card */}
         <div className="group relative rounded-3xl bg-white">
           <GlowingEffect spread={40} glow disabled={false} proximity={64} inactiveZone={0.01} borderWidth={2} />
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ y: 16 }}
-              animate={{ y: 0 }}
-              exit={{ y: -12 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
+          <div
               className="rounded-3xl p-8 md:p-12 relative overflow-hidden"
               style={{ background: '#ffffff', position: 'relative' }}
             >
@@ -290,8 +284,7 @@ const Solutions = () => {
                   )}
                 </div>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
         </div>
       </div>
     </section>
