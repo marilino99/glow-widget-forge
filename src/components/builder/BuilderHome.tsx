@@ -179,6 +179,25 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
+                <div className="flex border-b border-border">
+                  {[
+                    { label: "Last 7 days", days: 6 },
+                    { label: "Last 30 days", days: 29 },
+                    { label: "Last 90 days", days: 89 },
+                  ].map((preset) => (
+                    <button
+                      key={preset.label}
+                      onClick={() => {
+                        setDateFrom(subDays(new Date(), preset.days));
+                        setDateTo(new Date());
+                        setPickingFrom(false);
+                      }}
+                      className="flex-1 px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
                 {pickingFrom ? (
                   <div>
                     <p className="px-3 pt-3 text-xs font-medium text-muted-foreground">End date</p>
