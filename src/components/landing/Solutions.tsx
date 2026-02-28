@@ -4,7 +4,7 @@ import { MessageSquare, ShoppingBag, HelpCircle, BarChart3, Check, ArrowRight, B
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import leadgenChat from "@/assets/leadgen-chat.png";
 import salesChat from "@/assets/sales-chat.png";
-import engagementChat from "@/assets/support-chat.png";
+import engagementChat from "@/assets/engagement-chat.png";
 
 const tabs = [
   { id: "support", icon: Headphones },
