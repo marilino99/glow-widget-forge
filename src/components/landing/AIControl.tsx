@@ -189,7 +189,7 @@ const AIControl = () => {
               {[toolRow1, toolRow2].map((row, ri) => (
                 <div key={ri} className="flex gap-2.5 overflow-x-auto no-scrollbar">
                   {row.map((tool) => (
-                    <span key={tool.name} className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground whitespace-nowrap flex-shrink-0">
+                    <span key={tool.name} className="inline-flex items-center gap-2 rounded-full border border-border bg-[#f4f4f5] px-4 py-2 text-sm font-medium text-foreground whitespace-nowrap flex-shrink-0">
                       <span className="flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold text-white flex-shrink-0" style={{ backgroundColor: tool.color }}>{tool.icon}</span>
                       {tool.name}
                     </span>
