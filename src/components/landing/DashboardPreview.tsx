@@ -27,7 +27,7 @@ const DashboardPreview = () => {
   const labels = tabLabels[lang] || tabLabels.en;
 
   return (
-    <section id="dashboard" className="px-6 py-16 md:py-24">
+    <section id="dashboard" className="px-6 py-16 md:py-24" style={{ backgroundColor: '#f6f5f4' }}>
       <div className="mx-auto max-w-7xl">
         <div className="relative rounded-3xl bg-[#110c29] text-white overflow-hidden px-6 pt-16 pb-24">
           {/* Top glow */}
