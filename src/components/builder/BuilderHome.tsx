@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import successCoachImg from "@/assets/success-coach.png";
+import WorldMap from "@/components/builder/WorldMap";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -329,28 +330,42 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Chats by country</h2>
           <div className="rounded-2xl border border-border bg-background p-6">
             {isLoading ? (
-              <div className="flex h-20 items-center justify-center">
+              <div className="flex h-40 items-center justify-center">
                 <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
               </div>
             ) : countryData.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No data available yet</p>
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,280px] gap-6">
+                <div className="flex items-center justify-center">
+                  <WorldMap countryData={[]} />
+                </div>
+                <div className="lg:border-l lg:border-border lg:pl-6 flex items-center">
+                  <p className="text-sm text-muted-foreground">No data available yet</p>
+                </div>
+              </div>
             ) : (
-              <div className="space-y-4">
-                {countryData.map((item, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <span className="w-28 shrink-0 text-sm font-medium text-foreground truncate">{item.country}</span>
-                    <div className="flex-1 h-2 rounded-full bg-muted">
-                      <div
-                        className="h-2 rounded-full"
-                        style={{
-                          width: `${(item.count / countryData[0].count) * 100}%`,
-                          backgroundColor: "#818cf8",
-                        }}
-                      />
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,280px] gap-6">
+                <div className="flex items-center justify-center">
+                  <WorldMap countryData={countryData} />
+                </div>
+                <div className="lg:border-l lg:border-border lg:pl-6 flex flex-col justify-center space-y-4">
+                  {countryData.map((item, i) => (
+                    <div key={i}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-foreground truncate">{item.country}</span>
+                        <span className="text-sm font-semibold text-foreground ml-2">{item.count}</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-muted">
+                        <div
+                          className="h-2 rounded-full"
+                          style={{
+                            width: `${(item.count / countryData[0].count) * 100}%`,
+                            backgroundColor: "#818cf8",
+                          }}
+                        />
+                      </div>
                     </div>
-                    <span className="w-8 text-right text-sm font-semibold text-foreground">{item.count}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </div>
