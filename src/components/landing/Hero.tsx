@@ -66,10 +66,10 @@ const Hero = () => {
 
             {/* Social proof */}
             <div className="flex items-center gap-3">
-              <div className="relative h-11 w-20">
+              <div className="relative h-11 w-24">
                 <img src="https://i.pravatar.cc/80?img=11" alt="" className="absolute left-0 top-0 z-10 h-11 w-11 rounded-2xl border-2 border-background bg-background object-cover shadow-sm" />
-                <img src="https://i.pravatar.cc/80?img=32" alt="" className="absolute left-3 top-0 z-20 h-11 w-11 rounded-2xl border-2 border-background bg-background object-cover shadow-sm" />
-                <img src="https://i.pravatar.cc/80?img=47" alt="" className="absolute left-5 top-0 z-30 h-11 w-11 rounded-2xl border-2 border-background bg-background object-cover shadow-md" />
+                <img src="https://i.pravatar.cc/80?img=32" alt="" className="absolute left-4 top-0 z-20 h-11 w-11 rounded-2xl border-2 border-background bg-background object-cover shadow-sm" />
+                <img src="https://i.pravatar.cc/80?img=47" alt="" className="absolute left-8 top-0 z-30 h-11 w-11 rounded-2xl border-2 border-background bg-background object-cover shadow-md" />
               </div>
               <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">200+</span> widgets already published
