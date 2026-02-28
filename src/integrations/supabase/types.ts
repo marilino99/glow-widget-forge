@@ -53,6 +53,7 @@ export type Database = {
         Row: {
           cleared_at: string | null
           cleared_by_visitor: boolean
+          country: string | null
           created_at: string | null
           id: string
           last_message: string | null
@@ -67,6 +68,7 @@ export type Database = {
         Insert: {
           cleared_at?: string | null
           cleared_by_visitor?: boolean
+          country?: string | null
           created_at?: string | null
           id?: string
           last_message?: string | null
@@ -81,6 +83,7 @@ export type Database = {
         Update: {
           cleared_at?: string | null
           cleared_by_visitor?: boolean
+          country?: string | null
           created_at?: string | null
           id?: string
           last_message?: string | null
