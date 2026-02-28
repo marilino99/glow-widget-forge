@@ -1,25 +1,22 @@
 
 
-## Animazione di transizione senza flash dello sfondo
+## Tab bar styling update
 
-### Problema
-Quando si cambia tab, lo sfondo della pagina diventa visibile perché l'animazione coinvolge l'intero contenitore (sfondo bianco + blob inclusi).
+The active tab button currently uses a solid `bg-white` background. Based on the reference image, the active tab should have:
 
-### Soluzione
-Separare la struttura in due livelli:
-1. **Contenitore esterno** (sempre visibile): sfondo bianco, blob viola, bordi arrotondati -- questo non si anima MAI
-2. **Contenuto interno** (animato): testi, bullet, immagini/cards -- solo questo fa la transizione
+- A slightly transparent/frosted background instead of pure white
+- A subtle warm gradient (very light, almost imperceptible)
+- Softer shadow and slightly more rounded feel
 
-In questo modo lo sfondo bianco e i blob restano sempre fermi e visibili, mentre il contenuto interno fa un fade-in leggero ad ogni cambio tab.
+### Technical changes
 
-### Dettagli tecnici
+**File: `src/components/landing/DashboardPreview.tsx`**
 
-**File: `src/components/landing/Solutions.tsx`**
+Update the active tab button classes (line 61):
+- Replace `bg-white text-[#110c29] shadow-lg` with a semi-transparent background using a subtle linear gradient
+- Use inline style for the gradient: `background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7))` with `backdrop-blur-sm`
+- Keep the dark text color and add a soft `shadow-md` instead of `shadow-lg`
+- Add a faint `border border-white/30` to the active button for that frosted edge
 
-- Mantenere il `<div>` esterno con `bg-white`, blob e `GlowingEffect` sempre statico (come ora)
-- Wrappare solo il contenuto interno (la flex row con testo + cards/immagini) in un `<AnimatePresence mode="wait">` + `<motion.div>` con animazione di sola opacita (fade)
-- L'animazione sara: `initial={{ opacity: 0 }}`, `animate={{ opacity: 1 }}`, `exit={{ opacity: 0 }}` con durata breve (~0.25s)
-- I blob e il padding del contenitore restano fuori dall'animazione
-
-Questo garantisce che lo sfondo bianco + i blob non scompaiano mai durante la transizione.
+This will make the active tab look translucent with a gentle warmth, matching the reference screenshot.
 
