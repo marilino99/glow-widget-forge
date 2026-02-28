@@ -1,5 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useRef, useCallback } from "react";
 import SvgWorldMap, { type CountryContext } from "react-svg-worldmap";
+import { ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface CountryData {
   country: string;
@@ -85,63 +87,167 @@ const COUNTRY_NAME_TO_ID: Record<string, string> = {
 };
 
 const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
+  const [scale, setScale] = useState(1);
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const isPanning = useRef(false);
+  const panStart = useRef({ x: 0, y: 0 });
+  const translateStart = useRef({ x: 0, y: 0 });
+
   const mapData = useMemo(() => {
     const totalsByCountry = new Map<string, number>();
-
     for (const { country, count } of countryData) {
       const code = COUNTRY_NAME_TO_ID[country.trim()];
       if (!code || count <= 0) continue;
       totalsByCountry.set(code, (totalsByCountry.get(code) ?? 0) + count);
     }
-
     return Array.from(totalsByCountry.entries()).map(([country, value]) => ({
       country,
       value,
     }));
   }, [countryData]);
 
-  const styleFunction = ({ countryValue, minValue, maxValue, color }: CountryContext): React.CSSProperties => {
-    const hasValue = typeof countryValue === "number" && countryValue > 0;
+  const zoomIn = useCallback(() => {
+    setScale((s) => Math.min(s * 1.4, 5));
+  }, []);
 
-    if (!hasValue) {
-      return {
-        fill: "#d1d5db",
-        stroke: "#e5e7eb",
-        strokeWidth: 0.5,
-        cursor: "default",
-      };
+  const zoomOut = useCallback(() => {
+    setScale((s) => {
+      const next = Math.max(s / 1.4, 1);
+      if (next === 1) setTranslate({ x: 0, y: 0 });
+      return next;
+    });
+  }, []);
+
+  const reset = useCallback(() => {
+    setScale(1);
+    setTranslate({ x: 0, y: 0 });
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      setScale((s) => Math.min(s * 1.15, 5));
+    } else {
+      setScale((s) => {
+        const next = Math.max(s / 1.15, 1);
+        if (next === 1) setTranslate({ x: 0, y: 0 });
+        return next;
+      });
     }
+  }, []);
 
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (scale <= 1) return;
+      isPanning.current = true;
+      panStart.current = { x: e.clientX, y: e.clientY };
+      translateStart.current = { ...translate };
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    },
+    [scale, translate]
+  );
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isPanning.current) return;
+    setTranslate({
+      x: translateStart.current.x + (e.clientX - panStart.current.x),
+      y: translateStart.current.y + (e.clientY - panStart.current.y),
+    });
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    isPanning.current = false;
+  }, []);
+
+  const styleFunction = ({
+    countryValue,
+    minValue,
+    maxValue,
+    color,
+  }: CountryContext): React.CSSProperties => {
+    const hasValue = typeof countryValue === "number" && countryValue > 0;
+    if (!hasValue) {
+      return { fill: "#d1d5db", stroke: "#e5e7eb", strokeWidth: 0.5, cursor: scale > 1 ? "grab" : "default" };
+    }
     const safeRange = Math.max(1, (maxValue ?? 0) - (minValue ?? 0));
     const normalized = ((countryValue ?? 0) - (minValue ?? 0)) / safeRange;
     const opacity = 0.28 + normalized * 0.72;
-
     return {
       fill: color,
       fillOpacity: opacity,
       stroke: "hsl(var(--border))",
       strokeWidth: 0.6,
-      cursor: "default",
+      cursor: scale > 1 ? "grab" : "default",
     };
   };
 
   return (
-    <div className="w-full overflow-hidden [&_figure]:!m-0 [&_figure]:!p-0 [&_svg]:!block">
-      <SvgWorldMap
-        data={mapData}
-        size="responsive"
-        color="#818cf8"
-        backgroundColor="transparent"
-        borderColor="#e5e7eb"
-        strokeOpacity={0.6}
-        frame={false}
-        styleFunction={styleFunction}
-        tooltipBgColor="#1f2937"
-        tooltipTextColor="#f9fafb"
-        tooltipTextFunction={({ countryName, countryValue }) =>
-          countryValue && countryValue > 0 ? `${countryName}: ${countryValue} chat` : countryName
-        }
-      />
+    <div className="relative w-full">
+      {/* Zoom controls */}
+      <div className="absolute top-1 right-1 z-10 flex flex-col gap-1">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-7 w-7 rounded-md bg-background/80 backdrop-blur-sm"
+          onClick={zoomIn}
+        >
+          <ZoomIn className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-7 w-7 rounded-md bg-background/80 backdrop-blur-sm"
+          onClick={zoomOut}
+        >
+          <ZoomOut className="h-3.5 w-3.5" />
+        </Button>
+        {scale > 1 && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-7 w-7 rounded-md bg-background/80 backdrop-blur-sm"
+            onClick={reset}
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+          </Button>
+        )}
+      </div>
+
+      <div
+        className="w-full overflow-hidden [&_figure]:!m-0 [&_figure]:!p-0 [&_svg]:!block"
+        onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+        style={{ cursor: scale > 1 ? "grab" : "default" }}
+      >
+        <div
+          style={{
+            transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
+            transformOrigin: "center center",
+            transition: isPanning.current ? "none" : "transform 0.2s ease-out",
+          }}
+        >
+          <SvgWorldMap
+            data={mapData}
+            size="responsive"
+            color="#818cf8"
+            backgroundColor="transparent"
+            borderColor="#e5e7eb"
+            strokeOpacity={0.6}
+            frame={false}
+            styleFunction={styleFunction}
+            tooltipBgColor="#1f2937"
+            tooltipTextColor="#f9fafb"
+            tooltipTextFunction={({ countryName, countryValue }) =>
+              countryValue && countryValue > 0
+                ? `${countryName}: ${countryValue} chat`
+                : countryName
+            }
+          />
+        </div>
+      </div>
     </div>
   );
 };
