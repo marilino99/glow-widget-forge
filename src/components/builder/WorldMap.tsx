@@ -214,7 +214,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
       </div>
 
       <div
-        className="w-full overflow-hidden [&_figure]:!m-0 [&_figure]:!p-0 [&_svg]:!block"
+        className="w-full overflow-visible [&_figure]:!m-0 [&_figure]:!p-0 [&_svg]:!block"
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -240,11 +240,13 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
             styleFunction={styleFunction}
             tooltipBgColor="#1f2937"
             tooltipTextColor="#f9fafb"
-            tooltipTextFunction={({ countryName, countryValue }) =>
-              countryValue && countryValue > 0
-                ? `${countryName}: ${countryValue} chat`
-                : countryName
-            }
+            tooltipTextFunction={({ countryName, countryValue, countryCode }) => {
+              if (!countryValue || countryValue <= 0) return countryName;
+              const flag = countryCode
+                ? String.fromCodePoint(...[...countryCode.toUpperCase()].map((c) => 0x1f1e6 - 65 + c.charCodeAt(0)))
+                : "";
+              return `${flag} ${countryName} — ${countryValue} chat${countryValue > 1 ? "s" : ""}`;
+            }}
           />
         </div>
       </div>
