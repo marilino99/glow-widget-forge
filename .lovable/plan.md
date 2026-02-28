@@ -1,17 +1,21 @@
 
+# Highlight Selected Date Range in Calendar
 
-## Piano: Migliorare spaziatura e centratura del mockup chat su desktop
+## Overview
+Add visual highlighting to the calendar so that all days within the selected `dateFrom`–`dateTo` range show a subtle background, making the selected period clearly visible.
 
-### Problema
-Su desktop, il contenuto del mockup della conversazione (messaggi + box prodotti) appare troppo schiacciato ai lati, occupando tutta la larghezza della card.
+## Approach
+Instead of switching to `mode="range"` (which would change the selection UX), we'll use react-day-picker's `modifiers` and `modifiersStyles` props on both calendars to highlight days that fall within the current range.
 
-### Soluzione
-Aggiungere un wrapper con larghezza massima e centratura automatica attorno al contenuto del `ChatConversationMockup`, con padding laterale aggiuntivo su desktop.
+## Technical Details
 
-### Dettagli tecnici
+**File: `src/components/builder/BuilderHome.tsx`**
 
-**File:** `src/components/landing/AIControl.tsx`
+Add to both `<Calendar>` components:
+- A `modifiers` prop with an `inRange` modifier that matches days between `dateFrom` and `dateTo`
+- A `modifiersStyles` prop that applies a light indigo/purple background (`rgba(129,140,248,0.12)`) and rounded corners to those days
+- This gives a soft highlight across the entire selected period without changing the click behavior
 
-- Avvolgere il contenuto del `ChatConversationMockup` in un container con `max-w-lg mx-auto` per limitare la larghezza su schermi grandi e centrare il tutto
-- Questo mantiene il layout compatto e leggibile su desktop, senza impattare il mobile dove la larghezza e' gia' contenuta
+The modifier will use `{ after: dateFrom - 1day, before: dateTo + 1day }` (or equivalent date range logic) so both endpoints and all days in between are highlighted.
 
+Both the "Start date" and "End date" calendar views will show this range highlight, giving users immediate visual feedback of their selected timeframe.
