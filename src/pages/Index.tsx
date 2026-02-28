@@ -88,6 +88,7 @@ const LandingContent = () => {
         />
         <Solutions />
         <AIControl />
+        <PlatformIntegrations />
         <Features />
         <DashboardPreview />
         <PlatformIntegrations />
