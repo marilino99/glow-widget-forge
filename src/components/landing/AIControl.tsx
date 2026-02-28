@@ -19,14 +19,14 @@ const i18n: Record<string, {
     card1Title: "Supervise your AI agent in real time", card1Desc: "Monitor every conversation between your AI and visitors. Jump in anytime.", card1Cta: "Build your first AI agent",
     card2Title: "You set the rules. AI plays by them.", card2Desc: "Upload your knowledge base, define boundaries, and let AI handle the rest — exactly how you want.",
     card3Title: "Live insights into your team and AI.", card3Desc: "Track performance, response times, and conversions in one dashboard.",
-    card4Title: "On-brand in every reply.", card4Desc: "Set your tone, style, and personality. Every AI response feels like you wrote it.",
+    card4Title: "Works with your tools", card4Desc: "Integrate diverse data sources to enrich your agent's knowledge and capabilities.",
   },
   it: {
     headline1: "AI che ", headlineAccent: "controlli", headline2: ". Completamente.",
     card1Title: "Supervisiona il tuo agente AI in tempo reale", card1Desc: "Monitora ogni conversazione tra la tua AI e i visitatori. Intervieni in qualsiasi momento.", card1Cta: "Crea il tuo primo agente AI",
     card2Title: "Tu stabilisci le regole. L'AI le rispetta.", card2Desc: "Carica la tua knowledge base, definisci i limiti e lascia che l'AI gestisca il resto — esattamente come vuoi.",
     card3Title: "Insights in tempo reale sul team e l'AI.", card3Desc: "Monitora performance, tempi di risposta e conversioni in un'unica dashboard.",
-    card4Title: "Sempre in linea con il tuo brand.", card4Desc: "Imposta tono, stile e personalità. Ogni risposta dell'AI sembra scritta da te.",
+    card4Title: "Funziona con i tuoi strumenti", card4Desc: "Integra diverse fonti di dati per arricchire le conoscenze e le capacità del tuo agente.",
   },
 };
 
@@ -116,26 +116,23 @@ const AnalyticsMockup = () => (
   </div>
 );
 
-/* ── Mockup: Tone selector ── */
-const ToneMockup = () => {
-  const tones = ["Formal", "Friendly", "Direct", "Polite"];
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-6 py-8 px-6">
-      <div className="flex flex-wrap gap-2 justify-center">
-        {tones.map((tone, i) => (
-          <span key={tone} className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${i === 1 ? "bg-white text-[#c4785a] shadow-md" : "bg-white/20 text-white/90"}`}>
-            {tone}
-          </span>
-        ))}
-      </div>
-      <div className="max-w-[280px] rounded-2xl bg-white/20 backdrop-blur-sm p-4">
-        <p className="text-sm text-white/90 leading-relaxed">
-          "Hey there! 👋 Thanks for reaching out. I'd love to help you find the perfect solution. What are you looking for today?"
-        </p>
-      </div>
-    </div>
-  );
-};
+/* ── Tools data ── */
+const tools = [
+  { name: "Make", color: "#6d4aff", icon: "𝗠" },
+  { name: "Zendesk", color: "#03363d", icon: "⌘" },
+  { name: "Notion", color: "#000", icon: "𝗡" },
+  { name: "Slack", color: "#4A154B", icon: "⌗" },
+  { name: "Stripe", color: "#635BFF", icon: "S" },
+  { name: "Salesforce", color: "#00A1E0", icon: "☁" },
+  { name: "Cal.com", color: "#292929", icon: "Cal" },
+  { name: "Calendly", color: "#006BFF", icon: "◉" },
+  { name: "WhatsApp", color: "#25D366", icon: "✆" },
+  { name: "Zapier", color: "#FF4A00", icon: "⚡" },
+  { name: "Messenger", color: "#0084FF", icon: "✉" },
+  { name: "HubSpot", color: "#FF7A59", icon: "⬡" },
+];
+const toolRow1 = tools.slice(0, 6);
+const toolRow2 = tools.slice(6);
 
 /* ── Main component ── */
 const AIControl = () => {
@@ -181,14 +178,25 @@ const AIControl = () => {
           </motion.div>
         </div>
 
-        {/* Card 4 — On-brand */}
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl overflow-hidden grid md:grid-cols-2">
-          <div className="p-8 md:p-12 flex flex-col justify-center bg-white">
-            <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card4Title}</h3>
-            <p className="mt-2 text-sm text-[#6b6760] max-w-sm">{t.card4Desc}</p>
-          </div>
-          <div className="flex items-center justify-center min-h-[240px]" style={{ backgroundColor: "#c4785a" }}>
-            <ToneMockup />
+        {/* Card 4 — Works with your tools */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl border border-border bg-background p-8 md:p-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-8">
+            <div className="md:w-[38%] flex-shrink-0">
+              <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">{t.card4Title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground max-w-sm">{t.card4Desc}</p>
+            </div>
+            <div className="flex-1 space-y-3 overflow-hidden">
+              {[toolRow1, toolRow2].map((row, ri) => (
+                <div key={ri} className="flex gap-2.5 overflow-x-auto no-scrollbar">
+                  {row.map((tool) => (
+                    <span key={tool.name} className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground whitespace-nowrap flex-shrink-0">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold text-white flex-shrink-0" style={{ backgroundColor: tool.color }}>{tool.icon}</span>
+                      {tool.name}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>
