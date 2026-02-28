@@ -219,7 +219,7 @@ const Solutions = () => {
                 <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
                   {active.title1}
                   <br />
-                  <span className="text-muted-foreground">{active.title2}</span>
+                  <span style={{ color: '#838383' }}>{active.title2}</span>
                 </h3>
                 <p className="mt-4 text-muted-foreground text-sm md:text-base leading-relaxed max-w-md">
                   {active.description}
