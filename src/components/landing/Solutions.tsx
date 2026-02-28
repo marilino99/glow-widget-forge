@@ -210,9 +210,9 @@ const Solutions = () => {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
+              initial={{ y: 16 }}
+              animate={{ y: 0 }}
+              exit={{ y: -12 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="rounded-3xl p-8 md:p-12 relative overflow-hidden"
               style={{ background: '#ffffff', position: 'relative' }}
