@@ -219,71 +219,72 @@ const Solutions = () => {
                 <div className="absolute bottom-[0%] right-[20%] h-[40%] w-[30%] rounded-full blur-[80px]" style={{ background: 'hsl(290 65% 80% / 0.4)' }} />
                 <div className="absolute top-[5%] left-[5%] h-[30%] w-[20%] rounded-full blur-[60px]" style={{ background: 'hsl(260 60% 84% / 0.3)' }} />
               </div>
-              <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
-                {/* Left - headline + description */}
-                <div className="flex-1 flex flex-col justify-center">
-                  <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
-                    {active.title1}
-                    <br />
-                    <span style={{ color: '#838383' }}>{active.title2}</span>
-                  </h3>
-                  <p className="mt-4 text-sm md:text-base leading-relaxed max-w-md" style={{ color: '#202020' }}>
-                    {active.description}
-                  </p>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16"
+                >
+                 {/* Left - headline + description */}
+                 <div className="flex-1 flex flex-col justify-center">
+                   <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
+                     {active.title1}
+                     <br />
+                     <span style={{ color: '#838383' }}>{active.title2}</span>
+                   </h3>
+                   <p className="mt-4 text-sm md:text-base leading-relaxed max-w-md" style={{ color: '#202020' }}>
+                     {active.description}
+                   </p>
 
-                  <ul className="mt-6 space-y-2.5">
-                    {active.bullets.map((b, i) => (
-                      <li key={i} className="flex items-center gap-2.5 text-sm" style={{ color: '#838383' }}>
-                        <Check className="h-4 w-4 flex-shrink-0" style={{ color: '#838383' }} />
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
+                   <ul className="mt-6 space-y-2.5">
+                     {active.bullets.map((b, i) => (
+                       <li key={i} className="flex items-center gap-2.5 text-sm" style={{ color: '#838383' }}>
+                         <Check className="h-4 w-4 flex-shrink-0" style={{ color: '#838383' }} />
+                         {b}
+                       </li>
+                     ))}
+                   </ul>
 
-                  <div className="mt-8">
-                    <a
-                      href="/signup"
-                      className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:scale-105 hover:shadow-lg"
-                    >
-                      {lang === "it" ? "Inizia Gratis" : "Get Started"}
-                      <ArrowRight className="h-4 w-4" />
-                    </a>
-                  </div>
-                </div>
+                   <div className="mt-8">
+                     <a
+                       href="/signup"
+                       className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:scale-105 hover:shadow-lg"
+                     >
+                       {lang === "it" ? "Inizia Gratis" : "Get Started"}
+                       <ArrowRight className="h-4 w-4" />
+                     </a>
+                   </div>
+                 </div>
 
-                {/* Right - feature cards or image */}
-                <div className="flex-1 flex flex-col gap-3">
-                  {activeTab === "leadgen" || activeTab === "sales" || activeTab === "engagement" ? (
-                    <motion.div
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4 }}
-                      className="flex items-center justify-center h-full"
-                    >
-                      <img
-                        src={activeTab === "leadgen" ? leadgenChat : activeTab === "sales" ? salesChat : engagementChat}
-                        alt={activeTab === "leadgen" ? "AI chat capturing leads" : activeTab === "sales" ? "AI chat recommending products" : "AI chat engagement"}
-                        className="w-full max-w-[320px] rounded-2xl"
-                      />
-                    </motion.div>
-                  ) : (
-                    active.features.map((f, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.08, duration: 0.3 }}
-                        className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 md:p-5 shadow-sm"
-                      >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                          <f.icon className="h-5 w-5 text-primary" />
-                        </div>
-                        <span className="text-sm md:text-base font-medium text-foreground">{f.text}</span>
-                      </motion.div>
-                    ))
-                  )}
-                </div>
-              </div>
+                 {/* Right - feature cards or image */}
+                 <div className="flex-1 flex flex-col gap-3">
+                   {activeTab === "leadgen" || activeTab === "sales" || activeTab === "engagement" ? (
+                     <div className="flex items-center justify-center h-full">
+                       <img
+                         src={activeTab === "leadgen" ? leadgenChat : activeTab === "sales" ? salesChat : engagementChat}
+                         alt={activeTab === "leadgen" ? "AI chat capturing leads" : activeTab === "sales" ? "AI chat recommending products" : "AI chat engagement"}
+                         className="w-full max-w-[320px] rounded-2xl"
+                       />
+                     </div>
+                   ) : (
+                     active.features.map((f, i) => (
+                       <div
+                         key={i}
+                         className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 md:p-5 shadow-sm"
+                       >
+                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                           <f.icon className="h-5 w-5 text-primary" />
+                         </div>
+                         <span className="text-sm md:text-base font-medium text-foreground">{f.text}</span>
+                       </div>
+                     ))
+                   )}
+                 </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
         </div>
       </div>
