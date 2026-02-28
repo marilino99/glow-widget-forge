@@ -66,10 +66,10 @@ const Hero = () => {
 
             {/* Social proof */}
             <div className="flex items-center gap-3">
-              <div className="flex items-end -space-x-3">
-                <img src="https://i.pravatar.cc/40?img=47" alt="" className="relative z-30 h-10 w-10 rounded-xl border-2 border-background object-cover shadow-md" />
-                <img src="https://i.pravatar.cc/40?img=32" alt="" className="relative z-20 h-9 w-9 rounded-xl border-2 border-background object-cover shadow-sm -translate-y-0.5 rotate-[-6deg]" />
-                <img src="https://i.pravatar.cc/40?img=11" alt="" className="relative z-10 h-8 w-8 rounded-xl border-2 border-background object-cover shadow-sm -translate-y-1 rotate-[-12deg]" />
+              <div className="relative h-11 w-20">
+                <img src="https://i.pravatar.cc/80?img=47" alt="" className="absolute left-0 top-0 z-30 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-md" />
+                <img src="https://i.pravatar.cc/80?img=32" alt="" className="absolute left-3 top-0 z-20 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-sm origin-bottom-left rotate-[6deg]" />
+                <img src="https://i.pravatar.cc/80?img=11" alt="" className="absolute left-5 top-0 z-10 h-11 w-11 rounded-2xl border-[3px] border-background bg-background object-cover shadow-sm origin-bottom-left rotate-[12deg]" />
               </div>
               <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">200+</span> widgets already published
