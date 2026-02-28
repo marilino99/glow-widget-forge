@@ -221,6 +221,9 @@ const Solutions = () => {
               <motion.div animate={{ scale: [1, 1.2, 1], x: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute -top-10 right-[5%] h-[60%] w-[45%] rounded-full blur-[100px]" style={{ background: 'hsl(265 70% 80% / 0.4)' }} />
               <motion.div animate={{ scale: [1, 1.18, 1], y: [0, 10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="absolute bottom-[5%] right-[25%] h-[45%] w-[35%] rounded-full blur-[80px]" style={{ background: 'hsl(290 60% 82% / 0.35)' }} />
               <motion.div animate={{ scale: [1, 1.12, 1], x: [0, -8, 0] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 3 }} className="absolute top-[5%] right-[30%] h-[40%] w-[30%] rounded-full blur-[70px]" style={{ background: 'hsl(270 60% 88% / 0.3)' }} />
+              {/* Corner fills */}
+              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 }} className="absolute -top-8 -left-8 h-[50%] w-[35%] rounded-full blur-[90px]" style={{ background: 'hsl(268 65% 82% / 0.45)' }} />
+              <motion.div animate={{ scale: [1, 1.13, 1] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2.5 }} className="absolute -bottom-8 -right-8 h-[50%] w-[35%] rounded-full blur-[90px]" style={{ background: 'hsl(275 60% 80% / 0.45)' }} />
             </div>
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
