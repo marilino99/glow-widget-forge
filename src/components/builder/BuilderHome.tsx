@@ -199,7 +199,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                   ))}
                 </div>
                 {pickingFrom ? (
-                  <div>
+                <div>
                     <p className="px-3 pt-3 text-xs font-medium text-muted-foreground">End date</p>
                     <Calendar
                       mode="single"
@@ -208,6 +208,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                       disabled={(d) => d > new Date() || d < dateFrom}
                       initialFocus
                       className={cn("p-3 pointer-events-auto")}
+                      modifiers={{ inRange: { from: dateFrom, to: dateTo } }}
+                      modifiersStyles={{ inRange: { backgroundColor: "rgba(129,140,248,0.12)", borderRadius: "6px" } }}
                     />
                   </div>
                 ) : (
@@ -220,6 +222,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                       disabled={(d) => d > new Date()}
                       initialFocus
                       className={cn("p-3 pointer-events-auto")}
+                      modifiers={{ inRange: { from: dateFrom, to: dateTo } }}
+                      modifiersStyles={{ inRange: { backgroundColor: "rgba(129,140,248,0.12)", borderRadius: "6px" } }}
                     />
                   </div>
                 )}
