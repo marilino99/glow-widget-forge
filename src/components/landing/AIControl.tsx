@@ -8,6 +8,7 @@ import lovableLogo from "@/assets/logo-lovable.png";
 import onepageLogo from "@/assets/logo-onepage.png";
 import whatsappLogo from "@/assets/logo-whatsapp.png";
 import messengerLogo from "@/assets/logo-messenger.png";
+import woocommerceLogo from "@/assets/logo-woocommerce.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -131,6 +132,7 @@ const tools = [
   { name: "Lovable", color: "#FF6B6B", icon: "", image: lovableLogo },
   { name: "OnePage", color: "#2979FF", icon: "", image: onepageLogo },
   { name: "Slack", color: "#4A154B", icon: "⌗" },
+  { name: "WooCommerce", color: "#96588A", icon: "", image: woocommerceLogo },
   { name: "Stripe", color: "#635BFF", icon: "S" },
   { name: "WhatsApp", color: "#25D366", icon: "", image: whatsappLogo },
   { name: "Cal.com", color: "#292929", icon: "Cal" },
