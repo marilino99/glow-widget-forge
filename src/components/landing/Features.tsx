@@ -42,7 +42,7 @@ const Features = () => {
   ];
 
   return (
-    <section id="features" className="px-6 py-16 md:py-24">
+    <section id="features" className="px-6 py-16 md:py-24" style={{ backgroundColor: '#f6f5f4' }}>
       <div className="mx-auto max-w-7xl">
         <div className="relative rounded-3xl bg-[#110c29] text-white overflow-hidden px-6 py-24">
           <div className="relative z-10 mx-auto max-w-6xl">

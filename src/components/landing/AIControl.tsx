@@ -177,7 +177,7 @@ const AIControl = () => {
   const t = i18n[lang] || i18n.en;
 
   return (
-    <section className="px-6 py-16 md:py-24">
+    <section className="px-6 py-16 md:py-24" style={{ backgroundColor: '#f6f5f4' }}>
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Headline */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
