@@ -209,7 +209,8 @@ const Solutions = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="rounded-3xl border border-border bg-card/60 backdrop-blur-sm p-8 md:p-12"
+            className="rounded-3xl p-8 md:p-12"
+            style={{ backgroundColor: '#f8f9fa' }}
           >
             <div className="flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
