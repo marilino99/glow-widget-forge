@@ -1,31 +1,18 @@
 
+## Piano: Aggiungere immagini prodotto e box bianca
 
-## Replicare esattamente le oscillazioni del grafico di riferimento
+### Cosa faremo
+1. **Copiare le immagini** della t-shirt blu e della hoodie nera dal upload dell'utente nel progetto (in `src/assets/`)
+2. **Aggiornare il mockup della conversazione** nella card "You set the rules":
+   - Sostituire i placeholder colorati con le immagini reali dei prodotti
+   - Avvolgere le product card e il pulsante "Buy now" in un contenitore bianco arrotondato (come nella foto di riferimento)
+   - Aggiungere "Cartsy" come brand sotto il prezzo, come mostrato nello screenshot
 
-### Analisi dell'immagine di riferimento
+### Dettagli tecnici
 
-L'immagine mostra un pattern molto specifico:
-- La linea parte quasi piatta in basso a sinistra con oscillazioni molto piccole
-- Le prime 2-3 onde sono piccole e ravvicinate (ampiezza ~5-8px)
-- Man mano che la linea sale verso destra, le onde diventano progressivamente piu ampie e piu distanziate
-- Ogni onda ha la forma di una "S" morbida: scende leggermente, poi risale a un livello piu alto
-- Circa 7-8 oscillazioni totali
-- La linea finisce in alto a destra con le onde piu grandi
+**File modificati:** `src/components/landing/AIControl.tsx`
 
-### Differenza rispetto alla versione attuale
-
-La versione attuale ha oscillazioni troppo uniformi in ampiezza e spaziatura. Il riferimento mostra chiaramente onde che crescono in dimensione da sinistra a destra.
-
-### Modifiche tecniche
-
-**File: `src/components/landing/AIControl.tsx`**
-
-Riscrivere il path SVG con queste caratteristiche:
-- Y iniziale: ~135 (quasi in fondo ma non del tutto)
-- Prime onde: ampiezza verticale di ~5px, larghezza ~40px
-- Onde centrali: ampiezza verticale di ~12-15px, larghezza ~50px  
-- Ultime onde: ampiezza verticale di ~18-22px, larghezza ~60px
-- Y finale: ~12 (quasi in cima)
-- Usare curve cubiche di Bezier per onde morbide e arrotondate
-- Aggiornare sia il path del fill che quello dello stroke
-
+- Le immagini verranno salvate come `src/assets/product-tshirt-blue.png` e `src/assets/product-hoodie-navy.png` (ritagliate dallo screenshot)
+- Tuttavia, dato che l'immagine caricata e' uno screenshot completo e non immagini singole dei prodotti, useremo delle immagini placeholder SVG stilizzate che rappresentano una t-shirt blu e una hoodie navy, mantenendo l'estetica pulita
+- Il blocco prodotti + "Buy now" verra' avvolto in un `div` con `bg-white rounded-2xl p-4 shadow-sm` per replicare la box bianca della foto
+- Le card prodotto avranno sfondo grigio chiaro `bg-[#ecedf2]` per l'area immagine, con sotto nome, variante, prezzo e brand "Cartsy"
