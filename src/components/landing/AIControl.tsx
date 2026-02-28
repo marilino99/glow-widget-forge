@@ -239,9 +239,6 @@ const AIControl = () => {
             </div>
             {/* Content area */}
             <div className="mt-6 relative" style={{ backgroundColor: "#e8e4f8" }}>
-              <div className="px-6 pt-6">
-                <AnalyticsMockup />
-              </div>
               {/* Gradient chart line */}
               <div className="h-36 md:h-44 mt-4">
                 <svg viewBox="0 0 400 150" preserveAspectRatio="none" className="w-full h-full">
