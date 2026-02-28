@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, ShoppingBag, HelpCircle, BarChart3, Check, ArrowRight, Bot, Zap, Users, Headphones, Target } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
+import leadgenChat from "@/assets/leadgen-chat.png";
 
 const tabs = [
   { id: "support", icon: Headphones },
@@ -242,22 +243,33 @@ const Solutions = () => {
                 </div>
               </div>
 
-              {/* Right - feature cards */}
+              {/* Right - feature cards or image */}
               <div className="flex-1 flex flex-col gap-3">
-                {active.features.map((f, i) => (
+                {activeTab === "leadgen" ? (
                   <motion.div
-                    key={i}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.08, duration: 0.3 }}
-                    className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 md:p-5 shadow-sm"
+                    transition={{ duration: 0.4 }}
+                    className="flex items-center justify-center h-full"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                      <f.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <span className="text-sm md:text-base font-medium text-foreground">{f.text}</span>
+                    <img src={leadgenChat} alt="AI chat capturing leads" className="w-full max-w-sm rounded-2xl" />
                   </motion.div>
-                ))}
+                ) : (
+                  active.features.map((f, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.08, duration: 0.3 }}
+                      className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 md:p-5 shadow-sm"
+                    >
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                        <f.icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <span className="text-sm md:text-base font-medium text-foreground">{f.text}</span>
+                    </motion.div>
+                  ))
+                )}
               </div>
             </div>
           </motion.div>
