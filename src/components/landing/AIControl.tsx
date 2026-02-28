@@ -187,7 +187,7 @@ const AIControl = () => {
         </motion.div>
 
         {/* Card 1 — Supervise */}
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#ffffff" }}>
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div>
               <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card1Title}</h3>
@@ -201,7 +201,7 @@ const AIControl = () => {
 
         {/* Cards 2 & 3 — Rules + Insights */}
         <div className="grid md:grid-cols-2 gap-6">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#ffffff" }}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm text-[#6b6760] mb-2">{t.card2Desc}</p>
@@ -214,7 +214,7 @@ const AIControl = () => {
             <ChatConversationMockup />
           </motion.div>
 
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10 pb-40 md:pb-48 relative overflow-hidden" style={{ backgroundColor: "#f4f3f3" }}>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10 pb-40 md:pb-48 relative overflow-hidden" style={{ backgroundColor: "#ffffff" }}>
             <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card3Title}</h3>
             <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card3Desc}</p>
             {/* Gradient chart line */}
