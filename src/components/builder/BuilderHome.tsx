@@ -292,7 +292,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                       contentStyle={{ borderRadius: 14, border: "none", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", fontSize: 13, padding: "8px 14px" }}
                       cursor={{ stroke: "#c7c7cf", strokeWidth: 1, strokeDasharray: "4 4" }}
                     />
-                    <Area type="natural" dataKey="value" stroke="#818cf8" strokeWidth={2} fill="url(#chatsFill)" dot={false} activeDot={{ r: 4, fill: "#818cf8", strokeWidth: 0 }} />
+                    <Area type="monotone" dataKey="value" stroke="#818cf8" strokeWidth={2} fill="url(#chatsFill)" dot={false} activeDot={{ r: 4, fill: "#818cf8", strokeWidth: 0 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               )}
