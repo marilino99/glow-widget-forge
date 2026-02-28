@@ -59,7 +59,7 @@ const Hero = () => {
                   <ArrowRight className="h-4 w-4" />
                 </a>
               </Button>
-              <span className="text-sm leading-tight text-muted-foreground">
+              <span className="text-sm leading-tight" style={{ color: '#999999' }}>
                 {t("hero.note1")}<br />{t("hero.note2")}
               </span>
             </div>
