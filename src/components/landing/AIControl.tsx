@@ -185,7 +185,7 @@ const AIControl = () => {
               <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">{t.card4Title}</h3>
               <p className="mt-2 text-sm text-muted-foreground max-w-sm">{t.card4Desc}</p>
             </div>
-            <div className="flex-1 space-y-3 overflow-hidden" style={{ maskImage: 'linear-gradient(to right, black 82%, transparent)', WebkitMaskImage: 'linear-gradient(to right, black 82%, transparent)' }}>
+            <div className="flex-1 space-y-3 overflow-hidden">
               {[toolRow1, toolRow2].map((row, ri) => (
                 <div key={ri} className={`flex gap-2.5 ${ri === 1 ? 'ml-12' : ''}`}>
                   {row.map((tool) => (
