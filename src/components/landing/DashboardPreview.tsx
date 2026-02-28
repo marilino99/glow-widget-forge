@@ -58,9 +58,10 @@ const DashboardPreview = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
                         isActive
-                          ? "bg-white text-[#110c29] shadow-lg"
+                          ? "text-[#110c29] shadow-md backdrop-blur-sm border border-white/30"
                           : "text-white/50 hover:text-white/80"
                       }`}
+                      style={isActive ? { background: 'linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7))' } : undefined}
                     >
                       <Icon className="h-4 w-4" />
                       {labels[tab.id]}
