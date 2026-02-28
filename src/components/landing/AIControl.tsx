@@ -140,8 +140,8 @@ const tools = [
   { name: "Messenger", color: "#0084FF", icon: "", image: messengerLogo },
   
 ];
-const toolRow1 = tools.slice(0, 7);
-const toolRow2 = tools.slice(7);
+const toolRow1 = tools.slice(0, 6);
+const toolRow2 = tools.slice(6);
 
 /* ── Main component ── */
 const AIControl = () => {
