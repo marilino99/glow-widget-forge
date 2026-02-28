@@ -185,9 +185,39 @@ const AIControl = () => {
             <KnowledgeMockup />
           </motion.div>
 
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10 pb-40 md:pb-48 relative overflow-hidden" style={{ backgroundColor: "#f4f3f3" }}>
             <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card3Title}</h3>
             <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card3Desc}</p>
+            {/* Gradient chart line */}
+            <div className="absolute bottom-0 left-0 right-0 h-36 md:h-44">
+              <svg viewBox="0 0 400 150" preserveAspectRatio="none" className="w-full h-full">
+                <defs>
+                  <linearGradient id="chartLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#00d4ff" />
+                    <stop offset="50%" stopColor="#4f46e5" />
+                    <stop offset="100%" stopColor="#a855f7" />
+                  </linearGradient>
+                  <linearGradient id="chartFillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#4f46e5" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {/* Area fill */}
+                <path
+                  d="M0,140 C30,135 60,130 100,110 C140,90 160,95 200,70 C240,45 270,55 300,30 C330,10 360,15 400,5 L400,150 L0,150 Z"
+                  fill="url(#chartFillGradient)"
+                />
+                {/* Line stroke */}
+                <path
+                  d="M0,140 C30,135 60,130 100,110 C140,90 160,95 200,70 C240,45 270,55 300,30 C330,10 360,15 400,5"
+                  fill="none"
+                  stroke="url(#chartLineGradient)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </motion.div>
         </div>
 
