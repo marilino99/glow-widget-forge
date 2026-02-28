@@ -163,11 +163,12 @@ const Solutions = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
+              className={`inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
                 activeTab === tab.id
-                  ? "border-primary bg-primary/10 text-primary shadow-sm"
-                  : "border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  ? "shadow-sm"
+                  : "border-border bg-background text-muted-foreground hover:border-[hsl(270,80%,70%)] hover:text-foreground"
               }`}
+              style={activeTab === tab.id ? { borderColor: 'hsl(270, 80%, 50%)', backgroundColor: 'hsl(270, 80%, 96%)', color: 'hsl(270, 80%, 50%)' } : {}}
             >
               <tab.icon className="h-4 w-4" />
               {labels[tab.id]}
