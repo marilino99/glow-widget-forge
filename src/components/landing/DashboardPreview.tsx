@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
+import { MessageSquare, Users, Paintbrush, Bot, Zap, Check } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
@@ -46,26 +46,29 @@ const DashboardPreview = () => {
               <p className="mx-auto mt-4 max-w-xl text-white/60">{t("dashboard.desc")}</p>
             </motion.div>
 
-            {/* Tabs */}
-            <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex flex-wrap justify-center gap-2 md:gap-3">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? "bg-white/15 text-white shadow-lg shadow-white/5 border border-white/20"
-                        : "text-white/50 hover:text-white/80 hover:bg-white/5 border border-transparent"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {labels[tab.id]}
-                  </button>
-                );
-              })}
+            {/* Tabs - glassmorphic bar */}
+            <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex justify-center">
+              <div className="inline-flex items-center gap-1 rounded-2xl border border-white/10 bg-white/[0.07] p-1.5 backdrop-blur-md">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
+                        isActive
+                          ? "bg-white text-[#110c29] shadow-lg"
+                          : "text-white/50 hover:text-white/80"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {labels[tab.id]}
+                      {isActive && <Check className="h-3.5 w-3.5 ml-0.5" />}
+                    </button>
+                  );
+                })}
+              </div>
             </motion.div>
 
             {/* Dashboard image */}
