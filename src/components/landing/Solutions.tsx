@@ -212,7 +212,7 @@ const Solutions = () => {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="rounded-3xl p-8 md:p-12 relative overflow-hidden"
-            style={{ background: '#ffffff' }}
+            style={{ background: 'linear-gradient(to top, hsl(270 60% 92% / 0.7) 0%, hsl(270 50% 96% / 0.3) 30%, #ffffff 60%)' }}
           >
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
