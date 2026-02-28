@@ -11,6 +11,28 @@ import WorldMap from "@/components/builder/WorldMap";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+const COUNTRY_TO_CODE: Record<string, string> = {
+  "United States": "US", "United Kingdom": "GB", Germany: "DE", France: "FR", Italy: "IT",
+  Spain: "ES", Portugal: "PT", Netherlands: "NL", Belgium: "BE", Switzerland: "CH",
+  Austria: "AT", Poland: "PL", Sweden: "SE", Norway: "NO", Finland: "FI", Denmark: "DK",
+  Ireland: "IE", "Czech Republic": "CZ", Czechia: "CZ", Romania: "RO", Hungary: "HU",
+  Greece: "GR", Turkey: "TR", Ukraine: "UA", Russia: "RU", Canada: "CA", Mexico: "MX",
+  Brazil: "BR", Argentina: "AR", Colombia: "CO", Chile: "CL", Peru: "PE", Venezuela: "VE",
+  India: "IN", China: "CN", Japan: "JP", "South Korea": "KR", Australia: "AU",
+  "New Zealand": "NZ", Indonesia: "ID", Thailand: "TH", Vietnam: "VN", Philippines: "PH",
+  Malaysia: "MY", Singapore: "SG", "Saudi Arabia": "SA", "United Arab Emirates": "AE",
+  Israel: "IL", Egypt: "EG", "South Africa": "ZA", Nigeria: "NG", Kenya: "KE",
+  Morocco: "MA", Pakistan: "PK", Bangladesh: "BD", Taiwan: "TW", Iran: "IR", Iraq: "IQ",
+  Algeria: "DZ", Libya: "LY", Sudan: "SD", Ethiopia: "ET", Tanzania: "TZ", Congo: "CD",
+  Angola: "AO", Mozambique: "MZ", Madagascar: "MG", Kazakhstan: "KZ", Mongolia: "MN", Myanmar: "MM",
+};
+
+function countryToFlag(name: string): string {
+  const code = COUNTRY_TO_CODE[name.trim()];
+  if (!code) return "";
+  return String.fromCodePoint(...[...code].map((c) => 0x1f1e6 - 65 + c.charCodeAt(0)));
+}
+
 interface BuilderHomeProps {
   isPro: boolean;
   userName?: string | null;
@@ -351,7 +373,9 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                   {countryData.map((item, i) => (
                     <div key={i}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-foreground truncate">{item.country}</span>
+                        <span className="text-sm font-medium text-foreground truncate">
+                          {countryToFlag(item.country)} {item.country}
+                        </span>
                         <span className="text-sm font-semibold text-foreground ml-2">{item.count}</span>
                       </div>
                       <div className="h-2 rounded-full bg-muted">
