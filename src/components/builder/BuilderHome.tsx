@@ -15,7 +15,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   const [clicks, setClicks] = useState(0);
   const [impressions, setImpressions] = useState(0);
   const [conversations, setConversations] = useState(0);
-  const [chatsByDay, setChatsByDay] = useState<{ date: string; chats: number }[]>([]);
+  const [chartData, setChartData] = useState<Record<string, { date: string; value: number }[]>>({});
+  const [activeChart, setActiveChart] = useState<"Conversations" | "Impressions" | "Clicks">("Conversations");
   const [isLoading, setIsLoading] = useState(true);
 
   const getGreeting = () => {
@@ -66,29 +67,57 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         setImpressions(impressionsRes.count ?? 0);
         setConversations(convsRes.count ?? 0);
 
-        // Fetch chats by day for the chart
+        // Fetch daily data for charts
         const tenDaysAgo = new Date();
         tenDaysAgo.setDate(tenDaysAgo.getDate() - 9);
-        const { data: convRows } = await supabase
-          .from("conversations")
-          .select("created_at")
-          .eq("widget_owner_id", user.id)
-          .gte("created_at", tenDaysAgo.toISOString())
-          .order("created_at", { ascending: true });
+        const tenDaysSince = tenDaysAgo.toISOString();
 
-        // Group by day
-        const dayMap: Record<string, number> = {};
+        const [convRows, eventRows] = await Promise.all([
+          supabase
+            .from("conversations")
+            .select("created_at")
+            .eq("widget_owner_id", user.id)
+            .gte("created_at", tenDaysSince)
+            .order("created_at", { ascending: true }),
+          (supabase.from("widget_events") as any)
+            .select("created_at, event_type")
+            .eq("widget_id", config.id)
+            .in("event_type", ["click", "impression"])
+            .gte("created_at", tenDaysSince)
+            .order("created_at", { ascending: true }),
+        ]);
+
+        // Build day map
+        const dayKeys: string[] = [];
         for (let i = 0; i < 10; i++) {
           const d = new Date(tenDaysAgo);
           d.setDate(d.getDate() + i);
-          const key = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-          dayMap[key] = 0;
+          dayKeys.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
         }
-        (convRows || []).forEach((row) => {
-          const key = new Date(row.created_at!).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-          if (key in dayMap) dayMap[key]++;
+
+        const makeEmpty = () => Object.fromEntries(dayKeys.map((k) => [k, 0]));
+        const convsMap = makeEmpty();
+        const clicksMap = makeEmpty();
+        const impressionsMap = makeEmpty();
+
+        (convRows.data || []).forEach((row: any) => {
+          const key = new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          if (key in convsMap) convsMap[key]++;
         });
-        setChatsByDay(Object.entries(dayMap).map(([date, chats]) => ({ date, chats })));
+        (eventRows.data || []).forEach((row: any) => {
+          const key = new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          if (row.event_type === "click" && key in clicksMap) clicksMap[key]++;
+          if (row.event_type === "impression" && key in impressionsMap) impressionsMap[key]++;
+        });
+
+        const toArray = (map: Record<string, number>) =>
+          Object.entries(map).map(([date, value]) => ({ date, value }));
+
+        setChartData({
+          Conversations: toArray(convsMap),
+          Clicks: toArray(clicksMap),
+          Impressions: toArray(impressionsMap),
+        });
       } catch (error) {
         console.error("Error fetching metrics:", error);
       } finally {
@@ -130,35 +159,46 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Performance</h2>
           <p className="mb-4 text-xs" style={{ color: "#5b5b65" }}>Last 30 days</p>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {metricCards.map((metric) => (
-              <div
-                key={metric.label}
-                className="group flex flex-col gap-3 rounded-2xl border border-border bg-background p-5 transition-all hover:shadow-md"
-              >
+            {metricCards.map((metric) => {
+              const isClickable = metric.label === "Impressions" || metric.label === "Clicks" || metric.label === "Conversations";
+              const isActive = isClickable && activeChart === metric.label;
+              return (
                 <div
-                  className="flex h-10 w-10 items-center justify-center rounded-xl"
-                  style={{ backgroundColor: `${metric.color}15` }}
+                  key={metric.label}
+                  onClick={() => isClickable && setActiveChart(metric.label as any)}
+                  className={`group flex flex-col gap-3 rounded-2xl border p-5 transition-all ${
+                    isClickable ? "cursor-pointer" : ""
+                  } ${
+                    isActive
+                      ? "border-[#818cf8] bg-[#818cf8]/5 shadow-md"
+                      : "border-border bg-background hover:shadow-md"
+                  }`}
                 >
-                  <metric.icon className="h-5 w-5" style={{ color: metric.color }} />
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: isActive ? "rgba(129,140,248,0.15)" : `${metric.color}15` }}
+                  >
+                    <metric.icon className="h-5 w-5" style={{ color: isActive ? "#818cf8" : metric.color }} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">{metric.label}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {isLoading ? (
+                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                      ) : (
+                        typeof metric.value === "number" ? metric.value.toLocaleString() : metric.value
+                      )}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">{metric.label}</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {isLoading ? (
-                      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                    ) : (
-                      typeof metric.value === "number" ? metric.value.toLocaleString() : metric.value
-                    )}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* Chats started chart */}
+        {/* Dynamic chart */}
         <div>
-          <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Chats started</h2>
+          <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>{activeChart}</h2>
           <div className="rounded-2xl border border-border bg-background p-6 pb-4">
             <div className="h-[200px]">
               {isLoading ? (
@@ -167,7 +207,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chatsByDay} margin={{ top: 20, right: 10, bottom: 0, left: 10 }}>
+                  <AreaChart data={chartData[activeChart] || []} margin={{ top: 20, right: 10, bottom: 0, left: 10 }}>
                     <defs>
                       <linearGradient id="chatsFill" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#818cf8" stopOpacity={0.18} />
@@ -180,7 +220,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                       contentStyle={{ borderRadius: 14, border: "none", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", fontSize: 13, padding: "8px 14px" }}
                       cursor={{ stroke: "#c7c7cf", strokeWidth: 1, strokeDasharray: "4 4" }}
                     />
-                    <Area type="natural" dataKey="chats" stroke="#818cf8" strokeWidth={2} fill="url(#chatsFill)" dot={false} activeDot={{ r: 4, fill: "#818cf8", strokeWidth: 0 }} />
+                    <Area type="natural" dataKey="value" stroke="#818cf8" strokeWidth={2} fill="url(#chatsFill)" dot={false} activeDot={{ r: 4, fill: "#818cf8", strokeWidth: 0 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               )}
