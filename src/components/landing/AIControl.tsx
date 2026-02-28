@@ -182,7 +182,6 @@ const AIControl = () => {
               {t.card1Cta} <ArrowRight className="h-4 w-4" />
             </a>
           </div>
-          <ChatListMockup />
         </motion.div>
 
         {/* Cards 2 & 3 — Rules + Insights */}
