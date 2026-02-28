@@ -138,7 +138,7 @@ const tools = [
   { name: "Calendly", color: "#006BFF", icon: "◉" },
   { name: "Telegram", color: "#26A5E4", icon: "✈" },
   { name: "Messenger", color: "#0084FF", icon: "", image: messengerLogo },
-  { name: "HubSpot", color: "#FF7A59", icon: "⬡" },
+  
 ];
 const toolRow1 = tools.slice(0, 7);
 const toolRow2 = tools.slice(7);
