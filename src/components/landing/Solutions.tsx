@@ -131,10 +131,10 @@ const tabLabels: Record<string, Record<TabId, string>> = {
 };
 
 const sectionTitle: Record<string, { line1: string; sub: string }> = {
-  en: { line1: "A widget for every goal", sub: "One platform, endless use cases. Powered by Widjet." },
-  it: { line1: "Un widget per ogni obiettivo", sub: "Una piattaforma, infiniti casi d'uso. Powered by Widjet." },
-  de: { line1: "Ein Widget für jedes Ziel", sub: "Eine Plattform, unendlich viele Anwendungsfälle." },
-  fr: { line1: "Un widget pour chaque objectif", sub: "Une plateforme, des cas d'utilisation infinis." },
+  en: { line1: "Website widgets that convert, not just replies.", sub: "One platform, endless use cases. Powered by Widjet." },
+  it: { line1: "Widget che convertono, non solo rispondono.", sub: "Una piattaforma, infiniti casi d'uso. Powered by Widjet." },
+  de: { line1: "Website-Widgets, die konvertieren, nicht nur antworten.", sub: "Eine Plattform, unendlich viele Anwendungsfälle." },
+  fr: { line1: "Des widgets qui convertissent, pas seulement répondent.", sub: "Une plateforme, des cas d'utilisation infinis." },
 };
 
 const Solutions = () => {
