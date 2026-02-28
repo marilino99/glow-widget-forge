@@ -189,7 +189,7 @@ const Solutions = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`inline-flex items-center rounded-full px-5 py-1.5 text-sm font-medium transition-all duration-200 ${
+              className={`inline-flex items-center rounded-full px-4 py-1 text-xs font-medium transition-all duration-200 ${
                 activeTab === tab.id
                   ? "border-2 border-solid shadow-sm"
                   : "border-2 border-dashed border-border bg-background text-muted-foreground hover:border-[hsl(270,80%,70%)] hover:text-foreground"
