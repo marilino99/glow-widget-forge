@@ -1,34 +1,45 @@
 
 
-# Chats by Country Section
+# Chats by Country -- World Map + Ranking
 
 ## Overview
-Add a "Chats by country" section below the performance chart, displaying a top-5 country ranking with horizontal bar charts (matching the screenshot reference). Since geographic data isn't currently tracked, we'll need both database and backend changes.
+Replace the current "Chats by country" section with a two-column layout: a lightweight SVG world map on the left (countries colored by chat volume) and the top-5 country ranking list on the right, matching the reference screenshot.
 
-## Changes Required
+## Approach
+Use a lightweight inline SVG world map (simplified world paths) rendered as a React component. Countries are highlighted with shades of indigo based on their chat count relative to the maximum. No external map library needed -- keeps the bundle small.
 
-### 1. Database Migration
-Add a `country` column to the `conversations` table to store the visitor's country when a chat is initiated.
+## Changes
 
-```sql
-ALTER TABLE conversations ADD COLUMN country text DEFAULT NULL;
+### 1. New Component: `src/components/builder/WorldMap.tsx`
+- A React component that renders an SVG world map with simplified continent/country paths
+- Accepts `countryData` as props (array of `{ country: string; count: number }`)
+- Maps country names to SVG path IDs and fills them with indigo shades proportional to count
+- Default fill is a very light gray; highlighted countries get `rgba(129,140,248, opacity)` where opacity scales from 0.2 to 1.0
+- Uses a standard simplified world SVG with major countries as separate paths (US, India, UK, Germany, France, Brazil, Canada, Australia, Japan, China, etc.)
+
+### 2. Update `src/components/builder/BuilderHome.tsx`
+- Replace the current "Chats by country" card content with a two-column grid layout (`lg:grid-cols-[1fr,300px]`)
+- **Left column**: The `WorldMap` component showing the colored map
+- **Right column**: The existing country ranking list (country name, horizontal bar, count) -- styled with a left border separator
+- Keep the same data fetching logic and loading/empty states
+
+### Layout (matching screenshot)
+```text
++-----------------------------------------------+
+| Chats by country                               |
+| +---------------------------+--+--------------+|
+| |                           |  | US       500 ||
+| |   [World Map SVG]         |  | ████████████ ||
+| |   countries colored by    |  | India    456 ||
+| |   chat volume             |  | ██████████   ||
+| |                           |  | ...          ||
+| +---------------------------+--+--------------+|
++-----------------------------------------------+
 ```
 
-### 2. Edge Function Update (`send-chat-message/index.ts`)
-When creating a new conversation, detect the visitor's country from the request IP using a free geolocation API (e.g., `https://ipapi.co/{ip}/country_name/`) and store it in the `country` field. The IP is extracted from the `x-forwarded-for` header. This only runs on conversation creation (not every message).
-
-### 3. BuilderHome UI (`src/components/builder/BuilderHome.tsx`)
-Add a new section below the chart area with:
-- **Title**: "Chats by country"
-- **Layout**: Full-width card with the top 5 countries listed as rows
-- Each row shows: country name, a horizontal progress bar (indigo, proportional to max), and the count number
-- Data is fetched from conversations grouped by country within the selected date range
-- Countries with `null` are labeled as "Unknown"
-- Styled consistently with the existing card design (rounded-2xl, border, etc.)
-
-### Technical Notes
-- The query groups conversations by `country`, counts them, orders descending, and limits to 5
-- The horizontal bars use simple `div` widths calculated as percentage of the top country's count
-- No map library is needed -- the screenshot's key feature is the ranking list on the right, which we replicate as the full component (adding a world map SVG would add significant complexity for little value at this stage)
-- Existing conversations won't have country data until the edge function update is deployed; the UI handles nulls gracefully
+### Technical Details
+- The SVG world map uses simplified GeoJSON-derived paths for ~30 major countries
+- Country name matching uses a lookup map (e.g., "United States" -> "US" path ID)
+- The component is purely presentational -- no interactivity needed
+- Responsive: on mobile, the layout stacks vertically (map on top, ranking below)
 
