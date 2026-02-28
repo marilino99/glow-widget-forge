@@ -193,7 +193,7 @@ const AIControl = () => {
                   {row.map((tool) => (
                     <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
                       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
-                        {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-4 w-4 object-contain" /> : tool.icon}
+                        {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-5 w-5 object-contain" /> : tool.icon}
                       </span>
                       {tool.name}
                     </span>
