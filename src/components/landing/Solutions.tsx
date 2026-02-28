@@ -216,14 +216,6 @@ const Solutions = () => {
               background: 'linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 40%, hsl(260 60% 94%) 70%, hsl(270 70% 88%) 100%)',
             }}
           >
-            {/* Grain overlay */}
-            <div
-              className="pointer-events-none absolute inset-0 rounded-3xl opacity-[0.18]"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-                backgroundSize: '128px 128px',
-              }}
-            />
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
               <div className="flex-1 flex flex-col justify-center">
