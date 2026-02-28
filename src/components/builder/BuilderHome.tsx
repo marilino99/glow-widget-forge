@@ -175,6 +175,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#b0b0b8" }} dy={12} />
+                    <YAxis hide domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.3) || 1]} />
                     <Tooltip
                       contentStyle={{ borderRadius: 14, border: "none", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", fontSize: 13, padding: "8px 14px" }}
                       cursor={{ stroke: "#c7c7cf", strokeWidth: 1, strokeDasharray: "4 4" }}
