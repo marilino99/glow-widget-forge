@@ -48,7 +48,7 @@ const DashboardPreview = () => {
 
             {/* Tabs - glassmorphic bar */}
             <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex justify-center">
-              <div className="inline-flex items-center gap-1 rounded-2xl border border-white/10 bg-white/[0.07] p-1.5 backdrop-blur-md">
+              <div className="inline-flex items-center gap-1 rounded-2xl border border-white/10 bg-white/[0.07] p-1.5 backdrop-blur-md overflow-x-auto max-w-full scrollbar-hide">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
@@ -56,7 +56,7 @@ const DashboardPreview = () => {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      className={`relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
                         isActive
                           ? "bg-white text-[#110c29] shadow-lg"
                           : "text-white/50 hover:text-white/80"
