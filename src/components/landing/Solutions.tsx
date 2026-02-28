@@ -216,10 +216,11 @@ const Solutions = () => {
           >
             {/* Glow blobs */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
-              <motion.div animate={{ scale: [1, 1.15, 1], x: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-10 -left-10 h-[60%] w-[45%] rounded-full blur-[80px]" style={{ background: 'hsl(260 75% 78% / 0.6)' }} />
-              <motion.div animate={{ scale: [1, 1.1, 1], y: [0, -8, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute -bottom-5 left-[30%] h-[50%] w-[35%] rounded-full blur-[70px]" style={{ background: 'hsl(280 65% 82% / 0.5)' }} />
-              <motion.div animate={{ scale: [1, 1.2, 1], x: [0, -12, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute -bottom-8 right-[10%] h-[55%] w-[40%] rounded-full blur-[90px]" style={{ background: 'hsl(265 70% 76% / 0.55)' }} />
-              <motion.div animate={{ scale: [1, 1.18, 1], y: [0, 6, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="absolute bottom-[5%] right-[35%] h-[30%] w-[25%] rounded-full blur-[60px]" style={{ background: 'hsl(290 60% 85% / 0.4)' }} />
+              <motion.div animate={{ scale: [1, 1.15, 1], x: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-16 -left-16 h-[70%] w-[50%] rounded-full blur-[100px]" style={{ background: 'hsl(260 75% 78% / 0.5)' }} />
+              <motion.div animate={{ scale: [1, 1.1, 1], y: [0, -12, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="absolute top-[10%] left-[20%] h-[55%] w-[40%] rounded-full blur-[90px]" style={{ background: 'hsl(280 65% 85% / 0.35)' }} />
+              <motion.div animate={{ scale: [1, 1.2, 1], x: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute -top-10 right-[5%] h-[60%] w-[45%] rounded-full blur-[100px]" style={{ background: 'hsl(265 70% 80% / 0.4)' }} />
+              <motion.div animate={{ scale: [1, 1.18, 1], y: [0, 10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="absolute bottom-[5%] right-[25%] h-[45%] w-[35%] rounded-full blur-[80px]" style={{ background: 'hsl(290 60% 82% / 0.35)' }} />
+              <motion.div animate={{ scale: [1, 1.12, 1], x: [0, -8, 0] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 3 }} className="absolute top-[5%] right-[30%] h-[40%] w-[30%] rounded-full blur-[70px]" style={{ background: 'hsl(270 60% 88% / 0.3)' }} />
             </div>
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
