@@ -328,7 +328,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         {/* Chats by country */}
         <div>
           <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Chats by country</h2>
-          <div className="rounded-2xl border border-border bg-background p-6">
+          <div className="rounded-2xl border border-border bg-background p-3">
             {isLoading ? (
               <div className="flex h-40 items-center justify-center">
                 <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
