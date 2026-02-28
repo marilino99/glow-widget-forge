@@ -132,7 +132,7 @@ const tools = [
   { name: "Wix", color: "#0C6EFC", icon: "", image: wixLogo },
   { name: "Lovable", color: "#FF6B6B", icon: "", image: lovableLogo },
   { name: "OnePage", color: "#2979FF", icon: "", image: onepageLogo },
-  { name: "Stripe", color: "#635BFF", icon: "S" },
+  
   { name: "WhatsApp", color: "#25D366", icon: "", image: whatsappLogo },
   { name: "Cal.com", color: "#292929", icon: "Cal" },
   { name: "Calendly", color: "#006BFF", icon: "◉" },
