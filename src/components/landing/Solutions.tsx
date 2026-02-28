@@ -213,7 +213,7 @@ const Solutions = () => {
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="rounded-3xl p-8 md:p-12 relative overflow-hidden"
             style={{
-              background: 'linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(260 40% 95%) 50%, hsl(270 50% 92%) 100%)',
+              background: 'linear-gradient(180deg, hsl(0 0% 97%) 0%, hsl(260 60% 92%) 50%, hsl(270 70% 88%) 100%)',
             }}
           >
             {/* Grain overlay */}
