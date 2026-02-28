@@ -29,6 +29,24 @@ Deno.serve(async (req) => {
   if (w.__wj_loaded) return;
   w.__wj_loaded = true;
 
+  // Detect visitor country from client side
+  var visitorCountry = '';
+  try {
+    var geoXhr = new XMLHttpRequest();
+    geoXhr.open('GET', 'https://ipapi.co/country_name/', true);
+    geoXhr.timeout = 3000;
+    geoXhr.onreadystatechange = function() {
+      if (geoXhr.readyState !== 4) return;
+      if (geoXhr.status === 200) {
+        var name = geoXhr.responseText.trim();
+        if (name && name.indexOf('{') !== 0 && name !== 'Undefined') {
+          visitorCountry = name;
+        }
+      }
+    };
+    geoXhr.send();
+  } catch(e) {}
+
   var x = new XMLHttpRequest();
   x.open('GET', u + '/functions/v1/widget-config?id=' + id, true);
   x.onreadystatechange = function() {
@@ -653,7 +671,7 @@ Deno.serve(async (req) => {
             } catch(e) {}
           }
         };
-        xhr.send(JSON.stringify({ widgetId: id, visitorId: visitorId, visitorToken: visitorToken, message: msg, visitorName: 'Visitor' }));
+        xhr.send(JSON.stringify({ widgetId: id, visitorId: visitorId, visitorToken: visitorToken, message: msg, visitorName: 'Visitor', visitorCountry: visitorCountry }));
       }
 
       function renderBBMessage(msg) {
@@ -1197,7 +1215,8 @@ Deno.serve(async (req) => {
         visitorId: visitorId,
         visitorToken: visitorToken,
         message: msg,
-        visitorName: 'Visitor'
+        visitorName: 'Visitor',
+        visitorCountry: visitorCountry
       }));
     }
 
@@ -1236,7 +1255,8 @@ Deno.serve(async (req) => {
         visitorId: visitorId,
         visitorToken: visitorToken,
         message: msg,
-        visitorName: 'Visitor'
+        visitorName: 'Visitor',
+        visitorCountry: visitorCountry
       }));
     }
 
