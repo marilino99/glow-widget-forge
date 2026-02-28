@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
+import shopifyLogo from "@/assets/logo-shopify.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -118,7 +119,7 @@ const AnalyticsMockup = () => (
 
 /* ── Tools data ── */
 const tools = [
-  { name: "Shopify", color: "#96BF48", icon: "🛍" },
+  { name: "Shopify", color: "#96BF48", icon: "", image: shopifyLogo },
   { name: "Zendesk", color: "#03363d", icon: "⌘" },
   { name: "Notion", color: "#000", icon: "𝗡" },
   { name: "Slack", color: "#4A154B", icon: "⌗" },
@@ -190,7 +191,9 @@ const AIControl = () => {
                 <div key={ri} className={`flex gap-2.5 ${ri === 1 ? 'ml-12' : ''}`}>
                   {row.map((tool) => (
                     <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0" style={{ color: tool.color }}>{tool.icon}</span>
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
+                        {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-4 w-4 object-contain" /> : tool.icon}
+                      </span>
                       {tool.name}
                     </span>
                   ))}
