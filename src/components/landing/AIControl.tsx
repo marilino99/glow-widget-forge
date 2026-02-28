@@ -78,34 +78,42 @@ const ChatListMockup = () => (
   </div>
 );
 
-/* ── Mockup: Knowledge sources ── */
-const KnowledgeMockup = () => (
-  <div className="mt-6 md:mt-0 rounded-2xl bg-white/80 backdrop-blur-sm border border-black/5 overflow-hidden">
-    {/* Browser bar */}
-    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f5f3ef] border-b border-black/5">
-      <div className="flex gap-1.5">
-        <div className="h-2.5 w-2.5 rounded-full bg-[#ccc]" />
-        <div className="h-2.5 w-2.5 rounded-full bg-[#ccc]" />
-        <div className="h-2.5 w-2.5 rounded-full bg-[#ccc]" />
+/* ── Mockup: Chat conversation ── */
+const ChatConversationMockup = () => (
+  <div className="mt-6 md:mt-0 rounded-2xl bg-white/80 backdrop-blur-sm border border-black/5 overflow-hidden p-5 space-y-4">
+    {/* User message */}
+    <div className="flex justify-end">
+      <div className="rounded-2xl rounded-tr-sm bg-[#4a6cf7] px-4 py-3 max-w-[85%]">
+        <p className="text-sm text-white">I'm refreshing my wardrobe. Can you recommend some cosy, comfortable basics in size M?</p>
       </div>
-      <div className="flex-1 h-5 rounded-md bg-white/60 mx-4" />
     </div>
-    <div className="p-5 space-y-3">
+    {/* Bot message */}
+    <div className="flex justify-start">
+      <div className="rounded-2xl rounded-tl-sm bg-[#f0f0f3] px-4 py-3 max-w-[85%]">
+        <p className="text-sm text-[#2a2a2a]">Absolutely. Here are a few comfy essentials that pair well and could be a good starting point:</p>
+      </div>
+    </div>
+    {/* Product cards */}
+    <div className="grid grid-cols-2 gap-3">
       {[
-        { icon: Globe, label: "Website pages", count: "24 pages" },
-        { icon: FileText, label: "Product catalog", count: "156 items" },
-        { icon: FileText, label: "Help articles", count: "42 docs" },
-      ].map((item, i) => (
-        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-[#f5f3ef]">
-          <div className="h-9 w-9 rounded-lg bg-white flex items-center justify-center">
-            <item.icon className="h-4 w-4 text-[#8a8580]" />
+        { name: "Deluxe Shirt", variant: "Blue - Medium", price: "€23.00", color: "#3b5eda" },
+        { name: "Essential Hoodie", variant: "Navy - Medium", price: "€43.00", color: "#1e2a4a" },
+      ].map((p, i) => (
+        <div key={i} className="rounded-xl border border-black/5 bg-[#f5f5f8] overflow-hidden">
+          <div className="h-24 flex items-center justify-center bg-[#ecedf2]">
+            <div className="h-14 w-14 rounded-lg" style={{ backgroundColor: p.color }} />
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-[#2a2a2a]">{item.label}</p>
-            <p className="text-[11px] text-[#999]">{item.count}</p>
+          <div className="p-3 space-y-0.5">
+            <p className="text-xs font-semibold text-[#2a2a2a]">{p.name}</p>
+            <p className="text-[10px] text-[#888]">{p.variant}</p>
+            <p className="text-xs font-bold text-[#2a2a2a] mt-1">{p.price}</p>
           </div>
         </div>
       ))}
+    </div>
+    {/* CTA */}
+    <div className="rounded-xl bg-[#f0f0f3] py-2.5 text-center">
+      <span className="text-sm font-semibold text-[#4a6cf7]">Buy now</span>
     </div>
   </div>
 );
@@ -182,7 +190,7 @@ const AIControl = () => {
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
             <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card2Title}</h3>
             <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card2Desc}</p>
-            <KnowledgeMockup />
+            <ChatConversationMockup />
           </motion.div>
 
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10 pb-40 md:pb-48 relative overflow-hidden" style={{ backgroundColor: "#f4f3f3" }}>
