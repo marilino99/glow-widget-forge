@@ -1,22 +1,25 @@
 
 
-## Tab bar styling update
+## Redesign tab bar con stile underline
 
-The active tab button currently uses a solid `bg-white` background. Based on the reference image, the active tab should have:
+Il reference mostra un design completamente diverso dalla tab bar attuale: le tab sono distribuite su tutta la larghezza, senza sfondo glassmorphic, e la tab attiva ha un **underline** (linea sotto) invece di un background colorato.
 
-- A slightly transparent/frosted background instead of pure white
-- A subtle warm gradient (very light, almost imperceptible)
-- Softer shadow and slightly more rounded feel
-
-### Technical changes
+### Cambiamenti
 
 **File: `src/components/landing/DashboardPreview.tsx`**
 
-Update the active tab button classes (line 61):
-- Replace `bg-white text-[#110c29] shadow-lg` with a semi-transparent background using a subtle linear gradient
-- Use inline style for the gradient: `background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7))` with `backdrop-blur-sm`
-- Keep the dark text color and add a soft `shadow-md` instead of `shadow-lg`
-- Add a faint `border border-white/30` to the active button for that frosted edge
+1. Rimuovere il contenitore glassmorphic esterno (border, bg-white/[0.07], backdrop-blur, rounded-2xl, p-1.5)
+2. Cambiare il layout delle tab: usare `flex w-full justify-between` per distribuire le tab su tutta la larghezza
+3. Stile tab attiva: testo bianco + underline (border-bottom o pseudo-elemento) al posto del background semi-trasparente
+4. Stile tab inattiva: testo `text-white/50` senza sfondo
+5. Rimuovere l'icona Check dalla tab attiva
+6. Rimuovere lo style inline del gradient background
 
-This will make the active tab look translucent with a gentle warmth, matching the reference screenshot.
+### Dettagli tecnici
+
+- Contenitore tab: `flex w-full justify-between border-b border-white/10`
+- Tab attiva: `text-white border-b-2 border-white pb-3`
+- Tab inattiva: `text-white/50 hover:text-white/70 pb-3`
+- Rimuovere import di `Check` da lucide-react
+- Mantenere le icone a sinistra del label
 
