@@ -201,72 +201,44 @@ const AIControl = () => {
 
         {/* Cards 2 & 3 — Rules + Insights */}
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Card 2 — Rules */}
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl overflow-hidden" style={{ backgroundColor: "#f4f3f3" }}>
-            {/* Header */}
-            <div className="p-8 md:p-10 pb-0">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card2Title}</h3>
-                  <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card2Desc}</p>
-                </div>
-                <a href="/signup" className="flex-shrink-0 h-10 w-10 rounded-full bg-[#2a2a2a] flex items-center justify-center hover:bg-[#1a1a1a] transition-colors">
-                  <ArrowRight className="h-4 w-4 text-white" />
-                </a>
-              </div>
-            </div>
-            {/* Content area */}
-            <div className="mt-6 px-4 pb-4 rounded-b-3xl" style={{ backgroundColor: "#e8e4f8" }}>
-              <div className="pt-6 pb-2">
-                <ChatConversationMockup />
-              </div>
-            </div>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
+            <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card2Title}</h3>
+            <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card2Desc}</p>
+            <ChatConversationMockup />
           </motion.div>
 
-          {/* Card 3 — Insights */}
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl overflow-hidden" style={{ backgroundColor: "#f4f3f3" }}>
-            {/* Header */}
-            <div className="p-8 md:p-10 pb-0">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card3Title}</h3>
-                  <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card3Desc}</p>
-                </div>
-                <a href="/signup" className="flex-shrink-0 h-10 w-10 rounded-full bg-[#2a2a2a] flex items-center justify-center hover:bg-[#1a1a1a] transition-colors">
-                  <ArrowRight className="h-4 w-4" style={{ color: "white" }} />
-                </a>
-              </div>
-            </div>
-            {/* Content area */}
-            <div className="mt-6 relative" style={{ backgroundColor: "#e8e4f8" }}>
-              {/* Gradient chart line */}
-              <div className="h-36 md:h-44 mt-4">
-                <svg viewBox="0 0 400 150" preserveAspectRatio="none" className="w-full h-full">
-                  <defs>
-                    <linearGradient id="chartLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#00d4ff" />
-                      <stop offset="50%" stopColor="#4f46e5" />
-                      <stop offset="100%" stopColor="#a855f7" />
-                    </linearGradient>
-                    <linearGradient id="chartFillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M0,120 C18,120 22,117 40,115 C58,113 62,118 80,116 C95,114 99,110 114,107 C129,104 133,109 148,105 C161,102 165,96 180,91 C193,87 197,93 212,87 C225,82 229,74 246,67 C259,62 263,70 280,63 C293,58 297,48 316,40 C329,35 333,43 352,34 C365,28 370,18 390,10 C398,6 400,4 400,2 L400,150 L0,150 Z"
-                    fill="url(#chartFillGradient)"
-                  />
-                  <path
-                    d="M0,120 C18,120 22,117 40,115 C58,113 62,118 80,116 C95,114 99,110 114,107 C129,104 133,109 148,105 C161,102 165,96 180,91 C193,87 197,93 212,87 C225,82 229,74 246,67 C259,62 263,70 280,63 C293,58 297,48 316,40 C329,35 333,43 352,34 C365,28 370,18 390,10 C398,6 400,4 400,2"
-                    fill="none"
-                    stroke="url(#chartLineGradient)"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10 pb-40 md:pb-48 relative overflow-hidden" style={{ backgroundColor: "#f4f3f3" }}>
+            <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card3Title}</h3>
+            <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card3Desc}</p>
+            {/* Gradient chart line */}
+            <div className="absolute bottom-0 left-0 right-0 h-36 md:h-44">
+              <svg viewBox="0 0 400 150" preserveAspectRatio="none" className="w-full h-full">
+                <defs>
+                  <linearGradient id="chartLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#00d4ff" />
+                    <stop offset="50%" stopColor="#4f46e5" />
+                    <stop offset="100%" stopColor="#a855f7" />
+                  </linearGradient>
+                  <linearGradient id="chartFillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#7c3aed" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {/* Area fill */}
+                <path
+                  d="M0,120 C18,120 22,117 40,115 C58,113 62,118 80,116 C95,114 99,110 114,107 C129,104 133,109 148,105 C161,102 165,96 180,91 C193,87 197,93 212,87 C225,82 229,74 246,67 C259,62 263,70 280,63 C293,58 297,48 316,40 C329,35 333,43 352,34 C365,28 370,18 390,10 C398,6 400,4 400,2 L400,150 L0,150 Z"
+                  fill="url(#chartFillGradient)"
+                />
+                {/* Line stroke */}
+                <path
+                  d="M0,120 C18,120 22,117 40,115 C58,113 62,118 80,116 C95,114 99,110 114,107 C129,104 133,109 148,105 C161,102 165,96 180,91 C193,87 197,93 212,87 C225,82 229,74 246,67 C259,62 263,70 280,63 C293,58 297,48 316,40 C329,35 333,43 352,34 C365,28 370,18 390,10 C398,6 400,4 400,2"
+                  fill="none"
+                  stroke="url(#chartLineGradient)"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
           </motion.div>
         </div>
