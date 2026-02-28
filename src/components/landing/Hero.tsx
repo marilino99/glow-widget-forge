@@ -47,7 +47,7 @@ const Hero = () => {
             {t("hero.title2")}
           </motion.h1>
 
-          <motion.p custom={2} initial="hidden" animate="visible" variants={fadeUp} className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
+          <motion.p custom={2} initial="hidden" animate="visible" variants={fadeUp} className="mt-4 max-w-md text-base leading-relaxed md:text-lg" style={{ color: '#999999' }}>
             {t("hero.subtitle")}
           </motion.p>
 
