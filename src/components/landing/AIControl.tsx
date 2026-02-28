@@ -188,7 +188,6 @@ const AIControl = () => {
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
             <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card3Title}</h3>
             <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card3Desc}</p>
-            <AnalyticsMockup />
           </motion.div>
         </div>
 
