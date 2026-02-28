@@ -126,13 +126,12 @@ const AnalyticsMockup = () => (
 
 /* ── Tools data ── */
 const tools = [
+  { name: "WooCommerce", color: "#96588A", icon: "", image: woocommerceLogo },
   { name: "Shopify", color: "#96BF48", icon: "", image: shopifyLogo },
   { name: "WordPress", color: "#21759B", icon: "", image: wordpressLogo },
   { name: "Wix", color: "#0C6EFC", icon: "", image: wixLogo },
   { name: "Lovable", color: "#FF6B6B", icon: "", image: lovableLogo },
   { name: "OnePage", color: "#2979FF", icon: "", image: onepageLogo },
-  { name: "Slack", color: "#4A154B", icon: "⌗" },
-  { name: "WooCommerce", color: "#96588A", icon: "", image: woocommerceLogo },
   { name: "Stripe", color: "#635BFF", icon: "S" },
   { name: "WhatsApp", color: "#25D366", icon: "", image: whatsappLogo },
   { name: "Cal.com", color: "#292929", icon: "Cal" },
