@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import greenBlob from "@/assets/green-blob.png";
 import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import shopifyLogo from "@/assets/logo-shopify.png";
@@ -211,7 +212,9 @@ const AIControl = () => {
               {/* Row 2 */}
               <div className="flex gap-2.5 ml-12">
                 {/* Green blob */}
-                <span className="inline-flex h-9 w-32 rounded-full flex-shrink-0 overflow-hidden" style={{ background: "linear-gradient(135deg, #c5e8cf 0%, #d8f2e0 40%, #eaf7ee 100%)", opacity: 0.6 }} />
+                <span className="inline-flex h-9 w-32 rounded-full flex-shrink-0 overflow-hidden">
+                  <img src={greenBlob} alt="" className="h-full w-full object-cover" />
+                </span>
                 {toolRow2.map((tool) => (
                   <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
