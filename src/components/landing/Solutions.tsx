@@ -216,11 +216,11 @@ const Solutions = () => {
           >
             {/* Glow blobs */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
-              <motion.div animate={{ scale: [1, 1.25, 1], x: [0, 20, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-20 -left-20 h-[65%] w-[40%] rounded-full blur-[100px]" style={{ background: 'hsl(255 80% 75% / 0.55)' }} />
-              <motion.div animate={{ scale: [1, 1.08, 1], y: [0, -15, 0] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }} className="absolute top-[15%] left-[35%] h-[35%] w-[25%] rounded-full blur-[70px]" style={{ background: 'hsl(285 55% 88% / 0.25)' }} />
-              <motion.div animate={{ scale: [1, 1.3, 1], x: [0, -20, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2.5 }} className="absolute -top-14 right-[0%] h-[50%] w-[35%] rounded-full blur-[90px]" style={{ background: 'hsl(270 70% 78% / 0.5)' }} />
-              <motion.div animate={{ scale: [1, 1.22, 1], y: [0, 14, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="absolute bottom-[0%] right-[20%] h-[40%] w-[30%] rounded-full blur-[80px]" style={{ background: 'hsl(290 65% 80% / 0.4)' }} />
-              <motion.div animate={{ scale: [1, 1.1, 1], x: [0, 10, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 4 }} className="absolute top-[5%] left-[5%] h-[30%] w-[20%] rounded-full blur-[60px]" style={{ background: 'hsl(260 60% 84% / 0.3)' }} />
+              <div className="absolute -bottom-20 -left-20 h-[65%] w-[40%] rounded-full blur-[100px]" style={{ background: 'hsl(255 80% 75% / 0.55)' }} />
+              <div className="absolute top-[15%] left-[35%] h-[35%] w-[25%] rounded-full blur-[70px]" style={{ background: 'hsl(285 55% 88% / 0.25)' }} />
+              <div className="absolute -top-14 right-[0%] h-[50%] w-[35%] rounded-full blur-[90px]" style={{ background: 'hsl(270 70% 78% / 0.5)' }} />
+              <div className="absolute bottom-[0%] right-[20%] h-[40%] w-[30%] rounded-full blur-[80px]" style={{ background: 'hsl(290 65% 80% / 0.4)' }} />
+              <div className="absolute top-[5%] left-[5%] h-[30%] w-[20%] rounded-full blur-[60px]" style={{ background: 'hsl(260 60% 84% / 0.3)' }} />
             </div>
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
