@@ -176,7 +176,7 @@ const Solutions = () => {
   const active = contents[activeTab];
 
   return (
-    <section className="py-16 md:py-24 px-6">
+    <section className="pt-6 md:pt-10 pb-16 md:pb-24 px-6">
       <div className="mx-auto max-w-7xl">
         {/* Section header */}
         <div className="text-center mb-10">
