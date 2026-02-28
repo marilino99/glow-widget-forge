@@ -212,7 +212,7 @@ const Solutions = () => {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="rounded-3xl p-8 md:p-12 relative overflow-hidden"
-            style={{ background: 'linear-gradient(to top, hsl(270 70% 85%) 0%, hsl(270 60% 92% / 0.6) 35%, #ffffff 65%)' }}
+            style={{ background: 'linear-gradient(to top, hsl(270 70% 85%) 0%, hsl(270 60% 92% / 0.6) 35%, #ffffff 65%), radial-gradient(ellipse 80% 50% at 20% 100%, hsl(260 70% 82% / 0.7) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 90%, hsl(280 65% 88% / 0.8) 0%, transparent 55%)' }}
           >
             <div className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16">
               {/* Left - headline + description */}
