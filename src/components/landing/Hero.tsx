@@ -51,7 +51,7 @@ const Hero = () => {
             {t("hero.subtitle")}
           </motion.p>
 
-          <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="mt-8 flex flex-col items-start gap-4">
+          <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="mt-8 flex flex-col items-start gap-5">
             <div className="flex items-center gap-5">
               <Button size="lg" className="h-14 gap-2 rounded-full px-10 text-base font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:bg-primary hover:scale-105 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple-500/40" asChild>
                 <a href="/signup">
@@ -62,6 +62,18 @@ const Hero = () => {
               <span className="text-sm leading-tight text-muted-foreground">
                 {t("hero.note1")}<br />{t("hero.note2")}
               </span>
+            </div>
+
+            {/* Social proof */}
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2.5">
+                <img src="https://i.pravatar.cc/40?img=11" alt="" className="h-9 w-9 rounded-xl border-2 border-background object-cover shadow-sm" />
+                <img src="https://i.pravatar.cc/40?img=32" alt="" className="h-9 w-9 rounded-xl border-2 border-background object-cover shadow-sm" />
+                <img src="https://i.pravatar.cc/40?img=47" alt="" className="h-9 w-9 rounded-xl border-2 border-background object-cover shadow-sm" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">100+</span> businesses already signed up
+              </p>
             </div>
           </motion.div>
         </div>
