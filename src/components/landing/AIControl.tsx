@@ -179,7 +179,7 @@ const AIControl = () => {
 
         {/* Cards 2 & 3 — Rules + Insights */}
         <div className="grid md:grid-cols-2 gap-6">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#e8e5df" }}>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
             <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card2Title}</h3>
             <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card2Desc}</p>
             <KnowledgeMockup />
