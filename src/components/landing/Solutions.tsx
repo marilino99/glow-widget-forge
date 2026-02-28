@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, ShoppingBag, HelpCircle, BarChart3, Check, ArrowRight, Bot, Zap, Users, Headphones, Target } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import leadgenChat from "@/assets/leadgen-chat.png";
+import salesChat from "@/assets/sales-chat.png";
 
 const tabs = [
   { id: "support", icon: Headphones },
@@ -246,14 +247,18 @@ const Solutions = () => {
 
               {/* Right - feature cards or image */}
               <div className="flex-1 flex flex-col gap-3">
-                {activeTab === "leadgen" ? (
+                {activeTab === "leadgen" || activeTab === "sales" ? (
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4 }}
                     className="flex items-center justify-center h-full"
                   >
-                    <img src={leadgenChat} alt="AI chat capturing leads" className="w-full max-w-[320px] rounded-2xl" />
+                    <img
+                      src={activeTab === "leadgen" ? leadgenChat : salesChat}
+                      alt={activeTab === "leadgen" ? "AI chat capturing leads" : "AI chat recommending products"}
+                      className="w-full max-w-[320px] rounded-2xl"
+                    />
                   </motion.div>
                 ) : (
                   active.features.map((f, i) => (
