@@ -130,11 +130,11 @@ const tabLabels: Record<string, Record<TabId, string>> = {
   fr: { support: "Support", sales: "Ventes", selfservice: "Libre-service", engagement: "Engagement" },
 };
 
-const sectionTitle: Record<string, { line1: string; sub: string }> = {
-  en: { line1: "Website widgets that convert, not just replies.", sub: "One platform, endless use cases. Powered by Widjet." },
-  it: { line1: "Widget che convertono, non solo rispondono.", sub: "Una piattaforma, infiniti casi d'uso. Powered by Widjet." },
-  de: { line1: "Website-Widgets, die konvertieren, nicht nur antworten.", sub: "Eine Plattform, unendlich viele Anwendungsfälle." },
-  fr: { line1: "Des widgets qui convertissent, pas seulement répondent.", sub: "Une plateforme, des cas d'utilisation infinis." },
+const sectionTitle: Record<string, { before: string; accent: string; after: string; sub: string }> = {
+  en: { before: "Website widgets that ", accent: "convert", after: ", not just replies.", sub: "One platform, endless use cases. Powered by Widjet." },
+  it: { before: "Widget che ", accent: "convertono", after: ", non solo rispondono.", sub: "Una piattaforma, infiniti casi d'uso. Powered by Widjet." },
+  de: { before: "Website-Widgets, die ", accent: "konvertieren", after: ", nicht nur antworten.", sub: "Eine Plattform, unendlich viele Anwendungsfälle." },
+  fr: { before: "Des widgets qui ", accent: "convertissent", after: ", pas seulement répondent.", sub: "Une plateforme, des cas d'utilisation infinis." },
 };
 
 const Solutions = () => {
@@ -152,7 +152,7 @@ const Solutions = () => {
         {/* Section header */}
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
-            {title.line1}
+            {title.before}<em className="not-italic font-extrabold italic" style={{ color: 'hsl(16, 80%, 50%)' }}>{title.accent}</em>{title.after}
           </h2>
           <p className="mt-3 text-muted-foreground text-base md:text-lg">{title.sub}</p>
         </div>
