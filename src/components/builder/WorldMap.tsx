@@ -126,7 +126,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
   };
 
   return (
-    <div className="w-full overflow-hidden flex items-center justify-center" style={{ maxHeight: 200 }}>
+    <div className="w-full overflow-hidden [&_figure]:!m-0 [&_figure]:!p-0 [&_svg]:!block">
       <SvgWorldMap
         data={mapData}
         size="responsive"
@@ -134,6 +134,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ countryData }) => {
         backgroundColor="transparent"
         borderColor="#e5e7eb"
         strokeOpacity={0.6}
+        frame={false}
         styleFunction={styleFunction}
         tooltipBgColor="#1f2937"
         tooltipTextColor="#f9fafb"
