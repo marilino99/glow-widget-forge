@@ -252,7 +252,7 @@ const Solutions = () => {
                     transition={{ duration: 0.4 }}
                     className="flex items-center justify-center h-full"
                   >
-                    <img src={leadgenChat} alt="AI chat capturing leads" className="w-full max-w-sm rounded-2xl" />
+                    <img src={leadgenChat} alt="AI chat capturing leads" className="w-full max-w-[260px] rounded-2xl" />
                   </motion.div>
                 ) : (
                   active.features.map((f, i) => (
