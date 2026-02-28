@@ -51,7 +51,7 @@ const Hero = () => {
             {t("hero.subtitle")}
           </motion.p>
 
-          <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="mt-8 flex flex-col items-start gap-5">
+          <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="mt-8 flex flex-col items-start gap-8">
             <div className="flex items-center gap-5">
               <Button size="lg" className="h-14 gap-2 rounded-full px-10 text-base font-bold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:bg-primary hover:scale-105 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple-500/40" asChild>
                 <a href="/signup">
