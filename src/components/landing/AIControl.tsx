@@ -140,10 +140,9 @@ const tools = [
   { name: "Telegram", color: "#26A5E4", icon: "✈" },
   { name: "Messenger", color: "#0084FF", icon: "", image: messengerLogo },
   { name: "HubSpot", color: "#FF7A59", icon: "⬡" },
-  { name: "HubSpot", color: "#FF7A59", icon: "⬡" },
 ];
-const toolRow1 = tools.slice(0, 6);
-const toolRow2 = tools.slice(6);
+const toolRow1 = tools.slice(0, 7);
+const toolRow2 = tools.slice(7);
 
 /* ── Main component ── */
 const AIControl = () => {
