@@ -118,12 +118,12 @@ const AnalyticsMockup = () => (
       { label: "Total orders", value: "342", change: "+18%" },
       { label: "Avg response", value: "1.2s", change: "-40%" },
     ].map((item, i) => (
-      <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/15 backdrop-blur-sm">
+      <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/80 backdrop-blur-sm">
         <div>
-          <p className="text-xs text-white/60">{item.label}</p>
-          <p className="text-lg font-bold text-white">{item.value}</p>
+          <p className="text-xs text-[#999]">{item.label}</p>
+          <p className="text-lg font-bold text-[#2a2a2a]">{item.value}</p>
         </div>
-        <span className="text-xs font-semibold text-white/80 bg-white/10 rounded-full px-2 py-0.5">{item.change}</span>
+        <span className="text-xs font-semibold text-[#2a2a2a] bg-[#e8e5df] rounded-full px-2 py-0.5">{item.change}</span>
       </div>
     ))}
   </div>
@@ -185,9 +185,9 @@ const AIControl = () => {
             <KnowledgeMockup />
           </motion.div>
 
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#9a9a8a" }}>
-            <h3 className="text-xl md:text-2xl font-bold text-white">{t.card3Title}</h3>
-            <p className="mt-1.5 text-sm text-white/70 max-w-sm">{t.card3Desc}</p>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#f4f3f3" }}>
+            <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card3Title}</h3>
+            <p className="mt-1.5 text-sm text-[#6b6760] max-w-sm">{t.card3Desc}</p>
             <AnalyticsMockup />
           </motion.div>
         </div>
