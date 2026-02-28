@@ -205,7 +205,7 @@ const Solutions = () => {
         </div>
 
         {/* Content card */}
-        <div className="group relative rounded-3xl">
+        <div className="group relative rounded-3xl bg-white">
           <GlowingEffect spread={40} glow disabled={false} proximity={64} inactiveZone={0.01} borderWidth={2} />
           <AnimatePresence mode="wait">
             <motion.div
