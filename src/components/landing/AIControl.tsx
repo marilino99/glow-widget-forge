@@ -132,17 +132,17 @@ const tools = [
   { name: "Lovable", color: "#FF6B6B", icon: "", image: lovableLogo },
   { name: "OnePage", color: "#2979FF", icon: "", image: onepageLogo },
   { name: "Slack", color: "#4A154B", icon: "⌗" },
-  { name: "WooCommerce", color: "#96588A", icon: "", image: woocommerceLogo },
   { name: "Stripe", color: "#635BFF", icon: "S" },
   { name: "WhatsApp", color: "#25D366", icon: "", image: whatsappLogo },
+  { name: "WooCommerce", color: "#96588A", icon: "", image: woocommerceLogo },
   { name: "Cal.com", color: "#292929", icon: "Cal" },
   { name: "Calendly", color: "#006BFF", icon: "◉" },
   { name: "Telegram", color: "#26A5E4", icon: "✈" },
   { name: "Messenger", color: "#0084FF", icon: "", image: messengerLogo },
   { name: "HubSpot", color: "#FF7A59", icon: "⬡" },
 ];
-const toolRow1 = tools.slice(0, 7);
-const toolRow2 = tools.slice(7);
+const toolRow1 = tools.slice(0, 6);
+const toolRow2 = tools.slice(6);
 
 /* ── Main component ── */
 const AIControl = () => {
@@ -197,13 +197,20 @@ const AIControl = () => {
             </div>
             <div className="flex-1 space-y-3 overflow-hidden -mr-8 md:-mr-10">
               {[toolRow1, toolRow2].map((row, ri) => (
-                <div key={ri} className={`flex gap-2.5 ${ri === 1 ? 'ml-12' : ''}`}>
+                <div key={ri} className={`flex gap-3 ${ri === 1 ? 'ml-12' : ''}`}>
                   {row.map((tool) => (
-                    <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
+                    <span
+                      key={tool.name}
+                      className="inline-flex items-center justify-center rounded-full flex-shrink-0 h-11 w-11 shadow-sm"
+                      style={{
+                        background: `linear-gradient(135deg, ${tool.color}18, ${tool.color}30)`,
+                        border: `1px solid ${tool.color}20`,
+                      }}
+                      title={tool.name}
+                    >
+                      <span className="flex h-6 w-6 items-center justify-center text-[11px] font-bold overflow-hidden" style={{ color: tool.color }}>
                         {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-5 w-5 object-contain" /> : tool.icon}
                       </span>
-                      {tool.name}
                     </span>
                   ))}
                 </div>
