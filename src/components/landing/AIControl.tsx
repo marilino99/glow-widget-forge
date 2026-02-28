@@ -7,6 +7,7 @@ import wixLogo from "@/assets/logo-wix-icon.png";
 import lovableLogo from "@/assets/logo-lovable.png";
 import onepageLogo from "@/assets/logo-onepage.png";
 import whatsappLogo from "@/assets/logo-whatsapp.png";
+import messengerLogo from "@/assets/logo-messenger.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -135,8 +136,8 @@ const tools = [
   { name: "Cal.com", color: "#292929", icon: "Cal" },
   { name: "Calendly", color: "#006BFF", icon: "◉" },
   { name: "Telegram", color: "#26A5E4", icon: "✈" },
-  { name: "Zapier", color: "#FF4A00", icon: "⚡" },
-  { name: "Messenger", color: "#0084FF", icon: "✉" },
+  { name: "Messenger", color: "#0084FF", icon: "", image: messengerLogo },
+  { name: "HubSpot", color: "#FF7A59", icon: "⬡" },
   { name: "HubSpot", color: "#FF7A59", icon: "⬡" },
 ];
 const toolRow1 = tools.slice(0, 6);
