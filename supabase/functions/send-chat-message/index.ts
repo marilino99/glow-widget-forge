@@ -16,25 +16,10 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { widgetId, visitorId, message, visitorName, visitorToken } = await req.json();
+    const { widgetId, visitorId, message, visitorName, visitorToken, visitorCountry } = await req.json();
 
-    // Detect country from IP for new conversations
-    let detectedCountry: string | null = null;
-    try {
-      const forwarded = req.headers.get("x-forwarded-for");
-      const ip = forwarded ? forwarded.split(",")[0].trim() : null;
-      if (ip && ip !== "127.0.0.1" && ip !== "::1") {
-        const geoRes = await fetch(`https://ipapi.co/${ip}/country_name/`);
-        if (geoRes.ok) {
-          const name = (await geoRes.text()).trim();
-          if (name && !name.startsWith("{") && name !== "Undefined") {
-            detectedCountry = name;
-          }
-        }
-      }
-    } catch (e) {
-      console.error("Geo lookup failed:", e);
-    }
+    // Use client-side detected country
+    const detectedCountry: string | null = (visitorCountry && typeof visitorCountry === 'string' && visitorCountry.trim()) ? visitorCountry.trim() : null;
 
     if (!widgetId || !visitorId || !message || typeof message !== 'string') {
       return new Response(
