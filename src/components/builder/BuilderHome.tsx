@@ -16,7 +16,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   const [impressions, setImpressions] = useState(0);
   const [conversations, setConversations] = useState(0);
   const [chartData, setChartData] = useState<Record<string, { date: string; value: number }[]>>({});
-  const [activeChart, setActiveChart] = useState<"Conversations" | "Impressions" | "Clicks">("Conversations");
+  const [activeChart, setActiveChart] = useState<"Conversations" | "Impressions" | "Clicks" | "CTR">("Conversations");
   const [isLoading, setIsLoading] = useState(true);
 
   const getGreeting = () => {
@@ -113,10 +113,18 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
         const toArray = (map: Record<string, number>) =>
           Object.entries(map).map(([date, value]) => ({ date, value }));
 
+        // Compute CTR by day
+        const ctrArray = dayKeys.map((key) => {
+          const imp = impressionsMap[key] || 0;
+          const clk = clicksMap[key] || 0;
+          return { date: key, value: imp > 0 ? parseFloat(((clk / imp) * 100).toFixed(1)) : 0 };
+        });
+
         setChartData({
           Conversations: toArray(convsMap),
           Clicks: toArray(clicksMap),
           Impressions: toArray(impressionsMap),
+          CTR: ctrArray,
         });
       } catch (error) {
         console.error("Error fetching metrics:", error);
@@ -160,7 +168,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           <p className="mb-4 text-xs" style={{ color: "#5b5b65" }}>Last 30 days</p>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {metricCards.map((metric) => {
-              const isClickable = metric.label === "Impressions" || metric.label === "Clicks" || metric.label === "Conversations";
+              const isClickable = metric.label === "Impressions" || metric.label === "Clicks" || metric.label === "Conversations" || metric.label === "CTR";
               const isActive = isClickable && activeChart === metric.label;
               return (
                 <div
