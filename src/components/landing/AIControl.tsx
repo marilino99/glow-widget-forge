@@ -195,18 +195,32 @@ const AIControl = () => {
               <p className="mt-2 text-sm text-muted-foreground max-w-sm">{t.card4Desc}</p>
             </div>
             <div className="flex-1 space-y-3 overflow-hidden -mr-8 md:-mr-10">
-              {[toolRow1, toolRow2].map((row, ri) => (
-                <div key={ri} className={`flex gap-2.5 ${ri === 1 ? 'ml-12' : ''}`}>
-                  {row.map((tool) => (
-                    <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
-                        {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-5 w-5 object-contain" /> : tool.icon}
-                      </span>
-                      {tool.name}
+              {/* Row 1 */}
+              <div className="flex gap-2.5">
+                {toolRow1.map((tool) => (
+                  <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
+                      {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-5 w-5 object-contain" /> : tool.icon}
                     </span>
-                  ))}
-                </div>
-              ))}
+                    {tool.name}
+                  </span>
+                ))}
+                {/* Green blob */}
+                <span className="inline-flex h-9 w-28 rounded-full flex-shrink-0 overflow-hidden" style={{ background: "linear-gradient(135deg, #b8e6c4 0%, #d4f0db 40%, #e8f5ec 100%)", opacity: 0.7 }} />
+              </div>
+              {/* Row 2 */}
+              <div className="flex gap-2.5 ml-12">
+                {/* Green blob */}
+                <span className="inline-flex h-9 w-32 rounded-full flex-shrink-0 overflow-hidden" style={{ background: "linear-gradient(135deg, #c5e8cf 0%, #d8f2e0 40%, #eaf7ee 100%)", opacity: 0.6 }} />
+                {toolRow2.map((tool) => (
+                  <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
+                      {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-5 w-5 object-contain" /> : tool.icon}
+                    </span>
+                    {tool.name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
