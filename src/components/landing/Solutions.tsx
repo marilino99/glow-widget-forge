@@ -258,7 +258,7 @@ const Solutions = () => {
                     <img
                       src={activeTab === "leadgen" ? leadgenChat : activeTab === "sales" ? salesChat : engagementChat}
                       alt={activeTab === "leadgen" ? "AI chat capturing leads" : activeTab === "sales" ? "AI chat recommending products" : "AI chat engagement"}
-                      className="w-full max-w-[320px] rounded-2xl"
+                      className="w-full rounded-2xl"
                     />
                   </motion.div>
                 ) : (
