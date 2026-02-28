@@ -13,6 +13,7 @@ import Pricing from "@/components/landing/Pricing";
 import FAQs from "@/components/landing/FAQs";
 import Footer from "@/components/landing/Footer";
 import Solutions from "@/components/landing/Solutions";
+import AIControl from "@/components/landing/AIControl";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const LandingContent = () => {
@@ -86,6 +87,7 @@ const LandingContent = () => {
           ]}
         />
         <Solutions />
+        <AIControl />
         <Features />
         <DashboardPreview />
         <PlatformIntegrations />
