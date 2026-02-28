@@ -72,7 +72,7 @@ const Hero = () => {
                 <img src="https://i.pravatar.cc/40?img=47" alt="" className="h-9 w-9 rounded-xl border-2 border-background object-cover shadow-sm" />
               </div>
               <p className="text-sm text-muted-foreground">
-                <span className="font-semibold text-foreground">100+</span> businesses already signed up
+                <span className="font-semibold text-foreground">200+</span> widgets already published
               </p>
             </div>
           </motion.div>
