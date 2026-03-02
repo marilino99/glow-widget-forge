@@ -1,46 +1,22 @@
 
-# Restructure Top Header to Match ElevenLabs Design
 
-## Current State
-The builder has a full-width top bar with the logo on the left and actions/account on the right. Below that, the sidebar starts with a PanelLeft toggle button and workspace selector.
+# Fix: Timestamp non visibile nella lista conversazioni
 
-## Target Design (from screenshot)
-The ElevenLabs layout has:
-- **Logo** ("Widjet") at the top-left of the **sidebar area**, not a full-width bar
-- **Workspace selector** ("ElevenCreative" with avatar and chevron) below the logo, still inside the sidebar
-- A **vertical border** (the sidebar's right border) separates these from the main content
-- On the **right side of the vertical border**, at the **same height as the logo**, sits the current view label ("Home") with a sidebar collapse/expand icon
+## Problema
+Il componente `ScrollArea` di Radix non propaga correttamente i vincoli di larghezza al suo viewport interno. Il contenuto si espande oltre i 288px (w-72) del container, spingendo il timestamp fuori dallo schermo.
 
-There is NO full-width top bar spanning the entire page.
+## Soluzione
+Aggiungere `className="w-full"` al viewport della ScrollArea, oppure forzare `max-w-full` / `overflow-hidden` sul div interno alla ScrollArea, in modo che il layout `grid-cols-[1fr_auto]` funzioni correttamente entro i limiti del container.
 
-## Plan
+## Dettagli tecnici
 
-### 1. Remove the full-width top header bar
-Delete the current `h-12` top bar that spans the full width with logo, Feedback, Docs, Bell, and account dropdown.
+**File: `src/components/builder/ConversationsPanel.tsx`**
 
-### 2. Move logo into sidebar top area
-Place the Widjet logo at the top of the sidebar column, replacing the current PanelLeft toggle button position. The logo sits at the top-left, inside the sidebar, with consistent height (e.g. `h-12` row).
+1. Aggiungere `overflow-hidden` al div `space-y-0.5 p-1.5` che contiene la lista delle conversazioni, per forzare il contenuto a rispettare la larghezza del parent.
 
-### 3. Keep workspace selector below logo
-The existing workspace selector (popover with widget name and favicon) stays in the sidebar, directly below the logo -- no changes needed there.
+2. Aggiungere `overflow-hidden` anche al singolo `button` di ogni conversazione, in modo che il layout grid interno non possa espandersi oltre.
 
-### 4. Add view label + sidebar toggle in main content header
-At the top of the main content area (right of the sidebar border), add a row at the same height as the logo row containing:
-- The **sidebar collapse/expand icon** (PanelLeft) on the left
-- The **current view label** ("Home", "Conversations", etc.) next to it
+3. In alternativa (o in aggiunta), sovrascrivere lo stile del viewport della ScrollArea passando una classe custom che forza `overflow-x: hidden` e `max-width: 100%`.
 
-This row aligns horizontally with the logo row in the sidebar.
+Queste modifiche garantiscono che il testo del titolo venga troncato (`truncate`) e il timestamp resti sempre visibile a destra.
 
-### 5. Move account dropdown and action buttons
-Move Feedback, Docs, Bell, and account avatar dropdown to the **right side** of this new main content header row, keeping them accessible.
-
-### Technical Details
-
-**File: `src/pages/Builder.tsx`**
-
-- Remove the top-level `<div className="shrink-0 flex items-center justify-between border-b ...">` block (lines 320-381)
-- In the sidebar column (starting ~line 387), replace the PanelLeft toggle with the Widjet logo at the top, followed by a border-b, then the workspace selector
-- Add a new header row inside the main content area (`flex-1` div) with:
-  - Left: PanelLeft toggle + view label
-  - Right: Feedback, Docs, Bell, Account dropdown
-- Both the sidebar logo row and the main content header row share the same fixed height (`h-12`) and have `border-b` to create the continuous horizontal line with the vertical sidebar border intersecting it
