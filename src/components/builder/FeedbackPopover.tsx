@@ -51,7 +51,7 @@ const FeedbackPopover = ({ userEmail }: FeedbackPopoverProps) => {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted mb-4">
               <Check className="h-5 w-5 text-foreground" />
             </div>
-            <p className="text-base font-bold text-foreground">Your feedback was sent</p>
+            <p className="text-base font-bold text-foreground">Your feedback was sent!</p>
             <p className="text-sm text-muted-foreground mt-1">We'll get in touch soon.</p>
           </div>
         ) : (
