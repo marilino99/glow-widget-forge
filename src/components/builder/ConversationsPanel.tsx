@@ -279,7 +279,13 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
             <div className="space-y-0.5 p-1.5">
               {filteredConversations.map((conv, idx) => {
                 const identity = getVisitorIdentity(conv.visitor_id, idx);
-                const displayName = conv.visitor_name && conv.visitor_name !== "Visitor" ? conv.visitor_name : `Visitor ${identity.letter}`;
+                // Generate a short 2-3 word title from the last message
+                const getSummary = (msg: string | null) => {
+                  if (!msg) return "New Conversation";
+                  const words = msg.split(/\s+/).slice(0, 3).join(" ");
+                  return words.length > 25 ? words.slice(0, 25) + "…" : words + (msg.split(/\s+/).length > 3 ? "…" : "");
+                };
+                const summary = getSummary(conv.last_message);
                 return (
                 <button
                   key={conv.id}
@@ -301,7 +307,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-foreground truncate">
-                        {displayName}
+                        {summary}
                       </span>
                       <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
                         {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
@@ -320,7 +326,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     </span>
                   )}
                 </button>
-              );
+                );
               })}
             </div>
           )}
@@ -334,8 +340,10 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
               <h3 className="text-sm font-semibold text-foreground">
                 {(() => {
-                  const id = getVisitorIdentity(selectedConversation.visitor_id, 0);
-                  return selectedConversation.visitor_name && selectedConversation.visitor_name !== "Visitor" ? selectedConversation.visitor_name : `Visitor ${id.letter}`;
+                  const msg = selectedConversation.last_message;
+                  if (!msg) return "New Conversation";
+                  const words = msg.split(/\s+/).slice(0, 3).join(" ");
+                  return words.length > 25 ? words.slice(0, 25) + "…" : words + (msg.split(/\s+/).length > 3 ? "…" : "");
                 })()}
               </h3>
               <button className="rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
