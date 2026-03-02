@@ -20,8 +20,19 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import { formatDistanceToNow, format } from "date-fns";
-import { enUS } from "date-fns/locale";
+import { format, differenceInMinutes, differenceInHours, differenceInDays } from "date-fns";
+
+const shortTimeAgo = (date: Date) => {
+  const now = new Date();
+  const mins = differenceInMinutes(now, date);
+  if (mins < 1) return "now";
+  if (mins < 60) return `${mins} min`;
+  const hrs = differenceInHours(now, date);
+  if (hrs < 24) return `${hrs} h`;
+  const days = differenceInDays(now, date);
+  if (days < 30) return `${days} d`;
+  return `${Math.floor(days / 30)} mo`;
+};
 
 interface Conversation {
   id: string;
@@ -317,7 +328,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         {(() => { const msg = conv.last_message || "New conversation"; return msg.length > 25 ? msg.slice(0, 25) + "…" : msg; })()}
                       </p>
                       <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
-                        {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
+                        {shortTimeAgo(new Date(conv.last_message_at))}
                       </span>
                     </div>
                   </div>
