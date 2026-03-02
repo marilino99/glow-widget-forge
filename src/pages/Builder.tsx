@@ -589,7 +589,7 @@ const Builder = () => {
                   placeholder="Type your feedback here..."
                 />
                 <div className="flex items-end justify-between mt-3">
-                  <p className="text-xs text-muted-foreground leading-snug max-w-[180px]">We don't respond to submissions, but we read all of them carefully</p>
+                  <p className="text-xs text-muted-foreground leading-snug max-w-[200px]">We don't respond to submissions,<br/>but we read all of them carefully</p>
                   <Button size="sm" className="rounded-lg px-5">Submit</Button>
                 </div>
               </PopoverContent>
