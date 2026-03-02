@@ -34,7 +34,7 @@ import {
   LayoutTemplate,
   Home,
   ChevronsLeft,
-  CreditCard,
+  ArrowUp,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -729,37 +729,33 @@ const BuilderSidebar = ({
       {/* Usage overview */}
       {!isMiniSidebar && (
         <div className={`shrink-0 px-3 pb-2`}>
-          <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">{isPro ? "Pro" : "Free"}</span>
+          <div className="rounded-2xl border border-border bg-background p-4 space-y-3">
+            {/* Responses header */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-foreground">Responses</span>
+              <span className="text-sm font-semibold text-foreground">{aiResponsesThisMonth.toLocaleString()} / {aiResponseLimit.toLocaleString()}</span>
             </div>
-            <div className="text-sm text-foreground">
-              <span className="font-semibold">{aiResponsesThisMonth.toLocaleString()}</span>
-              <span className="text-muted-foreground"> / {aiResponseLimit.toLocaleString()} responses</span>
-            </div>
-            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  isAtLimit ? "bg-red-500" : isApproachingLimit ? "bg-yellow-500" : "bg-green-500"
-                }`}
-                style={{ width: `${Math.min((aiResponsesThisMonth / aiResponseLimit) * 100, 100)}%` }}
-              />
-            </div>
-            {isAtLimit && !isPro && (
-              <button
-                onClick={onUpgrade}
-                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-purple-700 transition-colors"
-              >
-                <Sparkles className="h-3 w-3" />
-                Upgrade to unlock more
-              </button>
-            )}
-            {isApproachingLimit && !isAtLimit && !isPro && (
-              <p className="text-xs text-yellow-600">
-                You're running low on AI responses.{" "}
-                <button onClick={onUpgrade} className="underline font-medium hover:text-yellow-700">Upgrade</button>
+
+            <div className="h-px w-full bg-border" />
+
+            {/* Reset date */}
+            {subscriptionEnd && (
+              <p className="text-xs text-muted-foreground">
+                Resets on {new Date(subscriptionEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {new Date(subscriptionEnd).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
               </p>
+            )}
+
+            {/* Upgrade button */}
+            {!isPro && (
+              <div className="group relative p-[2px] rounded-full overflow-hidden cursor-pointer" onClick={onUpgrade}>
+                <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,#f97316,#ec4899,#a855f7,#f97316)] opacity-60 group-hover:opacity-100 transition-opacity duration-300" style={{ animation: "rainbow-spin 4s linear infinite" }} />
+                <button className="relative w-full flex items-center justify-center gap-2 rounded-full bg-background px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center justify-center h-6 w-6 rounded-full bg-foreground">
+                    <ArrowUp className="h-3.5 w-3.5 text-background" />
+                  </div>
+                  Upgrade
+                </button>
+              </div>
             )}
           </div>
         </div>
