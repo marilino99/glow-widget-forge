@@ -752,9 +752,9 @@ const BuilderSidebar = ({
 
             {/* Upgrade button */}
             {!isPro && (
-              <div className="group relative p-[2px] rounded-full overflow-hidden cursor-pointer" onClick={onUpgrade}>
+              <div className="group relative p-[2px] rounded-xl overflow-hidden cursor-pointer" onClick={onUpgrade}>
                 <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,#f97316,#ec4899,#a855f7,#f97316)] opacity-60 group-hover:opacity-100 transition-opacity duration-300" style={{ animation: "rainbow-spin 4s linear infinite" }} />
-                <button className="relative w-full flex items-center justify-center gap-2 rounded-full bg-background px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors">
+                <button className="relative w-full flex items-center justify-center gap-2.5 rounded-[10px] bg-background px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors">
                   <div className="flex items-center justify-center h-6 w-6 rounded-full bg-foreground">
                     <ArrowUp className="h-3.5 w-3.5 text-background" />
                   </div>
