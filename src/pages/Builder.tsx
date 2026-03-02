@@ -633,6 +633,9 @@ const Builder = () => {
                 <DropdownMenuItem onClick={() => setShowSettingsDialog(true)} className="py-2 rounded-lg text-sm">
                   Settings
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setShowSettingsDialog(true); }} className="py-2 rounded-lg text-sm">
+                  Subscription
+                </DropdownMenuItem>
                 <DropdownMenuItem className="py-2 rounded-lg text-sm" disabled>
                   Integrations
                   <span className="ml-auto text-[10px] text-muted-foreground">soon</span>
