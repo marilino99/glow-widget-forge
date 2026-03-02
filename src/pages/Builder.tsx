@@ -336,7 +336,7 @@ const Builder = () => {
           )}
         </div>
         {/* Sidebar header - workspace selector */}
-        <div className={`shrink-0 pt-3 pb-2 ${isMiniSidebar ? 'px-2' : 'px-4'}`}>
+        <div className={`shrink-0 pt-1 pb-2 ${isMiniSidebar ? 'px-2' : 'px-4'}`}>
           {/* Workspace selector / mini icon */}
           {isMiniSidebar ? (
             <div className="mt-3 flex justify-center">
