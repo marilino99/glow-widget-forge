@@ -739,11 +739,16 @@ const BuilderSidebar = ({
             <div className="h-px w-full bg-border" />
 
             {/* Reset date */}
-            {subscriptionEnd && (
-              <p className="text-xs text-muted-foreground">
-                Resets on {new Date(subscriptionEnd).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {new Date(subscriptionEnd).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-              </p>
-            )}
+            {(() => {
+              const resetDate = subscriptionEnd
+                ? new Date(subscriptionEnd)
+                : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+              return (
+                <p className="text-xs text-muted-foreground">
+                  Resets on {resetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {resetDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                </p>
+              );
+            })()}
 
             {/* Upgrade button */}
             {!isPro && (
