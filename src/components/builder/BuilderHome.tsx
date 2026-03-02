@@ -295,7 +295,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                 >
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
-                    style={{ backgroundColor: isActive ? "rgba(129,140,248,0.15)" : `${metric.color}15` }}
+                    style={{ backgroundColor: isActive ? "rgba(129,140,248,0.15)" : "#f4f4f5" }}
                   >
                     <metric.icon className="h-5 w-5" style={{ color: isActive ? "#818cf8" : metric.color }} />
                   </div>
