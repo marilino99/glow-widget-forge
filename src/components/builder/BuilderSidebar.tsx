@@ -733,7 +733,7 @@ const BuilderSidebar = ({
             {/* Responses header */}
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-foreground">Responses</span>
-              <span className="text-sm font-semibold text-foreground">{aiResponsesThisMonth.toLocaleString()} / {aiResponseLimit.toLocaleString()}</span>
+              <span className="text-sm text-foreground">{aiResponsesThisMonth.toLocaleString()} / {aiResponseLimit.toLocaleString()}</span>
             </div>
 
             <div className="h-px w-full bg-border" />
