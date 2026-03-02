@@ -318,7 +318,7 @@ const Builder = () => {
   return (
     <div className="flex h-screen bg-background">
       {/* Left sidebar - full height */}
-      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-72'}`}>
+      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-64'}`}>
         {/* Sidebar logo row - same height as content header */}
         <div className={`shrink-0 flex items-center h-12 ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
           {isMiniSidebar ? (
