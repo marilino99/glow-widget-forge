@@ -311,12 +311,12 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <span className={`text-sm truncate block ${conv.unread_count > 0 ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
                       {title}
                     </span>
-                    <div className="flex items-center gap-1.5 mt-0.5">
+                    <div className="flex items-center gap-1.5 mt-0.5 overflow-hidden">
                       <MessageCircle className="h-3 w-3 text-muted-foreground shrink-0" />
-                      <p className={`truncate text-xs flex-1 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                      <p className={`truncate text-xs min-w-0 flex-1 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
                         {conv.last_message || "New conversation"}
                       </p>
-                      <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
+                      <span className="text-[11px] text-muted-foreground shrink-0 ml-auto whitespace-nowrap">
                         {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
                       </span>
                     </div>
