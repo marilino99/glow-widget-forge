@@ -278,7 +278,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
             <SlidersHorizontal className="h-3.5 w-3.5" />
           </button>
         </div>
-        <ScrollArea className="flex-1 [&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden">
+        <ScrollArea className="flex-1">
           {filteredConversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <MessageCircle className="h-10 w-10 text-muted-foreground/30" />
