@@ -282,8 +282,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 // Generate a short 2-3 word title from the last message
                 const getSummary = (msg: string | null) => {
                   if (!msg) return "New Conversation";
-                  const words = msg.split(/\s+/).slice(0, 3).join(" ");
-                  return words.length > 25 ? words.slice(0, 25) + "…" : words + (msg.split(/\s+/).length > 3 ? "…" : "");
+                  return msg.split(/\s+/).slice(0, 4).join(" ");
                 };
                 const summary = getSummary(conv.last_message);
                 return (
@@ -342,8 +341,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 {(() => {
                   const msg = selectedConversation.last_message;
                   if (!msg) return "New Conversation";
-                  const words = msg.split(/\s+/).slice(0, 3).join(" ");
-                  return words.length > 25 ? words.slice(0, 25) + "…" : words + (msg.split(/\s+/).length > 3 ? "…" : "");
+                  return msg.split(/\s+/).slice(0, 4).join(" ");
                 })()}
               </h3>
               <button className="rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
