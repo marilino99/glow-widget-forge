@@ -254,7 +254,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 2: Conversation list */}
-      <div className="flex w-72 shrink-0 flex-col border-r border-border bg-background">
+      <div className="flex w-72 shrink-0 flex-col border-r border-border bg-background overflow-hidden">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
             <MessageCircle className="h-4 w-4 text-muted-foreground" />
@@ -307,18 +307,20 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     </div>
                     <StatusDot online={isOnline(conv.last_message_at)} />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <span className={`text-sm truncate block ${conv.unread_count > 0 ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
-                      {title}
-                    </span>
-                    <div className="flex items-center gap-1.5 mt-0.5 overflow-hidden">
-                      <MessageCircle className="h-3 w-3 text-muted-foreground shrink-0" />
-                      <p className={`truncate text-xs min-w-0 flex-1 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                        {conv.last_message || "New conversation"}
-                      </p>
-                      <span className="text-[11px] text-muted-foreground shrink-0 ml-auto whitespace-nowrap">
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <div className="grid grid-cols-[1fr_auto] items-baseline gap-1">
+                      <span className={`text-sm truncate ${conv.unread_count > 0 ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
+                        {title}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
                         {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
                       </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <MessageCircle className="h-3 w-3 text-muted-foreground shrink-0" />
+                      <p className={`truncate text-xs min-w-0 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                        {conv.last_message || "New conversation"}
+                      </p>
                     </div>
                   </div>
                   {conv.unread_count > 0 && (
