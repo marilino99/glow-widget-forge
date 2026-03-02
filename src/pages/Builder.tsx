@@ -579,10 +579,6 @@ const Builder = () => {
             <button className="rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
               Feedback
             </button>
-            <button className="rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors flex items-center gap-1">
-              <BookOpen className="h-3 w-3" />
-              Docs
-            </button>
             <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors">
               <Bell className="h-4 w-4 text-muted-foreground" />
             </button>
