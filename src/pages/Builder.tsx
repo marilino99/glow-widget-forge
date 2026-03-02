@@ -576,9 +576,24 @@ const Builder = () => {
             <span className="text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button className="rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
-              Feedback
-            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
+                  Feedback
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-80 p-4" sideOffset={8}>
+                <textarea
+                  className="w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                  rows={4}
+                  placeholder="Type your feedback here..."
+                />
+                <div className="flex items-end justify-between mt-3">
+                  <p className="text-xs text-muted-foreground leading-snug max-w-[180px]">We don't respond to submissions, but we read all of them carefully</p>
+                  <Button size="sm" className="rounded-lg px-5">Submit</Button>
+                </div>
+              </PopoverContent>
+            </Popover>
             <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
               <Bell className="h-4 w-4 text-muted-foreground" />
             </button>
