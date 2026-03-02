@@ -204,7 +204,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   ];
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#fafafa] p-8 lg:p-12">
+    <div className="flex-1 overflow-y-auto bg-[#ffffff] p-8 lg:p-12">
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Greeting */}
         <div>
