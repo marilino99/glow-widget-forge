@@ -315,85 +315,23 @@ const Builder = () => {
   const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance" };
 
   return (
-    <div className="flex h-screen flex-col bg-background">
-      {/* Top header bar */}
-      <div className="shrink-0 flex items-center justify-between border-b border-border px-4 h-12">
-        {/* Left: Logo + current view */}
-        <div className="flex items-center gap-6">
-          <button onClick={() => window.location.reload()} className="flex items-center">
-            <img src={widjetLogoNavbar} className="h-7 w-auto" alt="Widjet logo" />
-          </button>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
-          </div>
-        </div>
-        {/* Right: Actions + Account */}
-        <div className="flex items-center gap-2">
-          <button className="rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors">
-            Feedback
-          </button>
-          <button className="rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors flex items-center gap-1">
-            <BookOpen className="h-3 w-3" />
-            Docs
-          </button>
-          <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors">
-            <Bell className="h-4 w-4 text-muted-foreground" />
-          </button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden hover:ring-2 hover:ring-border transition-all">
-                {userAvatarUrl ? (
-                  <img src={userAvatarUrl} alt="" className="h-8 w-8 rounded-full object-cover" />
-                ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
-                    {userInitial}
-                  </div>
-                )}
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">
-              <div className="flex items-center gap-3 px-2 py-2">
-                {userAvatarUrl ? (
-                  <img src={userAvatarUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
-                ) : (
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
-                    {userInitial}
-                  </div>
-                )}
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-semibold text-foreground">{userDisplayName || userInitial}</span>
-                  <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
-                </div>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={async () => {
-                  await signOut();
-                  navigate("/");
-                }}
-                className="gap-3 py-2 rounded-xl"
-              >
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-      {/* Main content area */}
-      <div className="flex flex-1 overflow-hidden">
+    <div className="flex h-screen bg-background">
       {/* Left sidebar - full height */}
       <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-72'}`}>
-        {/* Sidebar header */}
-        <div className={`shrink-0 pt-3 pb-2 ${isMiniSidebar ? 'px-2' : 'px-4'}`}>
-          <div className={`flex items-center ${isMiniSidebar ? 'justify-center' : 'justify-start'}`}>
-            <button
-              onClick={() => setIsMiniSidebar(!isMiniSidebar)}
-              className={`flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-[#f0f0f0]`}
-              title={isMiniSidebar ? "Espandi sidebar" : "Riduci sidebar"}
-            >
-              <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
+        {/* Sidebar logo row - same height as content header */}
+        <div className={`shrink-0 flex items-center h-12 border-b border-border ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
+          {isMiniSidebar ? (
+            <button onClick={() => window.location.reload()} className="flex items-center justify-center">
+              <img src={widjetLogoNavbar} className="h-5 w-auto" alt="Widjet logo" />
             </button>
-          </div>
+          ) : (
+            <button onClick={() => window.location.reload()} className="flex items-center">
+              <img src={widjetLogoNavbar} className="h-7 w-auto" alt="Widjet logo" />
+            </button>
+          )}
+        </div>
+        {/* Sidebar header - workspace selector */}
+        <div className={`shrink-0 pt-3 pb-2 ${isMiniSidebar ? 'px-2' : 'px-4'}`}>
           {/* Workspace selector / mini icon */}
           {isMiniSidebar ? (
             <div className="mt-3 flex justify-center">
@@ -619,7 +557,70 @@ const Builder = () => {
       )}
 
       {/* Right panel - full height */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Content header - same height as sidebar logo row */}
+        <div className="shrink-0 flex items-center justify-between h-12 border-b border-border px-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsMiniSidebar(!isMiniSidebar)}
+              className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-muted"
+              title={isMiniSidebar ? "Espandi sidebar" : "Riduci sidebar"}
+            >
+              <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
+            </button>
+            <span className="text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors">
+              Feedback
+            </button>
+            <button className="rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors flex items-center gap-1">
+              <BookOpen className="h-3 w-3" />
+              Docs
+            </button>
+            <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors">
+              <Bell className="h-4 w-4 text-muted-foreground" />
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden hover:ring-2 hover:ring-border transition-all">
+                  {userAvatarUrl ? (
+                    <img src={userAvatarUrl} alt="" className="h-8 w-8 rounded-full object-cover" />
+                  ) : (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
+                      {userInitial}
+                    </div>
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">
+                <div className="flex items-center gap-3 px-2 py-2">
+                  {userAvatarUrl ? (
+                    <img src={userAvatarUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
+                      {userInitial}
+                    </div>
+                  )}
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-semibold text-foreground">{userDisplayName || userInitial}</span>
+                    <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await signOut();
+                    navigate("/");
+                  }}
+                  className="gap-3 py-2 rounded-xl"
+                >
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         {builderView === "home" ? (
           <BuilderHome isPro={plan === "pro"} userName={config.contactName !== "Support" ? config.contactName : null} />
         ) : builderView === "conversations" ? (
@@ -871,7 +872,6 @@ const Builder = () => {
           }
         }}
       />
-      </div>
     </div>
   );
 };
