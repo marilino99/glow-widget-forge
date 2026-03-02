@@ -58,6 +58,7 @@ export type Database = {
           id: string
           last_message: string | null
           last_message_at: string | null
+          topic: string | null
           unread_count: number | null
           updated_at: string | null
           visitor_id: string
@@ -73,6 +74,7 @@ export type Database = {
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          topic?: string | null
           unread_count?: number | null
           updated_at?: string | null
           visitor_id: string
@@ -88,6 +90,7 @@ export type Database = {
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          topic?: string | null
           unread_count?: number | null
           updated_at?: string | null
           visitor_id?: string

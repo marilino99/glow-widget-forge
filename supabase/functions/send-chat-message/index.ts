@@ -64,6 +64,10 @@ Deno.serve(async (req) => {
       // Create new conversation with a server-generated visitor token
       const newVisitorToken = crypto.randomUUID();
 
+      // Generate a short topic from the first message (first 5 words, capitalized)
+      const topicWords = trimmedMessage.split(/\s+/).slice(0, 5).join(" ");
+      const topic = topicWords.length > 40 ? topicWords.slice(0, 40) : topicWords;
+
       const { data: newConv, error: createError } = await supabase
         .from("conversations")
         .insert({
@@ -75,6 +79,7 @@ Deno.serve(async (req) => {
           last_message: trimmedMessage,
           last_message_at: new Date().toISOString(),
           unread_count: 1,
+          topic,
         })
         .select()
         .single();

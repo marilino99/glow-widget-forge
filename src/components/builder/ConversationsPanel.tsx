@@ -30,6 +30,7 @@ interface Conversation {
   last_message_at: string;
   unread_count: number;
   created_at: string;
+  topic: string | null;
 }
 
 interface ChatMessage {
@@ -279,12 +280,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
             <div className="space-y-0.5 p-1.5">
               {filteredConversations.map((conv, idx) => {
                 const identity = getVisitorIdentity(conv.visitor_id, idx);
-                // Generate a short 2-3 word title from the last message
-                const getSummary = (msg: string | null) => {
-                  if (!msg) return "New Conversation";
-                  return msg.split(/\s+/).slice(0, 4).join(" ");
-                };
-                const summary = getSummary(conv.last_message);
+                const title = conv.topic || conv.last_message?.split(/\s+/).slice(0, 4).join(" ") || "New Conversation";
                 return (
                 <button
                   key={conv.id}
@@ -306,7 +302,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-foreground truncate">
-                        {summary}
+                        {title}
                       </span>
                       <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
                         {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
@@ -338,11 +334,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
           <>
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
               <h3 className="text-sm font-semibold text-foreground">
-                {(() => {
-                  const msg = selectedConversation.last_message;
-                  if (!msg) return "New Conversation";
-                  return msg.split(/\s+/).slice(0, 4).join(" ");
-                })()}
+                {selectedConversation.topic || selectedConversation.last_message?.split(/\s+/).slice(0, 4).join(" ") || "New Conversation"}
               </h3>
               <button className="rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
                 <MoreVertical className="h-4 w-4" />
