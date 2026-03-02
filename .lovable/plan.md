@@ -1,29 +1,46 @@
 
+# Restructure Top Header to Match ElevenLabs Design
 
-# Mappa del mondo migliorata
+## Current State
+The builder has a full-width top bar with the logo on the left and actions/account on the right. Below that, the sidebar starts with a PanelLeft toggle button and workspace selector.
 
-## Problema
-La mappa attuale usa tracciati SVG disegnati a mano con forme geometriche semplici che non assomigliano ai veri confini dei paesi. Il risultato e' visivamente brutto e non professionale.
+## Target Design (from screenshot)
+The ElevenLabs layout has:
+- **Logo** ("Widjet") at the top-left of the **sidebar area**, not a full-width bar
+- **Workspace selector** ("ElevenCreative" with avatar and chevron) below the logo, still inside the sidebar
+- A **vertical border** (the sidebar's right border) separates these from the main content
+- On the **right side of the vertical border**, at the **same height as the logo**, sits the current view label ("Home") with a sidebar collapse/expand icon
 
-## Soluzione
-Sostituire completamente il componente `WorldMap.tsx` con una mappa del mondo basata su tracciati SVG realistici derivati da Natural Earth (proiezione equirettangolare). Ogni paese sara' rappresentato dal suo contorno geografico reale, non da forme approssimative.
+There is NO full-width top bar spanning the entire page.
 
-## Approccio tecnico
+## Plan
 
-### Sostituzione di `src/components/builder/WorldMap.tsx`
-- Usare tracciati SVG accurati per i principali paesi del mondo (circa 50+ paesi con i contorni reali)
-- I path SVG saranno derivati da dati geografici reali (Natural Earth 110m) convertiti in coordinate SVG semplificate
-- Ogni paese mantiene il suo codice ISO (US, GB, DE, IT, ecc.) come ID
-- La logica di colorazione rimane la stessa: paesi con chat si colorano di indaco con opacita' proporzionale al volume
-- I paesi senza dati restano grigio chiaro
-- Il viewBox sara' calibrato per una proiezione equirettangolare standard (tipo Mercator semplificato)
+### 1. Remove the full-width top header bar
+Delete the current `h-12` top bar that spans the full width with logo, Feedback, Docs, Bell, and account dropdown.
 
-### Dettagli
-- Nessuna libreria esterna necessaria -- tutto inline SVG
-- I tracciati saranno piu' dettagliati (curve reali dei confini) ma comunque leggeri (ogni path e' una stringa di coordinate semplificata)
-- Il componente mantiene la stessa interfaccia props (`countryData`) e la stessa logica di mapping nomi->ID
-- Nessuna modifica necessaria a `BuilderHome.tsx` -- solo il file `WorldMap.tsx` viene riscritto
+### 2. Move logo into sidebar top area
+Place the Widjet logo at the top of the sidebar column, replacing the current PanelLeft toggle button position. The logo sits at the top-left, inside the sidebar, with consistent height (e.g. `h-12` row).
 
-### Risultato atteso
-Una mappa del mondo dove si riconoscono chiaramente le forme di Italia, Francia, USA, Brasile, India, ecc. con i confini realistici, non forme geometriche approssimative.
+### 3. Keep workspace selector below logo
+The existing workspace selector (popover with widget name and favicon) stays in the sidebar, directly below the logo -- no changes needed there.
 
+### 4. Add view label + sidebar toggle in main content header
+At the top of the main content area (right of the sidebar border), add a row at the same height as the logo row containing:
+- The **sidebar collapse/expand icon** (PanelLeft) on the left
+- The **current view label** ("Home", "Conversations", etc.) next to it
+
+This row aligns horizontally with the logo row in the sidebar.
+
+### 5. Move account dropdown and action buttons
+Move Feedback, Docs, Bell, and account avatar dropdown to the **right side** of this new main content header row, keeping them accessible.
+
+### Technical Details
+
+**File: `src/pages/Builder.tsx`**
+
+- Remove the top-level `<div className="shrink-0 flex items-center justify-between border-b ...">` block (lines 320-381)
+- In the sidebar column (starting ~line 387), replace the PanelLeft toggle with the Widjet logo at the top, followed by a border-b, then the workspace selector
+- Add a new header row inside the main content area (`flex-1` div) with:
+  - Left: PanelLeft toggle + view label
+  - Right: Feedback, Docs, Bell, Account dropdown
+- Both the sidebar logo row and the main content header row share the same fixed height (`h-12`) and have `border-b` to create the continuous horizontal line with the vertical sidebar border intersecting it
