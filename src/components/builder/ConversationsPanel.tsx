@@ -159,16 +159,29 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
     );
   }
 
-  const getAvatarColor = (name: string) => {
-    const colors = [
-      "from-purple-500 to-violet-600",
-      "from-blue-500 to-cyan-600",
-      "from-green-500 to-emerald-600",
-      "from-orange-500 to-red-600",
-      "from-pink-500 to-rose-600",
-    ];
-    const idx = (name || "V").charCodeAt(0) % colors.length;
-    return colors[idx];
+  const AVATAR_COLORS = [
+    "from-emerald-400 to-emerald-600",
+    "from-amber-400 to-yellow-500",
+    "from-blue-400 to-blue-600",
+    "from-rose-400 to-pink-600",
+    "from-violet-400 to-purple-600",
+    "from-cyan-400 to-teal-600",
+    "from-orange-400 to-orange-600",
+    "from-lime-400 to-green-600",
+    "from-fuchsia-400 to-fuchsia-600",
+    "from-sky-400 to-indigo-500",
+  ];
+
+  const getVisitorIdentity = (visitorId: string, index: number) => {
+    // Generate a deterministic but unique letter + number from the visitor_id
+    const letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
+    const hash1 = visitorId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const hash2 = visitorId.split("").reduce((acc, c, i) => acc + c.charCodeAt(0) * (i + 1), 0);
+    const letter = letters[hash1 % letters.length];
+    const number = (hash2 % 9) + 1;
+    const color = AVATAR_COLORS[(hash1 + hash2) % AVATAR_COLORS.length];
+    const displayName = `${letter}${number}`;
+    return { letter: displayName, color };
   };
 
   return (
@@ -252,7 +265,10 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
             </div>
           ) : (
             <div className="space-y-0.5 p-1.5">
-              {filteredConversations.map((conv) => (
+              {filteredConversations.map((conv, idx) => {
+                const identity = getVisitorIdentity(conv.visitor_id, idx);
+                const displayName = conv.visitor_name && conv.visitor_name !== "Visitor" ? conv.visitor_name : `Visitor ${identity.letter}`;
+                return (
                 <button
                   key={conv.id}
                   onClick={() => setSelectedConversation(conv)}
@@ -262,15 +278,15 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       : "hover:bg-muted/50"
                   }`}
                 >
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarColor(conv.visitor_name || "V")}`}>
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${identity.color}`}>
                     <span className="text-xs font-semibold text-white">
-                      {(conv.visitor_name || "V").charAt(0).toUpperCase()}
+                      {identity.letter}
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-foreground truncate">
-                        {conv.visitor_name || "Visitor"}
+                        {displayName}
                       </span>
                       <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
                         {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
@@ -289,7 +305,8 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     </span>
                   )}
                 </button>
-              ))}
+              );
+              })}
             </div>
           )}
         </ScrollArea>
@@ -301,7 +318,10 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
           <>
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
               <h3 className="text-sm font-semibold text-foreground">
-                {selectedConversation.visitor_name || "Visitor"}
+                {(() => {
+                  const id = getVisitorIdentity(selectedConversation.visitor_id, 0);
+                  return selectedConversation.visitor_name && selectedConversation.visitor_name !== "Visitor" ? selectedConversation.visitor_name : `Visitor ${id.letter}`;
+                })()}
               </h3>
               <button className="rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
                 <MoreVertical className="h-4 w-4" />
@@ -321,13 +341,16 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         </div>
                       )}
                       <div className={`flex items-end gap-2 ${message.sender_type === "owner" ? "justify-end" : "justify-start"}`}>
-                        {message.sender_type === "visitor" && (
-                          <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarColor(selectedConversation.visitor_name || "V")}`}>
-                            <span className="text-[10px] font-semibold text-white">
-                              {(selectedConversation.visitor_name || "V").charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                        )}
+                        {message.sender_type === "visitor" && (() => {
+                          const selIdentity = getVisitorIdentity(selectedConversation.visitor_id, 0);
+                          return (
+                            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${selIdentity.color}`}>
+                              <span className="text-[10px] font-semibold text-white">
+                                {selIdentity.letter}
+                              </span>
+                            </div>
+                          );
+                        })()}
                         <div
                           className={`max-w-[70%] rounded-2xl px-4 py-2.5 ${
                             message.sender_type === "owner"
