@@ -598,45 +598,54 @@ const Builder = () => {
                   )}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2">
-                <div className="flex items-center gap-3 px-2 py-2">
-                  {userAvatarUrl ? (
-                    <img src={userAvatarUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
-                  ) : (
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-sm font-semibold">
-                      {userInitial}
-                    </div>
-                  )}
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-semibold text-foreground">{userDisplayName || userInitial}</span>
-                    <span className="text-xs text-muted-foreground truncate">@{user?.email?.split("@")[0] || "user"}</span>
+              <DropdownMenuContent align="end" sideOffset={8} className="w-52 rounded-xl p-1.5">
+                {/* Balance / Responses section */}
+                <div className="px-3 py-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-foreground">Responses</span>
+                    {plan !== "pro" && (
+                      <button
+                        onClick={() => setShowUpgradeOverlay(true)}
+                        className="rounded-md bg-foreground px-2.5 py-1 text-[11px] font-medium text-background hover:bg-foreground/90 transition-colors"
+                      >
+                        Upgrade
+                      </button>
+                    )}
+                  </div>
+                  <div className="mt-1.5 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Remaining</span>
+                    <span className="font-medium text-foreground">{(aiResponseLimit - aiResponsesThisMonth).toLocaleString()}</span>
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                {plan !== "pro" && (
-                  <DropdownMenuItem onClick={() => setShowUpgradeOverlay(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
-                    <Sparkles className="h-4 w-4" style={{ color: '#D946EF' }} />
-                    <span style={{ color: '#D946EF' }}>Upgrade plan</span>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted" disabled>
-                  <LayoutGrid className="h-4 w-4" />
-                  Integrations
-                  <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">coming soon</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowSettingsDialog(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
-                  <Settings className="h-4 w-4" />
+                {/* Current workspace */}
+                <div className="px-3 py-2.5">
+                  <span className="text-[11px] text-muted-foreground">Current workspace</span>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{userDisplayName || userInitial}</p>
+                      <p className="text-xs text-muted-foreground">{plan === "pro" ? "Pro plan" : "Free plan"}</p>
+                    </div>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                {/* Menu items */}
+                <DropdownMenuItem onClick={() => setShowSettingsDialog(true)} className="py-2 rounded-lg text-sm">
                   Settings
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
-                  <LifeBuoy className="h-4 w-4" />
-                  Help
-                  <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
+                <DropdownMenuItem className="py-2 rounded-lg text-sm" disabled>
+                  Integrations
+                  <span className="ml-auto text-[10px] text-muted-foreground">soon</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
-                  <LogOut className="h-4 w-4" />
-                  Log out
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="py-2 rounded-lg text-sm">
+                  Help
+                  <ChevronRight className="ml-auto h-3.5 w-3.5 text-muted-foreground" />
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="py-2 rounded-lg text-sm">
+                  <LogOut className="h-3.5 w-3.5 mr-2" />
+                  Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
