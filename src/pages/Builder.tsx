@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, LogOut } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
@@ -27,6 +27,8 @@ import OnboardingTrainStep from "@/components/builder/OnboardingTrainStep";
 import OnboardingBrandStep from "@/components/builder/OnboardingBrandStep";
 import OnboardingTestStep from "@/components/builder/OnboardingTestStep";
 import OnboardingSurveyDialog, { type SurveyAnswers } from "@/components/builder/OnboardingSurveyDialog";
+import SettingsDialog from "@/components/builder/SettingsDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -135,6 +137,8 @@ const Builder = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMiniSidebar, setIsMiniSidebar] = useState(false);
   const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
 
@@ -594,7 +598,7 @@ const Builder = () => {
                   )}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">
+              <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2">
                 <div className="flex items-center gap-3 px-2 py-2">
                   {userAvatarUrl ? (
                     <img src={userAvatarUrl} alt="" className="h-8 w-8 shrink-0 rounded-full object-cover" />
@@ -605,17 +609,33 @@ const Builder = () => {
                   )}
                   <div className="flex flex-col min-w-0">
                     <span className="text-sm font-semibold text-foreground">{userDisplayName || userInitial}</span>
-                    <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+                    <span className="text-xs text-muted-foreground truncate">@{user?.email?.split("@")[0] || "user"}</span>
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={async () => {
-                    await signOut();
-                    navigate("/");
-                  }}
-                  className="gap-3 py-2 rounded-xl"
-                >
+                {plan !== "pro" && (
+                  <DropdownMenuItem onClick={() => setShowUpgradeOverlay(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
+                    <Sparkles className="h-4 w-4" style={{ color: '#D946EF' }} />
+                    <span style={{ color: '#D946EF' }}>Upgrade plan</span>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted" disabled>
+                  <LayoutGrid className="h-4 w-4" />
+                  Integrations
+                  <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">coming soon</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowSettingsDialog(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
+                  <LifeBuoy className="h-4 w-4" />
+                  Help
+                  <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="gap-3 py-2 rounded-xl transition-all duration-200 hover:bg-muted">
+                  <LogOut className="h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -872,6 +892,56 @@ const Builder = () => {
             });
           }
         }}
+      />
+
+      {/* Logout confirmation dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="max-w-sm rounded-3xl p-8 text-center [&>button]:hidden border-0 shadow-xl" overlayClassName="bg-black/10 backdrop-blur-sm">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-medium text-center text-foreground whitespace-pre-line">
+              {"Are you sure you\nwant to log out?"}
+            </DialogTitle>
+            <DialogDescription className="text-center text-base text-muted-foreground">
+              Log out of Widjet as {user?.email}?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-2">
+            <Button
+              onClick={async () => {
+                setShowLogoutDialog(false);
+                await signOut();
+                navigate("/");
+              }}
+              className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 py-6 text-base font-normal"
+            >
+              Log out
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowLogoutDialog(false)}
+              className="w-full rounded-full py-6 text-base font-normal sm:mt-0"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Settings dialog */}
+      <SettingsDialog
+        open={showSettingsDialog}
+        onOpenChange={setShowSettingsDialog}
+        userEmail={user?.email}
+        language={config.language}
+        onLanguageChange={(language) => updateConfig({ language })}
+        onSaveConfig={saveConfig}
+        isPro={plan === "pro"}
+        subscriptionEnd={subscriptionEnd}
+        onUpgrade={() => setShowUpgradeOverlay(true)}
+        showBranding={config.showBranding}
+        onShowBrandingChange={(show) => updateConfig({ showBranding: show })}
+        onAvatarChange={setUserAvatarUrl}
+        onNameChange={setUserDisplayName}
       />
     </div>
   );
