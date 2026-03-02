@@ -28,6 +28,7 @@ import OnboardingBrandStep from "@/components/builder/OnboardingBrandStep";
 import OnboardingTestStep from "@/components/builder/OnboardingTestStep";
 import OnboardingSurveyDialog, { type SurveyAnswers } from "@/components/builder/OnboardingSurveyDialog";
 import SettingsDialog from "@/components/builder/SettingsDialog";
+import FeedbackPopover from "@/components/builder/FeedbackPopover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -576,24 +577,7 @@ const Builder = () => {
             <span className="text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
-                  Feedback
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-96 p-4" sideOffset={12}>
-                <textarea
-                  className="w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring"
-                  rows={4}
-                  placeholder="Type your feedback here..."
-                />
-                <div className="flex items-end justify-between mt-3">
-                  <p className="text-xs text-muted-foreground leading-snug max-w-[200px]">We don't respond to submissions,<br/>but we read all of them carefully</p>
-                  <Button size="sm" className="rounded-lg px-5">Submit</Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <FeedbackPopover userEmail={user?.email} />
             <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
               <Bell className="h-4 w-4 text-muted-foreground" />
             </button>
