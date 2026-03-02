@@ -184,6 +184,19 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
     return { letter: displayName, color };
   };
 
+  const isOnline = (lastMessageAt: string) => {
+    const diff = Date.now() - new Date(lastMessageAt).getTime();
+    return diff < 5 * 60 * 1000; // 5 minutes
+  };
+
+  const StatusDot = ({ online, size = "md" }: { online: boolean; size?: "sm" | "md" }) => (
+    <span
+      className={`absolute bottom-0 right-0 rounded-full border-2 border-background ${
+        online ? "bg-green-500" : "bg-gray-300"
+      } ${size === "sm" ? "h-2.5 w-2.5" : "h-3 w-3"}`}
+    />
+  );
+
   return (
     <div className="relative flex flex-1 overflow-hidden bg-background">
       {/* AI Limit Banner */}
@@ -278,10 +291,13 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       : "hover:bg-muted/50"
                   }`}
                 >
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${identity.color}`}>
-                    <span className="text-xs font-semibold text-white">
-                      {identity.letter}
-                    </span>
+                  <div className="relative shrink-0">
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br ${identity.color}`}>
+                      <span className="text-xs font-semibold text-white">
+                        {identity.letter}
+                      </span>
+                    </div>
+                    <StatusDot online={isOnline(conv.last_message_at)} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between">
@@ -343,11 +359,15 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       <div className={`flex items-end gap-2 ${message.sender_type === "owner" ? "justify-end" : "justify-start"}`}>
                         {message.sender_type === "visitor" && (() => {
                           const selIdentity = getVisitorIdentity(selectedConversation.visitor_id, 0);
+                          const online = isOnline(selectedConversation.last_message_at);
                           return (
-                            <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${selIdentity.color}`}>
-                              <span className="text-[10px] font-semibold text-white">
-                                {selIdentity.letter}
-                              </span>
+                            <div className="relative shrink-0">
+                              <div className={`flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br ${selIdentity.color}`}>
+                                <span className="text-[10px] font-semibold text-white">
+                                  {selIdentity.letter}
+                                </span>
+                              </div>
+                              <StatusDot online={online} size="sm" />
                             </div>
                           );
                         })()}
