@@ -308,19 +308,17 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <StatusDot online={isOnline(conv.last_message_at)} />
                   </div>
                   <div className="min-w-0 flex-1 overflow-hidden">
-                    <div className="grid grid-cols-[1fr_auto] items-baseline gap-1">
-                      <span className={`text-sm truncate ${conv.unread_count > 0 ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
-                        {title}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                        {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
-                      </span>
-                    </div>
+                    <span className={`block text-sm truncate ${conv.unread_count > 0 ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
+                      {title}
+                    </span>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <MessageCircle className="h-3 w-3 text-muted-foreground shrink-0" />
-                      <p className={`truncate text-xs min-w-0 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                        {conv.last_message || "New conversation"}
+                      <p className={`truncate text-xs min-w-0 flex-1 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                        {(conv.last_message || "New conversation").slice(0, 30)}
                       </p>
+                      <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
+                        {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
+                      </span>
                     </div>
                   </div>
                   {conv.unread_count > 0 && (
