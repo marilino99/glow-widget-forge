@@ -51,6 +51,8 @@ export type Database = {
       }
       conversations: {
         Row: {
+          browser: string | null
+          city: string | null
           cleared_at: string | null
           cleared_by_visitor: boolean
           country: string | null
@@ -58,6 +60,8 @@ export type Database = {
           id: string
           last_message: string | null
           last_message_at: string | null
+          region: string | null
+          system: string | null
           topic: string | null
           unread_count: number | null
           updated_at: string | null
@@ -67,6 +71,8 @@ export type Database = {
           widget_owner_id: string
         }
         Insert: {
+          browser?: string | null
+          city?: string | null
           cleared_at?: string | null
           cleared_by_visitor?: boolean
           country?: string | null
@@ -74,6 +80,8 @@ export type Database = {
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          region?: string | null
+          system?: string | null
           topic?: string | null
           unread_count?: number | null
           updated_at?: string | null
@@ -83,6 +91,8 @@ export type Database = {
           widget_owner_id: string
         }
         Update: {
+          browser?: string | null
+          city?: string | null
           cleared_at?: string | null
           cleared_by_visitor?: boolean
           country?: string | null
@@ -90,6 +100,8 @@ export type Database = {
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          region?: string | null
+          system?: string | null
           topic?: string | null
           unread_count?: number | null
           updated_at?: string | null

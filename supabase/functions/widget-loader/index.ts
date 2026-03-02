@@ -29,22 +29,46 @@ Deno.serve(async (req) => {
   if (w.__wj_loaded) return;
   w.__wj_loaded = true;
 
-  // Detect visitor country from client side
+  // Detect visitor country, region, city from client side
   var visitorCountry = '';
+  var visitorRegion = '';
+  var visitorCity = '';
   try {
     var geoXhr = new XMLHttpRequest();
-    geoXhr.open('GET', 'https://ipapi.co/country_name/', true);
+    geoXhr.open('GET', 'https://ipapi.co/json/', true);
     geoXhr.timeout = 3000;
     geoXhr.onreadystatechange = function() {
       if (geoXhr.readyState !== 4) return;
       if (geoXhr.status === 200) {
-        var name = geoXhr.responseText.trim();
-        if (name && name.indexOf('{') !== 0 && name !== 'Undefined') {
-          visitorCountry = name;
-        }
+        try {
+          var geo = JSON.parse(geoXhr.responseText);
+          if (geo.country_name && geo.country_name !== 'Undefined') visitorCountry = geo.country_name;
+          if (geo.region) visitorRegion = geo.region;
+          if (geo.city) visitorCity = geo.city;
+        } catch(e) {}
       }
     };
     geoXhr.send();
+  } catch(e) {}
+
+  // Detect browser and system
+  var visitorBrowser = '';
+  var visitorSystem = '';
+  try {
+    var ua = navigator.userAgent || '';
+    if (ua.indexOf('Firefox') > -1) visitorBrowser = 'Firefox';
+    else if (ua.indexOf('Edg/') > -1) visitorBrowser = 'Edge';
+    else if (ua.indexOf('OPR') > -1 || ua.indexOf('Opera') > -1) visitorBrowser = 'Opera';
+    else if (ua.indexOf('Chrome') > -1) visitorBrowser = 'Chrome';
+    else if (ua.indexOf('Safari') > -1) visitorBrowser = 'Mobile Safari';
+    else visitorBrowser = 'Other';
+
+    if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) visitorSystem = 'iOS';
+    else if (ua.indexOf('Android') > -1) visitorSystem = 'Android';
+    else if (ua.indexOf('Mac OS') > -1) visitorSystem = 'macOS';
+    else if (ua.indexOf('Windows') > -1) visitorSystem = 'Windows';
+    else if (ua.indexOf('Linux') > -1) visitorSystem = 'Linux';
+    else visitorSystem = 'Other';
   } catch(e) {}
 
   var x = new XMLHttpRequest();
@@ -671,7 +695,7 @@ Deno.serve(async (req) => {
             } catch(e) {}
           }
         };
-        xhr.send(JSON.stringify({ widgetId: id, visitorId: visitorId, visitorToken: visitorToken, message: msg, visitorName: 'Visitor', visitorCountry: visitorCountry }));
+        xhr.send(JSON.stringify({ widgetId: id, visitorId: visitorId, visitorToken: visitorToken, message: msg, visitorName: 'Visitor', visitorCountry: visitorCountry, visitorRegion: visitorRegion, visitorCity: visitorCity, visitorBrowser: visitorBrowser, visitorSystem: visitorSystem }));
       }
 
       function renderBBMessage(msg) {
@@ -1216,7 +1240,11 @@ Deno.serve(async (req) => {
         visitorToken: visitorToken,
         message: msg,
         visitorName: 'Visitor',
-        visitorCountry: visitorCountry
+        visitorCountry: visitorCountry,
+        visitorRegion: visitorRegion,
+        visitorCity: visitorCity,
+        visitorBrowser: visitorBrowser,
+        visitorSystem: visitorSystem
       }));
     }
 
@@ -1256,7 +1284,11 @@ Deno.serve(async (req) => {
         visitorToken: visitorToken,
         message: msg,
         visitorName: 'Visitor',
-        visitorCountry: visitorCountry
+        visitorCountry: visitorCountry,
+        visitorRegion: visitorRegion,
+        visitorCity: visitorCity,
+        visitorBrowser: visitorBrowser,
+        visitorSystem: visitorSystem
       }));
     }
 

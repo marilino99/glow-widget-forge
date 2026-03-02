@@ -13,6 +13,7 @@ import {
   MoreVertical,
   SlidersHorizontal,
   ChevronRight,
+  ChevronDown,
   CheckSquare,
   Hand,
   Inbox,
@@ -30,7 +31,13 @@ interface Conversation {
   last_message_at: string;
   unread_count: number;
   created_at: string;
+  updated_at: string;
   topic: string | null;
+  country: string | null;
+  region: string | null;
+  city: string | null;
+  browser: string | null;
+  system: string | null;
 }
 
 interface ChatMessage {
@@ -66,6 +73,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [detailsTab, setDetailsTab] = useState<"details" | "activity">("details");
+  const [customerInfoOpen, setCustomerInfoOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -492,25 +500,70 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </button>
                   <div className="border-t border-border" />
-                  <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
+                  <button
+                    onClick={() => setCustomerInfoOpen(!customerInfoOpen)}
+                    className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
+                  >
                     <span>Customer info</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    {customerInfoOpen ? (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    )}
                   </button>
+                  {customerInfoOpen && (
+                    <div className="space-y-3 pb-2">
+                      <div className="flex items-start">
+                        <span className="w-28 shrink-0 text-sm text-muted-foreground">External ID</span>
+                        <span className="text-sm font-mono text-foreground truncate">
+                          {selectedConversation.visitor_id.replace('v_', '').slice(0, 18)}…
+                        </span>
+                      </div>
+                      {selectedConversation.region && (
+                        <div className="flex items-start">
+                          <span className="w-28 shrink-0 text-sm text-muted-foreground">Region</span>
+                          <span className="text-sm text-foreground">{selectedConversation.region}</span>
+                        </div>
+                      )}
+                      {selectedConversation.country && (
+                        <div className="flex items-start">
+                          <span className="w-28 shrink-0 text-sm text-muted-foreground">Country</span>
+                          <span className="text-sm text-foreground">{selectedConversation.country}</span>
+                        </div>
+                      )}
+                      {selectedConversation.city && (
+                        <div className="flex items-start">
+                          <span className="w-28 shrink-0 text-sm text-muted-foreground">City</span>
+                          <span className="text-sm text-foreground">{selectedConversation.city}</span>
+                        </div>
+                      )}
+                      {selectedConversation.browser && (
+                        <div className="flex items-start">
+                          <span className="w-28 shrink-0 text-sm text-muted-foreground">Browser</span>
+                          <span className="text-sm text-foreground">{selectedConversation.browser}</span>
+                        </div>
+                      )}
+                      {selectedConversation.system && (
+                        <div className="flex items-start">
+                          <span className="w-28 shrink-0 text-sm text-muted-foreground">System</span>
+                          <span className="text-sm text-foreground">{selectedConversation.system}</span>
+                        </div>
+                      )}
+                      <div className="flex items-start">
+                        <span className="w-28 shrink-0 text-sm text-muted-foreground">Created at</span>
+                        <span className="text-sm text-foreground">
+                          {format(new Date(selectedConversation.created_at), "MMM d, yyyy HH:mm")}
+                        </span>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="w-28 shrink-0 text-sm text-muted-foreground">Updated at</span>
+                        <span className="text-sm text-foreground">
+                          {format(new Date(selectedConversation.updated_at), "MMM d, yyyy HH:mm")}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   <div className="border-t border-border" />
-
-                  {/* Metadata */}
-                  <div className="space-y-3">
-                    <div className="flex items-start">
-                      <span className="w-24 shrink-0 text-xs text-muted-foreground">Created</span>
-                      <span className="text-xs text-foreground">
-                        {format(new Date(selectedConversation.created_at), "MMM d, yyyy")}
-                      </span>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="w-24 shrink-0 text-xs text-muted-foreground">Messages</span>
-                      <span className="text-xs text-foreground">{messages.length}</span>
-                    </div>
-                  </div>
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center">Select a conversation</p>
