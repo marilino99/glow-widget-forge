@@ -576,7 +576,7 @@ const Builder = () => {
             <span className="text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button className="rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors">
+            <button className="rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors">
               Feedback
             </button>
             <button className="rounded-full border border-border px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors flex items-center gap-1">
