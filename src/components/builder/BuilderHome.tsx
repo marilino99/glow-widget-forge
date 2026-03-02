@@ -290,7 +290,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                   } ${
                     isActive
                       ? "border-[#818cf8] bg-[#818cf8]/5 shadow-md"
-                      : "border-border bg-background hover:shadow-md"
+                      : "border-border bg-[#f4f4f5] hover:shadow-md"
                   }`}
                 >
                   <div
