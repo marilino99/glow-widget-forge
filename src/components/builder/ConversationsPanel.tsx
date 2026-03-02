@@ -454,31 +454,39 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
 
         <ScrollArea className="flex-1">
           {detailsTab === "details" ? (
-            <div className="p-5 space-y-5">
+            <div className="px-5 py-4">
               {selectedConversation ? (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Status</span>
-                    <span className="text-sm text-foreground">Active</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Assignee</span>
-                    <span className="text-sm text-foreground">—</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">ID</span>
-                    <span className="text-xs text-muted-foreground font-mono truncate max-w-[140px]">
-                      {selectedConversation.id.slice(0, 18)}...
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Channel</span>
-                    <div className="flex items-center gap-1.5">
-                      <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-sm text-foreground">Web Chat</span>
+                <div className="space-y-4">
+                  {/* Key details table */}
+                  <div className="space-y-3.5">
+                    <div className="flex items-start">
+                      <span className="w-24 shrink-0 text-sm text-muted-foreground">Status</span>
+                      <span className="text-sm font-medium text-foreground">
+                        {isOnline(selectedConversation.last_message_at) ? "Active" : "Closed by user"}
+                      </span>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="w-24 shrink-0 text-sm text-muted-foreground">Assignee</span>
+                      <span className="text-sm font-medium text-foreground">WidjetAI</span>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="w-24 shrink-0 text-sm text-muted-foreground">ID</span>
+                      <span className="text-sm font-mono text-foreground truncate">
+                        {selectedConversation.id.slice(0, 20)}…
+                      </span>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="w-24 shrink-0 text-sm text-muted-foreground">Channel</span>
+                      <div className="flex items-center gap-1.5">
+                        <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">Web Chat</span>
+                      </div>
                     </div>
                   </div>
+
                   <div className="border-t border-border" />
+
+                  {/* Expandable sections */}
                   <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
                     <span>AI overview</span>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -489,19 +497,21 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </button>
                   <div className="border-t border-border" />
-                  <div className="space-y-3 pt-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Created</span>
+
+                  {/* Metadata */}
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <span className="w-24 shrink-0 text-xs text-muted-foreground">Created</span>
                       <span className="text-xs text-foreground">
                         {format(new Date(selectedConversation.created_at), "MMM d, yyyy")}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Messages</span>
+                    <div className="flex items-start">
+                      <span className="w-24 shrink-0 text-xs text-muted-foreground">Messages</span>
                       <span className="text-xs text-foreground">{messages.length}</span>
                     </div>
                   </div>
-                </>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center">Select a conversation</p>
               )}
