@@ -12,6 +12,7 @@ import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
+import widjetIcon from "@/assets/widjet-icon.png";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import BuilderHome from "@/components/builder/BuilderHome";
@@ -322,7 +323,7 @@ const Builder = () => {
         <div className={`shrink-0 flex items-center h-12 border-b border-border ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
           {isMiniSidebar ? (
             <button onClick={() => window.location.reload()} className="flex items-center justify-center">
-              <img src={widjetLogoNavbar} className="h-5 w-auto" alt="Widjet logo" />
+              <img src={widjetIcon} className="h-7 w-7 object-contain" alt="Widjet" />
             </button>
           ) : (
             <button onClick={() => window.location.reload()} className="flex items-center">
