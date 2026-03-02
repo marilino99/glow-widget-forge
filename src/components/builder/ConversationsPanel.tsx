@@ -300,12 +300,12 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <StatusDot online={isOnline(conv.last_message_at)} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <span className="text-sm font-medium text-foreground truncate block">
+                    <span className={`text-sm truncate block ${conv.unread_count > 0 ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
                       {title}
                     </span>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <MessageCircle className="h-3 w-3 text-muted-foreground shrink-0" />
-                      <p className="truncate text-xs text-muted-foreground flex-1">
+                      <p className={`truncate text-xs flex-1 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
                         {conv.last_message || "New conversation"}
                       </p>
                       <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
