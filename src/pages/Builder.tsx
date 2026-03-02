@@ -582,7 +582,7 @@ const Builder = () => {
                   Feedback
                 </button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-80 p-4" sideOffset={12}>
+              <PopoverContent align="end" className="w-96 p-4" sideOffset={12}>
                 <textarea
                   className="w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring"
                   rows={4}
