@@ -24,10 +24,6 @@ const FeedbackPopover = ({ userEmail }: FeedbackPopoverProps) => {
       if (error) throw error;
       setSent(true);
       setFeedback("");
-      setTimeout(() => {
-        setOpen(false);
-        setTimeout(() => setSent(false), 300);
-      }, 2500);
     } catch (err) {
       console.error(err);
     } finally {
