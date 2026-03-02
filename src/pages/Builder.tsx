@@ -598,7 +598,7 @@ const Builder = () => {
                   )}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" sideOffset={8} className="w-52 rounded-xl p-1.5">
+              <DropdownMenuContent align="end" sideOffset={12} className="w-52 rounded-xl p-1.5">
                 {/* Balance / Responses section */}
                 <div className="px-3 py-2.5">
                   <div className="flex items-center justify-between">
