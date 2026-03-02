@@ -314,7 +314,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <MessageCircle className="h-3 w-3 text-muted-foreground shrink-0" />
                       <p className={`truncate text-xs min-w-0 flex-1 ${conv.unread_count > 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                        {(conv.last_message || "New conversation").slice(0, 30)}
+                        {(() => { const msg = conv.last_message || "New conversation"; return msg.length > 25 ? msg.slice(0, 25) + "…" : msg; })()}
                       </p>
                       <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
                         {formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: false, locale: enUS })}
