@@ -278,14 +278,14 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
             <SlidersHorizontal className="h-3.5 w-3.5" />
           </button>
         </div>
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 [&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden">
           {filteredConversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <MessageCircle className="h-10 w-10 text-muted-foreground/30" />
               <p className="mt-3 text-sm text-muted-foreground">No conversations</p>
             </div>
           ) : (
-            <div className="space-y-0.5 p-1.5">
+            <div className="space-y-0.5 p-1.5 overflow-hidden">
               {filteredConversations.map((conv, idx) => {
                 const identity = getVisitorIdentity(conv.visitor_id, idx);
                 const title = conv.topic || conv.last_message?.split(/\s+/).slice(0, 4).join(" ") || "New Conversation";
@@ -293,7 +293,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 <button
                   key={conv.id}
                   onClick={() => setSelectedConversation(conv)}
-                  className={`flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
+                  className={`flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors overflow-hidden ${
                     selectedConversation?.id === conv.id
                       ? "bg-blue-50"
                       : "hover:bg-muted/50"
