@@ -16,10 +16,14 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { widgetId, visitorId, message, visitorName, visitorToken, visitorCountry } = await req.json();
+    const { widgetId, visitorId, message, visitorName, visitorToken, visitorCountry, visitorRegion, visitorCity, visitorBrowser, visitorSystem } = await req.json();
 
-    // Use client-side detected country
+    // Use client-side detected geo/device info
     const detectedCountry: string | null = (visitorCountry && typeof visitorCountry === 'string' && visitorCountry.trim()) ? visitorCountry.trim() : null;
+    const detectedRegion: string | null = (visitorRegion && typeof visitorRegion === 'string' && visitorRegion.trim()) ? visitorRegion.trim() : null;
+    const detectedCity: string | null = (visitorCity && typeof visitorCity === 'string' && visitorCity.trim()) ? visitorCity.trim() : null;
+    const detectedBrowser: string | null = (visitorBrowser && typeof visitorBrowser === 'string' && visitorBrowser.trim()) ? visitorBrowser.trim() : null;
+    const detectedSystem: string | null = (visitorSystem && typeof visitorSystem === 'string' && visitorSystem.trim()) ? visitorSystem.trim() : null;
 
     if (!widgetId || !visitorId || !message || typeof message !== 'string') {
       return new Response(
@@ -76,6 +80,10 @@ Deno.serve(async (req) => {
           visitor_name: visitorName || "Visitor",
           visitor_token: newVisitorToken,
           country: detectedCountry,
+          region: detectedRegion,
+          city: detectedCity,
+          browser: detectedBrowser,
+          system: detectedSystem,
           last_message: trimmedMessage,
           last_message_at: new Date().toISOString(),
           unread_count: 1,
