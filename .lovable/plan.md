@@ -1,22 +1,21 @@
 
 
-# Fix: Timestamp non visibile nella lista conversazioni
+# Fix: Timestamp troncato nella lista conversazioni
 
 ## Problema
-Il componente `ScrollArea` di Radix non propaga correttamente i vincoli di larghezza al suo viewport interno. Il contenuto si espande oltre i 288px (w-72) del container, spingendo il timestamp fuori dallo schermo.
+Il viewport interno di Radix ScrollArea usa `overflow: scroll` inline, ignorando le classi CSS applicate dall'esterno. Il contenuto si espande oltre la larghezza della sidebar e il timestamp sparisce.
 
 ## Soluzione
-Aggiungere `className="w-full"` al viewport della ScrollArea, oppure forzare `max-w-full` / `overflow-hidden` sul div interno alla ScrollArea, in modo che il layout `grid-cols-[1fr_auto]` funzioni correttamente entro i limiti del container.
 
-## Dettagli tecnici
+### 1. Modificare `src/components/ui/scroll-area.tsx`
+Aggiungere al viewport la classe `[overflow-x:hidden!important]` per impedire lo scroll orizzontale e forzare il contenuto a rispettare la larghezza del parent.
 
-**File: `src/components/builder/ConversationsPanel.tsx`**
+```tsx
+<ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [overflow-x:hidden!important]">
+```
 
-1. Aggiungere `overflow-hidden` al div `space-y-0.5 p-1.5` che contiene la lista delle conversazioni, per forzare il contenuto a rispettare la larghezza del parent.
+### 2. Pulire `src/components/builder/ConversationsPanel.tsx`
+Rimuovere il selettore CSS hack `[&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden` dalla ScrollArea, dato che il fix e ora nel componente base.
 
-2. Aggiungere `overflow-hidden` anche al singolo `button` di ogni conversazione, in modo che il layout grid interno non possa espandersi oltre.
-
-3. In alternativa (o in aggiunta), sovrascrivere lo stile del viewport della ScrollArea passando una classe custom che forza `overflow-x: hidden` e `max-width: 100%`.
-
-Queste modifiche garantiscono che il testo del titolo venga troncato (`truncate`) e il timestamp resti sempre visibile a destra.
+Queste due modifiche risolvono il problema alla radice: il viewport non permettera piu al contenuto di espandersi orizzontalmente, e il layout `grid-cols-[1fr_auto]` funzionera correttamente troncando il titolo e mostrando il timestamp.
 
