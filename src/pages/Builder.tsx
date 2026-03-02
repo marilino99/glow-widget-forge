@@ -320,7 +320,7 @@ const Builder = () => {
       {/* Left sidebar - full height */}
       <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-72'}`}>
         {/* Sidebar logo row - same height as content header */}
-        <div className={`shrink-0 flex items-center h-12 border-b border-border ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
+        <div className={`shrink-0 flex items-center h-12 ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
           {isMiniSidebar ? (
             <button onClick={() => window.location.reload()} className="flex items-center justify-center">
               <img src={widjetIcon} className="h-7 w-7 object-contain" alt="Widjet" />
