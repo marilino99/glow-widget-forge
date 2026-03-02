@@ -173,15 +173,14 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
   ];
 
   const getVisitorIdentity = (visitorId: string, index: number) => {
-    // Generate a deterministic but unique letter + number from the visitor_id
     const letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
+    const digits = "0123456789";
+    const chars = letters + digits;
     const hash1 = visitorId.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
     const hash2 = visitorId.split("").reduce((acc, c, i) => acc + c.charCodeAt(0) * (i + 1), 0);
-    const letter = letters[hash1 % letters.length];
-    const number = (hash2 % 9) + 1;
+    const letter = chars[hash1 % chars.length];
     const color = AVATAR_COLORS[(hash1 + hash2) % AVATAR_COLORS.length];
-    const displayName = `${letter}${number}`;
-    return { letter: displayName, color };
+    return { letter, color };
   };
 
   const isOnline = (lastMessageAt: string) => {
