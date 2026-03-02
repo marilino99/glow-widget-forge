@@ -83,6 +83,13 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
           if (newConv && prev.length > 0) {
             setSelectedConversation(newConv);
           }
+          // On first load, auto-select the latest unread conversation
+          if (prev.length === 0 && !selectedConversation) {
+            const latestUnread = data.find((c) => c.unread_count > 0);
+            if (latestUnread) {
+              setSelectedConversation(latestUnread);
+            }
+          }
           return data;
         });
       }
