@@ -125,44 +125,44 @@ const Pricing = () => {
           </h2>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="inline-flex items-center rounded-full bg-[#f6f5f4] p-1">
-              <button onClick={() => setIsAnnual(false)} className={cn("relative rounded-full px-5 py-1 text-sm font-bold transition-colors", !isAnnual ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
-                {!isAnnual && <motion.span layoutId="pricing-pill" className="absolute inset-0 rounded-full bg-white shadow-sm" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />}
-                <span className="relative z-10">{t("pricing.monthly")}</span>
-              </button>
-              <button onClick={() => setIsAnnual(true)} className={cn("relative rounded-full px-5 py-1 text-sm font-bold transition-colors", isAnnual ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
-                {isAnnual && <motion.span layoutId="pricing-pill" className="absolute inset-0 rounded-full bg-white shadow-sm" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />}
-                <span className="relative z-10">{t("pricing.yearly")}</span>
-              </button>
-            </div>
+        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="inline-flex items-center rounded-full bg-[#f6f5f4] p-1 w-full sm:w-auto">
+            <button onClick={() => setIsAnnual(false)} className={cn("relative flex-1 sm:flex-none rounded-full px-5 py-2 sm:py-1 text-sm font-bold transition-colors", !isAnnual ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
+              {!isAnnual && <motion.span layoutId="pricing-pill" className="absolute inset-0 rounded-full bg-white shadow-sm" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />}
+              <span className="relative z-10">{t("pricing.monthly")}</span>
+            </button>
+            <button onClick={() => setIsAnnual(true)} className={cn("relative flex-1 sm:flex-none rounded-full px-5 py-2 sm:py-1 text-sm font-bold transition-colors", isAnnual ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
+              {isAnnual && <motion.span layoutId="pricing-pill" className="absolute inset-0 rounded-full bg-white shadow-sm" transition={{ type: "spring", bounce: 0.2, duration: 0.5 }} />}
+              <span className="relative z-10">{t("pricing.yearly")}</span>
+            </button>
+          </div>
+          <div className="flex items-center justify-between sm:gap-4">
             <span className="text-sm font-medium text-[hsl(270,70%,55%)]">
               {t("pricing.saveYearly")}
             </span>
-          </div>
-          <div className="relative" ref={currencyRef}>
-            <button
-              onClick={() => setCurrencyOpen(!currencyOpen)}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <span>{t("pricing.priceIn")}</span>
-              <span className="font-semibold text-foreground">{currency}</span>
-              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", currencyOpen && "rotate-180")} />
-            </button>
-            {currencyOpen && (
-              <div className="absolute right-0 top-full mt-1 rounded-lg border border-border bg-background shadow-lg z-20 overflow-hidden">
-                {(["EUR", "USD"] as const).map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => { setCurrency(c); setCurrencyOpen(false); }}
-                    className={cn("block w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors", currency === c && "font-semibold text-foreground bg-muted")}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="relative" ref={currencyRef}>
+              <button
+                onClick={() => setCurrencyOpen(!currencyOpen)}
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <span>{t("pricing.priceIn")}</span>
+                <span className="font-semibold text-foreground">{currency}</span>
+                <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", currencyOpen && "rotate-180")} />
+              </button>
+              {currencyOpen && (
+                <div className="absolute right-0 top-full mt-1 rounded-lg border border-border bg-background shadow-lg z-20 overflow-hidden">
+                  {(["EUR", "USD"] as const).map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => { setCurrency(c); setCurrencyOpen(false); }}
+                      className={cn("block w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors", currency === c && "font-semibold text-foreground bg-muted")}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </motion.div>
 
