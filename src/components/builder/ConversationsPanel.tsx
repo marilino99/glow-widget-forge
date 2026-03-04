@@ -490,8 +490,8 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     </div>
                     <div className="flex items-start">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">ID</span>
-                      <span className="text-sm font-mono text-foreground truncate">
-                        {selectedConversation.id.slice(0, 20)}…
+                      <span className="text-sm font-mono text-foreground truncate min-w-0">
+                        {selectedConversation.id.slice(0, 18)}…
                       </span>
                     </div>
                     <div className="flex items-start">
