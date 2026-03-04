@@ -523,10 +523,75 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
 
                   <div className="-mx-5" style={{ background: 'linear-gradient(90deg, rgba(219, 206, 252, 0.25) 0%, rgba(192, 132, 252, 0.22) 100%)' }}>
                     <div className="border-t border-border" />
-                    <button className="flex w-full items-center justify-between px-5 py-2.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-all">
+                    <button
+                      onClick={async () => {
+                        const opening = !aiOverviewOpen;
+                        setAiOverviewOpen(opening);
+                        if (opening && !aiOverviewData && selectedConversation) {
+                          setAiOverviewLoading(true);
+                          try {
+                            const { data: { session } } = await supabase.auth.getSession();
+                            const res = await fetch(
+                              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-overview`,
+                              {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                  Authorization: `Bearer ${session?.access_token}`,
+                                  apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                                },
+                                body: JSON.stringify({ conversation_id: selectedConversation.id }),
+                              }
+                            );
+                            const data = await res.json();
+                            if (data.summary) setAiOverviewData(data);
+                          } catch (e) {
+                            console.error("AI overview error:", e);
+                          } finally {
+                            setAiOverviewLoading(false);
+                          }
+                        }
+                      }}
+                      className="flex w-full items-center justify-between px-5 py-2.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-all"
+                    >
                       <span>AI overview</span>
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      {aiOverviewOpen ? (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      )}
                     </button>
+                    {aiOverviewOpen && (
+                      <div className="px-5 pb-4 pt-1">
+                        {aiOverviewLoading ? (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <span>Analyzing conversation…</span>
+                          </div>
+                        ) : aiOverviewData ? (
+                          <div className="space-y-3">
+                            <p className="text-sm font-semibold text-foreground">Summary</p>
+                            {aiOverviewData.summary.map((p, i) => (
+                              <p key={i} className="text-sm text-foreground/80 leading-relaxed">{p}</p>
+                            ))}
+                            {aiOverviewData.tags.length > 0 && (
+                              <div className="pt-1">
+                                <p className="text-sm font-semibold text-foreground mb-2">Suggested tags</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {aiOverviewData.tags.map((tag, i) => (
+                                    <span key={i} className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">Could not load AI overview.</p>
+                        )}
+                      </div>
+                    )}
                     <div className="border-t border-border" />
                   </div>
                   <button
