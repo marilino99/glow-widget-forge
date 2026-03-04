@@ -471,7 +471,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
           </button>
         </div>
 
-        <ScrollArea className="flex-1 [&>[data-radix-scroll-area-viewport]]:!overflow-x-hidden">
+        <ScrollArea className="flex-1 [&>[data-radix-scroll-area-viewport]]:!overflow-x-hidden [&>[data-radix-scroll-area-viewport]]:!overflow-y-scroll">
           {detailsTab === "details" ? (
             <div className="px-5 py-4">
               {selectedConversation ? (
