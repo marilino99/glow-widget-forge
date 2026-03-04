@@ -507,7 +507,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <div className="flex items-start">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Channel</span>
                       <div className="flex items-center gap-1.5">
-                        <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+                        <Globe className="h-3.5 w-3.5 text-foreground" />
                         <span className="text-sm font-medium text-foreground">Web Chat</span>
                       </div>
                     </div>
