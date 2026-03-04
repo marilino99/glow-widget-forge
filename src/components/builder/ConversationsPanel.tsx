@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -500,7 +501,14 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     </div>
                     <div className="flex items-start">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">ID</span>
-                      <span className="text-sm font-mono text-foreground truncate min-w-0">
+                      <span
+                        className="text-sm font-mono text-foreground truncate min-w-0 cursor-pointer hover:text-foreground/70 transition-colors"
+                        title="Double-click to copy"
+                        onDoubleClick={() => {
+                          navigator.clipboard.writeText(selectedConversation.id);
+                          toast("ID copied to clipboard");
+                        }}
+                      >
                         {selectedConversation.id.slice(0, 18)}…
                       </span>
                     </div>
@@ -536,7 +544,14 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     <div className="space-y-3 pb-2">
                       <div className="flex items-start">
                         <span className="w-28 shrink-0 text-sm text-muted-foreground">External ID</span>
-                        <span className="text-sm font-mono text-foreground truncate">
+                        <span
+                          className="text-sm font-mono text-foreground truncate cursor-pointer hover:text-foreground/70 transition-colors"
+                          title="Double-click to copy"
+                          onDoubleClick={() => {
+                            navigator.clipboard.writeText(selectedConversation.visitor_id);
+                            toast("External ID copied to clipboard");
+                          }}
+                        >
                           {selectedConversation.visitor_id.replace('v_', '').slice(0, 18)}…
                         </span>
                       </div>
