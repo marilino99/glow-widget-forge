@@ -105,9 +105,9 @@ const Builder = () => {
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
-    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance") : null;
+    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai") : null;
   });
-  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | null) => {
+  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null) => {
     setBuilderViewRaw(view);
     if (view) {
       sessionStorage.setItem("widjet_builder_view", view);
@@ -329,7 +329,7 @@ const Builder = () => {
   }
 
   const userInitial = (userDisplayName || user?.email || "U").charAt(0).toUpperCase();
-  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance" };
+  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", ai: "AI & Automation" };
 
   return (
     <div className="flex h-screen bg-background">
