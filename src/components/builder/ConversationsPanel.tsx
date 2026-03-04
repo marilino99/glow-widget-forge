@@ -86,6 +86,9 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [detailsTab, setDetailsTab] = useState<"details" | "activity">("details");
   const [customerInfoOpen, setCustomerInfoOpen] = useState(false);
+  const [aiOverviewOpen, setAiOverviewOpen] = useState(false);
+  const [aiOverviewData, setAiOverviewData] = useState<{ summary: string[]; tags: string[] } | null>(null);
+  const [aiOverviewLoading, setAiOverviewLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
