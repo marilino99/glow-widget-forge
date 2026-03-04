@@ -30,6 +30,8 @@ export interface WidgetConfiguration {
   chatbotInstructions: string;
   aiProvider: string;
   aiApiKey: string;
+  aiTemperature: number;
+  aiTone: string;
   widgetPosition: "left" | "right";
   widgetType: "popup" | "bottom-bar";
   googleReviewsEnabled: boolean;
@@ -68,6 +70,8 @@ const defaultConfig: WidgetConfiguration = {
   chatbotInstructions: "",
   aiProvider: "google",
   aiApiKey: "",
+  aiTemperature: 0.5,
+  aiTone: "friendly",
   widgetPosition: "right",
   widgetType: "popup",
   googleReviewsEnabled: false,
