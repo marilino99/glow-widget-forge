@@ -488,9 +488,10 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Sentiment</span>
                       <button
                         onClick={() => onUpgrade?.()}
-                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                       >
                         Not analyzed
+                        <span className="rounded bg-foreground px-1.5 py-0.5 text-[10px] font-semibold leading-none text-background">PLUS</span>
                       </button>
                     </div>
                     <div className="flex items-start">
