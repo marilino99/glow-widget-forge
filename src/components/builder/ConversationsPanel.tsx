@@ -20,7 +20,7 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import { format, differenceInMinutes, differenceInHours, differenceInDays } from "date-fns";
+import { format, formatDistanceToNow, differenceInMinutes, differenceInHours, differenceInDays } from "date-fns";
 
 const shortTimeAgo = (date: Date) => {
   const now = new Date();
