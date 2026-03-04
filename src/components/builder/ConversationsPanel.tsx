@@ -506,7 +506,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         title="Double-click to copy"
                         onDoubleClick={() => navigator.clipboard.writeText(selectedConversation.id)}
                       >
-                        {selectedConversation.id.slice(0, 18)}…
+                        {selectedConversation.id}
                       </span>
                     </div>
                     <div className="flex items-start">
@@ -546,7 +546,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                           title="Double-click to copy"
                           onDoubleClick={() => navigator.clipboard.writeText(selectedConversation.visitor_id)}
                         >
-                          {selectedConversation.visitor_id.replace('v_', '').slice(0, 18)}…
+                          {selectedConversation.visitor_id.replace('v_', '')}
                         </span>
                       </div>
                       {selectedConversation.region && (
