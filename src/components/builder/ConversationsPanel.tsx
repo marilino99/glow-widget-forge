@@ -521,7 +521,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                   <div className="-mx-5 border-t border-border" />
 
                   {/* Expandable sections */}
-                  <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
+                  <button className="flex w-full items-center justify-between -mx-5 px-5 py-2 text-sm font-medium text-foreground hover:text-foreground/80 transition-all rounded-none" style={{ boxShadow: '0 0 16px 4px rgba(192, 132, 252, 0.35), 0 0 6px 1px rgba(192, 132, 252, 0.2)', background: 'rgba(192, 132, 252, 0.06)' }}>
                     <span>AI overview</span>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </button>
