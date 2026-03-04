@@ -506,7 +506,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         title="Double-click to copy"
                         onDoubleClick={() => {
                           navigator.clipboard.writeText(selectedConversation.id);
-                          toast({ title: "ID copied to clipboard" });
+                          toast("ID copied to clipboard");
                         }}
                       >
                         {selectedConversation.id.slice(0, 18)}…
@@ -549,7 +549,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                           title="Double-click to copy"
                           onDoubleClick={() => {
                             navigator.clipboard.writeText(selectedConversation.visitor_id);
-                            toast({ title: "External ID copied to clipboard" });
+                            toast("External ID copied to clipboard");
                           }}
                         >
                           {selectedConversation.visitor_id.replace('v_', '').slice(0, 18)}…
