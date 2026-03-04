@@ -581,7 +581,7 @@ const Builder = () => {
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
             <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
-              <Bell className="h-4 w-4 text-muted-foreground" />
+              <Bell className="h-4 w-4 text-foreground" />
             </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
