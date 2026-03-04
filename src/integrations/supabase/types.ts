@@ -374,6 +374,8 @@ export type Database = {
         Row: {
           ai_api_key: string | null
           ai_provider: string
+          ai_temperature: number
+          ai_tone: string
           background_image: string | null
           background_type: string
           button_logo: string | null
@@ -414,6 +416,8 @@ export type Database = {
         Insert: {
           ai_api_key?: string | null
           ai_provider?: string
+          ai_temperature?: number
+          ai_tone?: string
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
@@ -454,6 +458,8 @@ export type Database = {
         Update: {
           ai_api_key?: string | null
           ai_provider?: string
+          ai_temperature?: number
+          ai_tone?: string
           background_image?: string | null
           background_type?: string
           button_logo?: string | null

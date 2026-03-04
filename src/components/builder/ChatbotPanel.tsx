@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Bot, Clock, MessageSquare, Sparkles, Info, Check, Eye, EyeOff } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { ArrowLeft, Bot, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -12,55 +11,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ChatbotPanelProps {
   onBack: () => void;
-  chatbotEnabled: boolean;
-  onChatbotToggle: (enabled: boolean) => void;
   chatbotInstructions: string;
   aiProvider: string;
-  aiApiKey: string;
+  aiTemperature: number;
+  aiTone: string;
   onSaveConfig: (config: Record<string, unknown>) => void;
 }
 
-const providers = [
-  { value: "google", label: "Google Gemini", placeholder: "AIzaSy..." },
-  { value: "openai", label: "OpenAI", placeholder: "sk-..." },
+const models = [
+  { value: "google", label: "Gemini 2.5 Flash" },
+  { value: "openai", label: "GPT-4o mini" },
+];
+
+const tones = [
+  { value: "professional", emoji: "💼", label: "Professional", description: "Clear and knowledgeable" },
+  { value: "friendly", emoji: "🤝", label: "Friendly", description: "Helpful and conversational" },
+  { value: "casual", emoji: "☕", label: "Casual", description: "Relaxed and informal" },
+  { value: "enthusiastic", emoji: "🎉", label: "Enthusiastic", description: "Energetic and encouraging" },
 ];
 
 const ChatbotPanel = ({
   onBack,
-  chatbotEnabled,
-  onChatbotToggle,
   chatbotInstructions,
   aiProvider,
-  aiApiKey,
+  aiTemperature,
+  aiTone,
   onSaveConfig,
 }: ChatbotPanelProps) => {
   const [instructions, setInstructions] = useState(chatbotInstructions);
   const [provider, setProvider] = useState(aiProvider || "google");
-  const [apiKey, setApiKey] = useState(aiApiKey || "");
-  const [showApiKey, setShowApiKey] = useState(false);
-
-  const currentProvider = providers.find((p) => p.value === provider);
-  const isConnected = !!aiApiKey && aiApiKey.length > 5;
+  const [temperature, setTemperature] = useState(aiTemperature ?? 0.5);
+  const [tone, setTone] = useState(aiTone || "friendly");
 
   const hasChanges =
     instructions !== chatbotInstructions ||
     provider !== aiProvider ||
-    apiKey !== aiApiKey;
+    temperature !== aiTemperature ||
+    tone !== aiTone;
 
   const handleSave = () => {
     onSaveConfig({
       chatbotInstructions: instructions,
       aiProvider: provider,
-      aiApiKey: apiKey,
+      aiTemperature: temperature,
+      aiTone: tone,
     });
   };
 
@@ -76,125 +73,105 @@ const ChatbotPanel = ({
         </button>
         <div className="flex items-center gap-2">
           <Bot className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold text-foreground">AI Chatbot</h2>
+          <h2 className="text-sm font-semibold text-foreground">AI & Automation</h2>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
-        <>
-            {/* Feature highlights */}
-            <div className="space-y-2.5">
-              <div className="flex items-start gap-2.5">
-                <Sparkles className="h-4 w-4 text-violet-500 mt-0.5 shrink-0" />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Risposte automatiche AI per i tuoi visitatori
-                </p>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <MessageSquare className="h-4 w-4 text-violet-500 mt-0.5 shrink-0" />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  I clienti possono chattare con un assistente AI
-                </p>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <Clock className="h-4 w-4 text-violet-500 mt-0.5 shrink-0" />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Disponibile 24/7
-                </p>
-              </div>
-            </div>
+      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-6">
+        <p className="text-xs text-muted-foreground">
+          Optimize responses and manage automated actions
+        </p>
 
-            {/* Provider selection */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-foreground">
-                Provider AI
-              </Label>
-              <Select value={provider} onValueChange={setProvider}>
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {providers.map((p) => (
-                    <SelectItem key={p.value} value={p.value}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+        {/* Model selection */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-foreground">Model</Label>
+          <Select value={provider} onValueChange={setProvider}>
+            <SelectTrigger className="rounded-xl">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {models.map((m) => (
+                <SelectItem key={m.value} value={m.value}>
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+                    {m.label}
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-            {/* API Key input */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5">
-                <Label className="text-sm font-medium text-foreground">
-                  {currentProvider?.label} API Key
-                </Label>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[240px]">
-                      <p className="text-xs">
-                        La tua API key è salvata in modo sicuro e viene usata solo per generare le risposte del chatbot.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Input
-                    type={showApiKey ? "text" : "password"}
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder={currentProvider?.placeholder || "Inserisci la tua API key"}
-                    className="rounded-xl pr-9"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showApiKey ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-              {isConnected && (
-                <div className="flex items-center gap-1.5 text-green-600">
-                  <Check className="h-3.5 w-3.5" />
-                  <span className="text-xs font-medium">Connesso</span>
-                </div>
-              )}
-            </div>
+        <div className="border-t border-border/40" />
 
-            {/* Additional Instructions */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-foreground">
-                Istruzioni aggiuntive (opzionale)
-              </Label>
-              <Textarea
-                value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
-                placeholder={`Aggiungi informazioni specifiche sulla tua attività, es:\n- Siamo un negozio di scarpe online\n- Orari: lun-ven 9-18\n- Spediamo in tutta Italia in 2-3 giorni`}
-                className="min-h-[140px] resize-none rounded-xl text-sm"
-              />
-              <p className="text-xs text-muted-foreground">
-                Queste istruzioni verranno aggiunte alla knowledge base predefinita di Widjet.
-              </p>
-            </div>
+        {/* Temperature */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium text-foreground">Temperature</Label>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Temperature decides how your AI responds—lower means straightforward and reliable, while higher introduces more variety, playfulness and creativity.
+          </p>
+          <Slider
+            value={[temperature]}
+            onValueChange={([v]) => setTemperature(v)}
+            min={0}
+            max={1}
+            step={0.1}
+            className="mt-2"
+          />
+          <p className="text-center text-sm font-medium text-foreground">{temperature.toFixed(1)}</p>
+        </div>
 
-            {/* Save button */}
-            {hasChanges && (
-              <Button onClick={handleSave} className="w-full rounded-xl">
-                Salva modifiche
-              </Button>
-            )}
-        </>
+        <div className="border-t border-border/40" />
+
+        {/* Tone of voice */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium text-foreground">
+            🗣️ Tone of voice
+          </Label>
+          <div className="grid grid-cols-2 gap-2">
+            {tones.map((t) => (
+              <button
+                key={t.value}
+                onClick={() => setTone(t.value)}
+                className={`flex flex-col items-center gap-1 rounded-xl border-2 px-3 py-3 text-center transition-all duration-200 ${
+                  tone === t.value
+                    ? "border-primary bg-primary/5"
+                    : "border-border/50 bg-background hover:border-border"
+                }`}
+              >
+                <span className="text-sm font-medium">
+                  {t.emoji} {t.label}
+                </span>
+                <span className="text-[11px] text-muted-foreground">{t.description}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-border/40" />
+
+        {/* Additional Instructions */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-foreground">
+            Additional instructions (optional)
+          </Label>
+          <Textarea
+            value={instructions}
+            onChange={(e) => setInstructions(e.target.value)}
+            placeholder={`Add specific information about your business, e.g:\n- We are an online shoe store\n- Hours: Mon-Fri 9-18\n- We ship across Italy in 2-3 days`}
+            className="min-h-[120px] resize-none rounded-xl text-sm"
+          />
+          <p className="text-xs text-muted-foreground">
+            These instructions will be added to Widjet's default knowledge base.
+          </p>
+        </div>
+
+        {/* Save button */}
+        {hasChanges && (
+          <Button onClick={handleSave} className="w-full rounded-xl">
+            Save
+          </Button>
+        )}
       </div>
     </div>
   );
