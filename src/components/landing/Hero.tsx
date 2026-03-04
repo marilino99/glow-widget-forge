@@ -17,7 +17,7 @@ const Hero = () => {
   const { t } = useLandingLang();
 
   return (
-    <section className="relative overflow-x-clip px-6 pb-24 pt-10 md:pb-32 md:pt-16">
+    <section className="relative overflow-x-hidden px-4 sm:px-6 pb-24 pt-10 md:pb-32 md:pt-16">
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -left-32 -top-32 h-[500px] w-[500px] animate-pulse rounded-full bg-primary/[0.08] blur-[120px]" />
@@ -33,15 +33,15 @@ const Hero = () => {
         }}
       />
 
-      <div className="mx-auto flex max-w-7xl flex-col items-start gap-12 md:flex-row md:items-stretch md:gap-16">
-        <div className="flex-1 flex flex-col justify-center text-left">
+      <div className="mx-auto flex max-w-7xl flex-col items-start gap-10 md:flex-row md:items-stretch md:gap-16">
+        <div className="flex-1 flex flex-col justify-center text-left w-full min-w-0">
           <motion.div custom={0} initial="hidden" animate="visible" variants={fadeUp} className="mb-4">
             <span className="wow-pill" style={{ background: 'hsl(270,80%,50%)', color: '#fff', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
               ⚡ Setup in 2 minutes
             </span>
           </motion.div>
 
-          <motion.h1 custom={1} initial="hidden" animate="visible" variants={fadeUp} className="text-[2.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.25rem] bg-clip-text text-transparent hero-gradient-text">
+          <motion.h1 custom={1} initial="hidden" animate="visible" variants={fadeUp} className="text-[2.25rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-[4.25rem] bg-clip-text text-transparent hero-gradient-text">
             {t("hero.title1")}
             <br />
             {t("hero.title2")}
@@ -78,7 +78,7 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="relative flex-1 max-w-md lg:max-w-lg flex flex-col overflow-visible">
+        <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="relative flex-1 max-w-md lg:max-w-lg flex flex-col overflow-hidden w-full min-w-0">
           <div className="relative rounded-3xl overflow-hidden bg-background">
             <img src={widgetPreview} alt="Widjet widget preview showing chat, FAQ and contact features" className="w-full h-full object-cover block" />
           </div>
