@@ -596,7 +596,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 <div className="space-y-3.5">
                   <div className="flex items-start">
                     <span className="w-28 shrink-0 text-sm text-muted-foreground">Current page</span>
-                    <span className="text-sm text-foreground">{conversationPageUrl ?? "-"}</span>
+                    <span className="text-sm text-foreground">-</span>
                   </div>
                   <div className="flex items-start">
                     <span className="w-28 shrink-0 text-sm text-muted-foreground">Session</span>
