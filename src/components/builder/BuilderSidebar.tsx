@@ -146,6 +146,8 @@ interface BuilderSidebarProps {
   chatbotInstructions: string;
   aiProvider: string;
   aiApiKey: string;
+  aiTemperature: number;
+  aiTone: string;
   onSaveChatbotConfig: (config: Record<string, unknown>) => void;
   widgetPosition: "left" | "right";
   onWidgetPositionChange: (position: "left" | "right") => void;
@@ -242,6 +244,8 @@ const BuilderSidebar = ({
   chatbotInstructions,
   aiProvider,
   aiApiKey,
+  aiTemperature,
+  aiTone,
   onSaveChatbotConfig,
   widgetPosition,
   onWidgetPositionChange,
