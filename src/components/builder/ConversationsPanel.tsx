@@ -563,7 +563,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       <div className="flex items-start">
                         <span className="w-28 shrink-0 text-sm text-muted-foreground">Created at</span>
                         <span className="text-sm text-foreground">
-                          {format(new Date(selectedConversation.created_at), "MMM d, yyyy HH:mm")}
+                          {format(new Date(selectedConversation.created_at), "MMM d, yyyy, hh:mm a")}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
