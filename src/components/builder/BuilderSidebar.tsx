@@ -155,8 +155,8 @@ interface BuilderSidebarProps {
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
-  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | null;
-  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | null) => void;
+  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null;
+  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null) => void;
   isMiniSidebar?: boolean;
   widgetId?: string;
   aiResponsesThisMonth: number;
@@ -616,19 +616,7 @@ const BuilderSidebar = ({
     );
   }
 
-  // Show Chatbot panel
-  if (showChatbotPanel) {
-    return (
-      <ChatbotPanel
-        onBack={handleBackFromChatbot}
-        chatbotInstructions={chatbotInstructions}
-        aiProvider={aiProvider}
-        aiTemperature={aiTemperature}
-        aiTone={aiTone}
-        onSaveConfig={onSaveChatbotConfig}
-      />
-    );
-  }
+
 
   // Show Templates panel
   if (showTemplatesPanel) {
@@ -708,8 +696,8 @@ const BuilderSidebar = ({
             <SidebarItem
               icon={Bot}
               label="AI Chatbot"
-              onClick={() => handleSelectWidget("chatbot")}
-              active={activeWidget === "chatbot"}
+              active={builderView === "ai"}
+              onClick={() => onBuilderViewChange("ai")}
               miniMode={isMiniSidebar}
             />
             <SidebarItem

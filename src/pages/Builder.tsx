@@ -19,6 +19,7 @@ import BuilderHome from "@/components/builder/BuilderHome";
 import ConversationsPanel from "@/components/builder/ConversationsPanel";
 import ContactsPanel from "@/components/builder/ContactsPanel";
 import AppearancePanel from "@/components/builder/AppearancePanel";
+import ChatbotPanel from "@/components/builder/ChatbotPanel";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
@@ -103,11 +104,11 @@ const Builder = () => {
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | null>(() => {
+  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
-    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance") : null;
+    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai") : null;
   });
-  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | null) => {
+  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null) => {
     setBuilderViewRaw(view);
     if (view) {
       sessionStorage.setItem("widjet_builder_view", view);
@@ -329,7 +330,7 @@ const Builder = () => {
   }
 
   const userInitial = (userDisplayName || user?.email || "U").charAt(0).toUpperCase();
-  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance" };
+  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", ai: "AI & Automation" };
 
   return (
     <div className="flex h-screen bg-background">
@@ -802,6 +803,24 @@ const Builder = () => {
                   minimal
                 />
               </div>
+            </div>
+          </div>
+        ) : builderView === "ai" ? (
+          <div className="flex h-full flex-col">
+            <div className="shrink-0 border-b border-border px-8 pt-8 pb-6">
+              <h1 className="text-2xl font-bold text-foreground">AI & Automation</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Optimize responses and manage automated actions
+              </p>
+            </div>
+            <div className="flex-1 overflow-y-auto px-8 py-6">
+              <ChatbotPanel
+                chatbotInstructions={config.chatbotInstructions}
+                aiProvider={config.aiProvider}
+                aiTemperature={config.aiTemperature}
+                aiTone={config.aiTone}
+                onSaveConfig={saveConfig}
+              />
             </div>
           </div>
         ) : (
