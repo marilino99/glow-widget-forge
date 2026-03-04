@@ -513,14 +513,14 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     </div>
                   </div>
 
-                  <div className="border-t border-border" />
+                  <div className="-mx-5 border-t border-border" />
 
                   {/* Expandable sections */}
                   <button className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors">
                     <span>AI overview</span>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </button>
-                  <div className="border-t border-border" />
+                  <div className="-mx-5 border-t border-border" />
                   <button
                     onClick={() => setCustomerInfoOpen(!customerInfoOpen)}
                     className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
@@ -584,7 +584,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       </div>
                     </div>
                   )}
-                  <div className="border-t border-border" />
+                  <div className="-mx-5 border-t border-border" />
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center">Select a conversation</p>
