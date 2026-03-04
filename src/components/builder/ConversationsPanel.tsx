@@ -485,6 +485,15 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       </span>
                     </div>
                     <div className="flex items-start">
+                      <span className="w-24 shrink-0 text-sm text-muted-foreground">Sentiment</span>
+                      <button
+                        onClick={() => onUpgrade?.()}
+                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                      >
+                        Not analyzed
+                      </button>
+                    </div>
+                    <div className="flex items-start">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Assignee</span>
                       <span className="text-sm font-medium text-foreground">WidjetAI</span>
                     </div>
