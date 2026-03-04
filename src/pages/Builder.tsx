@@ -103,7 +103,7 @@ const Builder = () => {
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | null>(() => {
+  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
     return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai") : null;
   });
