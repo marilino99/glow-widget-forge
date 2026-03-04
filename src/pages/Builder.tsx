@@ -103,7 +103,18 @@ const Builder = () => {
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderView] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance">("home");
+  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | null>(() => {
+    const saved = sessionStorage.getItem("widjet_builder_view");
+    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance") : null;
+  });
+  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | null) => {
+    setBuilderViewRaw(view);
+    if (view) {
+      sessionStorage.setItem("widjet_builder_view", view);
+    } else {
+      sessionStorage.removeItem("widjet_builder_view");
+    }
+  };
   const [reportBugsEnabled, setReportBugsEnabled] = useState(false);
   const [appearanceTab, setAppearanceTab] = useState("general");
   const [shareFeedbackEnabled, setShareFeedbackEnabled] = useState(false);
@@ -651,7 +662,7 @@ const Builder = () => {
             </DropdownMenu>
           </div>
         </div>
-        {builderView === "home" ? (
+        {builderView === "home" || builderView === null ? (
           <BuilderHome isPro={plan === "pro"} userName={config.contactName !== "Support" ? config.contactName : null} />
         ) : builderView === "conversations" ? (
           <ConversationsPanel isAtLimit={isAtLimit} isPro={plan === "pro"} onUpgrade={() => setShowUpgradeOverlay(true)} />
