@@ -45,7 +45,14 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   const [conversations, setConversations] = useState(0);
   const [chartData, setChartData] = useState<Record<string, { date: string; value: number }[]>>({});
   const [countryData, setCountryData] = useState<{ country: string; count: number }[]>([]);
-  const [activeChart, setActiveChart] = useState<"Conversations" | "Impressions" | "Clicks" | "CTR">("Conversations");
+  const [activeChart, setActiveChartRaw] = useState<"Conversations" | "Impressions" | "Clicks" | "CTR">(() => {
+    const saved = sessionStorage.getItem("widjet_active_chart");
+    return (saved as "Conversations" | "Impressions" | "Clicks" | "CTR") || "Conversations";
+  });
+  const setActiveChart = (v: "Conversations" | "Impressions" | "Clicks" | "CTR") => {
+    setActiveChartRaw(v);
+    sessionStorage.setItem("widjet_active_chart", v);
+  };
   const [isLoading, setIsLoading] = useState(true);
   const [dateFrom, setDateFrom] = useState<Date>(subDays(new Date(), 9));
   const [dateTo, setDateTo] = useState<Date>(new Date());
