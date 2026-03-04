@@ -39,19 +39,20 @@ const PlatformIntegrations = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut" as const }}
-          className="rounded-3xl border border-border bg-background p-8 md:p-10"
+          className="rounded-3xl border border-border bg-background p-6 md:p-10"
         >
-          <div className="flex flex-col md:flex-row md:items-center gap-8">
-            {/* Left — text */}
-            <div className="md:w-[38%] flex-shrink-0">
+          {/* Mobile: pills on top, text below */}
+          <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+            {/* Desktop: text left */}
+            <div className="hidden md:block md:w-[38%] flex-shrink-0">
               <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">{t.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground max-w-sm">{t.desc}</p>
             </div>
 
-            {/* Right — tool pills */}
-            <div className="flex-1 space-y-3 overflow-hidden">
+            {/* Pills — shown first on mobile, right on desktop */}
+            <div className="flex-1 space-y-2.5 overflow-hidden order-first md:order-last">
               {[row1, row2].map((row, ri) => (
-                <div key={ri} className="flex gap-2.5 overflow-x-auto no-scrollbar">
+                <div key={ri} className="flex flex-wrap md:flex-nowrap gap-2.5 md:overflow-x-auto no-scrollbar">
                   {row.map((tool) => (
                     <span
                       key={tool.name}
@@ -68,6 +69,12 @@ const PlatformIntegrations = () => {
                   ))}
                 </div>
               ))}
+            </div>
+
+            {/* Mobile: text below pills */}
+            <div className="md:hidden">
+              <h3 className="text-xl font-bold text-foreground tracking-tight">{t.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{t.desc}</p>
             </div>
           </div>
         </motion.div>
