@@ -569,7 +569,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                       <div className="flex items-start">
                         <span className="w-28 shrink-0 text-sm text-muted-foreground">Last activity</span>
                         <span className="text-sm text-foreground">
-                          {formatDistanceToNow(new Date(selectedConversation.last_message_at || selectedConversation.updated_at), { addSuffix: false }).replace('about ', '').replace('less than a minute', 'Just now').replace('less than ', '')}
+                          {formatDistanceToNow(new Date(selectedConversation.last_message_at || selectedConversation.updated_at), { addSuffix: true }).replace('about ', '').replace('less than a minute ago', 'Just now').replace('less than ', '')}
                         </span>
                       </div>
                     </div>
