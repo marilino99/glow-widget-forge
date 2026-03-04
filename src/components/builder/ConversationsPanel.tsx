@@ -307,7 +307,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 return (
                 <button
                   key={conv.id}
-                  onClick={() => setSelectedConversation(conv)}
+                  onClick={() => { setSelectedConversation(conv); setAiOverviewData(null); setAiOverviewOpen(false); }}
                   className={`flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors overflow-hidden ${
                     selectedConversation?.id === conv.id
                       ? "bg-blue-50"
