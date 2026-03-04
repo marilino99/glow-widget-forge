@@ -621,11 +621,10 @@ const BuilderSidebar = ({
     return (
       <ChatbotPanel
         onBack={handleBackFromChatbot}
-        chatbotEnabled={chatbotEnabled}
-        onChatbotToggle={onChatbotToggle}
         chatbotInstructions={chatbotInstructions}
         aiProvider={aiProvider}
-        aiApiKey={aiApiKey}
+        aiTemperature={aiTemperature}
+        aiTone={aiTone}
         onSaveConfig={onSaveChatbotConfig}
       />
     );

@@ -539,6 +539,8 @@ const Builder = () => {
             chatbotInstructions={config.chatbotInstructions}
             aiProvider={config.aiProvider}
             aiApiKey={config.aiApiKey}
+            aiTemperature={config.aiTemperature}
+            aiTone={config.aiTone}
             onSaveChatbotConfig={saveConfig}
             widgetPosition={config.widgetPosition}
             onWidgetPositionChange={(pos) => saveConfig({ widgetPosition: pos })}
