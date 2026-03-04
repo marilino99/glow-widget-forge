@@ -662,7 +662,7 @@ const Builder = () => {
             </DropdownMenu>
           </div>
         </div>
-        {builderView === "home" ? (
+        {builderView === "home" || builderView === null ? (
           <BuilderHome isPro={plan === "pro"} userName={config.contactName !== "Support" ? config.contactName : null} />
         ) : builderView === "conversations" ? (
           <ConversationsPanel isAtLimit={isAtLimit} isPro={plan === "pro"} onUpgrade={() => setShowUpgradeOverlay(true)} />
