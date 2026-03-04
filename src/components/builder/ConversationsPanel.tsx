@@ -471,7 +471,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
           </button>
         </div>
 
-        <ScrollArea className="flex-1 [&>[data-radix-scroll-area-viewport]]:!overflow-x-hidden [&>[data-radix-scroll-area-viewport]]:!overflow-y-scroll">
+        <div className="flex-1 overflow-y-auto">
           {detailsTab === "details" ? (
             <div className="px-5 py-4">
               {selectedConversation ? (
@@ -591,11 +591,24 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
               )}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center p-8 text-center">
-              <p className="text-sm text-muted-foreground">No activity recorded</p>
+            <div className="px-5 py-4">
+              {selectedConversation ? (
+                <div className="space-y-3.5">
+                  <div className="flex items-start">
+                    <span className="w-28 shrink-0 text-sm text-muted-foreground">Current page</span>
+                    <span className="text-sm text-foreground">{conversationPageUrl ?? "-"}</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="w-28 shrink-0 text-sm text-muted-foreground">Session</span>
+                    <span className="text-sm text-foreground">{selectedConversation.id.slice(0, 8)}…</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center">Select a conversation</p>
+              )}
             </div>
           )}
-        </ScrollArea>
+        </div>
       </div>
     </div>
   );
