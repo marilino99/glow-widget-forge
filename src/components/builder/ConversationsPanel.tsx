@@ -518,14 +518,14 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                     </div>
                   </div>
 
-                  <div className="-mx-5 border-t border-border" />
-
-                  {/* Expandable sections */}
-                  <button className="flex w-full items-center justify-between -mx-5 px-5 py-2.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-all" style={{ background: 'linear-gradient(90deg, rgba(251, 207, 178, 0.25) 0%, rgba(192, 132, 252, 0.2) 100%)' }}>
-                    <span>AI overview</span>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </button>
-                  <div className="-mx-5 border-t border-border" />
+                  <div className="-mx-5" style={{ background: 'linear-gradient(90deg, rgba(219, 206, 252, 0.25) 0%, rgba(192, 132, 252, 0.22) 100%)' }}>
+                    <div className="border-t border-border" />
+                    <button className="flex w-full items-center justify-between px-5 py-2.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-all">
+                      <span>AI overview</span>
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                    <div className="border-t border-border" />
+                  </div>
                   <button
                     onClick={() => setCustomerInfoOpen(!customerInfoOpen)}
                     className="flex w-full items-center justify-between py-1 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
