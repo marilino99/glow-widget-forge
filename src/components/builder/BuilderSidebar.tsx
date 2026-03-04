@@ -616,19 +616,7 @@ const BuilderSidebar = ({
     );
   }
 
-  // Show Chatbot panel
-  if (showChatbotPanel) {
-    return (
-      <ChatbotPanel
-        onBack={handleBackFromChatbot}
-        chatbotInstructions={chatbotInstructions}
-        aiProvider={aiProvider}
-        aiTemperature={aiTemperature}
-        aiTone={aiTone}
-        onSaveConfig={onSaveChatbotConfig}
-      />
-    );
-  }
+
 
   // Show Templates panel
   if (showTemplatesPanel) {
