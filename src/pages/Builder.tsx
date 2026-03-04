@@ -807,7 +807,7 @@ const Builder = () => {
           </div>
         ) : builderView === "ai" ? (
           <div className="flex h-full flex-col">
-            <div className="shrink-0 px-8 pt-8 pb-6">
+            <div className="shrink-0 px-8 pt-8 pb-6 text-center">
               <h1 className="text-2xl font-bold text-foreground">AI & Automation</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 Optimize responses and manage automated actions
