@@ -31,6 +31,7 @@ import {
   LifeBuoy,
   ChevronRight,
   Bot,
+  BookOpen,
   LayoutTemplate,
   Home,
   ChevronsLeft,
