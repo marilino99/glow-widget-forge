@@ -511,8 +511,8 @@ const DataSourcesPanel = () => {
 
             {/* Upload document */}
             <button
-              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm opacity-60 cursor-not-allowed"
-              disabled
+              onClick={() => fileInputRef.current?.click()}
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50">
                 <Upload className="h-5 w-5 text-pink-500" />
@@ -524,6 +524,13 @@ const DataSourcesPanel = () => {
                 </p>
               </div>
             </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.txt,.md,.csv"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
 
             {/* Add FAQ's */}
             <button
