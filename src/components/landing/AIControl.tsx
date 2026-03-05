@@ -1,19 +1,6 @@
 import { motion } from "framer-motion";
-import greenBlob from "@/assets/green-blob.png";
-import yellowBlob from "@/assets/yellow-blob.png";
-import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare } from "lucide-react";
+import { ArrowRight, Bot } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
-import shopifyLogo from "@/assets/logo-shopify.png";
-import wordpressLogo from "@/assets/logo-wordpress.png";
-import wixLogo from "@/assets/logo-wix-icon.png";
-import lovableLogo from "@/assets/logo-lovable.png";
-import onepageLogo from "@/assets/logo-onepage.png";
-import whatsappLogo from "@/assets/logo-whatsapp.png";
-import messengerLogo from "@/assets/logo-messenger.png";
-import woocommerceLogo from "@/assets/logo-woocommerce.png";
-import telegramLogo from "@/assets/logo-telegram.png";
-import calendlyLogo from "@/assets/logo-calendly.png";
-import elevenlabsLogo from "@/assets/logo-elevenlabs.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -164,24 +151,6 @@ const AnalyticsMockup = () => (
   </div>
 );
 
-/* ── Tools data ── */
-const tools = [
-  { name: "WooCommerce", color: "#96588A", icon: "", image: woocommerceLogo },
-  { name: "Shopify", color: "#96BF48", icon: "", image: shopifyLogo },
-  { name: "WordPress", color: "#21759B", icon: "", image: wordpressLogo },
-  { name: "Wix", color: "#0C6EFC", icon: "", image: wixLogo },
-  { name: "Lovable", color: "#FF6B6B", icon: "", image: lovableLogo },
-  { name: "OnePage", color: "#2979FF", icon: "", image: onepageLogo },
-  
-  { name: "WhatsApp", color: "#25D366", icon: "", image: whatsappLogo },
-  { name: "ElevenLabs", color: "#000000", icon: "", image: elevenlabsLogo },
-  { name: "Calendly", color: "#006BFF", icon: "", image: calendlyLogo },
-  { name: "Telegram", color: "#26A5E4", icon: "", image: telegramLogo },
-  { name: "Messenger", color: "#0084FF", icon: "", image: messengerLogo },
-  
-];
-const toolRow1 = tools.slice(0, 6);
-const toolRow2 = tools.slice(6);
 
 /* ── Main component ── */
 const AIControl = () => {
