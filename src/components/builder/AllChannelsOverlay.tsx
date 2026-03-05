@@ -54,20 +54,18 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
         background: "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
       }}
     >
-      {/* Fixed Back button */}
-      <div className="shrink-0 px-48 pt-8 pb-4">
-        <button
-          onClick={onClose}
-          className="flex items-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-5 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </button>
-      </div>
-
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto px-48 pb-10">
-        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-8">All widgets</h1>
+      <div className="flex-1 overflow-y-auto px-48 pb-10 pt-10">
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={onClose}
+            className="flex items-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-5 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </button>
+          <h1 className="text-3xl font-bold text-[#1a1a2e]">All widgets</h1>
+        </div>
         {/* Featured channels - 2 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {channels.map((channel) => (
