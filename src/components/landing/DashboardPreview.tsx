@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Home, MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
 import conversationsImg from "@/assets/dashboard-conversations.png";
+import appearanceImg from "@/assets/dashboard-appearance.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
@@ -27,7 +28,7 @@ const DashboardPreview = () => {
   const { t, lang } = useLandingLang();
   const [activeTab, setActiveTab] = useState<TabId>("home");
   const labels = tabLabels[lang] || tabLabels.en;
-  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg };
+  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, appearance: appearanceImg };
   const currentImage = tabImages[activeTab] || dashboardImg;
 
   return (
