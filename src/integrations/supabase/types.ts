@@ -49,6 +49,50 @@ export type Database = {
           },
         ]
       }
+      contacts: {
+        Row: {
+          channel: string | null
+          conversation_id: string | null
+          country: string | null
+          created_at: string | null
+          email: string
+          id: string
+          language: string | null
+          name: string | null
+          user_id: string
+        }
+        Insert: {
+          channel?: string | null
+          conversation_id?: string | null
+          country?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          language?: string | null
+          name?: string | null
+          user_id: string
+        }
+        Update: {
+          channel?: string | null
+          conversation_id?: string | null
+          country?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          language?: string | null
+          name?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           browser: string | null
