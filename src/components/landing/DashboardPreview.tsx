@@ -17,10 +17,10 @@ const tabs = [
 type TabId = (typeof tabs)[number]["id"];
 
 const tabLabels: Record<string, Record<TabId, string>> = {
-  en: { conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", actions: "Actions" },
-  it: { conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", actions: "Azioni" },
-  de: { conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", actions: "Aktionen" },
-  fr: { conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", actions: "Actions" },
+  en: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", actions: "Actions" },
+  it: { home: "Home", conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", actions: "Azioni" },
+  de: { home: "Home", conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", actions: "Aktionen" },
+  fr: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", actions: "Actions" },
 };
 
 const DashboardPreview = () => {
