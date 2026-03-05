@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
+import { Home, MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
+import conversationsImg from "@/assets/dashboard-conversations.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
+  { id: "home", icon: Home },
   { id: "conversations", icon: MessageSquare },
   { id: "contacts", icon: Users },
   { id: "appearance", icon: Paintbrush },
