@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import greenBlob from "@/assets/green-blob.png";
 import yellowBlob from "@/assets/yellow-blob.png";
-import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare } from "lucide-react";
+import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare, Shield, ShieldCheck, Scale, CloudOff } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import wordpressLogo from "@/assets/logo-wordpress.png";
@@ -22,61 +22,46 @@ const fadeUp = {
 
 const i18n: Record<string, {
   headline1: string; headlineAccent: string; headline2: string;
-  card1Title: string; card1Desc: string; card1Cta: string;
+  secTitle: string; secSubtitle: string;
+  badge1: string; badge1Desc: string;
+  badge2: string; badge2Desc: string;
+  badge3: string; badge3Desc: string;
+  badge4: string; badge4Desc: string;
   card2Title: string; card2Desc: string;
   card3Title: string; card3Desc: string;
   card4Title: string; card4Desc: string;
 }> = {
   en: {
     headline1: "AI you ", headlineAccent: "control", headline2: ". Completely.",
-    card1Title: "Supervise your AI agent in real time", card1Desc: "Monitor every conversation between your AI and visitors. Jump in anytime.", card1Cta: "Build your first AI agent",
+    secTitle: "Enterprise-grade security", secSubtitle: "Built on Google Cloud certified infrastructure",
+    badge1: "ISO/IEC 27001", badge1Desc: "Certified information security management via Google Cloud",
+    badge2: "SOC 2 Type II", badge2Desc: "Independently audited security controls and data protection",
+    badge3: "GDPR Ready", badge3Desc: "Full compliance with European data privacy regulations",
+    badge4: "Zero-Training Guarantee", badge4Desc: "Your data is never used to train AI models. Inference-only.",
     card2Title: "You set the rules. AI plays by them.", card2Desc: "Upload your knowledge base, define boundaries, and let AI handle the rest — exactly how you want.",
     card3Title: "Live insights into your team and AI.", card3Desc: "Track performance, response times, and conversions in one dashboard.",
     card4Title: "Instant integration", card4Desc: "Integrate diverse data sources to enrich your agent's knowledge and capabilities.",
   },
   it: {
     headline1: "AI che ", headlineAccent: "controlli", headline2: ". Completamente.",
-    card1Title: "Supervisiona il tuo agente AI in tempo reale", card1Desc: "Monitora ogni conversazione tra la tua AI e i visitatori. Intervieni in qualsiasi momento.", card1Cta: "Crea il tuo primo agente AI",
+    secTitle: "Sicurezza enterprise-grade", secSubtitle: "Costruito su infrastruttura certificata Google Cloud",
+    badge1: "ISO/IEC 27001", badge1Desc: "Gestione certificata della sicurezza delle informazioni via Google Cloud",
+    badge2: "SOC 2 Type II", badge2Desc: "Controlli di sicurezza verificati da revisori indipendenti",
+    badge3: "GDPR Ready", badge3Desc: "Piena conformità alle normative europee sulla privacy dei dati",
+    badge4: "Zero-Training Guarantee", badge4Desc: "I tuoi dati non vengono mai usati per addestrare modelli AI. Solo inferenza.",
     card2Title: "Tu stabilisci le regole. L'AI le rispetta.", card2Desc: "Carica la tua knowledge base, definisci i limiti e lascia che l'AI gestisca il resto — esattamente come vuoi.",
     card3Title: "Insights in tempo reale sul team e l'AI.", card3Desc: "Monitora performance, tempi di risposta e conversioni in un'unica dashboard.",
     card4Title: "Integrazione istantanea", card4Desc: "Integra diverse fonti di dati per arricchire le conoscenze e le capacità del tuo agente.",
   },
 };
 
-/* ── Mockup: Chat list rows ── */
-const chatRows = [
-  { name: "Emma Wilson", status: "Chatting now", statusColor: "#22c55e", time: "2m ago" },
-  { name: "Marco Rossi", status: "Chatting now", statusColor: "#22c55e", time: "5m ago" },
-  { name: "Sarah Chen", status: "Closed deal", statusColor: "#c75a2a", time: "12m ago" },
-  { name: "James Taylor", status: "Closed deal", statusColor: "#c75a2a", time: "1h ago" },
+/* ── Security badges data ── */
+const securityBadges = (t: typeof i18n.en) => [
+  { icon: ShieldCheck, name: t.badge1, desc: t.badge1Desc },
+  { icon: Shield, name: t.badge2, desc: t.badge2Desc },
+  { icon: Scale, name: t.badge3, desc: t.badge3Desc },
+  { icon: CloudOff, name: t.badge4, desc: t.badge4Desc },
 ];
-
-const ChatListMockup = () => (
-  <div className="mt-6 rounded-2xl bg-white/80 backdrop-blur-sm overflow-hidden border border-black/5">
-    {chatRows.map((row, i) => (
-      <div key={i} className={`flex items-center gap-4 px-5 py-3.5 ${i !== chatRows.length - 1 ? "border-b border-black/5" : ""}`}>
-        {/* Avatars */}
-        <div className="flex -space-x-2 flex-shrink-0">
-          <div className="h-8 w-8 rounded-full bg-[#d4d0c8] flex items-center justify-center border-2 border-white">
-            <Bot className="h-4 w-4 text-[#6b6760]" />
-          </div>
-          <div className="h-8 w-8 rounded-full bg-[#c4b5a0] flex items-center justify-center border-2 border-white text-[10px] font-bold text-white">
-            {row.name.split(" ").map(n => n[0]).join("")}
-          </div>
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-[#2a2a2a] truncate">AI agent and {row.name}</p>
-        </div>
-        <span className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold" style={{ backgroundColor: `${row.statusColor}18`, color: row.statusColor }}>
-          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: row.statusColor }} />
-          {row.status}
-        </span>
-        <span className="text-[11px] text-[#999] flex-shrink-0 hidden sm:block">{row.time}</span>
-        <button className="flex-shrink-0 text-[11px] font-semibold text-[#2a2a2a] bg-[#f0ede8] rounded-lg px-3 py-1.5 hover:bg-[#e4e0da] transition-colors hidden md:block">Supervise</button>
-      </div>
-    ))}
-  </div>
-);
 
 /* ── Mockup: Chat conversation ── */
 const ChatConversationMockup = () => (
@@ -186,16 +171,22 @@ const AIControl = () => {
           </h2>
         </motion.div>
 
-        {/* Card 1 — Supervise */}
+        {/* Card 1 — Security & Compliance */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#ffffff" }}>
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card1Title}</h3>
-              <p className="mt-1.5 text-sm text-[#6b6760] max-w-md">{t.card1Desc}</p>
-            </div>
-            <a href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#2a2a2a] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1a1a1a] transition-colors self-start flex-shrink-0">
-              {t.card1Cta} <ArrowRight className="h-4 w-4" />
-            </a>
+          <div className="mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.secTitle}</h3>
+            <p className="mt-1.5 text-sm text-[#6b6760]">{t.secSubtitle}</p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {securityBadges(t).map((badge, i) => (
+              <div key={i} className="rounded-2xl border border-black/5 bg-[#f8f8f7] p-5 space-y-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
+                  <badge.icon className="h-5 w-5 text-emerald-600" />
+                </div>
+                <p className="text-sm font-bold text-[#2a2a2a]">{badge.name}</p>
+                <p className="text-xs text-[#6b6760] leading-relaxed">{badge.desc}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
 
