@@ -22,21 +22,33 @@ const fadeUp = {
 
 const i18n: Record<string, {
   headline1: string; headlineAccent: string; headline2: string;
-  card1Title: string; card1Desc: string; card1Cta: string;
+  secTitle: string; secSubtitle: string;
+  badge1: string; badge1Desc: string;
+  badge2: string; badge2Desc: string;
+  badge3: string; badge3Desc: string;
+  badge4: string; badge4Desc: string;
   card2Title: string; card2Desc: string;
   card3Title: string; card3Desc: string;
   card4Title: string; card4Desc: string;
 }> = {
   en: {
     headline1: "AI you ", headlineAccent: "control", headline2: ". Completely.",
-    card1Title: "Supervise your AI agent in real time", card1Desc: "Monitor every conversation between your AI and visitors. Jump in anytime.", card1Cta: "Build your first AI agent",
+    secTitle: "Enterprise-grade security", secSubtitle: "Built on Google Cloud certified infrastructure",
+    badge1: "ISO/IEC 27001", badge1Desc: "Certified information security management via Google Cloud",
+    badge2: "SOC 2 Type II", badge2Desc: "Independently audited security controls and data protection",
+    badge3: "GDPR Ready", badge3Desc: "Full compliance with European data privacy regulations",
+    badge4: "Zero-Training Guarantee", badge4Desc: "Your data is never used to train AI models. Inference-only.",
     card2Title: "You set the rules. AI plays by them.", card2Desc: "Upload your knowledge base, define boundaries, and let AI handle the rest — exactly how you want.",
     card3Title: "Live insights into your team and AI.", card3Desc: "Track performance, response times, and conversions in one dashboard.",
     card4Title: "Instant integration", card4Desc: "Integrate diverse data sources to enrich your agent's knowledge and capabilities.",
   },
   it: {
     headline1: "AI che ", headlineAccent: "controlli", headline2: ". Completamente.",
-    card1Title: "Supervisiona il tuo agente AI in tempo reale", card1Desc: "Monitora ogni conversazione tra la tua AI e i visitatori. Intervieni in qualsiasi momento.", card1Cta: "Crea il tuo primo agente AI",
+    secTitle: "Sicurezza enterprise-grade", secSubtitle: "Costruito su infrastruttura certificata Google Cloud",
+    badge1: "ISO/IEC 27001", badge1Desc: "Gestione certificata della sicurezza delle informazioni via Google Cloud",
+    badge2: "SOC 2 Type II", badge2Desc: "Controlli di sicurezza verificati da revisori indipendenti",
+    badge3: "GDPR Ready", badge3Desc: "Piena conformità alle normative europee sulla privacy dei dati",
+    badge4: "Zero-Training Guarantee", badge4Desc: "I tuoi dati non vengono mai usati per addestrare modelli AI. Solo inferenza.",
     card2Title: "Tu stabilisci le regole. L'AI le rispetta.", card2Desc: "Carica la tua knowledge base, definisci i limiti e lascia che l'AI gestisca il resto — esattamente come vuoi.",
     card3Title: "Insights in tempo reale sul team e l'AI.", card3Desc: "Monitora performance, tempi di risposta e conversioni in un'unica dashboard.",
     card4Title: "Integrazione istantanea", card4Desc: "Integra diverse fonti di dati per arricchire le conoscenze e le capacità del tuo agente.",
