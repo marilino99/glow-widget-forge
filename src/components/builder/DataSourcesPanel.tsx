@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw } from "lucide-react";
+import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,7 +33,7 @@ interface TrainingSource {
   updated_at: string;
 }
 
-type AddMode = "url" | "text" | null;
+type AddMode = "url" | "text" | "picker" | null;
 
 const DataSourcesPanel = () => {
   const { user } = useAuth();
@@ -267,24 +267,10 @@ const DataSourcesPanel = () => {
           <span className="text-sm font-medium text-foreground">
             All sources: {filtered.length}
           </span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" className="rounded-xl gap-2">
-                <Plus className="h-4 w-4" />
-                Add
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl">
-              <DropdownMenuItem onClick={() => setAddMode("url")} className="gap-2">
-                <Link2 className="h-4 w-4" />
-                Add URL
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAddMode("text")} className="gap-2">
-                <FileText className="h-4 w-4" />
-                Add text
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button size="sm" className="rounded-xl gap-2" onClick={() => setAddMode("picker")}>
+            <Plus className="h-4 w-4" />
+            Add
+          </Button>
         </div>
 
         {/* Table */}
@@ -393,11 +379,91 @@ const DataSourcesPanel = () => {
         </div>
       </div>
 
+      {/* Add knowledge picker dialog */}
+      <Dialog open={addMode === "picker"} onOpenChange={(open) => !open && setAddMode(null)}>
+        <DialogContent className="rounded-2xl sm:max-w-2xl p-0">
+          <div className="flex items-start justify-between px-6 pt-6 pb-2">
+            <div>
+              <DialogTitle className="text-xl font-bold text-foreground">Add more knowledge</DialogTitle>
+              <DialogDescription className="mt-1">
+                Choose how you want to provide Widjet with knowledge.
+              </DialogDescription>
+            </div>
+          </div>
+          <div className="border-t border-border" />
+          <div className="grid grid-cols-2 gap-4 p-6">
+            {/* Add website URL */}
+            <button
+              onClick={() => setAddMode("url")}
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+                <Link2 className="h-5 w-5 text-indigo-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Add website URL</h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  Let Widjet scan your website and learn from its content
+                </p>
+              </div>
+            </button>
+
+            {/* Create article */}
+            <button
+              onClick={() => setAddMode("text")}
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50">
+                <FileText className="h-5 w-5 text-amber-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Create article</h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  Write custom help content for smarter answers
+                </p>
+              </div>
+            </button>
+
+            {/* Upload document */}
+            <button
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm opacity-60 cursor-not-allowed"
+              disabled
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50">
+                <Upload className="h-5 w-5 text-pink-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Upload document</h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  Upload files to turn docs into support data
+                </p>
+              </div>
+            </button>
+
+            {/* Add FAQ's */}
+            <button
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm opacity-60 cursor-not-allowed"
+              disabled
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+                <MessageSquareText className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Add FAQ's</h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  Add short question–answer pairs for quick replies
+                </p>
+              </div>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Add URL dialog */}
       <Dialog open={addMode === "url"} onOpenChange={(open) => !open && setAddMode(null)}>
         <DialogContent className="rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Add URL</DialogTitle>
+            <DialogTitle>Add website URL</DialogTitle>
             <DialogDescription>Enter a URL to scrape and add to your knowledge base.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -410,7 +476,7 @@ const DataSourcesPanel = () => {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddMode(null)} className="rounded-xl">Cancel</Button>
+            <Button variant="outline" onClick={() => setAddMode("picker")} className="rounded-xl">Back</Button>
             <Button onClick={handleAddUrl} disabled={isAdding || !newUrl.trim()} className="rounded-xl">
               {isAdding ? "Adding..." : "Add"}
             </Button>
@@ -422,8 +488,8 @@ const DataSourcesPanel = () => {
       <Dialog open={addMode === "text"} onOpenChange={(open) => !open && setAddMode(null)}>
         <DialogContent className="rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Add text</DialogTitle>
-            <DialogDescription>Add custom text content to your knowledge base.</DialogDescription>
+            <DialogTitle>Create article</DialogTitle>
+            <DialogDescription>Write custom help content for smarter answers.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div>
@@ -446,7 +512,7 @@ const DataSourcesPanel = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddMode(null)} className="rounded-xl">Cancel</Button>
+            <Button variant="outline" onClick={() => setAddMode("picker")} className="rounded-xl">Back</Button>
             <Button onClick={handleAddText} disabled={isAdding || !newTitle.trim() || !newContent.trim()} className="rounded-xl">
               {isAdding ? "Adding..." : "Add"}
             </Button>
