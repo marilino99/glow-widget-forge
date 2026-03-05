@@ -55,40 +55,13 @@ const i18n: Record<string, {
   },
 };
 
-/* ── Mockup: Chat list rows ── */
-const chatRows = [
-  { name: "Emma Wilson", status: "Chatting now", statusColor: "#22c55e", time: "2m ago" },
-  { name: "Marco Rossi", status: "Chatting now", statusColor: "#22c55e", time: "5m ago" },
-  { name: "Sarah Chen", status: "Closed deal", statusColor: "#c75a2a", time: "12m ago" },
-  { name: "James Taylor", status: "Closed deal", statusColor: "#c75a2a", time: "1h ago" },
+/* ── Security badges data ── */
+const securityBadges = (t: typeof i18n.en) => [
+  { icon: ShieldCheck, name: t.badge1, desc: t.badge1Desc },
+  { icon: Shield, name: t.badge2, desc: t.badge2Desc },
+  { icon: Scale, name: t.badge3, desc: t.badge3Desc },
+  { icon: CloudOff, name: t.badge4, desc: t.badge4Desc },
 ];
-
-const ChatListMockup = () => (
-  <div className="mt-6 rounded-2xl bg-white/80 backdrop-blur-sm overflow-hidden border border-black/5">
-    {chatRows.map((row, i) => (
-      <div key={i} className={`flex items-center gap-4 px-5 py-3.5 ${i !== chatRows.length - 1 ? "border-b border-black/5" : ""}`}>
-        {/* Avatars */}
-        <div className="flex -space-x-2 flex-shrink-0">
-          <div className="h-8 w-8 rounded-full bg-[#d4d0c8] flex items-center justify-center border-2 border-white">
-            <Bot className="h-4 w-4 text-[#6b6760]" />
-          </div>
-          <div className="h-8 w-8 rounded-full bg-[#c4b5a0] flex items-center justify-center border-2 border-white text-[10px] font-bold text-white">
-            {row.name.split(" ").map(n => n[0]).join("")}
-          </div>
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-[#2a2a2a] truncate">AI agent and {row.name}</p>
-        </div>
-        <span className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-semibold" style={{ backgroundColor: `${row.statusColor}18`, color: row.statusColor }}>
-          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: row.statusColor }} />
-          {row.status}
-        </span>
-        <span className="text-[11px] text-[#999] flex-shrink-0 hidden sm:block">{row.time}</span>
-        <button className="flex-shrink-0 text-[11px] font-semibold text-[#2a2a2a] bg-[#f0ede8] rounded-lg px-3 py-1.5 hover:bg-[#e4e0da] transition-colors hidden md:block">Supervise</button>
-      </div>
-    ))}
-  </div>
-);
 
 /* ── Mockup: Chat conversation ── */
 const ChatConversationMockup = () => (
