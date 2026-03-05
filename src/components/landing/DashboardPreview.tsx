@@ -30,7 +30,7 @@ const DashboardPreview = () => {
   const { t, lang } = useLandingLang();
   const [activeTab, setActiveTab] = useState<TabId>("home");
   const labels = tabLabels[lang] || tabLabels.en;
-  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, contacts: contactsImg, appearance: appearanceImg };
+  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, contacts: contactsImg, appearance: appearanceImg, chatbot: chatbotImg };
   const currentImage = tabImages[activeTab] || dashboardImg;
 
   return (
