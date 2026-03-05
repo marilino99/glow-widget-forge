@@ -153,7 +153,8 @@ const Builder = () => {
   const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
-  const [showAllChannels, setShowAllChannels] = useState(false);
+   const [showAllChannels, setShowAllChannels] = useState(false);
+   const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
 
@@ -355,7 +356,7 @@ const Builder = () => {
           {/* Workspace selector / mini icon */}
           {isMiniSidebar ? (
             <div className="mt-3 flex justify-center">
-              <Popover>
+              <Popover open={widgetPopoverOpen} onOpenChange={setWidgetPopoverOpen}>
                 <PopoverTrigger asChild>
                   <button
                     className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background transition-all duration-200 hover:bg-[#f0f0f0] hover:scale-[1.02]"
@@ -376,7 +377,7 @@ const Builder = () => {
                 <PopoverContent align="start" side="right" sideOffset={12} className="w-64 rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
-                    <button onClick={() => setShowAllChannels(true)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    <button onClick={() => { setWidgetPopoverOpen(false); setShowAllChannels(true); }} className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
@@ -406,7 +407,7 @@ const Builder = () => {
             </div>
           ) : (
             <div className="mt-3">
-              <Popover>
+              <Popover open={widgetPopoverOpen} onOpenChange={setWidgetPopoverOpen}>
                 <PopoverTrigger asChild>
                   <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-background -ml-2 pl-2 pr-3 py-1.5 text-left transition-colors hover:bg-[#f0f0f0]">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40">
@@ -431,7 +432,7 @@ const Builder = () => {
                 <PopoverContent align="start" side="bottom" className="w-[calc(288px-32px)] rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
-                    <button onClick={() => setShowAllChannels(true)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    <button onClick={() => { setWidgetPopoverOpen(false); setShowAllChannels(true); }} className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
