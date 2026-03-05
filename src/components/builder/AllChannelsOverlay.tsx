@@ -11,6 +11,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       title: "Chat widget",
       description: "Add a floating chat window to your site.",
       gradient: "linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%)",
+      icon: "💬",
       enabled: true,
     },
     {
@@ -18,6 +19,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       title: "Help page",
       description: "ChatGPT-style help page, deployed standalone or under a path on your site (/help).",
       gradient: "linear-gradient(135deg, #fde68a 0%, #fbbf24 100%)",
+      icon: "📖",
       enabled: true,
     },
   ];
@@ -72,49 +74,25 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
           {channels.map((channel) => (
             <div
               key={channel.title}
-              className="rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden"
+              className="rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col"
             >
-              {/* Preview area */}
+              {/* Icon area */}
               <div
-                className="h-48 relative flex items-center justify-center"
+                className="relative flex items-center justify-center py-10"
                 style={{ background: channel.gradient }}
               >
-                <div className="bg-[#1a1a2e]/80 rounded-xl px-6 py-4 text-white text-sm backdrop-blur-sm">
-                  {channel.title === "Chat widget" ? (
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      <span>Hi! What can I help you with?</span>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="flex gap-1.5">
-                        <div className="h-3 w-3 rounded-full bg-red-400" />
-                        <div className="h-3 w-3 rounded-full bg-yellow-400" />
-                        <div className="h-3 w-3 rounded-full bg-green-400" />
-                      </div>
-                      <span className="font-semibold text-[#1a1a2e] bg-white rounded-lg px-4 py-2">How can I help you today?</span>
-                    </div>
-                  )}
-                </div>
+                <span className="text-5xl drop-shadow-md">{channel.icon}</span>
+                {channel.enabled && (
+                  <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    Active
+                  </span>
+                )}
               </div>
-              {/* Info */}
-              <div className="px-6 py-5">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="text-base font-semibold text-[#1a1a2e]">{channel.title}</h3>
-                  {/* Toggle */}
-                  <div className="h-6 w-11 rounded-full bg-green-500 relative cursor-pointer">
-                    <div className="absolute right-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-all" />
-                  </div>
-                </div>
-                <p className="text-sm text-[#8a8fa8] mb-4">{channel.description}</p>
-                <div className="flex items-center justify-end gap-3">
-                  <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e0e3ef] bg-white text-[#8a8fa8] transition-colors hover:bg-[#f8f9fc]">
-                    <Monitor className="h-4 w-4" />
-                  </button>
-                  <button className="rounded-xl border border-[#e0e3ef] bg-white px-6 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]">
-                    Manage
-                  </button>
-                </div>
+              {/* Content */}
+              <div className="px-5 py-4 flex-1 flex flex-col">
+                <h3 className="text-base font-semibold text-[#1a1a2e] mb-1.5">{channel.title}</h3>
+                <p className="text-sm text-[#8a8fa8] leading-relaxed">{channel.description}</p>
               </div>
             </div>
           ))}
