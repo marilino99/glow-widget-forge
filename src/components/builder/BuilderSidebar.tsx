@@ -694,6 +694,13 @@ const BuilderSidebar = ({
               miniMode={isMiniSidebar}
             />
             <SidebarItem
+              icon={BookOpen}
+              label="Data Sources"
+              active={builderView === "data-sources"}
+              onClick={() => onBuilderViewChange("data-sources")}
+              miniMode={isMiniSidebar}
+            />
+            <SidebarItem
               icon={Bot}
               label="AI Chatbot"
               active={builderView === "ai"}
