@@ -252,11 +252,10 @@ Deno.serve(async (req) => {
 
     const leadCollectionInstruction = (!existingContact || existingContact.length === 0)
       ? `\n\nLEAD COLLECTION:
-- During the conversation, naturally ask for the visitor's name and email address.
-- Do this after answering their first question, not immediately on the first message.
-- Be natural and contextual: for example "By the way, can I get your name and email so we can follow up if needed?"
-- If they provide it, thank them and continue helping.
-- Do not ask more than once per conversation.
+- When the user sends a thumbs up emoji (👍), thank them warmly and then naturally ask for their name and email so you can follow up or send them useful info. Be casual and friendly, e.g. "Glad I could help! If you'd like, leave me your name and email and we can keep in touch 😊"
+- When the user sends a thumbs down emoji (👎), apologize that you weren't helpful enough and offer to connect them with a real person. Also gently ask for their name and email so the team can follow up.
+- If they provide name and/or email, thank them and continue helping.
+- Do not ask for contact info unless triggered by a thumbs emoji reaction.
 - Do not insist if they decline.`
       : "";
 

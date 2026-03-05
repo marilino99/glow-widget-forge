@@ -319,6 +319,10 @@ Deno.serve(async (req) => {
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};border-top:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
       #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
+      .wj-feedback{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;padding-right:4px}
+      .wj-feedback-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid \${dark ? 'rgba(255,255,255,0.2)' : color.bg + '44'};background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;padding:0}
+      .wj-feedback-btn:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : color.bg + '15'};border-color:\${color.bg}}
+      .wj-feedback-btn.selected{background:\${color.bg + '22'};border-color:\${color.bg}}
     \` : \`
       #wj-root{position:fixed;bottom:20px;\${cfg.widget_position === 'left' ? 'left' : 'right'}:20px;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
       #wj-btn{width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .2s,box-shadow .2s,opacity .2s;background:\${color.bg};overflow:hidden}
@@ -1166,6 +1170,9 @@ Deno.serve(async (req) => {
       }
     }
 
+    var feedbackShown = {};
+    var aiMessageCount = 0;
+
     function renderMessage(msg) {
       if (renderedMessageIds[msg.id]) return;
       renderedMessageIds[msg.id] = true;
@@ -1177,9 +1184,37 @@ Deno.serve(async (req) => {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
         bubble.innerHTML = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>') + '<div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:70%">' + esc(msg.content) + '</div>';
+        aiMessageCount++;
       }
       chatMsgs.appendChild(bubble);
       lastMessageId = msg.id;
+
+      // Show feedback thumbs after AI responses (from 2nd AI message onward, max once)
+      if (msg.sender_type === 'owner' && aiMessageCount >= 2 && !feedbackShown[msg.id] && Object.keys(feedbackShown).length === 0) {
+        feedbackShown[msg.id] = true;
+        var fb = d.createElement('div');
+        fb.className = 'wj-feedback';
+        var thumbUp = d.createElement('button');
+        thumbUp.className = 'wj-feedback-btn';
+        thumbUp.innerHTML = '👍';
+        var thumbDown = d.createElement('button');
+        thumbDown.className = 'wj-feedback-btn';
+        thumbDown.innerHTML = '👎';
+        thumbUp.onclick = function() {
+          thumbUp.classList.add('selected');
+          thumbDown.style.display = 'none';
+          sendMessageText('👍');
+        };
+        thumbDown.onclick = function() {
+          thumbDown.classList.add('selected');
+          thumbUp.style.display = 'none';
+          sendMessageText('👎');
+        };
+        fb.appendChild(thumbUp);
+        fb.appendChild(thumbDown);
+        chatMsgs.appendChild(fb);
+      }
+
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
 
