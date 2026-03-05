@@ -55,40 +55,53 @@ async function extractAndSaveContact(
   country: string | null
 ) {
   try {
-    // Build a compact conversation transcript
-    const transcript = messages
-      .map((m) => `${m.sender_type === "visitor" ? "Visitor" : "Assistant"}: ${m.content}`)
-      .join("\n");
+    // First try regex extraction from visitor messages only
+    const visitorTexts = messages
+      .filter((m) => m.sender_type === "visitor")
+      .map((m) => m.content)
+      .join(" ");
 
-    const extractionPrompt = `Analyze this conversation and extract the visitor's name and email address if they provided them.
-Reply ONLY with a JSON object: {"name": "...", "email": "..."}
-If name or email is not found, use null for that field. If neither is found, reply with {"name": null, "email": null}.
-Do not include any other text.
+    const emailMatch = visitorTexts.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    if (!emailMatch) return; // No email found, skip AI extraction entirely
+
+    const extractedEmail = emailMatch[0].toLowerCase().trim();
+
+    // Try to extract name via AI
+    let extractedName: string | null = null;
+    try {
+      const transcript = messages
+        .map((m) => `${m.sender_type === "visitor" ? "Visitor" : "Assistant"}: ${m.content}`)
+        .join("\n");
+
+      const extractionPrompt = `From this conversation, extract ONLY the visitor's name (not email). Reply with just the name as plain text, or "null" if not found. No JSON, no explanation.
 
 Conversation:
 ${transcript}`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: extractionPrompt }] }],
-          generationConfig: { temperature: 0, maxOutputTokens: 100 },
-        }),
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${geminiApiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: extractionPrompt }] }],
+            generationConfig: { temperature: 0, maxOutputTokens: 50 },
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        if (text && text.toLowerCase() !== "null" && text.length < 100) {
+          extractedName = text.replace(/['"]/g, "").trim();
+        }
       }
-    );
+    } catch (e) {
+      console.error("Name extraction error:", e);
+    }
 
-    if (!response.ok) return;
-
-    const data = await response.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    if (!text) return;
-
-    // Parse JSON from response (handle markdown code blocks)
-    const jsonStr = text.replace(/```json?\n?/g, "").replace(/```/g, "").trim();
-    const parsed = JSON.parse(jsonStr);
+    const parsed = { email: extractedEmail, name: extractedName };
 
     if (!parsed.email) return;
 
