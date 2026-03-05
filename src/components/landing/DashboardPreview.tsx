@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
+import { Home, MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
+import conversationsImg from "@/assets/dashboard-conversations.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
+  { id: "home", icon: Home },
   { id: "conversations", icon: MessageSquare },
   { id: "contacts", icon: Users },
   { id: "appearance", icon: Paintbrush },
@@ -15,16 +17,18 @@ const tabs = [
 type TabId = (typeof tabs)[number]["id"];
 
 const tabLabels: Record<string, Record<TabId, string>> = {
-  en: { conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", actions: "Actions" },
-  it: { conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", actions: "Azioni" },
-  de: { conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", actions: "Aktionen" },
-  fr: { conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", actions: "Actions" },
+  en: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", actions: "Actions" },
+  it: { home: "Home", conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", actions: "Azioni" },
+  de: { home: "Home", conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", actions: "Aktionen" },
+  fr: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", actions: "Actions" },
 };
 
 const DashboardPreview = () => {
   const { t, lang } = useLandingLang();
-  const [activeTab, setActiveTab] = useState<TabId>("conversations");
+  const [activeTab, setActiveTab] = useState<TabId>("home");
   const labels = tabLabels[lang] || tabLabels.en;
+  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg };
+  const currentImage = tabImages[activeTab] || dashboardImg;
 
   return (
     <section id="dashboard" className="px-6 py-16 md:py-24" style={{ backgroundColor: '#f6f5f4' }}>
@@ -79,7 +83,7 @@ const DashboardPreview = () => {
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={activeTab}
-                    src={dashboardImg}
+                    src={currentImage}
                     alt={`Widjet dashboard - ${labels[activeTab]}`}
                     className="w-full rounded-2xl"
                     loading="lazy"
