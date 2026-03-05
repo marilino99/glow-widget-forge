@@ -212,7 +212,7 @@ Deno.serve(async (req) => {
 
     // Fetch training sources and FAQ items
     const [{ data: trainingSources }, { data: faqItems }] = await Promise.all([
-      supabase.from("training_sources").select("title, content, source_type").eq("user_id", config.user_id).in("status", ["scraped", "trained"]).limit(20),
+      supabase.from("training_sources").select("title, content, source_type").eq("user_id", config.user_id).neq("content", "").limit(20),
       supabase.from("faq_items").select("question, answer").eq("user_id", config.user_id).order("sort_order", { ascending: true }),
     ]);
 
