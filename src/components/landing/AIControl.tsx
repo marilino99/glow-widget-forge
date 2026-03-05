@@ -171,16 +171,22 @@ const AIControl = () => {
           </h2>
         </motion.div>
 
-        {/* Card 1 — Supervise */}
+        {/* Card 1 — Security & Compliance */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#ffffff" }}>
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.card1Title}</h3>
-              <p className="mt-1.5 text-sm text-[#6b6760] max-w-md">{t.card1Desc}</p>
-            </div>
-            <a href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[#2a2a2a] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1a1a1a] transition-colors self-start flex-shrink-0">
-              {t.card1Cta} <ArrowRight className="h-4 w-4" />
-            </a>
+          <div className="mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.secTitle}</h3>
+            <p className="mt-1.5 text-sm text-[#6b6760]">{t.secSubtitle}</p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {securityBadges(t).map((badge, i) => (
+              <div key={i} className="rounded-2xl border border-black/5 bg-[#f8f8f7] p-5 space-y-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50">
+                  <badge.icon className="h-5 w-5 text-emerald-600" />
+                </div>
+                <p className="text-sm font-bold text-[#2a2a2a]">{badge.name}</p>
+                <p className="text-xs text-[#6b6760] leading-relaxed">{badge.desc}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
 
