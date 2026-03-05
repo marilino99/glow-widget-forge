@@ -240,17 +240,21 @@ Deno.serve(async (req) => {
     // Build knowledge base
     let knowledgeBase = "";
     if (trainingSources && trainingSources.length > 0) {
-      knowledgeBase += "\n## Website Knowledge Base\n";
+      knowledgeBase += "\n## === OFFICIAL KNOWLEDGE BASE (USE THIS TO ANSWER) ===\n";
       for (const source of trainingSources) {
-        knowledgeBase += `\n### ${source.title}\n${source.content.substring(0, 3000)}\n`;
+        knowledgeBase += `\n### ${source.title}\n${source.content.substring(0, 6000)}\n`;
       }
+      knowledgeBase += "\n## === END OF KNOWLEDGE BASE ===\n";
     }
     if (faqItems && faqItems.length > 0) {
-      knowledgeBase += "\n## Frequently Asked Questions\n";
+      knowledgeBase += "\n## === FREQUENTLY ASKED QUESTIONS ===\n";
       for (const faq of faqItems) {
         knowledgeBase += `\n**Q: ${faq.question}**\nA: ${faq.answer}\n`;
       }
+      knowledgeBase += "\n## === END OF FAQ ===\n";
     }
+
+    console.log(`Knowledge base: ${trainingSources?.length || 0} sources, ${faqItems?.length || 0} FAQs, total chars: ${knowledgeBase.length}`);
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
