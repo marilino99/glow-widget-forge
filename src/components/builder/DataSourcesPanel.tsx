@@ -35,7 +35,11 @@ interface TrainingSource {
 
 type AddMode = "url" | "text" | "upload" | "picker" | null;
 
-const DataSourcesPanel = () => {
+interface DataSourcesPanelProps {
+  onNavigateToFaq?: () => void;
+}
+
+const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [sources, setSources] = useState<TrainingSource[]>([]);
@@ -553,8 +557,8 @@ const DataSourcesPanel = () => {
 
             {/* Add FAQ's */}
             <button
-              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm opacity-60 cursor-not-allowed"
-              disabled
+              onClick={() => { setAddMode(null); onNavigateToFaq?.(); }}
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
                 <MessageSquareText className="h-5 w-5 text-blue-500" />
