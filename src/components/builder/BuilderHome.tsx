@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { MousePointerClick, Eye, TrendingUp, Loader2, MessageSquareText, Mail, CalendarDays, CalendarIcon } from "lucide-react";
+import { MousePointerClick, Eye, TrendingUp, Loader2, MessageSquareText, Mail, CalendarDays, CalendarIcon, CloudOff, Lock, ShieldCheck, UserX } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -205,10 +205,10 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   ];
 
   const securityCerts = [
-    { icon: "🔒", name: "SSL Encrypted", description: "All data encrypted in transit with TLS 1.3" },
-    { icon: "🛡️", name: "GDPR Compliant", description: "Full compliance with EU data protection" },
-    { icon: "✅", name: "SOC 2 Type II", description: "Enterprise-grade security controls" },
-    { icon: "🔐", name: "Data Encryption", description: "AES-256 encryption at rest" },
+    { icon: CloudOff, name: "Zero-Training Guarantee", description: "Your documents and conversations are never used to train any AI model. Inference-only mode." },
+    { icon: Lock, name: "SSL Encrypted", description: "All data encrypted in transit via HTTPS/TLS" },
+    { icon: ShieldCheck, name: "Data Isolation", description: "Each account's data is logically isolated with row-level security policies" },
+    { icon: UserX, name: "No Third-Party Sharing", description: "Your data is never sold or shared with third parties" },
   ];
 
   return (
@@ -450,13 +450,15 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           <div>
             <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Security</h2>
             <div className="space-y-3">
-              {securityCerts.map((cert) => (
+              {securityCerts.map((cert) => {
+                const IconComp = cert.icon;
+                return (
                 <div
                   key={cert.name}
                   className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10">
-                    <span className="text-lg">{cert.icon}</span>
+                    <IconComp className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">{cert.name}</p>
@@ -464,7 +466,8 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
                   </div>
                   <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
