@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
+import { Home, MessageSquare, Users, Paintbrush, Bot, Database } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
 import conversationsImg from "@/assets/dashboard-conversations.png";
 import appearanceImg from "@/assets/dashboard-appearance.png";
 import contactsImg from "@/assets/dashboard-contacts.png";
 import chatbotImg from "@/assets/dashboard-chatbot.png";
+import datasourcesImg from "@/assets/dashboard-datasources.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
@@ -14,23 +15,23 @@ const tabs = [
   { id: "contacts", icon: Users },
   { id: "appearance", icon: Paintbrush },
   { id: "chatbot", icon: Bot },
-  { id: "actions", icon: Zap },
+  { id: "datasources", icon: Database },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
 
 const tabLabels: Record<string, Record<TabId, string>> = {
-  en: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", actions: "Actions" },
-  it: { home: "Home", conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", actions: "Azioni" },
-  de: { home: "Home", conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", actions: "Aktionen" },
-  fr: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", actions: "Actions" },
+  en: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", datasources: "Data Sources" },
+  it: { home: "Home", conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", datasources: "Data Sources" },
+  de: { home: "Home", conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", datasources: "Data Sources" },
+  fr: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", datasources: "Data Sources" },
 };
 
 const DashboardPreview = () => {
   const { t, lang } = useLandingLang();
   const [activeTab, setActiveTab] = useState<TabId>("home");
   const labels = tabLabels[lang] || tabLabels.en;
-  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, contacts: contactsImg, appearance: appearanceImg, chatbot: chatbotImg };
+  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, contacts: contactsImg, appearance: appearanceImg, chatbot: chatbotImg, datasources: datasourcesImg };
   const currentImage = tabImages[activeTab] || dashboardImg;
 
   return (
