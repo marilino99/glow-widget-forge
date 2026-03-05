@@ -66,7 +66,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
           </button>
         </div>
         <div className="px-36">
-        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-6">All widgets</h1>
+        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-4">All widgets</h1>
         {/* Featured channels - 2 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {channels.map((channel) => (
