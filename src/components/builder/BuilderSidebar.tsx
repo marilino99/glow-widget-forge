@@ -728,7 +728,7 @@ const BuilderSidebar = ({
             </div>
 
             {/* Progress bar */}
-            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+            <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-foreground transition-all duration-500 ease-out"
                 style={{ width: `${Math.min((aiResponsesThisMonth / aiResponseLimit) * 100, 100)}%` }}
