@@ -389,18 +389,30 @@ const DataSourcesPanel = () => {
                     <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                       source.source_type === "url"
                         ? "bg-purple-100 text-purple-600"
-                        : "bg-red-100 text-red-600"
+                        : source.source_type === "pdf"
+                        ? "bg-red-100 text-red-600"
+                        : source.source_type === "doc"
+                        ? "bg-blue-100 text-blue-600"
+                        : "bg-amber-100 text-amber-600"
                     }`}>
                       {source.source_type === "url" ? (
                         <Link2 className="h-4 w-4" />
+                      ) : source.source_type === "pdf" ? (
+                        <Upload className="h-4 w-4" />
                       ) : (
                         <FileText className="h-4 w-4" />
                       )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">{source.title}</p>
-                      {source.url && (
+                      {source.source_type === "url" && source.url && (
                         <p className="text-xs text-muted-foreground truncate">{source.url}</p>
+                      )}
+                      {source.source_type === "pdf" && (
+                        <p className="text-xs text-muted-foreground">PDF document</p>
+                      )}
+                      {source.source_type === "doc" && (
+                        <p className="text-xs text-muted-foreground">Word document</p>
                       )}
                       {source.source_type === "text" && (
                         <p className="text-xs text-muted-foreground">Text document</p>
