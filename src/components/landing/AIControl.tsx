@@ -1,6 +1,19 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Bot } from "lucide-react";
+import greenBlob from "@/assets/green-blob.png";
+import yellowBlob from "@/assets/yellow-blob.png";
+import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
+import shopifyLogo from "@/assets/logo-shopify.png";
+import wordpressLogo from "@/assets/logo-wordpress.png";
+import wixLogo from "@/assets/logo-wix-icon.png";
+import lovableLogo from "@/assets/logo-lovable.png";
+import onepageLogo from "@/assets/logo-onepage.png";
+import whatsappLogo from "@/assets/logo-whatsapp.png";
+import messengerLogo from "@/assets/logo-messenger.png";
+import woocommerceLogo from "@/assets/logo-woocommerce.png";
+import telegramLogo from "@/assets/logo-telegram.png";
+import calendlyLogo from "@/assets/logo-calendly.png";
+import elevenlabsLogo from "@/assets/logo-elevenlabs.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -13,32 +26,20 @@ const i18n: Record<string, {
   card2Title: string; card2Desc: string;
   card3Title: string; card3Desc: string;
   card4Title: string; card4Desc: string;
-  certIso: string; certSoc: string; certGdpr: string; certHipaa: string;
-  certIsoDesc: string; certSocDesc: string; certGdprDesc: string; certHipaaDesc: string;
 }> = {
   en: {
     headline1: "AI you ", headlineAccent: "control", headline2: ". Completely.",
     card1Title: "Supervise your AI agent in real time", card1Desc: "Monitor every conversation between your AI and visitors. Jump in anytime.", card1Cta: "Build your first AI agent",
     card2Title: "You set the rules. AI plays by them.", card2Desc: "Upload your knowledge base, define boundaries, and let AI handle the rest — exactly how you want.",
     card3Title: "Live insights into your team and AI.", card3Desc: "Track performance, response times, and conversions in one dashboard.",
-    card4Title: "Your data is protected", card4Desc: "Enterprise-grade security to keep your data safe and compliant.",
-    certIso: "ISO 27001", certSoc: "SOC 2 Type II", certGdpr: "GDPR Ready", certHipaa: "HIPAA Ready",
-    certIsoDesc: "International standard for information security management systems.",
-    certSocDesc: "Audited controls for security, availability, and confidentiality.",
-    certGdprDesc: "Full compliance with EU data protection regulations.",
-    certHipaaDesc: "Ready for healthcare data protection requirements.",
+    card4Title: "Instant integration", card4Desc: "Integrate diverse data sources to enrich your agent's knowledge and capabilities.",
   },
   it: {
     headline1: "AI che ", headlineAccent: "controlli", headline2: ". Completamente.",
     card1Title: "Supervisiona il tuo agente AI in tempo reale", card1Desc: "Monitora ogni conversazione tra la tua AI e i visitatori. Intervieni in qualsiasi momento.", card1Cta: "Crea il tuo primo agente AI",
     card2Title: "Tu stabilisci le regole. L'AI le rispetta.", card2Desc: "Carica la tua knowledge base, definisci i limiti e lascia che l'AI gestisca il resto — esattamente come vuoi.",
     card3Title: "Insights in tempo reale sul team e l'AI.", card3Desc: "Monitora performance, tempi di risposta e conversioni in un'unica dashboard.",
-    card4Title: "I tuoi dati sono protetti", card4Desc: "Sicurezza di livello enterprise per mantenere i tuoi dati al sicuro e conformi.",
-    certIso: "ISO 27001", certSoc: "SOC 2 Type II", certGdpr: "GDPR Ready", certHipaa: "HIPAA Ready",
-    certIsoDesc: "Standard internazionale per la gestione della sicurezza delle informazioni.",
-    certSocDesc: "Controlli verificati per sicurezza, disponibilità e riservatezza.",
-    certGdprDesc: "Piena conformità con le normative UE sulla protezione dei dati.",
-    certHipaaDesc: "Pronto per i requisiti di protezione dei dati sanitari.",
+    card4Title: "Integrazione istantanea", card4Desc: "Integra diverse fonti di dati per arricchire le conoscenze e le capacità del tuo agente.",
   },
 };
 
@@ -151,6 +152,24 @@ const AnalyticsMockup = () => (
   </div>
 );
 
+/* ── Tools data ── */
+const tools = [
+  { name: "WooCommerce", color: "#96588A", icon: "", image: woocommerceLogo },
+  { name: "Shopify", color: "#96BF48", icon: "", image: shopifyLogo },
+  { name: "WordPress", color: "#21759B", icon: "", image: wordpressLogo },
+  { name: "Wix", color: "#0C6EFC", icon: "", image: wixLogo },
+  { name: "Lovable", color: "#FF6B6B", icon: "", image: lovableLogo },
+  { name: "OnePage", color: "#2979FF", icon: "", image: onepageLogo },
+  
+  { name: "WhatsApp", color: "#25D366", icon: "", image: whatsappLogo },
+  { name: "ElevenLabs", color: "#000000", icon: "", image: elevenlabsLogo },
+  { name: "Calendly", color: "#006BFF", icon: "", image: calendlyLogo },
+  { name: "Telegram", color: "#26A5E4", icon: "", image: telegramLogo },
+  { name: "Messenger", color: "#0084FF", icon: "", image: messengerLogo },
+  
+];
+const toolRow1 = tools.slice(0, 6);
+const toolRow2 = tools.slice(6);
 
 /* ── Main component ── */
 const AIControl = () => {
@@ -231,25 +250,45 @@ const AIControl = () => {
           </motion.div>
         </div>
 
-        {/* Card 4 — Security Certificates */}
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl bg-white p-8 md:p-10">
-          <div className="text-center mb-8">
-            <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">{t.card4Title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">{t.card4Desc}</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: t.certIso, desc: t.certIsoDesc, icon: "🛡️" },
-              { label: t.certSoc, desc: t.certSocDesc, icon: "✅" },
-              { label: t.certGdpr, desc: t.certGdprDesc, icon: "🇪🇺" },
-              { label: t.certHipaa, desc: t.certHipaaDesc, icon: "🏥" },
-            ].map((cert) => (
-              <div key={cert.label} className="rounded-2xl border border-border bg-[#f6f5f4] p-5 text-center space-y-2">
-                <span className="text-3xl">{cert.icon}</span>
-                <p className="text-sm font-bold text-foreground">{cert.label}</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{cert.desc}</p>
+        {/* Card 4 — Works with your tools */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl border border-border bg-background p-8 md:p-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-8">
+            <div className="md:w-[38%] flex-shrink-0">
+              <h3 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">{t.card4Title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground max-w-sm">{t.card4Desc}</p>
+            </div>
+            <div className="flex-1 space-y-3 overflow-hidden -mr-8 md:-mr-10">
+              {/* Row 1 */}
+              <div className="flex gap-2.5">
+                {toolRow1.map((tool) => (
+                  <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
+                      {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-5 w-5 object-contain" /> : tool.icon}
+                    </span>
+                    {tool.name}
+                  </span>
+                ))}
+                {/* Yellow blob */}
+                <span className="inline-flex h-9 w-28 rounded-full flex-shrink-0 overflow-hidden">
+                  <img src={yellowBlob} alt="" className="h-full w-full object-cover" />
+                </span>
               </div>
-            ))}
+              {/* Row 2 */}
+              <div className="flex gap-2.5 ml-12">
+                {/* Green blob */}
+                <span className="inline-flex h-9 w-32 rounded-full flex-shrink-0 overflow-hidden">
+                  <img src={greenBlob} alt="" className="h-full w-full object-cover" />
+                </span>
+                {toolRow2.map((tool) => (
+                  <span key={tool.name} className="inline-flex items-center gap-2 rounded-full bg-[#f4f4f5] px-2.5 py-1.5 text-xs font-semibold text-foreground whitespace-nowrap flex-shrink-0">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[9px] font-bold flex-shrink-0 overflow-hidden" style={{ color: tool.color }}>
+                      {(tool as any).image ? <img src={(tool as any).image} alt={tool.name} className="h-5 w-5 object-contain" /> : tool.icon}
+                    </span>
+                    {tool.name}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
