@@ -5,6 +5,7 @@ import dashboardImg from "@/assets/dashboard-preview.png";
 import conversationsImg from "@/assets/dashboard-conversations.png";
 import appearanceImg from "@/assets/dashboard-appearance.png";
 import contactsImg from "@/assets/dashboard-contacts.png";
+import chatbotImg from "@/assets/dashboard-chatbot.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
@@ -29,7 +30,7 @@ const DashboardPreview = () => {
   const { t, lang } = useLandingLang();
   const [activeTab, setActiveTab] = useState<TabId>("home");
   const labels = tabLabels[lang] || tabLabels.en;
-  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, contacts: contactsImg, appearance: appearanceImg };
+  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, contacts: contactsImg, appearance: appearanceImg, chatbot: chatbotImg };
   const currentImage = tabImages[activeTab] || dashboardImg;
 
   return (
