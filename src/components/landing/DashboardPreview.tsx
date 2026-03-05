@@ -4,6 +4,7 @@ import { Home, MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
 import conversationsImg from "@/assets/dashboard-conversations.png";
 import appearanceImg from "@/assets/dashboard-appearance.png";
+import contactsImg from "@/assets/dashboard-contacts.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
