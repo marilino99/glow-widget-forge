@@ -25,8 +25,10 @@ const tabLabels: Record<string, Record<TabId, string>> = {
 
 const DashboardPreview = () => {
   const { t, lang } = useLandingLang();
-  const [activeTab, setActiveTab] = useState<TabId>("conversations");
+  const [activeTab, setActiveTab] = useState<TabId>("home");
   const labels = tabLabels[lang] || tabLabels.en;
+  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg };
+  const currentImage = tabImages[activeTab] || dashboardImg;
 
   return (
     <section id="dashboard" className="px-6 py-16 md:py-24" style={{ backgroundColor: '#f6f5f4' }}>
