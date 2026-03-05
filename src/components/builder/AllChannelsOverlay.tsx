@@ -55,8 +55,8 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-10 pt-10 pb-6 shrink-0">
-        <h1 className="text-3xl font-bold text-[#1a1a2e]">All channels</h1>
+      <div className="flex items-center justify-between px-16 pt-10 pb-6 shrink-0">
+        <h1 className="text-3xl font-bold text-[#1a1a2e]">All widgets</h1>
         <button
           onClick={onClose}
           className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e0e3ef] bg-white text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]"
@@ -66,7 +66,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-10 pb-10">
+      <div className="flex-1 overflow-y-auto px-16 pb-10">
         {/* Featured channels - 2 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {channels.map((channel) => (
