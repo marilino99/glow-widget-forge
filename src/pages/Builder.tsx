@@ -376,7 +376,7 @@ const Builder = () => {
                 <PopoverContent align="start" side="right" sideOffset={12} className="w-64 rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
-                    <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    <button onClick={() => setShowAllChannels(true)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
@@ -431,7 +431,7 @@ const Builder = () => {
                 <PopoverContent align="start" side="bottom" className="w-[calc(288px-32px)] rounded-2xl p-3 bg-background border border-border shadow-lg z-50">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-semibold text-foreground">My Widgets</h3>
-                    <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    <button onClick={() => setShowAllChannels(true)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
@@ -986,6 +986,9 @@ const Builder = () => {
         onAvatarChange={setUserAvatarUrl}
         onNameChange={setUserDisplayName}
       />
+      {showAllChannels && (
+        <AllChannelsOverlay onClose={() => setShowAllChannels(false)} />
+      )}
     </div>
   );
 };
