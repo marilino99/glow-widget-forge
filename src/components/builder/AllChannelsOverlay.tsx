@@ -11,6 +11,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       title: "Chat widget",
       description: "Add a floating chat window to your site.",
       gradient: "linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%)",
+      icon: "💬",
       enabled: true,
     },
     {
@@ -18,6 +19,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       title: "Help page",
       description: "ChatGPT-style help page, deployed standalone or under a path on your site (/help).",
       gradient: "linear-gradient(135deg, #fde68a 0%, #fbbf24 100%)",
+      icon: "📖",
       enabled: true,
     },
   ];
