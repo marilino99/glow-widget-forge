@@ -370,6 +370,13 @@ const DataSourcesPanel = () => {
               <span />
             </div>
 
+            {uploadingFile && (
+              <div className="px-4 py-3 border-b border-border bg-primary/5 flex items-center gap-2 text-sm text-primary">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                Uploading document...
+              </div>
+            )}
+
             {isLoading ? (
               <div className="px-4 py-10 text-center text-sm text-muted-foreground">
                 Loading sources...
