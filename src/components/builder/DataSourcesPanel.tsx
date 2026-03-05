@@ -179,6 +179,89 @@ const DataSourcesPanel = () => {
     setDeleteId(null);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+      "text/markdown",
+      "text/csv",
+    ];
+    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|txt|md|csv)$/i)) {
+      toast({ title: "Unsupported file type", description: "Please upload PDF, DOC, DOCX, TXT, MD, or CSV files.", variant: "destructive" });
+      return;
+    }
+
+    // Validate size (max 20MB)
+    if (file.size > 20 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum file size is 20MB.", variant: "destructive" });
+      return;
+    }
+
+    setUploadingFile(true);
+    setAddMode(null);
+
+    try {
+      const filePath = `${user.id}/${Date.now()}_${file.name}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from("training-documents")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Determine source type label
+      const ext = file.name.split(".").pop()?.toLowerCase() || "";
+      const sourceType = ext === "pdf" ? "pdf" : ext === "doc" || ext === "docx" ? "doc" : "text";
+
+      // Create training source entry
+      const { data, error: insertError } = await supabase
+        .from("training_sources")
+        .insert({
+          user_id: user.id,
+          title: file.name,
+          source_type: sourceType,
+          status: "pending",
+          content: "",
+          url: filePath,
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      setSources((prev) => [data, ...prev]);
+      toast({ title: "Document uploaded", description: "Processing content..." });
+
+      // Trigger parsing in background
+      supabase.functions.invoke("parse-document", {
+        body: { sourceId: data.id, filePath },
+      }).then(({ error: parseErr }) => {
+        if (!parseErr) {
+          setSources((prev) =>
+            prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s)
+          );
+        } else {
+          setSources((prev) =>
+            prev.map((s) => s.id === data.id ? { ...s, status: "error" } : s)
+          );
+        }
+      });
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast({ title: "Upload failed", description: "Could not upload the document.", variant: "destructive" });
+    } finally {
+      setUploadingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="flex h-full">
       {/* Left sidebar - Folders */}
