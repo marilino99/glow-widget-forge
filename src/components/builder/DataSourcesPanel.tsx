@@ -33,7 +33,7 @@ interface TrainingSource {
   updated_at: string;
 }
 
-type AddMode = "url" | "text" | "picker" | null;
+type AddMode = "url" | "text" | "upload" | "picker" | null;
 
 const DataSourcesPanel = () => {
   const { user } = useAuth();
@@ -48,6 +48,8 @@ const DataSourcesPanel = () => {
   const [newContent, setNewContent] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const fileInputRef = useState<HTMLInputElement | null>(null);
 
   // Load sources
   useEffect(() => {
