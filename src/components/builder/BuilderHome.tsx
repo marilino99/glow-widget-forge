@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText, Mail, CalendarDays, CalendarIcon } from "lucide-react";
+import { MousePointerClick, Eye, TrendingUp, Loader2, MessageSquareText, Mail, CalendarDays, CalendarIcon } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -204,10 +204,11 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
     { icon: MessageSquareText, label: "Conversations", value: conversations, color: "#5b5b65" },
   ];
 
-  const integrations = [
-    { icon: ShoppingBag, name: "Shopify", description: "Connect your store", available: false },
-    { icon: Globe, name: "WordPress", description: "Install plugin", available: false },
-    { icon: Plug, name: "Zapier", description: "Automate workflows", available: false },
+  const securityCerts = [
+    { icon: "🔒", name: "SSL Encrypted", description: "All data encrypted in transit with TLS 1.3" },
+    { icon: "🛡️", name: "GDPR Compliant", description: "Full compliance with EU data protection" },
+    { icon: "✅", name: "SOC 2 Type II", description: "Enterprise-grade security controls" },
+    { icon: "🔐", name: "Data Encryption", description: "AES-256 encryption at rest" },
   ];
 
   return (
@@ -445,25 +446,23 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
             </div>
           </div>
 
-          {/* Integrations */}
+          {/* Security Certificates */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Integrations</h2>
+            <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Security</h2>
             <div className="space-y-3">
-              {integrations.map((integration) => (
+              {securityCerts.map((cert) => (
                 <div
-                  key={integration.name}
-                  className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 opacity-60"
+                  key={cert.name}
+                  className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-muted/40">
-                    <integration.icon className="h-5 w-5 text-muted-foreground" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10">
+                    <span className="text-lg">{cert.icon}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{integration.name}</p>
-                    <p className="text-xs text-muted-foreground">{integration.description}</p>
+                    <p className="text-sm font-medium text-foreground">{cert.name}</p>
+                    <p className="text-xs text-muted-foreground">{cert.description}</p>
                   </div>
-                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                    coming soon
-                  </span>
+                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                 </div>
               ))}
             </div>
