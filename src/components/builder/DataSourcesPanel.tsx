@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw } from "lucide-react";
+import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,7 +33,7 @@ interface TrainingSource {
   updated_at: string;
 }
 
-type AddMode = "url" | "text" | null;
+type AddMode = "url" | "text" | "picker" | null;
 
 const DataSourcesPanel = () => {
   const { user } = useAuth();
@@ -267,24 +267,10 @@ const DataSourcesPanel = () => {
           <span className="text-sm font-medium text-foreground">
             All sources: {filtered.length}
           </span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" className="rounded-xl gap-2">
-                <Plus className="h-4 w-4" />
-                Add
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl">
-              <DropdownMenuItem onClick={() => setAddMode("url")} className="gap-2">
-                <Link2 className="h-4 w-4" />
-                Add URL
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setAddMode("text")} className="gap-2">
-                <FileText className="h-4 w-4" />
-                Add text
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button size="sm" className="rounded-xl gap-2" onClick={() => setAddMode("picker")}>
+            <Plus className="h-4 w-4" />
+            Add
+          </Button>
         </div>
 
         {/* Table */}
