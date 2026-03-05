@@ -153,6 +153,7 @@ const Builder = () => {
   const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [showAllChannels, setShowAllChannels] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
 
