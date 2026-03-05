@@ -205,10 +205,10 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
   ];
 
   const securityCerts = [
-    { icon: "🔒", name: "SSL Encrypted", description: "All data encrypted in transit with TLS 1.3" },
-    { icon: "🛡️", name: "GDPR Compliant", description: "Full compliance with EU data protection" },
-    { icon: "✅", name: "SOC 2 Type II", description: "Enterprise-grade security controls" },
-    { icon: "🔐", name: "Data Encryption", description: "AES-256 encryption at rest" },
+    { icon: CloudOff, name: "Zero-Training Guarantee", description: "Your documents and conversations are never used to train any AI model. Inference-only mode." },
+    { icon: Lock, name: "SSL Encrypted", description: "All data encrypted in transit via HTTPS/TLS" },
+    { icon: ShieldCheck, name: "Data Isolation", description: "Each account's data is logically isolated with row-level security policies" },
+    { icon: UserX, name: "No Third-Party Sharing", description: "Your data is never sold or shared with third parties" },
   ];
 
   return (
