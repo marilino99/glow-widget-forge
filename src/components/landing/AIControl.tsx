@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import greenBlob from "@/assets/green-blob.png";
 import yellowBlob from "@/assets/yellow-blob.png";
-import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare } from "lucide-react";
+import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare, Shield, ShieldCheck, Scale, CloudOff } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import wordpressLogo from "@/assets/logo-wordpress.png";
