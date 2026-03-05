@@ -156,7 +156,9 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
             </div>
           ))}
         </div>
+        </div>
       </div>
+    </div>
     </div>
   );
 };
