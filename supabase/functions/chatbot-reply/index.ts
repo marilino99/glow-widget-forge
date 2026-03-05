@@ -240,17 +240,21 @@ Deno.serve(async (req) => {
     // Build knowledge base
     let knowledgeBase = "";
     if (trainingSources && trainingSources.length > 0) {
-      knowledgeBase += "\n## Website Knowledge Base\n";
+      knowledgeBase += "\n## === OFFICIAL KNOWLEDGE BASE (USE THIS TO ANSWER) ===\n";
       for (const source of trainingSources) {
-        knowledgeBase += `\n### ${source.title}\n${source.content.substring(0, 3000)}\n`;
+        knowledgeBase += `\n### ${source.title}\n${source.content.substring(0, 6000)}\n`;
       }
+      knowledgeBase += "\n## === END OF KNOWLEDGE BASE ===\n";
     }
     if (faqItems && faqItems.length > 0) {
-      knowledgeBase += "\n## Frequently Asked Questions\n";
+      knowledgeBase += "\n## === FREQUENTLY ASKED QUESTIONS ===\n";
       for (const faq of faqItems) {
         knowledgeBase += `\n**Q: ${faq.question}**\nA: ${faq.answer}\n`;
       }
+      knowledgeBase += "\n## === END OF FAQ ===\n";
     }
+
+    console.log(`Knowledge base: ${trainingSources?.length || 0} sources, ${faqItems?.length || 0} FAQs, total chars: ${knowledgeBase.length}`);
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
@@ -279,13 +283,14 @@ ${knowledgeBase}
 ${additionalInstructions}
 ${leadCollectionInstruction}
 
-STRICT RULES:
-- Use the knowledge base above to answer questions about the business, its products, services, and FAQ.
-- If the knowledge base contains relevant information, use it to give accurate, helpful answers.
-- If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat.
-- Be helpful, friendly and concise.
-- Keep responses short (2-3 sentences max unless more detail is needed).
-- Do not make up information. Only use what's in the knowledge base.`;
+CRITICAL RULES — YOU MUST FOLLOW THESE:
+1. YOUR PRIMARY SOURCE OF TRUTH IS THE KNOWLEDGE BASE ABOVE. Before answering ANY question, search through the entire knowledge base for relevant information.
+2. If the knowledge base contains information related to the user's question, you MUST use it in your answer. Do NOT generate answers from your own training data when relevant knowledge base content exists.
+3. When answering from the knowledge base, be accurate and cite the specific information found there.
+4. If the user asks something NOT covered by the knowledge base, clearly state that you don't have that specific information and suggest they contact the business directly via chat.
+5. NEVER invent or fabricate information that is not in the knowledge base.
+6. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
+7. If the FAQ section contains a matching question, use that exact answer.`;
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;
