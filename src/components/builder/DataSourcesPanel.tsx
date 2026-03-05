@@ -488,8 +488,8 @@ const DataSourcesPanel = () => {
       <Dialog open={addMode === "text"} onOpenChange={(open) => !open && setAddMode(null)}>
         <DialogContent className="rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Add text</DialogTitle>
-            <DialogDescription>Add custom text content to your knowledge base.</DialogDescription>
+            <DialogTitle>Create article</DialogTitle>
+            <DialogDescription>Write custom help content for smarter answers.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div>
@@ -512,7 +512,7 @@ const DataSourcesPanel = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddMode(null)} className="rounded-xl">Cancel</Button>
+            <Button variant="outline" onClick={() => setAddMode("picker")} className="rounded-xl">Back</Button>
             <Button onClick={handleAddText} disabled={isAdding || !newTitle.trim() || !newContent.trim()} className="rounded-xl">
               {isAdding ? "Adding..." : "Add"}
             </Button>
