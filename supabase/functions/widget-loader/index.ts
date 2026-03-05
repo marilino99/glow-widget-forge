@@ -1166,6 +1166,9 @@ Deno.serve(async (req) => {
       }
     }
 
+    var feedbackShown = {};
+    var aiMessageCount = 0;
+
     function renderMessage(msg) {
       if (renderedMessageIds[msg.id]) return;
       renderedMessageIds[msg.id] = true;
@@ -1177,9 +1180,37 @@ Deno.serve(async (req) => {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
         bubble.innerHTML = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>') + '<div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:70%">' + esc(msg.content) + '</div>';
+        aiMessageCount++;
       }
       chatMsgs.appendChild(bubble);
       lastMessageId = msg.id;
+
+      // Show feedback thumbs after AI responses (from 2nd AI message onward, max once)
+      if (msg.sender_type === 'owner' && aiMessageCount >= 2 && !feedbackShown[msg.id] && Object.keys(feedbackShown).length === 0) {
+        feedbackShown[msg.id] = true;
+        var fb = d.createElement('div');
+        fb.className = 'wj-feedback';
+        var thumbUp = d.createElement('button');
+        thumbUp.className = 'wj-feedback-btn';
+        thumbUp.innerHTML = '👍';
+        var thumbDown = d.createElement('button');
+        thumbDown.className = 'wj-feedback-btn';
+        thumbDown.innerHTML = '👎';
+        thumbUp.onclick = function() {
+          thumbUp.classList.add('selected');
+          thumbDown.style.display = 'none';
+          sendMessageText('👍');
+        };
+        thumbDown.onclick = function() {
+          thumbDown.classList.add('selected');
+          thumbUp.style.display = 'none';
+          sendMessageText('👎');
+        };
+        fb.appendChild(thumbUp);
+        fb.appendChild(thumbDown);
+        chatMsgs.appendChild(fb);
+      }
+
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
 
