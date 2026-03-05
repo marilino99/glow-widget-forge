@@ -1,4 +1,4 @@
-import { X, Monitor, MessageSquare } from "lucide-react";
+import { ArrowLeft, Monitor, MessageSquare } from "lucide-react";
 
 interface AllChannelsOverlayProps {
   onClose: () => void;
@@ -54,19 +54,20 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
         background: "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
       }}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between px-48 pt-10 pb-6 shrink-0">
-        <h1 className="text-3xl font-bold text-[#1a1a2e]">All widgets</h1>
+      {/* Fixed Back button */}
+      <div className="shrink-0 px-48 pt-8 pb-4">
         <button
           onClick={onClose}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e0e3ef] bg-white text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]"
+          className="flex items-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-5 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]"
         >
-          <X className="h-5 w-5" />
+          <ArrowLeft className="h-4 w-4" />
+          Back
         </button>
       </div>
 
-      {/* Content */}
+      {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto px-48 pb-10">
+        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-8">All widgets</h1>
         {/* Featured channels - 2 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {channels.map((channel) => (
