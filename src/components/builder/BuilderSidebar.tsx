@@ -727,6 +727,14 @@ const BuilderSidebar = ({
               <span className="text-sm text-foreground">{aiResponsesThisMonth.toLocaleString()} / {aiResponseLimit.toLocaleString()}</span>
             </div>
 
+            {/* Progress bar */}
+            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full rounded-full bg-foreground transition-all duration-500 ease-out"
+                style={{ width: `${Math.min((aiResponsesThisMonth / aiResponseLimit) * 100, 100)}%` }}
+              />
+            </div>
+
             <div className="h-px w-full bg-border" />
 
             {/* Reset date */}
