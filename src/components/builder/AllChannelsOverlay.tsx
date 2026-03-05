@@ -120,38 +120,30 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
           ))}
         </div>
 
-        {/* Integration channels - 3 columns */}
+        {/* Integration channels */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {integrations.map((integration) => (
             <div
               key={integration.title}
-              className="rounded-2xl border border-[#e0e3ef] bg-white p-6 flex flex-col"
+              className="rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col"
             >
-              {/* Icon */}
+              {/* Icon area */}
               <div
-                className="flex h-14 w-14 items-center justify-center rounded-2xl mb-5 text-2xl"
-                style={{ backgroundColor: integration.iconBg }}
+                className="relative flex items-center justify-center py-10"
+                style={{ background: integration.iconBg }}
               >
-                {integration.icon}
-              </div>
-              {/* Title + badge */}
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-base font-semibold text-[#1a1a2e]">{integration.title}</h3>
+                <span className="text-5xl drop-shadow-md">{integration.icon}</span>
                 {integration.badge && (
-                  <span className="rounded-full bg-[#1a1a2e] px-2.5 py-0.5 text-[11px] font-medium text-white">
+                  <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#3b82f6] shadow-sm">
+                    <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2l1.5 3.5L13 7l-3.5 1.5L8 12l-1.5-3.5L3 7l3.5-1.5z"/></svg>
                     {integration.badge}
                   </span>
                 )}
               </div>
-              <p className="text-sm text-[#8a8fa8] mb-6 flex-1">{integration.description}</p>
-              {/* Actions */}
-              <div className="flex items-center justify-end gap-3">
-                <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e0e3ef] bg-white text-[#8a8fa8] transition-colors hover:bg-[#f8f9fc]">
-                  <Monitor className="h-4 w-4" />
-                </button>
-                <button className="rounded-xl border border-[#e0e3ef] bg-white px-6 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]">
-                  {integration.action === "upgrade" ? "Upgrade to enable" : "Setup"}
-                </button>
+              {/* Content */}
+              <div className="px-5 py-4 flex-1 flex flex-col">
+                <h3 className="text-base font-semibold text-[#1a1a2e] mb-1.5">{integration.title}</h3>
+                <p className="text-sm text-[#8a8fa8] leading-relaxed">{integration.description}</p>
               </div>
             </div>
           ))}
