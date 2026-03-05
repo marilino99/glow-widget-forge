@@ -810,7 +810,11 @@ const Builder = () => {
             </div>
           </div>
         ) : builderView === "data-sources" ? (
-          <DataSourcesPanel />
+          <DataSourcesPanel onNavigateToFaq={() => {
+            setBuilderView("editor");
+            setActiveWidget("faq");
+            setIsPanelOpen(true);
+          }} />
         ) : builderView === "ai" ? (
           <div className="flex h-full flex-col">
             <div className="shrink-0 px-8 pt-8 pb-6 text-center">
