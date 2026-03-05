@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { MousePointerClick, Eye, TrendingUp, Loader2, Plug, ShoppingBag, Globe, MessageSquareText, Mail, CalendarDays, CalendarIcon } from "lucide-react";
+import { MousePointerClick, Eye, TrendingUp, Loader2, MessageSquareText, Mail, CalendarDays, CalendarIcon } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
