@@ -28,7 +28,6 @@ async function getUserPlan(userId: string, supabase: any): Promise<"free" | "pro
   const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
   if (!stripeKey) return "free";
 
-  // Get user email
   const { data: userData } = await supabase.auth.admin.getUserById(userId);
   const email = userData?.user?.email;
   if (!email) return "free";
@@ -44,6 +43,75 @@ async function getUserPlan(userId: string, supabase: any): Promise<"free" | "pro
   });
 
   return subscriptions.data.length > 0 ? "pro" : "free";
+}
+
+async function extractAndSaveContact(
+  supabase: any,
+  messages: any[],
+  userId: string,
+  conversationId: string,
+  geminiApiKey: string,
+  language: string,
+  country: string | null
+) {
+  try {
+    // Build a compact conversation transcript
+    const transcript = messages
+      .map((m) => `${m.sender_type === "visitor" ? "Visitor" : "Assistant"}: ${m.content}`)
+      .join("\n");
+
+    const extractionPrompt = `Analyze this conversation and extract the visitor's name and email address if they provided them.
+Reply ONLY with a JSON object: {"name": "...", "email": "..."}
+If name or email is not found, use null for that field. If neither is found, reply with {"name": null, "email": null}.
+Do not include any other text.
+
+Conversation:
+${transcript}`;
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: extractionPrompt }] }],
+          generationConfig: { temperature: 0, maxOutputTokens: 100 },
+        }),
+      }
+    );
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (!text) return;
+
+    // Parse JSON from response (handle markdown code blocks)
+    const jsonStr = text.replace(/```json?\n?/g, "").replace(/```/g, "").trim();
+    const parsed = JSON.parse(jsonStr);
+
+    if (!parsed.email) return;
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(parsed.email)) return;
+
+    // Upsert contact
+    await supabase.from("contacts").upsert(
+      {
+        user_id: userId,
+        email: parsed.email.toLowerCase().trim(),
+        name: parsed.name?.trim() || null,
+        conversation_id: conversationId,
+        channel: "chatbot",
+        country: country,
+        language: language,
+      },
+      { onConflict: "user_id,email" }
+    );
+  } catch (e) {
+    console.error("Contact extraction error:", e);
+  }
 }
 
 Deno.serve(async (req) => {
@@ -94,7 +162,6 @@ Deno.serve(async (req) => {
     const limit = plan === "pro" ? PRO_LIMIT : FREE_LIMIT;
 
     if (monthlyCount >= limit) {
-      // Insert fallback message instead of AI response
       const fallbackMessages: Record<string, string> = {
         it: "L'assistente non è al momento disponibile. Lascia un messaggio e ti risponderemo il prima possibile.",
         en: "The assistant is currently unavailable. Leave a message and we'll get back to you as soon as possible.",
@@ -176,11 +243,29 @@ Deno.serve(async (req) => {
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
 
+    // Check if contact already exists for this conversation
+    const { data: existingContact } = await supabase
+      .from("contacts")
+      .select("id")
+      .eq("conversation_id", conversationId)
+      .limit(1);
+
+    const leadCollectionInstruction = (!existingContact || existingContact.length === 0)
+      ? `\n\nLEAD COLLECTION:
+- During the conversation, naturally ask for the visitor's name and email address.
+- Do this after answering their first question, not immediately on the first message.
+- Be natural and contextual: for example "By the way, can I get your name and email so we can follow up if needed?"
+- If they provide it, thank them and continue helping.
+- Do not ask more than once per conversation.
+- Do not insist if they decline.`
+      : "";
+
     const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
 Language: ALWAYS respond in ${config.language || "en"}.
 
 ${knowledgeBase}
 ${additionalInstructions}
+${leadCollectionInstruction}
 
 STRICT RULES:
 - Use the knowledge base above to answer questions about the business, its products, services, and FAQ.
@@ -286,6 +371,38 @@ STRICT RULES:
       last_message: aiReply.trim(),
       last_message_at: new Date().toISOString(),
     }).eq("id", conversationId);
+
+    // === CONTACT EXTRACTION (async, non-blocking) ===
+    // Get conversation metadata for country
+    const { data: convData } = await supabase
+      .from("conversations")
+      .select("country")
+      .eq("id", conversationId)
+      .single();
+
+    // Re-fetch all messages including the new AI reply
+    const { data: allMessages } = await supabase
+      .from("chat_messages")
+      .select("sender_type, content")
+      .eq("conversation_id", conversationId)
+      .order("created_at", { ascending: true })
+      .limit(30);
+
+    if (allMessages && allMessages.length >= 3 && geminiApiKey) {
+      // Only attempt extraction if no contact exists yet for this conversation
+      if (!existingContact || existingContact.length === 0) {
+        await extractAndSaveContact(
+          supabase,
+          allMessages,
+          config.user_id,
+          conversationId,
+          geminiApiKey,
+          config.language || "en",
+          convData?.country || null
+        );
+      }
+    }
+    // === END CONTACT EXTRACTION ===
 
     return new Response(
       JSON.stringify({ success: true }),
