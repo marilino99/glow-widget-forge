@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, MessageSquare, Users, Paintbrush, Bot, Zap } from "lucide-react";
+import { Home, MessageSquare, Users, Paintbrush, Bot, Database } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
 import conversationsImg from "@/assets/dashboard-conversations.png";
 import appearanceImg from "@/assets/dashboard-appearance.png";
