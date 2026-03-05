@@ -55,8 +55,8 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       }}
     >
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto px-48 pb-10 pt-10">
-        <div className="flex items-center mb-8 -ml-36">
+      <div className="flex-1 overflow-y-auto px-12 pb-10 pt-10">
+        <div className="flex items-center mb-8">
           <button
             onClick={onClose}
             className="flex items-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-5 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]"
@@ -65,6 +65,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
             Back
           </button>
         </div>
+        <div className="px-36">
         <h1 className="text-3xl font-bold text-[#1a1a2e] mb-8">All widgets</h1>
         {/* Featured channels - 2 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -154,6 +155,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
               </div>
             </div>
           ))}
+        </div>
         </div>
       </div>
     </div>
