@@ -83,7 +83,7 @@ const DashboardPreview = () => {
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={activeTab}
-                    src={dashboardImg}
+                    src={currentImage}
                     alt={`Widjet dashboard - ${labels[activeTab]}`}
                     className="w-full rounded-2xl"
                     loading="lazy"
