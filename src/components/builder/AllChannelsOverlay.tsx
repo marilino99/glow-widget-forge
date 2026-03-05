@@ -66,7 +66,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
-          <h1 className="text-3xl font-bold text-[#1a1a2e] ml-4">All widgets</h1>
+          <h1 className="text-3xl font-bold text-[#1a1a2e] ml-16">All widgets</h1>
         </div>
         <div className="px-16 max-w-5xl mx-auto">
         {/* Featured channels - 2 columns */}
