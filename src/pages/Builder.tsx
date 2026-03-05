@@ -20,6 +20,7 @@ import ConversationsPanel from "@/components/builder/ConversationsPanel";
 import ContactsPanel from "@/components/builder/ContactsPanel";
 import AppearancePanel from "@/components/builder/AppearancePanel";
 import ChatbotPanel from "@/components/builder/ChatbotPanel";
+import DataSourcesPanel from "@/components/builder/DataSourcesPanel";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
 import AddToWebsiteDialog from "@/components/builder/AddToWebsiteDialog";
@@ -105,11 +106,11 @@ const Builder = () => {
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null>(() => {
+  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
-    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai") : null;
+    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai") : null;
   });
-  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null) => {
+  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null) => {
     setBuilderViewRaw(view);
     if (view) {
       sessionStorage.setItem("widjet_builder_view", view);
@@ -333,7 +334,7 @@ const Builder = () => {
   }
 
   const userInitial = (userDisplayName || user?.email || "U").charAt(0).toUpperCase();
-  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", ai: "AI & Automation" };
+  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", "data-sources": "Data Sources", ai: "AI & Automation" };
 
   return (
     <div className="flex h-screen bg-background">
@@ -808,6 +809,8 @@ const Builder = () => {
               </div>
             </div>
           </div>
+        ) : builderView === "data-sources" ? (
+          <DataSourcesPanel />
         ) : builderView === "ai" ? (
           <div className="flex h-full flex-col">
             <div className="shrink-0 px-8 pt-8 pb-6 text-center">

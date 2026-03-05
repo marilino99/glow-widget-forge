@@ -31,6 +31,7 @@ import {
   LifeBuoy,
   ChevronRight,
   Bot,
+  BookOpen,
   LayoutTemplate,
   Home,
   ChevronsLeft,
@@ -155,8 +156,8 @@ interface BuilderSidebarProps {
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
-  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null;
-  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null) => void;
+  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null;
+  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null) => void;
   isMiniSidebar?: boolean;
   widgetId?: string;
   aiResponsesThisMonth: number;
@@ -691,6 +692,13 @@ const BuilderSidebar = ({
               label="Appearance"
               active={builderView === "appearance"}
               onClick={() => onBuilderViewChange("appearance")}
+              miniMode={isMiniSidebar}
+            />
+            <SidebarItem
+              icon={BookOpen}
+              label="Data Sources"
+              active={builderView === "data-sources"}
+              onClick={() => onBuilderViewChange("data-sources")}
               miniMode={isMiniSidebar}
             />
             <SidebarItem
