@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ interface TrainingSource {
   updated_at: string;
 }
 
-type AddMode = "url" | "text" | "picker" | null;
+type AddMode = "url" | "text" | "upload" | "picker" | null;
 
 const DataSourcesPanel = () => {
   const { user } = useAuth();
@@ -48,6 +48,8 @@ const DataSourcesPanel = () => {
   const [newContent, setNewContent] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Load sources
   useEffect(() => {
@@ -177,6 +179,89 @@ const DataSourcesPanel = () => {
     setDeleteId(null);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+      "text/markdown",
+      "text/csv",
+    ];
+    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|txt|md|csv)$/i)) {
+      toast({ title: "Unsupported file type", description: "Please upload PDF, DOC, DOCX, TXT, MD, or CSV files.", variant: "destructive" });
+      return;
+    }
+
+    // Validate size (max 20MB)
+    if (file.size > 20 * 1024 * 1024) {
+      toast({ title: "File too large", description: "Maximum file size is 20MB.", variant: "destructive" });
+      return;
+    }
+
+    setUploadingFile(true);
+    setAddMode(null);
+
+    try {
+      const filePath = `${user.id}/${Date.now()}_${file.name}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from("training-documents")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Determine source type label
+      const ext = file.name.split(".").pop()?.toLowerCase() || "";
+      const sourceType = ext === "pdf" ? "pdf" : ext === "doc" || ext === "docx" ? "doc" : "text";
+
+      // Create training source entry
+      const { data, error: insertError } = await supabase
+        .from("training_sources")
+        .insert({
+          user_id: user.id,
+          title: file.name,
+          source_type: sourceType,
+          status: "pending",
+          content: "",
+          url: filePath,
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      setSources((prev) => [data, ...prev]);
+      toast({ title: "Document uploaded", description: "Processing content..." });
+
+      // Trigger parsing in background
+      supabase.functions.invoke("parse-document", {
+        body: { sourceId: data.id, filePath },
+      }).then(({ error: parseErr }) => {
+        if (!parseErr) {
+          setSources((prev) =>
+            prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s)
+          );
+        } else {
+          setSources((prev) =>
+            prev.map((s) => s.id === data.id ? { ...s, status: "error" } : s)
+          );
+        }
+      });
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast({ title: "Upload failed", description: "Could not upload the document.", variant: "destructive" });
+    } finally {
+      setUploadingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="flex h-full">
       {/* Left sidebar - Folders */}
@@ -285,6 +370,13 @@ const DataSourcesPanel = () => {
               <span />
             </div>
 
+            {uploadingFile && (
+              <div className="px-4 py-3 border-b border-border bg-primary/5 flex items-center gap-2 text-sm text-primary">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                Uploading document...
+              </div>
+            )}
+
             {isLoading ? (
               <div className="px-4 py-10 text-center text-sm text-muted-foreground">
                 Loading sources...
@@ -304,18 +396,30 @@ const DataSourcesPanel = () => {
                     <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                       source.source_type === "url"
                         ? "bg-purple-100 text-purple-600"
-                        : "bg-red-100 text-red-600"
+                        : source.source_type === "pdf"
+                        ? "bg-red-100 text-red-600"
+                        : source.source_type === "doc"
+                        ? "bg-blue-100 text-blue-600"
+                        : "bg-amber-100 text-amber-600"
                     }`}>
                       {source.source_type === "url" ? (
                         <Link2 className="h-4 w-4" />
+                      ) : source.source_type === "pdf" ? (
+                        <Upload className="h-4 w-4" />
                       ) : (
                         <FileText className="h-4 w-4" />
                       )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">{source.title}</p>
-                      {source.url && (
+                      {source.source_type === "url" && source.url && (
                         <p className="text-xs text-muted-foreground truncate">{source.url}</p>
+                      )}
+                      {source.source_type === "pdf" && (
+                        <p className="text-xs text-muted-foreground">PDF document</p>
+                      )}
+                      {source.source_type === "doc" && (
+                        <p className="text-xs text-muted-foreground">Word document</p>
                       )}
                       {source.source_type === "text" && (
                         <p className="text-xs text-muted-foreground">Text document</p>
@@ -426,8 +530,8 @@ const DataSourcesPanel = () => {
 
             {/* Upload document */}
             <button
-              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm opacity-60 cursor-not-allowed"
-              disabled
+              onClick={() => fileInputRef.current?.click()}
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-background p-5 text-left transition-all hover:border-primary/30 hover:shadow-sm"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50">
                 <Upload className="h-5 w-5 text-pink-500" />
@@ -439,6 +543,13 @@ const DataSourcesPanel = () => {
                 </p>
               </div>
             </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.txt,.md,.csv"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
 
             {/* Add FAQ's */}
             <button
