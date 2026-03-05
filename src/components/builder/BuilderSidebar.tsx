@@ -155,8 +155,8 @@ interface BuilderSidebarProps {
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
-  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null;
-  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "ai" | null) => void;
+  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null;
+  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null) => void;
   isMiniSidebar?: boolean;
   widgetId?: string;
   aiResponsesThisMonth: number;
