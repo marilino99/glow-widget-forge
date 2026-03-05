@@ -55,7 +55,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       }}
     >
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto px-12 pb-10 pt-6">
+      <div className="flex-1 overflow-y-auto px-12 pb-10 pt-3">
         <div className="flex items-center mb-0">
           <button
             onClick={onClose}
