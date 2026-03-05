@@ -6,6 +6,7 @@ import conversationsImg from "@/assets/dashboard-conversations.png";
 import appearanceImg from "@/assets/dashboard-appearance.png";
 import contactsImg from "@/assets/dashboard-contacts.png";
 import chatbotImg from "@/assets/dashboard-chatbot.png";
+import datasourcesImg from "@/assets/dashboard-datasources.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const tabs = [
@@ -14,16 +15,16 @@ const tabs = [
   { id: "contacts", icon: Users },
   { id: "appearance", icon: Paintbrush },
   { id: "chatbot", icon: Bot },
-  { id: "actions", icon: Zap },
+  { id: "datasources", icon: Database },
 ] as const;
 
 type TabId = (typeof tabs)[number]["id"];
 
 const tabLabels: Record<string, Record<TabId, string>> = {
-  en: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", actions: "Actions" },
-  it: { home: "Home", conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", actions: "Azioni" },
-  de: { home: "Home", conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", actions: "Aktionen" },
-  fr: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", actions: "Actions" },
+  en: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", chatbot: "AI Chatbot", datasources: "Data Sources" },
+  it: { home: "Home", conversations: "Conversazioni", contacts: "Contatti", appearance: "Aspetto", chatbot: "AI Chatbot", datasources: "Data Sources" },
+  de: { home: "Home", conversations: "Gespräche", contacts: "Kontakte", appearance: "Aussehen", chatbot: "AI Chatbot", datasources: "Data Sources" },
+  fr: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", datasources: "Data Sources" },
 };
 
 const DashboardPreview = () => {
