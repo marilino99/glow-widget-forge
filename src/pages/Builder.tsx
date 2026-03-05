@@ -28,6 +28,7 @@ import OnboardingTrainStep from "@/components/builder/OnboardingTrainStep";
 import OnboardingBrandStep from "@/components/builder/OnboardingBrandStep";
 import OnboardingTestStep from "@/components/builder/OnboardingTestStep";
 import OnboardingSurveyDialog, { type SurveyAnswers } from "@/components/builder/OnboardingSurveyDialog";
+import AllChannelsOverlay from "@/components/builder/AllChannelsOverlay";
 import SettingsDialog from "@/components/builder/SettingsDialog";
 import FeedbackPopover from "@/components/builder/FeedbackPopover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
