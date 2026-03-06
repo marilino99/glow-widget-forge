@@ -761,6 +761,7 @@ const Builder = () => {
                           {!widgetIsLive ? 'Install widget first' : !g2ReviewApproved ? (phReviewSaved ? 'Waiting for approval' : 'Submit review first') : 'Claim your free credits'}
                         </button>
                       )}
+                      <p className="text-[10px] text-muted-foreground mt-3 leading-tight">*Valid only for new Lovable accounts.</p>
                     </div>
                   )}
                 </div>
