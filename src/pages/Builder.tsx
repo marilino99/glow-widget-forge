@@ -840,7 +840,6 @@ const Builder = () => {
                   minimal
                 />
               </div>
-            </div>
           </div>
         ) : builderView === "data-sources" ? (
           <DataSourcesPanel onNavigateToFaq={() => {
