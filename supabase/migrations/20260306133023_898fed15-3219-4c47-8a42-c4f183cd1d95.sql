@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN g2_review_approved boolean NOT NULL DEFAULT false;
