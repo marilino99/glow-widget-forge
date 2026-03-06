@@ -712,6 +712,7 @@ const Builder = () => {
                                     </button>
                                   </div>
                                 </div>
+                            ) : (
                               <p className="text-xs text-green-500 mt-0.5">Review submitted ✓</p>
                             )}
                           </div>
