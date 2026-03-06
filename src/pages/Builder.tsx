@@ -709,6 +709,9 @@ const Builder = () => {
                                           event_type: "g2_review_submitted",
                                           metadata: { url: phReviewUrl },
                                         });
+                                        supabase.functions.invoke("notify-review", {
+                                          body: { reviewUrl: phReviewUrl, userEmail: user.email },
+                                        });
                                       }
                                     }}
                                     className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-40"

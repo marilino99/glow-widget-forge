@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.chatbot-reply]
 verify_jwt = false
+
+[functions.notify-review]
+verify_jwt = false
