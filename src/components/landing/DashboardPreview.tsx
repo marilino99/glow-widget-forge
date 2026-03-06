@@ -84,19 +84,40 @@ const DashboardPreview = () => {
                 <div className="w-[80%] h-[80%] rounded-full bg-gradient-to-r from-[hsl(270,80%,50%)] via-[hsl(310,70%,50%)] to-[hsl(250,85%,65%)] opacity-40 blur-[100px]" />
               </div>
               <div className="relative hero-image-border rounded-2xl p-[2px] transition-transform duration-300 hover:scale-[1.02]">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={activeTab}
-                    src={currentImage}
-                    alt={`Widjet dashboard - ${labels[activeTab]}`}
-                    className="w-full rounded-2xl"
+            <div className="relative">
+                {/* Keep previous image visible underneath */}
+                {Object.entries(tabImages).map(([id, src]) => (
+                  <img
+                    key={id}
+                    src={src}
+                    alt={`Widjet dashboard - ${labels[id as TabId]}`}
+                    className={`w-full rounded-2xl ${id === activeTab ? 'relative' : 'absolute inset-0 pointer-events-none'}`}
+                    style={{ opacity: id === activeTab ? 1 : 0 }}
                     loading="lazy"
+                  />
+                ))}
+                {/* Default/home image */}
+                <img
+                  src={dashboardImg}
+                  alt={`Widjet dashboard - ${labels.home}`}
+                  className={`w-full rounded-2xl ${activeTab === 'home' ? 'relative' : 'absolute inset-0 pointer-events-none'}`}
+                  style={{
+                    opacity: activeTab === 'home' ? 1 : 0,
+                    transition: 'opacity 0.3s ease-in-out',
+                  }}
+                  loading="lazy"
+                />
+                {/* Crossfade overlay */}
+                <AnimatePresence mode="popLayout">
+                  <motion.div
+                    key={activeTab}
+                    className="absolute inset-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: 0.3 }}
                   />
                 </AnimatePresence>
+              </div>
               </div>
             </motion.div>
           </div>
