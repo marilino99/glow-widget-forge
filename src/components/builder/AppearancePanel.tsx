@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight, ChevronDown, Eye, Clock, Search, MapPin } from "lucide-react";
+import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
 import { FaqItemData } from "@/types/faqItem";
 import { CustomLinkData } from "@/types/customLink";
 import { ProductCardData } from "@/types/productCard";
@@ -115,6 +116,8 @@ interface AppearancePanelProps {
   googleReviewsEnabled?: boolean;
   onGoogleReviewsToggle?: (enabled: boolean) => void;
   onOpenGoogleReviews?: () => void;
+  onBusinessSelect?: (business: GoogleBusinessData | null) => void;
+  savedGoogleBusiness?: GoogleBusinessData | null;
 }
 
 const presetColors = [
@@ -198,6 +201,8 @@ const AppearancePanel = ({
   googleReviewsEnabled,
   onGoogleReviewsToggle,
   onOpenGoogleReviews,
+  onBusinessSelect,
+  savedGoogleBusiness,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -205,6 +210,86 @@ const AppearancePanel = ({
   const [isUploading, setIsUploading] = useState(false);
   const [showCustomColor, setShowCustomColor] = useState(false);
   const colorInputRef = useRef<HTMLInputElement>(null);
+  const [googleExpanded, setGoogleExpanded] = useState(false);
+  const [googleSearchQuery, setGoogleSearchQuery] = useState("");
+  const [googleLinkValue, setGoogleLinkValue] = useState("");
+  const [googleSearchTab, setGoogleSearchTab] = useState<"search" | "link">("search");
+  const [googlePredictions, setGooglePredictions] = useState<any[]>([]);
+  const [isGoogleSearching, setIsGoogleSearching] = useState(false);
+  const [googleSelectedBusiness, setGoogleSelectedBusiness] = useState<GoogleBusinessData | null>(null);
+  const [isLoadingGoogleDetails, setIsLoadingGoogleDetails] = useState(false);
+  const googleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Google Places autocomplete effect
+  useEffect(() => {
+    if (googleDebounceRef.current) clearTimeout(googleDebounceRef.current);
+    if (googleSearchQuery.length < 2 || googleSelectedBusiness) {
+      setGooglePredictions([]);
+      return;
+    }
+    googleDebounceRef.current = setTimeout(async () => {
+      setIsGoogleSearching(true);
+      try {
+        const { data, error } = await supabase.functions.invoke("google-places-autocomplete", {
+          body: { query: googleSearchQuery },
+        });
+        if (error) throw error;
+        setGooglePredictions(data?.predictions || []);
+      } catch (err) {
+        console.error("Autocomplete error:", err);
+        setGooglePredictions([]);
+      } finally {
+        setIsGoogleSearching(false);
+      }
+    }, 350);
+    return () => { if (googleDebounceRef.current) clearTimeout(googleDebounceRef.current); };
+  }, [googleSearchQuery, googleSelectedBusiness]);
+
+  const handleGoogleSelectBusiness = async (prediction: any) => {
+    setGooglePredictions([]);
+    setGoogleSearchQuery(prediction.structured_formatting?.main_text || prediction.description);
+    setIsLoadingGoogleDetails(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("google-places-autocomplete", {
+        body: { place_id: prediction.place_id },
+      });
+      if (error) throw error;
+      const business: GoogleBusinessData = { ...data?.result, place_id: prediction.place_id };
+      setGoogleSelectedBusiness(business);
+    } catch (err) {
+      console.error("Place details error:", err);
+    } finally {
+      setIsLoadingGoogleDetails(false);
+    }
+  };
+
+  const handleGoogleSearchChange = (value: string) => {
+    setGoogleSearchQuery(value);
+    if (googleSelectedBusiness) setGoogleSelectedBusiness(null);
+  };
+
+  const handleGoogleSaveAndEnable = () => {
+    if (!googleSelectedBusiness) return;
+    onBusinessSelect?.(googleSelectedBusiness);
+    onGoogleReviewsToggle?.(true);
+  };
+
+  const handleGoogleRemove = () => {
+    onBusinessSelect?.(null);
+    onGoogleReviewsToggle?.(false);
+    setGoogleSelectedBusiness(null);
+    setGoogleSearchQuery("");
+  };
+
+  const truncateUrl = (url: string, maxLen = 40) => {
+    try {
+      const u = new URL(url);
+      const display = u.origin + u.pathname;
+      return display.length > maxLen ? display.slice(0, maxLen) + "..." : display;
+    } catch {
+      return url.length > maxLen ? url.slice(0, maxLen) + "..." : url;
+    }
+  };
 
   // Track initial values for dirty detection
   const [initialValues, setInitialValues] = useState({
@@ -710,7 +795,7 @@ const AppearancePanel = ({
             <div>
               <p className="mb-2 text-sm font-semibold text-foreground">Add-ons</p>
               <button
-                onClick={onOpenGoogleReviews}
+                onClick={() => setGoogleExpanded(!googleExpanded)}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 hover:bg-muted/50"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
@@ -719,16 +804,174 @@ const AppearancePanel = ({
                 <span className="flex-1 text-left text-sm font-medium text-foreground">Google reviews</span>
                 {hasGoogleBusiness && onGoogleReviewsToggle && (
                   <span onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={googleReviewsEnabled}
-                      onChange={(e) => onGoogleReviewsToggle(e.target.checked)}
-                      className="h-4 w-4 rounded accent-foreground"
-                    />
+                    <Switch checked={googleReviewsEnabled} onCheckedChange={onGoogleReviewsToggle} />
                   </span>
                 )}
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                {googleExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                )}
               </button>
+
+              {/* Inline Google Reviews content */}
+              {googleExpanded && (
+                <div className="mt-3 space-y-4 px-1">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Enhance your business's credibility and customer appeal by displaying Google Reviews right on your website!
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Eye className="h-4 w-4 text-foreground shrink-0" />
+                      <span className="text-sm font-medium text-foreground">Visible once per visit</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Clock className="h-4 w-4 text-foreground shrink-0" />
+                      <span className="text-sm font-medium text-foreground">Shows up for 8 seconds</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <HelpCircle className="h-4 w-4 text-foreground shrink-0" />
+                      <span className="text-sm font-medium text-foreground">Asks customer to leave a review</span>
+                    </div>
+                  </div>
+
+                  {/* Saved state */}
+                  {savedGoogleBusiness ? (
+                    <div className="rounded-xl border border-border bg-background p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="text-sm font-bold text-foreground leading-tight">{savedGoogleBusiness.name}</h4>
+                        {(savedGoogleBusiness.url || savedGoogleBusiness.website) && (
+                          <button
+                            onClick={() => window.open(savedGoogleBusiness.url || savedGoogleBusiness.website, "_blank")}
+                            className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                        )}
+                      </div>
+                      {savedGoogleBusiness.rating != null && (
+                        <p className="mt-1 text-xs">
+                          <span className="font-bold text-foreground">{savedGoogleBusiness.rating}</span>
+                          {savedGoogleBusiness.user_ratings_total != null && (
+                            <span className="text-muted-foreground"> ({savedGoogleBusiness.user_ratings_total} reviews)</span>
+                          )}
+                        </p>
+                      )}
+                      {savedGoogleBusiness.formatted_address && (
+                        <p className="mt-1 text-xs text-muted-foreground">{savedGoogleBusiness.formatted_address}</p>
+                      )}
+                      {savedGoogleBusiness.website && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">{truncateUrl(savedGoogleBusiness.website)}</p>
+                      )}
+                      <div className="mt-2 flex justify-end">
+                        <button
+                          onClick={handleGoogleRemove}
+                          className="text-xs font-medium text-destructive hover:text-destructive/80 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <Tabs value={googleSearchTab} onValueChange={(v) => setGoogleSearchTab(v as "search" | "link")} className="mb-4">
+                        <TabsList className="w-full bg-muted">
+                          <TabsTrigger value="search" className="flex-1 text-xs">Search your business</TabsTrigger>
+                          <TabsTrigger value="link" className="flex-1 text-xs">Provide link</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+
+                      {googleSearchTab === "search" ? (
+                        <div>
+                          <h3 className="text-xs font-bold text-foreground mb-2">Search your business</h3>
+                          <div className="relative">
+                            <Input
+                              value={googleSearchQuery}
+                              onChange={(e) => handleGoogleSearchChange(e.target.value)}
+                              placeholder="Enter full name or website address"
+                              className="bg-muted border-0 pr-9 text-sm"
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              {isGoogleSearching ? (
+                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                              ) : (
+                                <Search className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+
+                            {googlePredictions.length > 0 && (
+                              <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-popover shadow-lg overflow-hidden">
+                                {googlePredictions.map((p: any) => (
+                                  <button
+                                    key={p.place_id}
+                                    onClick={() => handleGoogleSelectBusiness(p)}
+                                    className="flex w-full items-start gap-3 px-3 py-2 text-left hover:bg-accent transition-colors"
+                                  >
+                                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-medium text-foreground truncate">
+                                        {p.structured_formatting?.main_text || p.description}
+                                      </p>
+                                      {p.structured_formatting?.secondary_text && (
+                                        <p className="text-[11px] text-muted-foreground truncate">
+                                          {p.structured_formatting.secondary_text}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {isLoadingGoogleDetails && (
+                            <div className="mt-3 flex items-center justify-center gap-2 py-4">
+                              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">Loading business details...</span>
+                            </div>
+                          )}
+
+                          {googleSelectedBusiness && !isLoadingGoogleDetails && (
+                            <div className="mt-3 space-y-3">
+                              <div className="rounded-xl border border-border bg-background p-3">
+                                <h4 className="text-sm font-bold text-foreground">{googleSelectedBusiness.name}</h4>
+                                {googleSelectedBusiness.rating != null && (
+                                  <p className="mt-1 text-xs">
+                                    <span className="font-bold text-foreground">{googleSelectedBusiness.rating}</span>
+                                    {googleSelectedBusiness.user_ratings_total != null && (
+                                      <span className="text-muted-foreground"> ({googleSelectedBusiness.user_ratings_total} reviews)</span>
+                                    )}
+                                  </p>
+                                )}
+                                {googleSelectedBusiness.formatted_address && (
+                                  <p className="mt-1 text-xs text-muted-foreground">{googleSelectedBusiness.formatted_address}</p>
+                                )}
+                              </div>
+                              <Button
+                                onClick={handleGoogleSaveAndEnable}
+                                className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 h-10 text-sm font-semibold"
+                              >
+                                Save and enable
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div>
+                          <h3 className="text-xs font-bold text-foreground mb-2">Provide link</h3>
+                          <Input
+                            value={googleLinkValue}
+                            onChange={(e) => setGoogleLinkValue(e.target.value)}
+                            placeholder="Paste your Google Reviews link"
+                            className="bg-muted border-0 text-sm"
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
