@@ -611,7 +611,7 @@ const Builder = () => {
                    <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group">
                       <h3 className="text-base font-bold text-foreground mb-1.5 flex items-center gap-1.5">Get 3 months of Lovable Pro for free <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                        We've partnered with Lovable! Get 100 monthly credits for 3 months completely free. Start building faster today.
+                        Get 100 monthly credits for 3 months completely free. Start building faster today.
                       </p>
                       <img src={changelogFeatured} alt="Lovable x WidJet partnership" className="rounded-xl w-full object-cover" />
                       <p className="text-xs text-muted-foreground mt-2">Just now</p>
