@@ -668,40 +668,50 @@ const Builder = () => {
                           </div>
                         </div>
 
-                        {/* Step 2: Product Hunt Review */}
+                        {/* Step 2: G2 Review */}
                         <div className="flex items-start gap-3">
                           <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${phReviewSaved ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
                             {phReviewSaved ? <Check className="h-3.5 w-3.5" /> : '2'}
                           </span>
                           <div className="flex-1">
-                            <p className={`text-sm font-medium ${phReviewSaved ? 'text-green-600 line-through' : 'text-foreground'}`}>Leave a review on Product Hunt</p>
+                            <p className={`text-sm font-medium ${phReviewSaved ? 'text-green-600 line-through' : 'text-foreground'}`}>Leave a review on G2</p>
                             {!phReviewSaved ? (
-                              <div className="mt-1.5 flex gap-1.5">
-                                <input
-                                  type="url"
-                                  value={phReviewUrl}
-                                  onChange={(e) => setPhReviewUrl(e.target.value)}
-                                  placeholder="Paste your review link"
-                                  className="flex-1 rounded-lg border border-border bg-muted px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                                />
-                                <button
-                                  disabled={!phReviewUrl.includes("producthunt.com")}
-                                  onClick={() => {
-                                    setPhReviewSaved(true);
-                                    // Log the review URL
-                                    if (user) {
-                                      supabase.from("user_activity_logs").insert({
-                                        user_id: user.id,
-                                        event_type: "ph_review_submitted",
-                                        metadata: { url: phReviewUrl },
-                                      });
-                                    }
-                                  }}
-                                  className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-40"
+                              <div className="mt-1.5 flex flex-col gap-1.5">
+                                <a
+                                  href="https://www.g2.com/products/widjet/take_survey"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
                                 >
-                                  Confirm
-                                </button>
-                              </div>
+                                  <ExternalLink className="h-3 w-3" />
+                                  Write your review on G2
+                                </a>
+                                <div className="flex gap-1.5">
+                                  <input
+                                    type="url"
+                                    value={phReviewUrl}
+                                    onChange={(e) => setPhReviewUrl(e.target.value)}
+                                    placeholder="Paste your G2 review link"
+                                    className="flex-1 rounded-lg border border-border bg-muted px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                                  />
+                                  <button
+                                    disabled={!phReviewUrl.includes("g2.com")}
+                                    onClick={() => {
+                                      setPhReviewSaved(true);
+                                      if (user) {
+                                        supabase.from("user_activity_logs").insert({
+                                          user_id: user.id,
+                                          event_type: "g2_review_submitted",
+                                          metadata: { url: phReviewUrl },
+                                        });
+                                      }
+                                    }}
+                                    className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-40"
+                                    >
+                                      Confirm
+                                    </button>
+                                  </div>
+                                </div>
                             ) : (
                               <p className="text-xs text-green-500 mt-0.5">Review submitted ✓</p>
                             )}
