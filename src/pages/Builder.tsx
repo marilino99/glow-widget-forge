@@ -598,9 +598,70 @@ const Builder = () => {
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
-              <Bell className="h-4 w-4 text-foreground" />
-            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
+                  <Bell className="h-4 w-4 text-foreground" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
+                <div className="max-h-[480px] overflow-y-auto">
+                  {/* Featured update */}
+                  <div className="p-5 border-b border-border">
+                    <h3 className="text-base font-bold text-foreground mb-1.5">AI Chatbot is here</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                      Train your AI agent on your website content and let it answer customer questions automatically, 24/7.
+                    </p>
+                    <div className="rounded-xl overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500 p-6 flex items-center justify-center">
+                      <span className="text-white text-2xl font-bold text-center leading-tight">Introducing<br/>AI Chatbot</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">1 week ago</p>
+                  </div>
+
+                  {/* Update item */}
+                  <div className="p-5 border-b border-border flex gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-bold text-foreground mb-1">Google Reviews integration</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Display your Google Reviews directly on your widget to boost credibility and trust.
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1.5">2 weeks ago</p>
+                    </div>
+                    <div className="shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center">
+                      <span className="text-2xl">⭐</span>
+                    </div>
+                  </div>
+
+                  {/* Update item */}
+                  <div className="p-5 border-b border-border flex gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-bold text-foreground mb-1">Product carousel</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Showcase your products with an interactive carousel directly inside the widget.
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1.5">3 weeks ago</p>
+                    </div>
+                    <div className="shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br from-purple-300 to-violet-500 flex items-center justify-center">
+                      <span className="text-2xl">🛍️</span>
+                    </div>
+                  </div>
+
+                  {/* Update item */}
+                  <div className="p-5 flex gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-sm font-bold text-foreground mb-1">FAQ section</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Add frequently asked questions to help visitors find answers instantly.
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1.5">1 month ago</p>
+                    </div>
+                    <div className="shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br from-green-300 to-emerald-500 flex items-center justify-center">
+                      <span className="text-2xl">❓</span>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden hover:ring-2 hover:ring-border transition-all">
