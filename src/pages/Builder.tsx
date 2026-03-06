@@ -604,7 +604,7 @@ const Builder = () => {
                   <Bell className="h-4 w-4 text-foreground" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent align="end" sideOffset={8} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
+              <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
                 <div className="max-h-[480px] overflow-y-auto">
                   {/* Featured update */}
                   <div className="p-5 border-b border-border">
