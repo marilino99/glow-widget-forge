@@ -600,7 +600,7 @@ const Builder = () => {
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
-            <Popover>
+            <Popover onOpenChange={(open) => { if (!open) setChangelogDetailOpen(false); }}>
               <PopoverTrigger asChild>
                 <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                   <Bell className="h-4 w-4 text-foreground" />
@@ -608,16 +608,53 @@ const Builder = () => {
               </PopoverTrigger>
               <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
                 <div className="max-h-[480px] overflow-y-auto">
-                  {/* Featured update */}
-                   <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group">
-                      <h3 className="text-base font-bold text-foreground mb-1.5 flex items-center gap-1.5">Get 3 months of Lovable Pro for free <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                        Get 100 monthly credits for 3 months completely free. Start building faster today.
+                  {!changelogDetailOpen ? (
+                    <>
+                      {/* Featured update */}
+                      <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group" onClick={() => setChangelogDetailOpen(true)}>
+                        <h3 className="text-base font-bold text-foreground mb-1.5 flex items-center gap-1.5">Get 3 months of Lovable Pro for free <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                          Get 100 monthly credits for 3 months completely free. Start building faster today.
+                        </p>
+                        <img src={changelogFeatured} alt="Lovable x WidJet partnership" className="rounded-xl w-full object-cover" />
+                        <p className="text-xs text-muted-foreground mt-2">Just now</p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="p-5">
+                      <button onClick={() => setChangelogDetailOpen(false)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+                        <ChevronLeft className="h-4 w-4" />
+                        Back
+                      </button>
+                      <img src={changelogFeatured} alt="Lovable x WidJet partnership" className="rounded-xl w-full object-cover mb-4" />
+                      <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+                        <Gift className="h-5 w-5 text-primary" />
+                        Get 3 months of Lovable Pro for free
+                      </h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                        We've partnered with Lovable to give every WidJet user an exclusive perk: <span className="font-semibold text-foreground">100 credits per month for 3 months</span>, completely free.
                       </p>
-                      <img src={changelogFeatured} alt="Lovable x WidJet partnership" className="rounded-xl w-full object-cover" />
-                      <p className="text-xs text-muted-foreground mt-2">Just now</p>
-                   </div>
-
+                      <div className="space-y-3 mb-5">
+                        <h4 className="text-sm font-semibold text-foreground">How to claim:</h4>
+                        <div className="flex items-start gap-3">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
+                          <p className="text-sm text-muted-foreground">Create a free account on <span className="font-medium text-foreground">lovable.dev</span></p>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
+                          <p className="text-sm text-muted-foreground">Use the same email you registered with on WidJet</p>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">3</span>
+                          <p className="text-sm text-muted-foreground">Your credits will be automatically applied to your Lovable account</p>
+                        </div>
+                      </div>
+                      <a href="https://lovable.dev" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity">
+                        Claim your free credits
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </div>
+                  )}
                 </div>
               </PopoverContent>
             </Popover>
