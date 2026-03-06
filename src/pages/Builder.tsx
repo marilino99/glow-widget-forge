@@ -678,7 +678,7 @@ const Builder = () => {
         ) : builderView === "appearance" ? (
           <div className="flex h-full flex-col">
             {/* Full-width header */}
-            <div className="shrink-0 border-b border-border px-8 pt-8 pb-0">
+            <div className="shrink-0 border-b border-border px-8 pt-5 pb-0">
               <h1 className="text-2xl font-bold text-foreground">Appearance</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 Adjust the appearance of your chat widget to match your website's style.
