@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight } from "lucide-react";
 import { FaqItemData } from "@/types/faqItem";
 import { CustomLinkData } from "@/types/customLink";
 import { ProductCardData } from "@/types/productCard";
@@ -108,6 +108,13 @@ interface AppearancePanelProps {
   onWidgetPositionChange: (position: "left" | "right") => void;
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
+  // Style tab - widget type & google reviews
+  widgetType: "popup" | "bottom-bar";
+  onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
+  hasGoogleBusiness?: boolean;
+  googleReviewsEnabled?: boolean;
+  onGoogleReviewsToggle?: (enabled: boolean) => void;
+  onOpenGoogleReviews?: () => void;
 }
 
 const presetColors = [
@@ -185,6 +192,12 @@ const AppearancePanel = ({
   onWidgetPositionChange,
   buttonLogo,
   onButtonLogoChange,
+  widgetType,
+  onWidgetTypeChange,
+  hasGoogleBusiness,
+  googleReviewsEnabled,
+  onGoogleReviewsToggle,
+  onOpenGoogleReviews,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -657,11 +670,65 @@ const AppearancePanel = ({
         )}
 
         {activeTab === "style" && (
-          <div className="max-w-xs mx-auto space-y-4">
-            <div className="rounded-xl border border-border bg-muted/30 p-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Style customization options coming soon.
-              </p>
+          <div className="max-w-xs mx-auto space-y-6">
+            {/* Widget Type Selector */}
+            <div>
+              <p className="mb-2 text-sm font-semibold text-foreground">Widget type</p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => onWidgetTypeChange("popup")}
+                  className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
+                    widgetType === "popup"
+                      ? "border-foreground bg-card shadow-sm"
+                      : "border-border bg-card/50"
+                  }`}
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
+                    <MessageCircle className="h-6 w-6 text-foreground" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">Popup</span>
+                </button>
+                <button
+                  onClick={() => onWidgetTypeChange("bottom-bar")}
+                  className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
+                    widgetType === "bottom-bar"
+                      ? "border-foreground bg-card shadow-sm"
+                      : "border-border bg-card/50"
+                  }`}
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
+                    <Star className="h-6 w-6 text-foreground" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">Bottom Bar</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="border-t border-border" />
+
+            {/* Add-ons */}
+            <div>
+              <p className="mb-2 text-sm font-semibold text-foreground">Add-ons</p>
+              <button
+                onClick={onOpenGoogleReviews}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 hover:bg-muted/50"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+                  <Star className="h-4 w-4 text-foreground" />
+                </div>
+                <span className="flex-1 text-left text-sm font-medium text-foreground">Google reviews</span>
+                {hasGoogleBusiness && onGoogleReviewsToggle && (
+                  <span onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={googleReviewsEnabled}
+                      onChange={(e) => onGoogleReviewsToggle(e.target.checked)}
+                      className="h-4 w-4 rounded accent-foreground"
+                    />
+                  </span>
+                )}
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </button>
             </div>
           </div>
         )}
