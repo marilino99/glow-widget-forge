@@ -1,21 +1,31 @@
 
 
-# Fix: Timestamp troncato nella lista conversazioni
+## Single-Use Claim Link
 
-## Problema
-Il viewport interno di Radix ScrollArea usa `overflow: scroll` inline, ignorando le classi CSS applicate dall'esterno. Il contenuto si espande oltre la larghezza della sidebar e il timestamp sparisce.
+### Approach
+Track in the database whether each user has already claimed/clicked the Lovable Pro link. Once claimed, disable the button and show a "Already claimed" state.
 
-## Soluzione
+### Database Change
+Add a column `lovable_promo_claimed` (boolean, default false) to the `profiles` table, or create a lightweight `promo_claims` table. Adding to `profiles` is simpler since it's a 1:1 user attribute.
 
-### 1. Modificare `src/components/ui/scroll-area.tsx`
-Aggiungere al viewport la classe `[overflow-x:hidden!important]` per impedire lo scroll orizzontale e forzare il contenuto a rispettare la larghezza del parent.
-
-```tsx
-<ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [overflow-x:hidden!important]">
+Migration:
+```sql
+ALTER TABLE public.profiles ADD COLUMN lovable_promo_claimed boolean NOT NULL DEFAULT false;
 ```
 
-### 2. Pulire `src/components/builder/ConversationsPanel.tsx`
-Rimuovere il selettore CSS hack `[&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden` dalla ScrollArea, dato che il fix e ora nel componente base.
+### Frontend Changes (Builder.tsx)
+1. Fetch the user's `lovable_promo_claimed` status from `profiles` on mount (can piggyback on existing profile query).
+2. When user clicks "Claim your free credits":
+   - Update `profiles` set `lovable_promo_claimed = true` for the current user.
+   - Then open the link in a new tab.
+3. If `lovable_promo_claimed` is already `true`:
+   - Show the button as disabled with text like "Already claimed" or hide the detail view entirely and show a "You've already claimed this offer" message.
 
-Queste due modifiche risolvono il problema alla radice: il viewport non permettera piu al contenuto di espandersi orizzontalmente, e il layout `grid-cols-[1fr_auto]` funzionera correttamente troncando il titolo e mostrando il timestamp.
+### Security
+- RLS already restricts profile updates to own user, so users can only mark their own claim.
+- The flag can only go from `false` to `true` (enforced client-side; optionally add a trigger to prevent reversal, but low risk since users can only update their own profile).
+
+### UX Flow
+- **Not claimed**: Card is clickable, detail view shows steps + active CTA button.
+- **Claimed**: Card shows a subtle "Claimed" badge, detail view shows disabled button or confirmation message. The link is no longer accessible.
 
