@@ -772,8 +772,31 @@ const Builder = () => {
                   hasGoogleBusiness={!!config.googleBusinessName}
                   googleReviewsEnabled={config.googleReviewsEnabled}
                   onGoogleReviewsToggle={(enabled) => saveConfig({ googleReviewsEnabled: enabled })}
-                  onOpenGoogleReviews={() => {
-                    // Navigate to google reviews panel via sidebar
+                  onOpenGoogleReviews={() => {}}
+                  savedGoogleBusiness={config.googleBusinessName ? {
+                    name: config.googleBusinessName,
+                    rating: config.googleBusinessRating ?? undefined,
+                    user_ratings_total: config.googleBusinessRatingsTotal ?? undefined,
+                    url: config.googleBusinessUrl ?? undefined,
+                  } : null}
+                  onBusinessSelect={(business) => {
+                    if (business) {
+                      saveConfig({
+                        googleBusinessName: business.name,
+                        googleBusinessRating: business.rating ?? null,
+                        googleBusinessRatingsTotal: business.user_ratings_total ?? null,
+                        googleBusinessUrl: business.url ?? null,
+                        googleReviewsEnabled: true,
+                      });
+                    } else {
+                      saveConfig({
+                        googleBusinessName: null,
+                        googleBusinessRating: null,
+                        googleBusinessRatingsTotal: null,
+                        googleBusinessUrl: null,
+                        googleReviewsEnabled: false,
+                      });
+                    }
                   }}
                 />
               </div>
