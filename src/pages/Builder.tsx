@@ -165,15 +165,20 @@ const Builder = () => {
   const [widgetIsLive, setWidgetIsLive] = useState(false);
   const [phReviewUrl, setPhReviewUrl] = useState("");
   const [phReviewSaved, setPhReviewSaved] = useState(false);
+  const [g2ReviewApproved, setG2ReviewApproved] = useState(false);
 
   // Load user profile for top bar
   useEffect(() => {
     const loadProfile = async () => {
       if (!user) return;
-      const { data } = await supabase.from("profiles").select("avatar_url, first_name, lovable_promo_claimed").eq("user_id", user.id).single();
+      const { data } = await supabase.from("profiles").select("avatar_url, first_name, lovable_promo_claimed, g2_review_approved").eq("user_id", user.id).single();
       if (data?.avatar_url) setUserAvatarUrl(data.avatar_url);
       if (data?.first_name) setUserDisplayName(data.first_name);
       if ((data as any)?.lovable_promo_claimed) setPromoClaimed(true);
+      if ((data as any)?.g2_review_approved) {
+        setG2ReviewApproved(true);
+        setPhReviewSaved(true);
+      }
     };
     loadProfile();
   }, [user]);
@@ -712,8 +717,10 @@ const Builder = () => {
                                     </button>
                                   </div>
                                 </div>
+                            ) : g2ReviewApproved ? (
+                              <p className="text-xs text-green-500 mt-0.5">Review approved ✓</p>
                             ) : (
-                              <p className="text-xs text-green-500 mt-0.5">Review submitted ✓</p>
+                              <p className="text-xs text-amber-500 mt-0.5">Under review — we'll approve it shortly ⏳</p>
                             )}
                           </div>
                         </div>
@@ -734,7 +741,7 @@ const Builder = () => {
                         </div>
                       ) : (
                         <button
-                          disabled={promoClaimLoading || !widgetIsLive || !phReviewSaved}
+                          disabled={promoClaimLoading || !widgetIsLive || !g2ReviewApproved}
                           onClick={async () => {
                             if (!user) return;
                             setPromoClaimLoading(true);
@@ -748,7 +755,7 @@ const Builder = () => {
                           className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           {promoClaimLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
-                          {!widgetIsLive ? 'Install widget first' : !phReviewSaved ? 'Submit review first' : 'Claim your free credits'}
+                          {!widgetIsLive ? 'Install widget first' : !g2ReviewApproved ? (phReviewSaved ? 'Waiting for approval' : 'Submit review first') : 'Claim your free credits'}
                         </button>
                       )}
                     </div>

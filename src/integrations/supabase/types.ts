@@ -302,6 +302,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           first_name: string | null
+          g2_review_approved: boolean
           id: string
           last_name: string | null
           lovable_promo_claimed: boolean
@@ -313,6 +314,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           first_name?: string | null
+          g2_review_approved?: boolean
           id?: string
           last_name?: string | null
           lovable_promo_claimed?: boolean
@@ -324,6 +326,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           first_name?: string | null
+          g2_review_approved?: boolean
           id?: string
           last_name?: string | null
           lovable_promo_claimed?: boolean
