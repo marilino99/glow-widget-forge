@@ -52,15 +52,48 @@ Deno.serve(async (req) => {
     .update({ lovable_promo_claimed: true })
     .eq("id", profile.id);
 
-  // Redirect to Lovable partnership page
-  return new Response(null, {
-    status: 302,
+  // Serve interstitial page that redirects via JS (hides URL from address bar)
+  const targetUrl = "https://lovable.dev/lp/learnn-2512?reward_code=03aa3b40-4c2b-4f78-8cc5-7d7cb0588f97";
+  const encoded = btoa(targetUrl);
+
+  return new Response(redirectPage(encoded), {
+    status: 200,
     headers: {
-      Location: "https://lovable.dev/lp/learnn-2512?reward_code=03aa3b40-4c2b-4f78-8cc5-7d7cb0588f97",
+      "Content-Type": "text/html; charset=utf-8",
+      "Referrer-Policy": "no-referrer",
+      "Cache-Control": "no-store, no-cache",
       ...corsHeaders,
     },
   });
 });
+
+function redirectPage(encodedUrl: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>Redirecting...</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fafafa; color: #333; }
+    .card { text-align: center; padding: 3rem 2rem; max-width: 400px; }
+    .spinner { width: 32px; height: 32px; border: 3px solid #e0e0e0; border-top-color: #333; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    p { color: #666; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="spinner"></div>
+    <p>Redirecting you to Lovable...</p>
+  </div>
+  <script>
+    (function(){var d=atob("${encodedUrl}");setTimeout(function(){window.location.replace(d)},1200)})();
+  </script>
+</body>
+</html>`;
+}
 
 function expiredPage(message: string): string {
   return `<!DOCTYPE html>
