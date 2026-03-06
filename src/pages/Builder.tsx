@@ -676,34 +676,34 @@ const Builder = () => {
         ) : builderView === "contacts" ? (
           <ContactsPanel />
         ) : builderView === "appearance" ? (
-          <div className="flex h-full flex-col">
-            {/* Full-width header */}
-            <div className="shrink-0 px-8 pt-5 pb-0">
-              <h1 className="text-2xl font-bold text-foreground">Appearance</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Adjust the appearance of your chat widget to match your website's style.
-              </p>
-              <div className="mt-6 flex gap-0">
-                {["General", "Style", "Home Screen", "Widget button"].map((tab) => {
-                  const tabValue = tab.toLowerCase().replace(/ /g, "-");
-                  return (
-                    <button
-                      key={tabValue}
-                      onClick={() => setAppearanceTab(tabValue)}
-                      className={`relative px-4 pb-3 pt-1 text-sm font-medium transition-colors ${
-                        appearanceTab === tabValue
-                          ? "text-primary border-b-2 border-primary"
-                          : "text-muted-foreground border-b-2 border-transparent hover:text-foreground"
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  );
-                })}
+          <div className="flex h-full">
+            {/* Left column: header + panel */}
+            <div className="flex flex-1 flex-col overflow-hidden">
+              {/* Full-width header */}
+              <div className="shrink-0 px-8 pt-5 pb-0">
+                <h1 className="text-2xl font-bold text-foreground">Appearance</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Adjust the appearance of your chat widget to match your website's style.
+                </p>
+                <div className="mt-6 flex gap-0">
+                  {["General", "Style", "Home Screen", "Widget button"].map((tab) => {
+                    const tabValue = tab.toLowerCase().replace(/ /g, "-");
+                    return (
+                      <button
+                        key={tabValue}
+                        onClick={() => setAppearanceTab(tabValue)}
+                        className={`relative px-4 pb-3 pt-1 text-sm font-medium transition-colors ${
+                          appearanceTab === tabValue
+                            ? "text-primary border-b-2 border-primary"
+                            : "text-muted-foreground border-b-2 border-transparent hover:text-foreground"
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-            {/* Split content */}
-            <div className="flex flex-1 overflow-hidden">
               <div className="flex-1 overflow-hidden">
                 <AppearancePanel
                   contactName={config.contactName}
