@@ -116,6 +116,8 @@ interface AppearancePanelProps {
   googleReviewsEnabled?: boolean;
   onGoogleReviewsToggle?: (enabled: boolean) => void;
   onOpenGoogleReviews?: () => void;
+  onBusinessSelect?: (business: GoogleBusinessData | null) => void;
+  savedGoogleBusiness?: GoogleBusinessData | null;
 }
 
 const presetColors = [
