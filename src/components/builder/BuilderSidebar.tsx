@@ -708,13 +708,6 @@ const BuilderSidebar = ({
               onClick={() => onBuilderViewChange("ai")}
               miniMode={isMiniSidebar}
             />
-            <SidebarItem
-              icon={LayoutTemplate}
-              label="Templates"
-              onClick={() => handleSelectWidget("templates")}
-              active={activeWidget === "templates"}
-              miniMode={isMiniSidebar}
-            />
           </div>
         </div>
 
