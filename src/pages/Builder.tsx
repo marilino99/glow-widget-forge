@@ -767,6 +767,14 @@ const Builder = () => {
                   onWidgetPositionChange={(position) => saveConfig({ widgetPosition: position })}
                   buttonLogo={config.buttonLogo}
                   onButtonLogoChange={(logo) => saveConfig({ buttonLogo: logo })}
+                  widgetType={config.widgetType}
+                  onWidgetTypeChange={(type) => saveConfig({ widgetType: type })}
+                  hasGoogleBusiness={!!config.googleBusinessName}
+                  googleReviewsEnabled={config.googleReviewsEnabled}
+                  onGoogleReviewsToggle={(enabled) => saveConfig({ googleReviewsEnabled: enabled })}
+                  onOpenGoogleReviews={() => {
+                    // Navigate to google reviews panel via sidebar
+                  }}
                 />
               </div>
               <div className="w-[420px] shrink-0 overflow-hidden border-l border-border bg-[#f8f8f8]">

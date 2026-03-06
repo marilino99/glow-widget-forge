@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight } from "lucide-react";
 import { FaqItemData } from "@/types/faqItem";
 import { CustomLinkData } from "@/types/customLink";
 import { ProductCardData } from "@/types/productCard";
