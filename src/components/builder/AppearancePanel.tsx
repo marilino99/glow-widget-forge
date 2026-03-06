@@ -989,11 +989,6 @@ const AppearancePanel = ({
           </div>
         )}
 
-        {activeTab === "chat" && (
-          <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">
-            Chat settings coming soon
-          </div>
-        )}
 
         {activeTab === "widget-button" && (
           <div className="flex-1 p-6 space-y-0">
@@ -1101,11 +1096,6 @@ const AppearancePanel = ({
           </div>
         )}
 
-        {activeTab === "visibility" && (
-          <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">
-            Visibility settings coming soon
-          </div>
-        )}
       </div>
 
       {/* Footer with Save/Cancel - only shown when changes exist */}
