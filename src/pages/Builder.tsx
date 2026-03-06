@@ -652,10 +652,28 @@ const Builder = () => {
                           <p className="text-sm text-muted-foreground">Your credits will be automatically applied to your Lovable account</p>
                         </div>
                       </div>
-                      <a href="https://lovable.dev" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity">
-                        Claim your free credits
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
+                      {promoClaimed ? (
+                        <div className="flex items-center justify-center gap-2 w-full rounded-xl bg-muted text-muted-foreground font-medium py-2.5 text-sm cursor-default">
+                          <Check className="h-4 w-4" />
+                          Already claimed
+                        </div>
+                      ) : (
+                        <button
+                          disabled={promoClaimLoading}
+                          onClick={async () => {
+                            if (!user) return;
+                            setPromoClaimLoading(true);
+                            await (supabase.from("profiles") as any).update({ lovable_promo_claimed: true }).eq("user_id", user.id);
+                            setPromoClaimed(true);
+                            setPromoClaimLoading(false);
+                            window.open("https://lovable.dev", "_blank", "noopener,noreferrer");
+                          }}
+                          className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+                        >
+                          {promoClaimLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
+                          Claim your free credits
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
