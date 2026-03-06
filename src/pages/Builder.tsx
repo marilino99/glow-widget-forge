@@ -663,10 +663,14 @@ const Builder = () => {
                           onClick={async () => {
                             if (!user) return;
                             setPromoClaimLoading(true);
-                            await (supabase.from("profiles") as any).update({ lovable_promo_claimed: true }).eq("user_id", user.id);
+                            // Generate a unique token for this user
+                            const token = crypto.randomUUID();
+                            await (supabase.from("profiles") as any).update({ promo_token: token }).eq("user_id", user.id);
                             setPromoClaimed(true);
                             setPromoClaimLoading(false);
-                            window.open("https://lovable.dev", "_blank", "noopener,noreferrer");
+                            // Open the single-use link through the edge function
+                            const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+                            window.open(`https://${projectId}.supabase.co/functions/v1/claim-promo?token=${token}`, "_blank", "noopener,noreferrer");
                           }}
                           className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
                         >
