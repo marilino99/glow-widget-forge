@@ -162,6 +162,9 @@ const Builder = () => {
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
   const [promoClaimed, setPromoClaimed] = useState(false);
   const [promoClaimLoading, setPromoClaimLoading] = useState(false);
+  const [widgetIsLive, setWidgetIsLive] = useState(false);
+  const [phReviewUrl, setPhReviewUrl] = useState("");
+  const [phReviewSaved, setPhReviewSaved] = useState(false);
 
   // Load user profile for top bar
   useEffect(() => {
@@ -174,6 +177,21 @@ const Builder = () => {
     };
     loadProfile();
   }, [user]);
+
+  // Check if widget is live (has impressions)
+  useEffect(() => {
+    const checkWidgetLive = async () => {
+      if (!config.id) return;
+      const { data } = await supabase
+        .from("widget_events")
+        .select("id")
+        .eq("widget_id", config.id)
+        .eq("event_type", "impression")
+        .limit(1);
+      if (data && data.length > 0) setWidgetIsLive(true);
+    };
+    checkWidgetLive();
+  }, [config.id]);
   
   // Track initial typography values for cancel functionality
   const [initialTypography, setInitialTypography] = useState({
