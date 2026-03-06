@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN promo_token text UNIQUE;
