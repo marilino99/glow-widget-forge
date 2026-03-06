@@ -617,47 +617,6 @@ const Builder = () => {
                      <p className="text-xs text-muted-foreground mt-2">1 week ago</p>
                    </div>
 
-                  {/* Update item */}
-                   <div className="p-5 border-b border-border flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer group">
-                     <div className="flex-1">
-                       <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-1.5">Google Reviews integration <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Display your Google Reviews directly on your widget to boost credibility and trust.
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1.5">2 weeks ago</p>
-                    </div>
-                    <div className="shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center">
-                      <span className="text-2xl">⭐</span>
-                    </div>
-                  </div>
-
-                  {/* Update item */}
-                   <div className="p-5 border-b border-border flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer group">
-                     <div className="flex-1">
-                       <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-1.5">Product carousel <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Showcase your products with an interactive carousel directly inside the widget.
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1.5">3 weeks ago</p>
-                    </div>
-                    <div className="shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br from-purple-300 to-violet-500 flex items-center justify-center">
-                      <span className="text-2xl">🛍️</span>
-                    </div>
-                  </div>
-
-                  {/* Update item */}
-                   <div className="p-5 flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer group">
-                     <div className="flex-1">
-                       <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-1.5">FAQ section <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Add frequently asked questions to help visitors find answers instantly.
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1.5">1 month ago</p>
-                    </div>
-                    <div className="shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br from-green-300 to-emerald-500 flex items-center justify-center">
-                      <span className="text-2xl">❓</span>
-                    </div>
-                  </div>
                 </div>
               </PopoverContent>
             </Popover>
