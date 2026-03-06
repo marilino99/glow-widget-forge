@@ -802,7 +802,7 @@ const Builder = () => {
               </div>
             </div>
             {/* Right column: preview */}
-            <div className="w-[420px] shrink-0 overflow-hidden border-l border-border bg-[#f8f8f8]">
+            <div className="flex-1 overflow-hidden border-l border-border bg-[#f8f8f8]">
                 <WidgetPreviewPanel 
                   activeWidget={activeWidget}
                   selectedAvatar={config.selectedAvatar} 
