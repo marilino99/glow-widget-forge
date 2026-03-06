@@ -156,7 +156,8 @@ const Builder = () => {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
    const [showAllChannels, setShowAllChannels] = useState(false);
-   const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
+    const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
+   const [changelogDetailOpen, setChangelogDetailOpen] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
 
