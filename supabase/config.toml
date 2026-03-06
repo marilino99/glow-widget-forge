@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.notify-review]
 verify_jwt = false
+
+[functions.handle-review-action]
+verify_jwt = false

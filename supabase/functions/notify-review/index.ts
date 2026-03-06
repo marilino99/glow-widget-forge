@@ -46,6 +46,10 @@ Deno.serve(async (req) => {
     });
   }
 
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+  const approveUrl = `${SUPABASE_URL}/functions/v1/handle-review-action?action=approve&user_id=${userId}&email=${encodeURIComponent(userEmail || "")}`;
+  const declineUrl = `${SUPABASE_URL}/functions/v1/handle-review-action?action=decline&user_id=${userId}&email=${encodeURIComponent(userEmail || "")}`;
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -59,13 +63,16 @@ Deno.serve(async (req) => {
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 2rem;">
           <h2 style="margin: 0 0 1rem;">New G2 Review Submitted</h2>
-          <p style="color: #555; line-height: 1.6;">A user has submitted a G2 review and is waiting for approval.</p>
+          <p style="color: #555; line-height: 1.6;">A user has submitted a G2 review and is waiting for your approval.</p>
           <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
             <tr><td style="padding: 0.5rem 0; color: #888; font-size: 0.875rem;">User ID</td><td style="padding: 0.5rem 0; font-size: 0.875rem;">${userId}</td></tr>
             <tr><td style="padding: 0.5rem 0; color: #888; font-size: 0.875rem;">Email</td><td style="padding: 0.5rem 0; font-size: 0.875rem;">${userEmail || "N/A"}</td></tr>
             <tr><td style="padding: 0.5rem 0; color: #888; font-size: 0.875rem;">Review URL</td><td style="padding: 0.5rem 0; font-size: 0.875rem;"><a href="${reviewUrl}" style="color: #2563eb;">${reviewUrl}</a></td></tr>
           </table>
-          <p style="color: #888; font-size: 0.8rem; margin-top: 1.5rem;">To approve, set <code>g2_review_approved = true</code> on this user's profile.</p>
+          <div style="margin-top: 1.5rem; text-align: center;">
+            <a href="${approveUrl}" style="display: inline-block; padding: 0.75rem 2rem; background: #16a34a; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 0.75rem;">✅ Approve</a>
+            <a href="${declineUrl}" style="display: inline-block; padding: 0.75rem 2rem; background: #dc2626; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600;">❌ Decline</a>
+          </div>
         </div>
       `,
     }),
