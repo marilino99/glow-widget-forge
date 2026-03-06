@@ -795,7 +795,7 @@ const AppearancePanel = ({
             <div>
               <p className="mb-2 text-sm font-semibold text-foreground">Add-ons</p>
               <button
-                onClick={onOpenGoogleReviews}
+                onClick={() => setGoogleExpanded(!googleExpanded)}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 hover:bg-muted/50"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
@@ -804,16 +804,174 @@ const AppearancePanel = ({
                 <span className="flex-1 text-left text-sm font-medium text-foreground">Google reviews</span>
                 {hasGoogleBusiness && onGoogleReviewsToggle && (
                   <span onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={googleReviewsEnabled}
-                      onChange={(e) => onGoogleReviewsToggle(e.target.checked)}
-                      className="h-4 w-4 rounded accent-foreground"
-                    />
+                    <Switch checked={googleReviewsEnabled} onCheckedChange={onGoogleReviewsToggle} />
                   </span>
                 )}
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                {googleExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                )}
               </button>
+
+              {/* Inline Google Reviews content */}
+              {googleExpanded && (
+                <div className="mt-3 space-y-4 px-1">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Enhance your business's credibility and customer appeal by displaying Google Reviews right on your website!
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Eye className="h-4 w-4 text-foreground shrink-0" />
+                      <span className="text-sm font-medium text-foreground">Visible once per visit</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Clock className="h-4 w-4 text-foreground shrink-0" />
+                      <span className="text-sm font-medium text-foreground">Shows up for 8 seconds</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <HelpCircle className="h-4 w-4 text-foreground shrink-0" />
+                      <span className="text-sm font-medium text-foreground">Asks customer to leave a review</span>
+                    </div>
+                  </div>
+
+                  {/* Saved state */}
+                  {savedGoogleBusiness ? (
+                    <div className="rounded-xl border border-border bg-background p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="text-sm font-bold text-foreground leading-tight">{savedGoogleBusiness.name}</h4>
+                        {(savedGoogleBusiness.url || savedGoogleBusiness.website) && (
+                          <button
+                            onClick={() => window.open(savedGoogleBusiness.url || savedGoogleBusiness.website, "_blank")}
+                            className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                        )}
+                      </div>
+                      {savedGoogleBusiness.rating != null && (
+                        <p className="mt-1 text-xs">
+                          <span className="font-bold text-foreground">{savedGoogleBusiness.rating}</span>
+                          {savedGoogleBusiness.user_ratings_total != null && (
+                            <span className="text-muted-foreground"> ({savedGoogleBusiness.user_ratings_total} reviews)</span>
+                          )}
+                        </p>
+                      )}
+                      {savedGoogleBusiness.formatted_address && (
+                        <p className="mt-1 text-xs text-muted-foreground">{savedGoogleBusiness.formatted_address}</p>
+                      )}
+                      {savedGoogleBusiness.website && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">{truncateUrl(savedGoogleBusiness.website)}</p>
+                      )}
+                      <div className="mt-2 flex justify-end">
+                        <button
+                          onClick={handleGoogleRemove}
+                          className="text-xs font-medium text-destructive hover:text-destructive/80 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <Tabs value={googleSearchTab} onValueChange={(v) => setGoogleSearchTab(v as "search" | "link")} className="mb-4">
+                        <TabsList className="w-full bg-muted">
+                          <TabsTrigger value="search" className="flex-1 text-xs">Search your business</TabsTrigger>
+                          <TabsTrigger value="link" className="flex-1 text-xs">Provide link</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+
+                      {googleSearchTab === "search" ? (
+                        <div>
+                          <h3 className="text-xs font-bold text-foreground mb-2">Search your business</h3>
+                          <div className="relative">
+                            <Input
+                              value={googleSearchQuery}
+                              onChange={(e) => handleGoogleSearchChange(e.target.value)}
+                              placeholder="Enter full name or website address"
+                              className="bg-muted border-0 pr-9 text-sm"
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              {isGoogleSearching ? (
+                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                              ) : (
+                                <Search className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+
+                            {googlePredictions.length > 0 && (
+                              <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-popover shadow-lg overflow-hidden">
+                                {googlePredictions.map((p: any) => (
+                                  <button
+                                    key={p.place_id}
+                                    onClick={() => handleGoogleSelectBusiness(p)}
+                                    className="flex w-full items-start gap-3 px-3 py-2 text-left hover:bg-accent transition-colors"
+                                  >
+                                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-medium text-foreground truncate">
+                                        {p.structured_formatting?.main_text || p.description}
+                                      </p>
+                                      {p.structured_formatting?.secondary_text && (
+                                        <p className="text-[11px] text-muted-foreground truncate">
+                                          {p.structured_formatting.secondary_text}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {isLoadingGoogleDetails && (
+                            <div className="mt-3 flex items-center justify-center gap-2 py-4">
+                              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">Loading business details...</span>
+                            </div>
+                          )}
+
+                          {googleSelectedBusiness && !isLoadingGoogleDetails && (
+                            <div className="mt-3 space-y-3">
+                              <div className="rounded-xl border border-border bg-background p-3">
+                                <h4 className="text-sm font-bold text-foreground">{googleSelectedBusiness.name}</h4>
+                                {googleSelectedBusiness.rating != null && (
+                                  <p className="mt-1 text-xs">
+                                    <span className="font-bold text-foreground">{googleSelectedBusiness.rating}</span>
+                                    {googleSelectedBusiness.user_ratings_total != null && (
+                                      <span className="text-muted-foreground"> ({googleSelectedBusiness.user_ratings_total} reviews)</span>
+                                    )}
+                                  </p>
+                                )}
+                                {googleSelectedBusiness.formatted_address && (
+                                  <p className="mt-1 text-xs text-muted-foreground">{googleSelectedBusiness.formatted_address}</p>
+                                )}
+                              </div>
+                              <Button
+                                onClick={handleGoogleSaveAndEnable}
+                                className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 h-10 text-sm font-semibold"
+                              >
+                                Save and enable
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div>
+                          <h3 className="text-xs font-bold text-foreground mb-2">Provide link</h3>
+                          <Input
+                            value={googleLinkValue}
+                            onChange={(e) => setGoogleLinkValue(e.target.value)}
+                            placeholder="Paste your Google Reviews link"
+                            className="bg-muted border-0 text-sm"
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
