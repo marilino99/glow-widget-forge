@@ -361,7 +361,7 @@ const AppearancePanel = ({
   return (
     <div className="flex h-full flex-col">
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 pb-16">
+      <div className="flex-1 overflow-y-auto px-6 py-6 pb-32">
         {activeTab === "general" && (
           <div className="max-w-xs mx-auto space-y-4">
             {/* Logo */}
