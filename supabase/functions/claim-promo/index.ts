@@ -52,11 +52,11 @@ Deno.serve(async (req) => {
     .update({ lovable_promo_claimed: true })
     .eq("id", profile.id);
 
-  // Redirect to Lovable
+  // Redirect to Lovable partnership page with the token as reward_code
   return new Response(null, {
     status: 302,
     headers: {
-      Location: "https://lovable.dev",
+      Location: `https://lovable.dev/lp/learnn-2512?reward_code=${token}`,
       ...corsHeaders,
     },
   });
