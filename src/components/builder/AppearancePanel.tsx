@@ -755,7 +755,7 @@ const AppearancePanel = ({
         )}
 
         {activeTab === "style" && (
-          <div className="max-w-xs mx-auto space-y-6">
+          <div className="max-w-xs mx-auto space-y-6 pb-48">
             {/* Widget Type Selector */}
             <div>
               <p className="mb-2 text-sm font-semibold text-foreground">Widget type</p>
