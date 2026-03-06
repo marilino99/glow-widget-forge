@@ -107,22 +107,17 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
           {integrations.map((integration) => (
             <div
               key={integration.title}
-              className="rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col"
+              className="rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col opacity-60"
             >
-              {/* Icon area */}
               <div
                 className="relative flex items-center justify-center py-10"
                 style={{ background: integration.iconBg }}
               >
                 <span className="text-5xl drop-shadow-md">{integration.icon}</span>
-                {integration.badge && (
-                  <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#3b82f6] shadow-sm">
-                    <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2l1.5 3.5L13 7l-3.5 1.5L8 12l-1.5-3.5L3 7l3.5-1.5z"/></svg>
-                    {integration.badge}
-                  </span>
-                )}
+                <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#8a8fa8] shadow-sm">
+                  Coming soon
+                </span>
               </div>
-              {/* Content */}
               <div className="px-5 py-4 flex-1 flex flex-col">
                 <h3 className="text-base font-semibold text-[#1a1a2e] mb-1.5">{integration.title}</h3>
                 <p className="text-sm text-[#8a8fa8] leading-relaxed">{integration.description}</p>
