@@ -613,9 +613,7 @@ const Builder = () => {
                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                        Train your AI agent on your website content and let it answer customer questions automatically, 24/7.
                      </p>
-                     <div className="rounded-xl overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500 p-6 flex items-center justify-center">
-                       <span className="text-white text-2xl font-bold text-center leading-tight">Introducing<br/>AI Chatbot</span>
-                     </div>
+                     <img src={changelogFeatured} alt="AI Chatbot" className="rounded-xl w-full object-cover" />
                      <p className="text-xs text-muted-foreground mt-2">1 week ago</p>
                    </div>
 
