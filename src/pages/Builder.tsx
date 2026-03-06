@@ -653,23 +653,70 @@ const Builder = () => {
                         Get 3 months of Lovable Pro for free
                       </h3>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                        We've partnered with Lovable to give every WidJet user an exclusive perk: <span className="font-semibold text-foreground">100 credits per month for 3 months</span>, completely free.
+                        Complete these 3 steps to unlock your exclusive <span className="font-semibold text-foreground">100 credits/month for 3 months</span>.
                       </p>
+
+                      {/* Step 1: Widget Live */}
                       <div className="space-y-3 mb-5">
-                        <h4 className="text-sm font-semibold text-foreground">How to claim:</h4>
                         <div className="flex items-start gap-3">
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
-                          <p className="text-sm text-muted-foreground">Create a free account on <span className="font-medium text-foreground">lovable.dev</span></p>
+                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${widgetIsLive ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
+                            {widgetIsLive ? <Check className="h-3.5 w-3.5" /> : '1'}
+                          </span>
+                          <div className="flex-1">
+                            <p className={`text-sm font-medium ${widgetIsLive ? 'text-green-600 line-through' : 'text-foreground'}`}>Install the widget on your website</p>
+                            <p className="text-xs text-muted-foreground">We'll detect it automatically once it receives its first visit.</p>
+                          </div>
                         </div>
+
+                        {/* Step 2: Product Hunt Review */}
                         <div className="flex items-start gap-3">
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
-                          <p className="text-sm text-muted-foreground">Use the same email you registered with on WidJet</p>
+                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${phReviewSaved ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
+                            {phReviewSaved ? <Check className="h-3.5 w-3.5" /> : '2'}
+                          </span>
+                          <div className="flex-1">
+                            <p className={`text-sm font-medium ${phReviewSaved ? 'text-green-600 line-through' : 'text-foreground'}`}>Leave a review on Product Hunt</p>
+                            {!phReviewSaved ? (
+                              <div className="mt-1.5 flex gap-1.5">
+                                <input
+                                  type="url"
+                                  value={phReviewUrl}
+                                  onChange={(e) => setPhReviewUrl(e.target.value)}
+                                  placeholder="Paste your review link"
+                                  className="flex-1 rounded-lg border border-border bg-muted px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                                />
+                                <button
+                                  disabled={!phReviewUrl.includes("producthunt.com")}
+                                  onClick={() => {
+                                    setPhReviewSaved(true);
+                                    // Log the review URL
+                                    if (user) {
+                                      supabase.from("user_activity_logs").insert({
+                                        user_id: user.id,
+                                        event_type: "ph_review_submitted",
+                                        metadata: { url: phReviewUrl },
+                                      });
+                                    }
+                                  }}
+                                  className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-40"
+                                >
+                                  Confirm
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-green-500 mt-0.5">Review submitted ✓</p>
+                            )}
+                          </div>
                         </div>
+
+                        {/* Step 3: Claim */}
                         <div className="flex items-start gap-3">
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">3</span>
-                          <p className="text-sm text-muted-foreground">Your credits will be automatically applied to your Lovable account</p>
+                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${promoClaimed ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
+                            {promoClaimed ? <Check className="h-3.5 w-3.5" /> : '3'}
+                          </span>
+                          <p className={`text-sm font-medium ${promoClaimed ? 'text-green-600 line-through' : 'text-foreground'}`}>Claim your free credits</p>
                         </div>
                       </div>
+
                       {promoClaimed ? (
                         <div className="flex items-center justify-center gap-2 w-full rounded-xl bg-muted text-muted-foreground font-medium py-2.5 text-sm cursor-default">
                           <Check className="h-4 w-4" />
@@ -677,23 +724,21 @@ const Builder = () => {
                         </div>
                       ) : (
                         <button
-                          disabled={promoClaimLoading}
+                          disabled={promoClaimLoading || !widgetIsLive || !phReviewSaved}
                           onClick={async () => {
                             if (!user) return;
                             setPromoClaimLoading(true);
-                            // Generate a unique token for this user
                             const token = crypto.randomUUID();
                             await (supabase.from("profiles") as any).update({ promo_token: token }).eq("user_id", user.id);
                             setPromoClaimed(true);
                             setPromoClaimLoading(false);
-                            // Open the single-use link through the edge function
                             const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
                             window.open(`https://${projectId}.supabase.co/functions/v1/claim-promo?token=${token}`, "_blank", "noopener,noreferrer");
                           }}
-                          className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+                          className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           {promoClaimLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
-                          Claim your free credits
+                          {!widgetIsLive ? 'Install widget first' : !phReviewSaved ? 'Submit review first' : 'Claim your free credits'}
                         </button>
                       )}
                     </div>
