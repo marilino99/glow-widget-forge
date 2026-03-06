@@ -707,11 +707,11 @@ const Builder = () => {
                                       }
                                     }}
                                     className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-40"
-                                >
-                                  Confirm
-                                </button>
-                              </div>
-                            ) : (
+                                    >
+                                      Confirm
+                                    </button>
+                                  </div>
+                                </div>
                               <p className="text-xs text-green-500 mt-0.5">Review submitted ✓</p>
                             )}
                           </div>
