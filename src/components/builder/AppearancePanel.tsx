@@ -201,6 +201,8 @@ const AppearancePanel = ({
   googleReviewsEnabled,
   onGoogleReviewsToggle,
   onOpenGoogleReviews,
+  onBusinessSelect,
+  savedGoogleBusiness,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -208,6 +210,86 @@ const AppearancePanel = ({
   const [isUploading, setIsUploading] = useState(false);
   const [showCustomColor, setShowCustomColor] = useState(false);
   const colorInputRef = useRef<HTMLInputElement>(null);
+  const [googleExpanded, setGoogleExpanded] = useState(false);
+  const [googleSearchQuery, setGoogleSearchQuery] = useState("");
+  const [googleLinkValue, setGoogleLinkValue] = useState("");
+  const [googleSearchTab, setGoogleSearchTab] = useState<"search" | "link">("search");
+  const [googlePredictions, setGooglePredictions] = useState<any[]>([]);
+  const [isGoogleSearching, setIsGoogleSearching] = useState(false);
+  const [googleSelectedBusiness, setGoogleSelectedBusiness] = useState<GoogleBusinessData | null>(null);
+  const [isLoadingGoogleDetails, setIsLoadingGoogleDetails] = useState(false);
+  const googleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Google Places autocomplete effect
+  useEffect(() => {
+    if (googleDebounceRef.current) clearTimeout(googleDebounceRef.current);
+    if (googleSearchQuery.length < 2 || googleSelectedBusiness) {
+      setGooglePredictions([]);
+      return;
+    }
+    googleDebounceRef.current = setTimeout(async () => {
+      setIsGoogleSearching(true);
+      try {
+        const { data, error } = await supabase.functions.invoke("google-places-autocomplete", {
+          body: { query: googleSearchQuery },
+        });
+        if (error) throw error;
+        setGooglePredictions(data?.predictions || []);
+      } catch (err) {
+        console.error("Autocomplete error:", err);
+        setGooglePredictions([]);
+      } finally {
+        setIsGoogleSearching(false);
+      }
+    }, 350);
+    return () => { if (googleDebounceRef.current) clearTimeout(googleDebounceRef.current); };
+  }, [googleSearchQuery, googleSelectedBusiness]);
+
+  const handleGoogleSelectBusiness = async (prediction: any) => {
+    setGooglePredictions([]);
+    setGoogleSearchQuery(prediction.structured_formatting?.main_text || prediction.description);
+    setIsLoadingGoogleDetails(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("google-places-autocomplete", {
+        body: { place_id: prediction.place_id },
+      });
+      if (error) throw error;
+      const business: GoogleBusinessData = { ...data?.result, place_id: prediction.place_id };
+      setGoogleSelectedBusiness(business);
+    } catch (err) {
+      console.error("Place details error:", err);
+    } finally {
+      setIsLoadingGoogleDetails(false);
+    }
+  };
+
+  const handleGoogleSearchChange = (value: string) => {
+    setGoogleSearchQuery(value);
+    if (googleSelectedBusiness) setGoogleSelectedBusiness(null);
+  };
+
+  const handleGoogleSaveAndEnable = () => {
+    if (!googleSelectedBusiness) return;
+    onBusinessSelect?.(googleSelectedBusiness);
+    onGoogleReviewsToggle?.(true);
+  };
+
+  const handleGoogleRemove = () => {
+    onBusinessSelect?.(null);
+    onGoogleReviewsToggle?.(false);
+    setGoogleSelectedBusiness(null);
+    setGoogleSearchQuery("");
+  };
+
+  const truncateUrl = (url: string, maxLen = 40) => {
+    try {
+      const u = new URL(url);
+      const display = u.origin + u.pathname;
+      return display.length > maxLen ? display.slice(0, maxLen) + "..." : display;
+    } catch {
+      return url.length > maxLen ? url.slice(0, maxLen) + "..." : url;
+    }
+  };
 
   // Track initial values for dirty detection
   const [initialValues, setInitialValues] = useState({
