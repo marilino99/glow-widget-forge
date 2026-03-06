@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN lovable_promo_claimed boolean NOT NULL DEFAULT false;

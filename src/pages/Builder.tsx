@@ -160,14 +160,17 @@ const Builder = () => {
    const [changelogDetailOpen, setChangelogDetailOpen] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
+  const [promoClaimed, setPromoClaimed] = useState(false);
+  const [promoClaimLoading, setPromoClaimLoading] = useState(false);
 
   // Load user profile for top bar
   useEffect(() => {
     const loadProfile = async () => {
       if (!user) return;
-      const { data } = await supabase.from("profiles").select("avatar_url, first_name").eq("user_id", user.id).single();
+      const { data } = await supabase.from("profiles").select("avatar_url, first_name, lovable_promo_claimed").eq("user_id", user.id).single();
       if (data?.avatar_url) setUserAvatarUrl(data.avatar_url);
       if (data?.first_name) setUserDisplayName(data.first_name);
+      if ((data as any)?.lovable_promo_claimed) setPromoClaimed(true);
     };
     loadProfile();
   }, [user]);
