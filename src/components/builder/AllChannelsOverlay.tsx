@@ -75,9 +75,8 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
           {channels.map((channel) => (
             <div
               key={channel.title}
-              className="rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col"
+              className={`rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col ${channel.comingSoon ? "opacity-60" : ""}`}
             >
-              {/* Icon area */}
               <div
                 className="relative flex items-center justify-center py-10"
                 style={{ background: channel.gradient }}
@@ -89,8 +88,12 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
                     Active
                   </span>
                 )}
+                {channel.comingSoon && (
+                  <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#8a8fa8] shadow-sm">
+                    Coming soon
+                  </span>
+                )}
               </div>
-              {/* Content */}
               <div className="px-5 py-4 flex-1 flex flex-col">
                 <h3 className="text-base font-semibold text-[#1a1a2e] mb-1.5">{channel.title}</h3>
                 <p className="text-sm text-[#8a8fa8] leading-relaxed">{channel.description}</p>
