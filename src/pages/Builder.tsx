@@ -684,7 +684,7 @@ const Builder = () => {
                 Adjust the appearance of your chat widget to match your website's style.
               </p>
               <div className="mt-6 flex gap-0">
-                {["General", "Home Screen", "Widget button"].map((tab) => {
+                {["General", "Style", "Home Screen", "Widget button"].map((tab) => {
                   const tabValue = tab.toLowerCase().replace(/ /g, "-");
                   return (
                     <button

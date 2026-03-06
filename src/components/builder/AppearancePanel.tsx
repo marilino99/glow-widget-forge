@@ -656,6 +656,16 @@ const AppearancePanel = ({
           </div>
         )}
 
+        {activeTab === "style" && (
+          <div className="max-w-xs mx-auto space-y-4">
+            <div className="rounded-xl border border-border bg-muted/30 p-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                Style customization options coming soon.
+              </p>
+            </div>
+          </div>
+        )}
+
         {activeTab === "home-screen" && (
           <div className="max-w-xs mx-auto space-y-1">
             <p className="mb-3 text-xs text-muted-foreground">Toggle sections visible on the widget home screen.</p>
