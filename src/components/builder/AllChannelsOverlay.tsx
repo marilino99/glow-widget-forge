@@ -13,6 +13,7 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       gradient: "linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%)",
       icon: "💬",
       enabled: true,
+      comingSoon: false,
     },
     {
       type: "featured" as const,
@@ -20,7 +21,8 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
       description: "ChatGPT-style help page, deployed standalone or under a path on your site (/help).",
       gradient: "linear-gradient(135deg, #fde68a 0%, #fbbf24 100%)",
       icon: "📖",
-      enabled: true,
+      enabled: false,
+      comingSoon: true,
     },
   ];
 
@@ -28,24 +30,23 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
     {
       title: "Email",
       description: "Connect your agent to an email address and let it respond to messages from your customers.",
-      badge: "Beta",
       icon: "📧",
       iconBg: "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
-      action: "upgrade" as const,
+      comingSoon: true,
     },
     {
       title: "Slack",
       description: "Connect your agent to Slack, mention it, and have it reply to any message.",
       icon: "💬",
       iconBg: "linear-gradient(135deg, #fef9c3 0%, #fde68a 100%)",
-      action: "upgrade" as const,
+      comingSoon: true,
     },
     {
       title: "WordPress",
       description: "Use the official plugin for WordPress to add the chat widget to your website.",
       icon: "🌐",
       iconBg: "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)",
-      action: "setup" as const,
+      comingSoon: true,
     },
   ];
 
