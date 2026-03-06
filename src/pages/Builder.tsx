@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, LogOut } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, LogOut, ArrowRight } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
@@ -607,21 +607,21 @@ const Builder = () => {
               <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
                 <div className="max-h-[480px] overflow-y-auto">
                   {/* Featured update */}
-                  <div className="p-5 border-b border-border">
-                    <h3 className="text-base font-bold text-foreground mb-1.5">AI Chatbot is here</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                      Train your AI agent on your website content and let it answer customer questions automatically, 24/7.
-                    </p>
-                    <div className="rounded-xl overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500 p-6 flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold text-center leading-tight">Introducing<br/>AI Chatbot</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">1 week ago</p>
-                  </div>
+                   <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group">
+                     <h3 className="text-base font-bold text-foreground mb-1.5 flex items-center gap-1.5">AI Chatbot is here <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
+                     <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                       Train your AI agent on your website content and let it answer customer questions automatically, 24/7.
+                     </p>
+                     <div className="rounded-xl overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500 p-6 flex items-center justify-center">
+                       <span className="text-white text-2xl font-bold text-center leading-tight">Introducing<br/>AI Chatbot</span>
+                     </div>
+                     <p className="text-xs text-muted-foreground mt-2">1 week ago</p>
+                   </div>
 
                   {/* Update item */}
-                  <div className="p-5 border-b border-border flex gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-bold text-foreground mb-1">Google Reviews integration</h3>
+                   <div className="p-5 border-b border-border flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer group">
+                     <div className="flex-1">
+                       <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-1.5">Google Reviews integration <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         Display your Google Reviews directly on your widget to boost credibility and trust.
                       </p>
@@ -633,9 +633,9 @@ const Builder = () => {
                   </div>
 
                   {/* Update item */}
-                  <div className="p-5 border-b border-border flex gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-bold text-foreground mb-1">Product carousel</h3>
+                   <div className="p-5 border-b border-border flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer group">
+                     <div className="flex-1">
+                       <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-1.5">Product carousel <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         Showcase your products with an interactive carousel directly inside the widget.
                       </p>
@@ -647,9 +647,9 @@ const Builder = () => {
                   </div>
 
                   {/* Update item */}
-                  <div className="p-5 flex gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-bold text-foreground mb-1">FAQ section</h3>
+                   <div className="p-5 flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer group">
+                     <div className="flex-1">
+                       <h3 className="text-sm font-bold text-foreground mb-1 flex items-center gap-1.5">FAQ section <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         Add frequently asked questions to help visitors find answers instantly.
                       </p>
