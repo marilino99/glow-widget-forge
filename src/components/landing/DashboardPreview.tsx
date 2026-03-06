@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Home, MessageSquare, Users, Paintbrush, Bot, Database } from "lucide-react";
 import dashboardImg from "@/assets/dashboard-preview.png";
 import conversationsImg from "@/assets/dashboard-conversations.png";
@@ -27,12 +27,19 @@ const tabLabels: Record<string, Record<TabId, string>> = {
   fr: { home: "Home", conversations: "Conversations", contacts: "Contacts", appearance: "Apparence", chatbot: "AI Chatbot", datasources: "Data Sources" },
 };
 
+const allImages: { id: TabId; src: string }[] = [
+  { id: "home", src: dashboardImg },
+  { id: "conversations", src: conversationsImg },
+  { id: "contacts", src: contactsImg },
+  { id: "appearance", src: appearanceImg },
+  { id: "chatbot", src: chatbotImg },
+  { id: "datasources", src: datasourcesImg },
+];
+
 const DashboardPreview = () => {
   const { t, lang } = useLandingLang();
   const [activeTab, setActiveTab] = useState<TabId>("home");
   const labels = tabLabels[lang] || tabLabels.en;
-  const tabImages: Partial<Record<TabId, string>> = { conversations: conversationsImg, contacts: contactsImg, appearance: appearanceImg, chatbot: chatbotImg, datasources: datasourcesImg };
-  const currentImage = tabImages[activeTab] || dashboardImg;
 
   return (
     <section id="dashboard" className="px-6 py-16 md:py-24" style={{ backgroundColor: '#f6f5f4' }}>
@@ -54,7 +61,7 @@ const DashboardPreview = () => {
               <p className="mx-auto mt-4 max-w-xl text-white/60">{t("dashboard.desc")}</p>
             </motion.div>
 
-            {/* Tabs - glassmorphic bar */}
+            {/* Tabs */}
             <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.15 }} className="mt-10 flex justify-center">
               <div className="flex w-full justify-between border-b border-white/10 px-8 md:px-16">
                 {tabs.map((tab) => {
@@ -78,25 +85,26 @@ const DashboardPreview = () => {
               </div>
             </motion.div>
 
-            {/* Dashboard image */}
+            {/* Dashboard image – crossfade via stacked images */}
             <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="relative mt-0">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden>
                 <div className="w-[80%] h-[80%] rounded-full bg-gradient-to-r from-[hsl(270,80%,50%)] via-[hsl(310,70%,50%)] to-[hsl(250,85%,65%)] opacity-40 blur-[100px]" />
               </div>
               <div className="relative hero-image-border rounded-2xl p-[2px] transition-transform duration-300 hover:scale-[1.02]">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={activeTab}
-                    src={currentImage}
-                    alt={`Widjet dashboard - ${labels[activeTab]}`}
-                    className="w-full rounded-2xl"
-                    loading="lazy"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                  />
-                </AnimatePresence>
+                <div className="relative">
+                  {allImages.map(({ id, src }, i) => (
+                    <img
+                      key={id}
+                      src={src}
+                      alt={`Widjet dashboard - ${labels[id]}`}
+                      className={`w-full rounded-2xl transition-opacity duration-300 ease-in-out ${
+                        i === 0 ? "relative" : "absolute inset-0"
+                      }`}
+                      style={{ opacity: activeTab === id ? 1 : 0 }}
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
               </div>
             </motion.div>
           </div>
