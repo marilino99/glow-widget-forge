@@ -622,16 +622,21 @@ const Builder = () => {
         {/* Content header - same height as sidebar logo row */}
         <div className="shrink-0 flex items-center justify-between h-12 border-b border-border px-4">
           <div className="flex items-center gap-2">
+            {/* Mobile: show logo */}
+            <button onClick={() => window.location.reload()} className="flex items-center lg:hidden">
+              <img src={widjetLogoNavbar} className="h-6 w-auto" alt="Widjet logo" />
+            </button>
+            {/* Desktop: sidebar toggle + view label */}
             {builderView !== "conversations" && (
               <button
                 onClick={() => setIsMiniSidebar(!isMiniSidebar)}
-                className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-muted"
+                className="hidden lg:flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-muted"
                 title={isMiniSidebar ? "Espandi sidebar" : "Riduci sidebar"}
               >
                 <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
               </button>
             )}
-            <span className="text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
+            <span className="hidden lg:inline text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
