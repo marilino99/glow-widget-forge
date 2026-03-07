@@ -53,6 +53,7 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
   const [isAdding, setIsAdding] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Load sources
