@@ -268,7 +268,7 @@ const OnboardingBrandStep = ({
           <div className="lg:hidden mt-6 mb-2">
             <button
               onClick={() => setShowMobilePreview(true)}
-              className="w-full flex items-center justify-center gap-2 rounded-xl border-2 border-[#7c3aed] bg-[#f3f0ff] px-4 py-3 text-[15px] font-semibold text-[#7c3aed] transition-all hover:bg-[#ebe5ff]"
+              className="w-full flex items-center justify-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-4 py-3 text-[15px] font-medium text-[#6a6f88] transition-all hover:bg-[#f8f9fc]"
             >
               <Eye className="h-4 w-4" />
               Preview
