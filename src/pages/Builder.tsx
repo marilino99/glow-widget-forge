@@ -608,7 +608,7 @@ const Builder = () => {
               const wasConversations = builderView === "conversations";
               setBuilderView(view);
               if (view === "conversations") setIsMiniSidebar(true);
-              if (wasConversations && view === "contacts") setIsMiniSidebar(false);
+              if (wasConversations && view === "contacts" && !autoMini) setIsMiniSidebar(false);
             }}
             isMiniSidebar={isMiniSidebar}
             widgetId={config.id || undefined}
