@@ -89,6 +89,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
   const [aiOverviewOpen, setAiOverviewOpen] = useState(false);
   const [aiOverviewData, setAiOverviewData] = useState<{ summary: string[]; tags: string[] } | null>(null);
   const [aiOverviewLoading, setAiOverviewLoading] = useState(false);
+  const [mobileView, setMobileView] = useState<"filters" | "list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
