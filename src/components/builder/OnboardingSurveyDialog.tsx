@@ -106,7 +106,7 @@ const OnboardingSurveyDialog = ({ open, onComplete }: OnboardingSurveyDialogProp
   return (
     <Dialog open={open}>
       <DialogContent
-        className="sm:max-w-[720px] border-0 p-0 overflow-hidden [&>button]:hidden z-[60] rounded-2xl shadow-2xl"
+        className="sm:max-w-[720px] max-h-[100dvh] sm:max-h-[90vh] border-0 p-0 overflow-hidden [&>button]:hidden z-[60] rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:h-auto sm:w-auto"
         overlayClassName="z-[59]"
         style={{ backgroundColor: "#eef0f4" }}
         onPointerDownOutside={(e) => e.preventDefault()}
