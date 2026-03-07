@@ -1211,6 +1211,7 @@ const Builder = () => {
       )}
 
       {/* Mobile bottom navigation bar */}
+      {!showWebsiteStep && !showTrainStep && !showBrandStep && !showTestStep && !showSurveyDialog && (
       <div className="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden items-center justify-around border-t border-border bg-background/95 backdrop-blur-sm px-2 py-1.5 safe-bottom">
         {[
           { key: "home" as const, icon: Home, label: "Home" },
