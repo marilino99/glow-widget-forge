@@ -332,10 +332,11 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
                 <FolderOpen className="h-5 w-5" />
               </button>
               <div>
-              <h1 className="text-2xl font-bold text-foreground">All sources</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Widjet will use the knowledge you add here to answer customer questions
-              </p>
+                <h1 className="text-2xl font-bold text-foreground">All sources</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Widjet will use the knowledge you add here to answer customer questions
+                </p>
+              </div>
             </div>
           </div>
         </div>
