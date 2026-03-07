@@ -48,7 +48,7 @@ const OnboardingTestStep = ({
       }}
     >
       {/* Stepper */}
-      <div className="flex items-center justify-center pt-10 pb-6 shrink-0">
+      <div className="flex items-center justify-center pt-8 pb-4 sm:pt-10 sm:pb-6 shrink-0 px-6">
         {Array.from({ length: totalSteps }).map((_, i) => {
           const stepNum = i + 1;
           const isActive = stepNum === currentStep;
@@ -57,18 +57,18 @@ const OnboardingTestStep = ({
             <div key={i} className="flex items-center">
               {i > 0 && (
                 <div
-                  className="h-[2px] w-24"
+                  className="h-[2px] w-12 sm:w-24"
                   style={{ backgroundColor: isPast ? "#7c3aed" : "#e5e7eb" }}
                 />
               )}
               <div
                 className="flex items-center justify-center rounded-full font-bold transition-all"
                 style={{
-                  width: isActive ? "40px" : "14px",
-                  height: isActive ? "40px" : "14px",
+                  width: isActive ? "36px" : "12px",
+                  height: isActive ? "36px" : "12px",
                   backgroundColor: isActive ? "#7c3aed" : isPast ? "#7c3aed" : "#e5e7eb",
                   color: isActive ? "#fff" : "transparent",
-                  fontSize: isActive ? "16px" : "0",
+                  fontSize: isActive ? "14px" : "0",
                 }}
               >
                 {isActive ? stepNum : ""}
@@ -79,49 +79,49 @@ const OnboardingTestStep = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto px-6">
-        <div className="max-w-xl w-full space-y-8">
+      <div className="flex-1 flex flex-col items-center justify-start sm:justify-center overflow-y-auto px-4 sm:px-6 pt-4 sm:pt-0">
+        <div className="max-w-xl w-full space-y-6 sm:space-y-8">
           {/* Title */}
           <div>
-            <h1 className="text-3xl font-bold text-[#1a1a2e] mb-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a2e] mb-2 sm:mb-3">
               🎉 Your AI Agent is ready!
             </h1>
-            <p className="text-[#8a8fa8] text-base leading-relaxed">
+            <p className="text-[#8a8fa8] text-sm sm:text-base leading-relaxed">
               Test your AI Agent to make sure it works perfectly. When you're satisfied, copy the code below and paste it before the closing{" "}
               <code className="text-[#7c3aed] font-mono">&lt;/body&gt;</code> tag on your website to activate it.
             </p>
           </div>
 
           {/* Code snippet */}
-          <div className="rounded-2xl border border-[#e0e3ef] bg-[#fafbff] px-6 py-5 flex items-start justify-between gap-4">
-            <pre className="text-sm text-[#1a1a2e] font-mono whitespace-pre-wrap break-all leading-relaxed flex-1">
+          <div className="rounded-2xl border border-[#e0e3ef] bg-[#fafbff] px-4 sm:px-6 py-4 sm:py-5 flex items-start justify-between gap-3 sm:gap-4">
+            <pre className="text-xs sm:text-sm text-[#1a1a2e] font-mono whitespace-pre-wrap break-all leading-relaxed flex-1">
               {embedCode}
             </pre>
             <button
               onClick={handleCopy}
-              className="flex items-center gap-2 rounded-lg border border-[#e0e3ef] bg-white px-4 py-2 text-sm font-medium text-[#1a1a2e] hover:bg-[#f8f9fc] transition-colors shrink-0"
+              className="flex items-center gap-1.5 sm:gap-2 rounded-lg border border-[#e0e3ef] bg-white px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-[#1a1a2e] hover:bg-[#f8f9fc] transition-colors shrink-0"
             >
               {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
-              {copied ? "Copied!" : "Copy"}
+              <span className="hidden sm:inline">{copied ? "Copied!" : "Copy"}</span>
             </button>
           </div>
 
           {/* Example questions */}
-          <div className="space-y-4">
-            <p className="text-[#8a8fa8] text-base">
+          <div className="space-y-3 sm:space-y-4">
+            <p className="text-[#8a8fa8] text-sm sm:text-base">
               Go ahead, test your AI agent now. Try the examples below:
             </p>
 
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-start sm:items-center gap-2 sm:gap-3">
               {exampleQuestions.map((q, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 rounded-full border border-[#e0e3ef] bg-[#fafbff] px-6 py-3"
-                  style={{ marginLeft: `${i * 40}px` }}
+                  className="flex items-center gap-2 sm:gap-3 rounded-full border border-[#e0e3ef] bg-[#fafbff] px-4 sm:px-6 py-2.5 sm:py-3"
+                  style={{ marginLeft: window.innerWidth >= 640 ? `${i * 40}px` : '0px' }}
                 >
-                  <span className="text-sm text-[#1a1a2e]">{q}</span>
+                  <span className="text-xs sm:text-sm text-[#1a1a2e]">{q}</span>
                   <button className="text-[#b0b4c8] hover:text-[#6a6f88] shrink-0">
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </button>
                 </div>
               ))}
@@ -131,16 +131,16 @@ const OnboardingTestStep = ({
       </div>
 
       {/* Bottom bar */}
-      <div className="flex items-center justify-center gap-3 px-10 py-6 shrink-0">
+      <div className="flex items-center justify-center gap-3 px-4 sm:px-10 py-4 sm:py-6 shrink-0">
         <button
           onClick={onBack}
-          className="rounded-xl border border-[#e0e3ef] bg-white px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc]"
+          className="rounded-xl border border-[#e0e3ef] bg-white px-6 sm:px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc]"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          className="rounded-xl bg-[#7c3aed] px-10 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
+          className="rounded-xl bg-[#7c3aed] px-8 sm:px-10 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
         >
           Next
         </button>
