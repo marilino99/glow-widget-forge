@@ -53,6 +53,7 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
   const [isAdding, setIsAdding] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Load sources
@@ -266,16 +267,17 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
     }
   };
 
+
   return (
     <div className="flex h-full">
-      {/* Left sidebar - Folders */}
-      <div className="w-56 shrink-0 border-r border-border bg-[#fafbfc] flex flex-col">
+      {/* Left sidebar - Folders: hidden on mobile unless toggled */}
+      <div className={`${showMobileSidebar ? "flex" : "hidden"} lg:flex w-full lg:w-56 shrink-0 border-r border-border bg-[#fafbfc] flex-col`}>
         <div className="px-5 pt-6 pb-4">
           <h2 className="text-lg font-bold text-foreground">Training</h2>
         </div>
         <div className="px-3 space-y-0.5">
           <button
-            onClick={() => setSelectedFolder(null)}
+            onClick={() => { setSelectedFolder(null); setShowMobileSidebar(false); }}
             className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
               !selectedFolder ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
             }`}
@@ -303,7 +305,7 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
               {folders.map(([domain, count]) => (
                 <button
                   key={domain}
-                  onClick={() => setSelectedFolder(selectedFolder === domain ? null : domain)}
+                  onClick={() => { setSelectedFolder(selectedFolder === domain ? null : domain); setShowMobileSidebar(false); }}
                   className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors ${
                     selectedFolder === domain
                       ? "bg-primary/10 text-primary font-medium"
@@ -320,22 +322,27 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
         )}
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main content - hidden on mobile when sidebar is showing */}
+      <div className={`${showMobileSidebar ? "hidden" : "flex"} lg:flex flex-1 flex-col min-w-0`}>
         {/* Header */}
-        <div className="shrink-0 px-8 pt-6 pb-4">
+        <div className="shrink-0 px-5 lg:px-8 pt-6 pb-4">
           <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">All sources</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Widjet will use the knowledge you add here to answer customer questions
-              </p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setShowMobileSidebar(true)} className="lg:hidden rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
+                <FolderOpen className="h-5 w-5" />
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">All sources</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Widjet will use the knowledge you add here to answer customer questions
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Search + Filter bar */}
-        <div className="shrink-0 px-8 pb-4 flex items-center gap-3">
+        <div className="shrink-0 px-5 lg:px-8 pb-4 flex items-center gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
