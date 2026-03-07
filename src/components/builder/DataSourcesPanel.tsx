@@ -305,7 +305,7 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
               {folders.map(([domain, count]) => (
                 <button
                   key={domain}
-                  onClick={() => setSelectedFolder(selectedFolder === domain ? null : domain)}
+                  onClick={() => { setSelectedFolder(selectedFolder === domain ? null : domain); setShowMobileSidebar(false); }}
                   className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors ${
                     selectedFolder === domain
                       ? "bg-primary/10 text-primary font-medium"
@@ -322,12 +322,16 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
         )}
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Main content - hidden on mobile when sidebar is showing */}
+      <div className={`${showMobileSidebar ? "hidden" : "flex"} lg:flex flex-1 flex-col min-w-0`}>
         {/* Header */}
-        <div className="shrink-0 px-8 pt-6 pb-4">
+        <div className="shrink-0 px-5 lg:px-8 pt-6 pb-4">
           <div className="flex items-start justify-between">
-            <div>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setShowMobileSidebar(true)} className="lg:hidden rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
+                <FolderOpen className="h-5 w-5" />
+              </button>
+              <div>
               <h1 className="text-2xl font-bold text-foreground">All sources</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 Widjet will use the knowledge you add here to answer customer questions
