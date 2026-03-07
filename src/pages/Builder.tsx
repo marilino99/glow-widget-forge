@@ -1209,6 +1209,34 @@ const Builder = () => {
       {showAllChannels && (
         <AllChannelsOverlay onClose={() => setShowAllChannels(false)} />
       )}
+
+      {/* Mobile bottom navigation bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden items-center justify-around border-t border-border bg-background/95 backdrop-blur-sm px-2 py-1.5 safe-bottom">
+        {[
+          { key: "home" as const, icon: Home, label: "Home" },
+          { key: "conversations" as const, icon: MessageCircle, label: "Chats" },
+          { key: "appearance" as const, icon: Palette, label: "Design" },
+          { key: "data-sources" as const, icon: BookOpen, label: "Data" },
+          { key: "ai" as const, icon: Sparkles, label: "AI" },
+        ].map((item) => {
+          const isActive = builderView === item.key || (item.key === "home" && builderView === null);
+          return (
+            <button
+              key={item.key}
+              onClick={() => {
+                setBuilderView(item.key);
+                if (item.key === "conversations") setIsMiniSidebar(true);
+              }}
+              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors ${
+                isActive ? "text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              <item.icon className={`h-5 w-5 ${isActive ? "text-foreground" : "text-muted-foreground"}`} />
+              <span className="text-[10px] font-medium">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 };
