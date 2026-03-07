@@ -389,7 +389,7 @@ const Builder = () => {
   return (
     <div className="flex h-screen bg-background">
       {/* Left sidebar - full height, hidden on mobile */}
-      <div className={`hidden lg:flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden bg-[#fafafa] ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-64'}`}>
+      <div className={`hidden md:flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden bg-[#fafafa] ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-64'}`}>
         {/* Sidebar logo row - same height as content header */}
         <div className={`shrink-0 flex items-center h-12 ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
           {isMiniSidebar ? (
@@ -623,7 +623,7 @@ const Builder = () => {
       {isSidebarCollapsed && (
         <button
           onClick={() => setIsSidebarCollapsed(false)}
-          className="hidden lg:flex absolute left-2 top-4 z-10 h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
+          className="hidden md:flex absolute left-2 top-4 z-10 h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
           title="Apri sidebar"
         >
           <ChevronsRight className="h-4 w-4 text-muted-foreground" />
@@ -636,20 +636,20 @@ const Builder = () => {
         <div className="shrink-0 flex items-center justify-between h-12 border-b border-border px-4">
           <div className="flex items-center gap-2">
             {/* Mobile: show logo */}
-            <button onClick={() => window.location.reload()} className="flex items-center lg:hidden">
+            <button onClick={() => window.location.reload()} className="flex items-center md:hidden">
               <img src={widjetLogoNavbar} className="h-6 w-auto" alt="Widjet logo" />
             </button>
             {/* Desktop: sidebar toggle + view label */}
             {builderView !== "conversations" && (
               <button
                 onClick={() => setIsMiniSidebar(!isMiniSidebar)}
-                className="hidden lg:flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-muted"
+                className="hidden md:flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-muted"
                 title={isMiniSidebar ? "Espandi sidebar" : "Riduci sidebar"}
               >
                 <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
               </button>
             )}
-            <span className="hidden lg:inline text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
+            <span className="hidden md:inline text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
