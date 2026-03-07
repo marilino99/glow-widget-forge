@@ -342,7 +342,7 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
         </div>
 
         {/* Search + Filter bar */}
-        <div className="shrink-0 px-8 pb-4 flex items-center gap-3">
+        <div className="shrink-0 px-5 lg:px-8 pb-4 flex items-center gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
