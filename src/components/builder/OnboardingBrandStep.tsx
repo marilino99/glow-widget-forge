@@ -531,6 +531,144 @@ const OnboardingBrandStep = ({
           Skip Customization
         </button>
       </div>
+
+      {/* Mobile Preview Modal */}
+      {showMobilePreview && (
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowMobilePreview(false)}
+          />
+          {/* Sheet */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[85vh] flex flex-col animate-in slide-in-from-bottom duration-300">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#eaedf5] shrink-0">
+              <span className="text-lg font-semibold text-[#1a1a2e]">Preview</span>
+              <button
+                onClick={() => setShowMobilePreview(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f0f1f5] hover:bg-[#e5e7eb]"
+              >
+                <X className="h-4 w-4 text-[#6a6f88]" />
+              </button>
+            </div>
+
+            {/* Widget preview content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="mx-auto max-w-[360px]">
+                {/* Home View */}
+                <div
+                  className="flex flex-col overflow-hidden rounded-2xl shadow-lg"
+                  style={{ backgroundColor: "#f8f8f8" }}
+                >
+                  {/* Scrollable content */}
+                  <div className="relative" style={{ backgroundColor: "#f8f8f8" }}>
+                    {/* Gradient overlay */}
+                    <div
+                      className="pointer-events-none absolute inset-x-0 top-0 h-48 z-0"
+                      style={{
+                        background: `linear-gradient(180deg, ${brandColor}70 0%, ${brandColor}38 45%, transparent 100%)`,
+                      }}
+                    />
+
+                    {/* Header */}
+                    <div className="relative overflow-hidden px-5 py-4 z-[1]">
+                      <div
+                        className="absolute -right-8 -top-8 h-24 w-24 rounded-full blur-2xl"
+                        style={{
+                          background: `radial-gradient(circle, ${brandColor}45, ${brandColor}18)`,
+                        }}
+                      />
+                      {logoPreview && (
+                        <img src={logoPreview} alt="Logo" className="relative h-7 w-auto object-contain mb-2" />
+                      )}
+                      <h3 className="relative text-xl font-bold text-slate-900 whitespace-pre-line max-w-[70%] break-words">
+                        {welcomeMessage.split("\n")[0] || "Hello! 👋"}
+                      </h3>
+                    </div>
+
+                    {/* Contact section */}
+                    <div className="mx-3 rounded-xl p-3.5 bg-white z-[1] relative">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
+                          {brandName?.charAt(0)?.toUpperCase() || "?"}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-xs text-slate-500">{brandName || "AI Agent"}</p>
+                          <p className="text-sm text-slate-900">Write to us</p>
+                        </div>
+                      </div>
+                      <Button
+                        className={`mt-3 w-full ${buttonTextColor}`}
+                        style={{ backgroundColor: brandColor }}
+                        size="sm"
+                      >
+                        <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                        Contact us
+                      </Button>
+                    </div>
+
+                    {/* FAQ Section */}
+                    {suggestedEnabled && suggestions.filter((s) => s.trim()).length > 0 && (
+                      <div className="px-3 pb-3 mt-3" style={{ backgroundColor: "#f8f8f8" }}>
+                        <div className="rounded-xl p-3.5 bg-white">
+                          <div className="mb-2 flex items-center gap-2">
+                            <HelpCircle className="h-3.5 w-3.5 text-slate-500" />
+                            <span className="text-sm font-medium text-slate-900">Quick answers</span>
+                          </div>
+                          <div className="space-y-0.5">
+                            {suggestions
+                              .filter((s) => s.trim())
+                              .map((s, i) => (
+                                <div
+                                  key={i}
+                                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-900"
+                                >
+                                  <span className="font-medium text-xs">{s}</span>
+                                  <ArrowRight className="h-3 w-3 text-slate-400" />
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Bottom nav */}
+                  <div className="px-3 pb-1 pt-2 shrink-0" style={{ backgroundColor: "#f8f8f8" }}>
+                    <div className="flex rounded-xl backdrop-blur-md bg-white/70 shadow-sm">
+                      <button className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-slate-900">
+                        <Home className="h-4 w-4" />
+                        <span className="text-[10px]">Home</span>
+                      </button>
+                      <button className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-slate-400">
+                        <MessageCircle className="h-4 w-4" />
+                        <span className="text-[10px]">Contact</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Powered by */}
+                  <div className="flex items-center justify-center gap-1 py-1.5 shrink-0" style={{ backgroundColor: "#f8f8f8" }}>
+                    <span className="text-[9px] text-slate-400">Powered by</span>
+                    <img src={widjetLogoNavbar} alt="Widjet" className="h-3.5 w-auto -ml-1 opacity-40" />
+                  </div>
+                </div>
+
+                {/* Floating button */}
+                <div className="flex justify-end mt-4">
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-full shadow-lg"
+                    style={{ backgroundColor: brandColor }}
+                  >
+                    <HelpCircle className={`h-6 w-6 ${buttonTextColor}`} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
