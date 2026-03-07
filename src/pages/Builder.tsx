@@ -618,7 +618,7 @@ const Builder = () => {
       )}
 
       {/* Right panel - full height */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-[#ffffff]">
+      <div className="flex flex-1 flex-col overflow-hidden bg-[#ffffff] pb-16 lg:pb-0">
         {/* Content header - same height as sidebar logo row */}
         <div className="shrink-0 flex items-center justify-between h-12 border-b border-border px-4">
           <div className="flex items-center gap-2">
