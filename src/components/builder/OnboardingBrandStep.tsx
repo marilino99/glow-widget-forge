@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Upload, X, Minus, Home, MessageCircle, HelpCircle, ArrowRight, Sparkles, ArrowLeft, ArrowUp, Smile } from "lucide-react";
+import { Upload, X, Minus, Home, MessageCircle, HelpCircle, ArrowRight, Sparkles, ArrowLeft, ArrowUp, Smile, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 
@@ -60,6 +60,7 @@ const OnboardingBrandStep = ({
   const [chatInputValue, setChatInputValue] = useState("");
   const [chatInputFocused, setChatInputFocused] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   useEffect(() => {
     if (extractedLogo && !logoPreview) setLogoPreview(extractedLogo);
