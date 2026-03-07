@@ -267,7 +267,6 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
     }
   };
 
-  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   return (
     <div className="flex h-full">
