@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Link2, FileText, MessageCircleQuestion, FilePlus2, Globe, Check, Loader2 } from "lucide-react";
+import { Link2, FileText, MessageCircleQuestion, FilePlus2, Globe, Check, Loader2, Upload, X, FileUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface OnboardingTrainStepProps {
   onNext: () => void;
@@ -11,6 +13,11 @@ interface OnboardingTrainStepProps {
 }
 
 type Tab = "url" | "document" | "faq";
+
+interface UploadedDoc {
+  name: string;
+  status: "uploading" | "done" | "error";
+}
 
 const OnboardingTrainStep = ({
   onNext,
@@ -27,6 +34,10 @@ const OnboardingTrainStep = ({
   const [displayedCount, setDisplayedCount] = useState(0);
   const allPagesRef = useRef<string[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedDocs, setUploadedDocs] = useState<UploadedDoc[]>([]);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   // Start fetching pages when component mounts with a websiteUrl
   useEffect(() => {
@@ -41,14 +52,12 @@ const OnboardingTrainStep = ({
 
         if (error || !data?.success) {
           console.error("Sitemap scrape failed:", error || data?.error);
-          // Fallback: just add the URL itself
           const fallback = websiteUrl.startsWith("http") ? websiteUrl : `https://${websiteUrl}`;
           allPagesRef.current = [fallback];
         } else {
           allPagesRef.current = data.links || [];
         }
 
-        // Animate pages appearing one by one
         setDisplayedCount(0);
         let idx = 0;
         timerRef.current = setInterval(() => {
@@ -104,6 +113,92 @@ const OnboardingTrainStep = ({
     }
   };
 
+  const handleFileUpload = async (files: FileList | null) => {
+    if (!files || !user) return;
+
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+      "text/markdown",
+      "text/csv",
+    ];
+
+    for (const file of Array.from(files)) {
+      if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|txt|md|csv)$/i)) {
+        toast({
+          variant: "destructive",
+          title: "Unsupported file",
+          description: `${file.name} is not supported. Use PDF, DOC, DOCX, TXT, MD, or CSV.`,
+        });
+        continue;
+      }
+
+      if (file.size > 20 * 1024 * 1024) {
+        toast({
+          variant: "destructive",
+          title: "File too large",
+          description: `${file.name} exceeds the 20MB limit.`,
+        });
+        continue;
+      }
+
+      const docEntry: UploadedDoc = { name: file.name, status: "uploading" };
+      setUploadedDocs((prev) => [...prev, docEntry]);
+
+      try {
+        const filePath = `${user.id}/${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("training-documents")
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        // Parse the document
+        const { data: parseData, error: parseError } = await supabase.functions.invoke("parse-document", {
+          body: { filePath, fileName: file.name },
+        });
+
+        if (parseError) throw parseError;
+
+        // Save as training source
+        await (supabase.from("training_sources") as any).insert({
+          user_id: user.id,
+          source_type: "document",
+          title: file.name,
+          content: parseData?.content || "",
+          status: "trained",
+        });
+
+        setUploadedDocs((prev) =>
+          prev.map((d) => (d.name === file.name ? { ...d, status: "done" } : d))
+        );
+
+        toast({
+          title: "Document uploaded",
+          description: `${file.name} has been processed.`,
+        });
+      } catch (err) {
+        console.error("Upload error:", err);
+        setUploadedDocs((prev) =>
+          prev.map((d) => (d.name === file.name ? { ...d, status: "error" } : d))
+        );
+        toast({
+          variant: "destructive",
+          title: "Upload failed",
+          description: `Could not process ${file.name}.`,
+        });
+      }
+    }
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeDoc = (name: string) => {
+    setUploadedDocs((prev) => prev.filter((d) => d.name !== name));
+  };
+
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: "url", label: "Add website URL", icon: <Link2 className="h-4 w-4" /> },
     { key: "document", label: "Upload document", icon: <FileText className="h-4 w-4" /> },
@@ -114,13 +209,13 @@ const OnboardingTrainStep = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col"
       style={{
         background: "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
       }}
     >
       {/* Stepper */}
-      <div className="flex items-center justify-center pt-8 pb-4 sm:pt-12 sm:pb-8 px-6">
+      <div className="flex items-center justify-center pt-8 pb-4 sm:pt-12 sm:pb-8 px-6 shrink-0">
         {Array.from({ length: totalSteps }).map((_, i) => {
           const stepNum = i + 1;
           const isActive = stepNum === currentStep;
@@ -150,134 +245,209 @@ const OnboardingTrainStep = ({
         })}
       </div>
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col items-center px-4 sm:px-6 pt-2 sm:pt-4 overflow-hidden min-h-0">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a2e] mb-2 sm:mb-4 text-center">
-          Train your AI agent
-        </h1>
-        <p className="max-w-2xl text-center text-[#8a8fa8] text-sm sm:text-base leading-relaxed mb-4 sm:mb-8">
-          Upload your website, docs, PDFs, and knowledge base to train your AI
-          agent. The more data sources, the smarter your chatbot. You can add or
-          remove sources later.
-        </p>
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="flex flex-col items-center px-4 sm:px-6 pt-2 sm:pt-4 pb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a2e] mb-2 sm:mb-4 text-center">
+            Train your AI agent
+          </h1>
+          <p className="max-w-2xl text-center text-[#8a8fa8] text-sm sm:text-base leading-relaxed mb-4 sm:mb-8">
+            Upload your website, docs, PDFs, and knowledge base to train your AI
+            agent. The more data sources, the smarter your chatbot. You can add or
+            remove sources later.
+          </p>
 
-        {/* Tabs */}
-        <div className="flex w-full max-w-3xl gap-2 sm:gap-3 mb-4 sm:mb-6">
-          {tabs.map((tab) => {
-            const isTabActive = activeTab === tab.key;
-            const badge = tab.key === "url" && hasPages ? pages.length : null;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className="flex flex-1 flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 rounded-xl border-2 px-2 sm:px-4 py-3 sm:py-3.5 text-[12px] sm:text-[14px] font-medium transition-all relative"
-                style={{
-                  backgroundColor: isTabActive ? "#f3f0ff" : "#fff",
-                  borderColor: isTabActive ? "#7c3aed" : "#e0e3ef",
-                  color: isTabActive ? "#7c3aed" : "#6a6f88",
-                }}
-              >
-                {tab.icon}
-                <span className="text-center leading-tight">{tab.label}</span>
-                {badge !== null && (
-                  <span className="absolute -top-2 -right-2 sm:static sm:ml-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#7c3aed] px-1.5 text-[11px] font-bold text-white">
-                    {badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+          {/* Tabs */}
+          <div className="flex w-full max-w-3xl gap-2 sm:gap-3 mb-4 sm:mb-6">
+            {tabs.map((tab) => {
+              const isTabActive = activeTab === tab.key;
+              const badge =
+                tab.key === "url" && hasPages
+                  ? pages.length
+                  : tab.key === "document" && uploadedDocs.length > 0
+                  ? uploadedDocs.filter((d) => d.status === "done").length
+                  : null;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className="flex flex-1 flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 rounded-xl border-2 px-2 sm:px-4 py-3 sm:py-3.5 text-[12px] sm:text-[14px] font-medium transition-all relative"
+                  style={{
+                    backgroundColor: isTabActive ? "#f3f0ff" : "#fff",
+                    borderColor: isTabActive ? "#7c3aed" : "#e0e3ef",
+                    color: isTabActive ? "#7c3aed" : "#6a6f88",
+                  }}
+                >
+                  {tab.icon}
+                  <span className="text-center leading-tight">{tab.label}</span>
+                  {badge !== null && badge > 0 && (
+                    <span className="absolute -top-2 -right-2 sm:static sm:ml-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#7c3aed] px-1.5 text-[11px] font-bold text-white">
+                      {badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Content area */}
-        {activeTab === "url" && (hasPages || isScanning) ? (
-          <div className="flex w-full max-w-3xl flex-1 flex-col rounded-2xl bg-white border border-[#eaedf5] overflow-hidden min-h-0">
-            {/* Header row */}
-            <div className="flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3 border-b border-[#eaedf5] shrink-0">
-              <div className="flex items-center gap-2">
-                {hasPages && (
-                  <button
-                    onClick={toggleAll}
-                    className="flex h-5 w-5 items-center justify-center rounded border-2 transition-colors"
-                    style={{
-                      borderColor: selectedPages.size === pages.length && pages.length > 0 ? "#7c3aed" : "#d1d5db",
-                      backgroundColor: selectedPages.size === pages.length && pages.length > 0 ? "#7c3aed" : "transparent",
-                    }}
-                  >
-                    {selectedPages.size === pages.length && pages.length > 0 && (
-                      <Check className="h-3 w-3 text-white" />
-                    )}
-                  </button>
-                )}
-                <span className="text-xs sm:text-sm font-medium text-[#1a1a2e]">
-                  {isScanning
-                    ? `Scanning... ${pages.length} found`
-                    : `${selectedPages.size} of ${pages.length} selected`}
-                </span>
-              </div>
-              {isScanning && (
-                <div className="flex items-center gap-2 text-[#7c3aed]">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-xs font-medium hidden sm:inline">Fetching pages...</span>
-                </div>
-              )}
-            </div>
-
-            {/* Page list */}
-            <div className="flex-1 overflow-y-auto px-2 py-2">
-              {pages.map((pageUrl, index) => {
-                const isSelected = selectedPages.has(pageUrl);
-                const label = getPageLabel(pageUrl);
-                return (
-                  <div
-                    key={pageUrl}
-                    className="animate-in fade-in slide-in-from-bottom-2 duration-300"
-                    style={{ animationDelay: `${index * 40}ms`, animationFillMode: "backwards" }}
-                  >
-                    <button
-                      onClick={() => togglePage(pageUrl)}
-                      className="flex w-full items-center gap-2 sm:gap-3 rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 text-left transition-colors hover:bg-[#f8f9fc]"
-                    >
-                      <div
-                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
+          {/* Content area */}
+          <div className="w-full max-w-3xl">
+            {activeTab === "url" && (hasPages || isScanning) ? (
+              <div className="flex flex-col rounded-2xl bg-white border border-[#eaedf5] overflow-hidden">
+                {/* Header row */}
+                <div className="flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3 border-b border-[#eaedf5]">
+                  <div className="flex items-center gap-2">
+                    {hasPages && (
+                      <button
+                        onClick={toggleAll}
+                        className="flex h-5 w-5 items-center justify-center rounded border-2 transition-colors"
                         style={{
-                          borderColor: isSelected ? "#7c3aed" : "#d1d5db",
-                          backgroundColor: isSelected ? "#7c3aed" : "transparent",
+                          borderColor: selectedPages.size === pages.length && pages.length > 0 ? "#7c3aed" : "#d1d5db",
+                          backgroundColor: selectedPages.size === pages.length && pages.length > 0 ? "#7c3aed" : "transparent",
                         }}
                       >
-                        {isSelected && <Check className="h-3 w-3 text-white" />}
-                      </div>
-                      <Globe className="h-4 w-4 shrink-0 text-[#b0b4c8] hidden sm:block" />
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-sm font-medium text-[#1a1a2e] truncate">
-                          {label}
-                        </span>
-                        <span className="text-xs text-[#8a8fa8] truncate hidden sm:block">
-                          {pageUrl}
-                        </span>
-                      </div>
-                    </button>
+                        {selectedPages.size === pages.length && pages.length > 0 && (
+                          <Check className="h-3 w-3 text-white" />
+                        )}
+                      </button>
+                    )}
+                    <span className="text-xs sm:text-sm font-medium text-[#1a1a2e]">
+                      {isScanning
+                        ? `Scanning... ${pages.length} found`
+                        : `${selectedPages.size} of ${pages.length} selected`}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          /* Empty state card */
-          <div className="flex w-full max-w-3xl flex-1 items-center justify-center rounded-2xl bg-[#f8f9fc] border border-[#eaedf5] min-h-[200px] sm:min-h-[280px]">
-            <div className="flex flex-col items-center gap-3 text-center px-6">
-              <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-white border border-[#eaedf5]">
-                <FilePlus2 className="h-5 w-5 sm:h-6 sm:w-6 text-[#c0c4d8]" />
+                  {isScanning && (
+                    <div className="flex items-center gap-2 text-[#7c3aed]">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-xs font-medium hidden sm:inline">Fetching pages...</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Page list - no flex-1, natural height */}
+                <div className="px-2 py-2 max-h-[50vh] overflow-y-auto">
+                  {pages.map((pageUrl, index) => {
+                    const isSelected = selectedPages.has(pageUrl);
+                    const label = getPageLabel(pageUrl);
+                    return (
+                      <div
+                        key={pageUrl}
+                        className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+                        style={{ animationDelay: `${index * 40}ms`, animationFillMode: "backwards" }}
+                      >
+                        <button
+                          onClick={() => togglePage(pageUrl)}
+                          className="flex w-full items-center gap-2 sm:gap-3 rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 text-left transition-colors hover:bg-[#f8f9fc]"
+                        >
+                          <div
+                            className="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
+                            style={{
+                              borderColor: isSelected ? "#7c3aed" : "#d1d5db",
+                              backgroundColor: isSelected ? "#7c3aed" : "transparent",
+                            }}
+                          >
+                            {isSelected && <Check className="h-3 w-3 text-white" />}
+                          </div>
+                          <Globe className="h-4 w-4 shrink-0 text-[#b0b4c8] hidden sm:block" />
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <span className="text-sm font-medium text-[#1a1a2e] truncate">
+                              {label}
+                            </span>
+                            <span className="text-xs text-[#8a8fa8] truncate hidden sm:block">
+                              {pageUrl}
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <p className="text-base sm:text-lg font-semibold text-[#1a1a2e]">
-                Add your first training source
-              </p>
-              <p className="max-w-xs text-sm text-[#8a8fa8] leading-relaxed">
-                Start by adding URLs, documents, and frequently asked questions.
-              </p>
-            </div>
+            ) : activeTab === "document" ? (
+              /* Document upload area */
+              <div className="flex flex-col gap-4">
+                {/* Drop zone */}
+                <label
+                  className="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#d4d8e8] bg-[#f8f9fc] py-12 sm:py-16 cursor-pointer hover:border-[#7c3aed] hover:bg-[#f3f0ff] transition-colors"
+                  onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleFileUpload(e.dataTransfer.files);
+                  }}
+                >
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white border border-[#eaedf5]">
+                    <FileUp className="h-6 w-6 text-[#7c3aed]" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-[#1a1a2e]">
+                      Drop files here or <span className="text-[#7c3aed]">browse</span>
+                    </p>
+                    <p className="text-xs text-[#8a8fa8] mt-1">
+                      PDF, DOC, DOCX, TXT, MD, CSV — Max 20MB
+                    </p>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.doc,.docx,.txt,.md,.csv"
+                    multiple
+                    onChange={(e) => handleFileUpload(e.target.files)}
+                  />
+                </label>
+
+                {/* Uploaded files list */}
+                {uploadedDocs.length > 0 && (
+                  <div className="rounded-2xl bg-white border border-[#eaedf5] overflow-hidden">
+                    {uploadedDocs.map((doc, i) => (
+                      <div
+                        key={`${doc.name}-${i}`}
+                        className="flex items-center gap-3 px-4 py-3 border-b border-[#eaedf5] last:border-b-0"
+                      >
+                        <FileText className="h-4 w-4 shrink-0 text-[#7c3aed]" />
+                        <span className="flex-1 text-sm text-[#1a1a2e] truncate">{doc.name}</span>
+                        {doc.status === "uploading" && (
+                          <Loader2 className="h-4 w-4 animate-spin text-[#7c3aed]" />
+                        )}
+                        {doc.status === "done" && (
+                          <Check className="h-4 w-4 text-green-600" />
+                        )}
+                        {doc.status === "error" && (
+                          <span className="text-xs text-red-500">Failed</span>
+                        )}
+                        <button
+                          onClick={() => removeDoc(doc.name)}
+                          className="text-[#b0b4c8] hover:text-[#6a6f88]"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Empty state card for URL (no pages) or FAQ */
+              <div className="flex items-center justify-center rounded-2xl bg-[#f8f9fc] border border-[#eaedf5] min-h-[200px] sm:min-h-[280px]">
+                <div className="flex flex-col items-center gap-3 text-center px-6">
+                  <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-white border border-[#eaedf5]">
+                    <FilePlus2 className="h-5 w-5 sm:h-6 sm:w-6 text-[#c0c4d8]" />
+                  </div>
+                  <p className="text-base sm:text-lg font-semibold text-[#1a1a2e]">
+                    {activeTab === "faq" ? "Add FAQs in the builder" : "Add your first training source"}
+                  </p>
+                  <p className="max-w-xs text-sm text-[#8a8fa8] leading-relaxed">
+                    {activeTab === "faq"
+                      ? "You can add frequently asked questions after completing the setup."
+                      : "Start by adding URLs, documents, and frequently asked questions."}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Bottom bar */}
