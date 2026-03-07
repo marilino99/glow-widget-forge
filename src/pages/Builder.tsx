@@ -58,7 +58,16 @@ const Builder = () => {
   const [extractedBranding, setExtractedBranding] = useState<{ logo: string | null; color: string | null }>({ logo: null, color: null });
   
 
-  // Check if user already completed or skipped the survey
+  // Auto-detect users who never completed onboarding (no widget config)
+  useEffect(() => {
+    if (isLoading || !user) return;
+    // If config has no id, it means no widget_configuration exists yet → show onboarding
+    if (!config?.id && !showWebsiteStep && !showTrainStep && !showBrandStep && !showTestStep) {
+      setShowWebsiteStep(true);
+    }
+  }, [isLoading, user, config?.id]);
+
+  // Check if user already completed or skipped the survey (when coming via ?onboarding=true)
   useEffect(() => {
     if (!isNewUser || !user) return;
     const checkSurvey = async () => {
