@@ -277,7 +277,7 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
         </div>
         <div className="px-3 space-y-0.5">
           <button
-            onClick={() => setSelectedFolder(null)}
+            onClick={() => { setSelectedFolder(null); setShowMobileSidebar(false); }}
             className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
               !selectedFolder ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
             }`}
