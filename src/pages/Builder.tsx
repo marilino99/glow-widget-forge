@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ArrowRight, ExternalLink, Gift } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ArrowRight, ExternalLink, Gift, Home, Palette } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
@@ -375,8 +375,8 @@ const Builder = () => {
 
   return (
     <div className="flex h-screen bg-background">
-      {/* Left sidebar - full height */}
-      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden bg-[#fafafa] ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-64'}`}>
+      {/* Left sidebar - full height, hidden on mobile */}
+      <div className={`hidden lg:flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden bg-[#fafafa] ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-64'}`}>
         {/* Sidebar logo row - same height as content header */}
         <div className={`shrink-0 flex items-center h-12 ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
           {isMiniSidebar ? (
@@ -606,11 +606,11 @@ const Builder = () => {
           />
         </div>
       </div>
-      {/* Reopen sidebar button */}
+      {/* Reopen sidebar button - desktop only */}
       {isSidebarCollapsed && (
         <button
           onClick={() => setIsSidebarCollapsed(false)}
-          className="absolute left-2 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
+          className="hidden lg:flex absolute left-2 top-4 z-10 h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
           title="Apri sidebar"
         >
           <ChevronsRight className="h-4 w-4 text-muted-foreground" />
@@ -618,20 +618,25 @@ const Builder = () => {
       )}
 
       {/* Right panel - full height */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-[#ffffff]">
+      <div className="flex flex-1 flex-col overflow-hidden bg-[#ffffff] pb-16 lg:pb-0">
         {/* Content header - same height as sidebar logo row */}
         <div className="shrink-0 flex items-center justify-between h-12 border-b border-border px-4">
           <div className="flex items-center gap-2">
+            {/* Mobile: show logo */}
+            <button onClick={() => window.location.reload()} className="flex items-center lg:hidden">
+              <img src={widjetLogoNavbar} className="h-6 w-auto" alt="Widjet logo" />
+            </button>
+            {/* Desktop: sidebar toggle + view label */}
             {builderView !== "conversations" && (
               <button
                 onClick={() => setIsMiniSidebar(!isMiniSidebar)}
-                className="flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-muted"
+                className="hidden lg:flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 hover:bg-muted"
                 title={isMiniSidebar ? "Espandi sidebar" : "Riduci sidebar"}
               >
                 <PanelLeft className="h-[18px] w-[18px] text-muted-foreground" />
               </button>
             )}
-            <span className="text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
+            <span className="hidden lg:inline text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
@@ -1204,6 +1209,34 @@ const Builder = () => {
       {showAllChannels && (
         <AllChannelsOverlay onClose={() => setShowAllChannels(false)} />
       )}
+
+      {/* Mobile bottom navigation bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex lg:hidden items-center justify-around border-t border-border bg-background/95 backdrop-blur-sm px-2 py-1.5 safe-bottom">
+        {[
+          { key: "home" as const, icon: Home, label: "Home" },
+          { key: "conversations" as const, icon: MessageCircle, label: "Chats" },
+          { key: "appearance" as const, icon: Palette, label: "Design" },
+          { key: "data-sources" as const, icon: BookOpen, label: "Data" },
+          { key: "ai" as const, icon: Sparkles, label: "AI" },
+        ].map((item) => {
+          const isActive = builderView === item.key || (item.key === "home" && builderView === null);
+          return (
+            <button
+              key={item.key}
+              onClick={() => {
+                setBuilderView(item.key);
+                if (item.key === "conversations") setIsMiniSidebar(true);
+              }}
+              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors ${
+                isActive ? "text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              <item.icon className={`h-5 w-5 ${isActive ? "text-foreground" : "text-muted-foreground"}`} />
+              <span className="text-[10px] font-medium">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 };
