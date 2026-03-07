@@ -266,10 +266,12 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
     }
   };
 
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+
   return (
     <div className="flex h-full">
-      {/* Left sidebar - Folders */}
-      <div className="w-56 shrink-0 border-r border-border bg-[#fafbfc] flex flex-col">
+      {/* Left sidebar - Folders: hidden on mobile unless toggled */}
+      <div className={`${showMobileSidebar ? "flex" : "hidden"} lg:flex w-full lg:w-56 shrink-0 border-r border-border bg-[#fafbfc] flex-col`}>
         <div className="px-5 pt-6 pb-4">
           <h2 className="text-lg font-bold text-foreground">Training</h2>
         </div>
