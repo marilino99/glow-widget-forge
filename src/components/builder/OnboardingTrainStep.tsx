@@ -114,13 +114,13 @@ const OnboardingTrainStep = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col"
+      className="fixed inset-0 z-50 flex flex-col overflow-hidden"
       style={{
         background: "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
       }}
     >
       {/* Stepper */}
-      <div className="flex items-center justify-center pt-12 pb-8">
+      <div className="flex items-center justify-center pt-8 pb-4 sm:pt-12 sm:pb-8 px-6">
         {Array.from({ length: totalSteps }).map((_, i) => {
           const stepNum = i + 1;
           const isActive = stepNum === currentStep;
@@ -129,18 +129,18 @@ const OnboardingTrainStep = ({
             <div key={i} className="flex items-center">
               {i > 0 && (
                 <div
-                  className="h-[2px] w-24"
+                  className="h-[2px] w-12 sm:w-24"
                   style={{ backgroundColor: isPast ? "#7c3aed" : "#e5e7eb" }}
                 />
               )}
               <div
                 className="flex items-center justify-center rounded-full font-bold transition-all"
                 style={{
-                  width: isActive ? "40px" : "14px",
-                  height: isActive ? "40px" : "14px",
+                  width: isActive ? "36px" : "12px",
+                  height: isActive ? "36px" : "12px",
                   backgroundColor: isActive ? "#7c3aed" : isPast ? "#7c3aed" : "#e5e7eb",
                   color: isActive ? "#fff" : "transparent",
-                  fontSize: isActive ? "16px" : "0",
+                  fontSize: isActive ? "14px" : "0",
                 }}
               >
                 {isActive ? stepNum : ""}
@@ -151,18 +151,18 @@ const OnboardingTrainStep = ({
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col items-center px-6 pt-4 overflow-hidden">
-        <h1 className="text-3xl font-bold text-[#1a1a2e] mb-4 text-center">
+      <div className="flex flex-1 flex-col items-center px-4 sm:px-6 pt-2 sm:pt-4 overflow-hidden min-h-0">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a2e] mb-2 sm:mb-4 text-center">
           Train your AI agent
         </h1>
-        <p className="max-w-2xl text-center text-[#8a8fa8] text-base leading-relaxed mb-8">
+        <p className="max-w-2xl text-center text-[#8a8fa8] text-sm sm:text-base leading-relaxed mb-4 sm:mb-8">
           Upload your website, docs, PDFs, and knowledge base to train your AI
           agent. The more data sources, the smarter your chatbot. You can add or
           remove sources later.
         </p>
 
         {/* Tabs */}
-        <div className="flex w-full max-w-3xl gap-3 mb-6">
+        <div className="flex w-full max-w-3xl gap-2 sm:gap-3 mb-4 sm:mb-6">
           {tabs.map((tab) => {
             const isTabActive = activeTab === tab.key;
             const badge = tab.key === "url" && hasPages ? pages.length : null;
@@ -170,7 +170,7 @@ const OnboardingTrainStep = ({
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className="flex flex-1 items-center justify-center gap-2.5 rounded-xl border-2 px-4 py-3.5 text-[14px] font-medium transition-all relative"
+                className="flex flex-1 flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 rounded-xl border-2 px-2 sm:px-4 py-3 sm:py-3.5 text-[12px] sm:text-[14px] font-medium transition-all relative"
                 style={{
                   backgroundColor: isTabActive ? "#f3f0ff" : "#fff",
                   borderColor: isTabActive ? "#7c3aed" : "#e0e3ef",
@@ -178,9 +178,9 @@ const OnboardingTrainStep = ({
                 }}
               >
                 {tab.icon}
-                {tab.label}
+                <span className="text-center leading-tight">{tab.label}</span>
                 {badge !== null && (
-                  <span className="ml-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#7c3aed] px-1.5 text-[11px] font-bold text-white">
+                  <span className="absolute -top-2 -right-2 sm:static sm:ml-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#7c3aed] px-1.5 text-[11px] font-bold text-white">
                     {badge}
                   </span>
                 )}
@@ -193,7 +193,7 @@ const OnboardingTrainStep = ({
         {activeTab === "url" && (hasPages || isScanning) ? (
           <div className="flex w-full max-w-3xl flex-1 flex-col rounded-2xl bg-white border border-[#eaedf5] overflow-hidden min-h-0">
             {/* Header row */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-[#eaedf5] shrink-0">
+            <div className="flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3 border-b border-[#eaedf5] shrink-0">
               <div className="flex items-center gap-2">
                 {hasPages && (
                   <button
@@ -209,16 +209,16 @@ const OnboardingTrainStep = ({
                     )}
                   </button>
                 )}
-                <span className="text-sm font-medium text-[#1a1a2e]">
+                <span className="text-xs sm:text-sm font-medium text-[#1a1a2e]">
                   {isScanning
-                    ? `Scanning... ${pages.length} pages found`
-                    : `${selectedPages.size} of ${pages.length} pages selected`}
+                    ? `Scanning... ${pages.length} found`
+                    : `${selectedPages.size} of ${pages.length} selected`}
                 </span>
               </div>
               {isScanning && (
                 <div className="flex items-center gap-2 text-[#7c3aed]">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-xs font-medium">Fetching pages...</span>
+                  <span className="text-xs font-medium hidden sm:inline">Fetching pages...</span>
                 </div>
               )}
             </div>
@@ -236,7 +236,7 @@ const OnboardingTrainStep = ({
                   >
                     <button
                       onClick={() => togglePage(pageUrl)}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[#f8f9fc]"
+                      className="flex w-full items-center gap-2 sm:gap-3 rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 text-left transition-colors hover:bg-[#f8f9fc]"
                     >
                       <div
                         className="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
@@ -247,12 +247,12 @@ const OnboardingTrainStep = ({
                       >
                         {isSelected && <Check className="h-3 w-3 text-white" />}
                       </div>
-                      <Globe className="h-4 w-4 shrink-0 text-[#b0b4c8]" />
+                      <Globe className="h-4 w-4 shrink-0 text-[#b0b4c8] hidden sm:block" />
                       <div className="flex flex-col min-w-0 flex-1">
                         <span className="text-sm font-medium text-[#1a1a2e] truncate">
                           {label}
                         </span>
-                        <span className="text-xs text-[#8a8fa8] truncate">
+                        <span className="text-xs text-[#8a8fa8] truncate hidden sm:block">
                           {pageUrl}
                         </span>
                       </div>
@@ -264,12 +264,12 @@ const OnboardingTrainStep = ({
           </div>
         ) : (
           /* Empty state card */
-          <div className="flex w-full max-w-3xl flex-1 items-center justify-center rounded-2xl bg-[#f8f9fc] border border-[#eaedf5] min-h-[280px]">
+          <div className="flex w-full max-w-3xl flex-1 items-center justify-center rounded-2xl bg-[#f8f9fc] border border-[#eaedf5] min-h-[200px] sm:min-h-[280px]">
             <div className="flex flex-col items-center gap-3 text-center px-6">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white border border-[#eaedf5]">
-                <FilePlus2 className="h-6 w-6 text-[#c0c4d8]" />
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-white border border-[#eaedf5]">
+                <FilePlus2 className="h-5 w-5 sm:h-6 sm:w-6 text-[#c0c4d8]" />
               </div>
-              <p className="text-lg font-semibold text-[#1a1a2e]">
+              <p className="text-base sm:text-lg font-semibold text-[#1a1a2e]">
                 Add your first training source
               </p>
               <p className="max-w-xs text-sm text-[#8a8fa8] leading-relaxed">
@@ -281,11 +281,11 @@ const OnboardingTrainStep = ({
       </div>
 
       {/* Bottom bar */}
-      <div className="flex items-center justify-end gap-3 px-10 py-8">
+      <div className="flex items-center justify-center sm:justify-end gap-3 px-4 sm:px-10 py-4 sm:py-8 shrink-0">
         <button
           onClick={onBack}
           disabled={isTraining}
-          className="rounded-xl border border-[#e0e3ef] bg-white px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc] disabled:opacity-50"
+          className="rounded-xl border border-[#e0e3ef] bg-white px-6 sm:px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc] disabled:opacity-50"
         >
           Back
         </button>
@@ -305,7 +305,7 @@ const OnboardingTrainStep = ({
             onNext();
           }}
           disabled={isTraining}
-          className="rounded-xl bg-[#7c3aed] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9] disabled:opacity-50 flex items-center gap-2"
+          className="rounded-xl bg-[#7c3aed] px-6 sm:px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9] disabled:opacity-50 flex items-center gap-2"
         >
           {isTraining ? (
             <>
