@@ -608,7 +608,7 @@ const Builder = () => {
               const wasConversations = builderView === "conversations";
               setBuilderView(view);
               if (view === "conversations") setIsMiniSidebar(true);
-              if (wasConversations && view === "contacts") setIsMiniSidebar(false);
+              if (wasConversations && view === "contacts" && !autoMini) setIsMiniSidebar(false);
             }}
             isMiniSidebar={isMiniSidebar}
             widgetId={config.id || undefined}
@@ -993,7 +993,7 @@ const Builder = () => {
               </div>
             </div>
             {/* Right column: preview - hidden on mobile */}
-            <div className="hidden md:flex flex-1 overflow-hidden border-l border-border bg-[#f8f8f8]">
+            <div className="hidden md:flex flex-col flex-1 overflow-hidden border-l border-border bg-[#f8f8f8]">
                 <WidgetPreviewPanel 
                   activeWidget={activeWidget}
                   selectedAvatar={config.selectedAvatar} 
