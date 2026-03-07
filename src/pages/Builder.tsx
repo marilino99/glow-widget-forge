@@ -1142,12 +1142,22 @@ const Builder = () => {
         open={showSurveyDialog}
         onComplete={async (answers: SurveyAnswers) => {
           setShowSurveyDialog(false);
+          searchParams.delete("onboarding");
+          setSearchParams(searchParams, { replace: true });
           if (user) {
-            await supabase.from("user_activity_logs").insert({
-              user_id: user.id,
-              event_type: "survey_completed",
-              metadata: answers as any,
-            });
+            const isSkipped = !answers.businessType && !answers.mainGoal && !answers.monthlyVisitors;
+            await (supabase.from("user_activity_logs") as any).insert([
+              {
+                user_id: user.id,
+                event_type: isSkipped ? "survey_skipped" : "survey_completed",
+                metadata: answers as any,
+              },
+              {
+                user_id: user.id,
+                event_type: "onboarding_completed",
+                metadata: {} as any,
+              },
+            ]);
           }
         }}
       />
