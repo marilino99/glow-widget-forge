@@ -221,9 +221,6 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
     />
   );
 
-  // Mobile: track which column to show
-  const [mobileView, setMobileView] = useState<"filters" | "list" | "chat">("list");
-
   // When a conversation is selected on mobile, jump to chat view
   const handleSelectConversation = (conv: Conversation) => {
     setSelectedConversation(conv);
