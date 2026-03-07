@@ -375,8 +375,8 @@ const Builder = () => {
 
   return (
     <div className="flex h-screen bg-background">
-      {/* Left sidebar - full height */}
-      <div className={`flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden bg-[#fafafa] ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-64'}`}>
+      {/* Left sidebar - full height, hidden on mobile */}
+      <div className={`hidden lg:flex shrink-0 flex-col border-r border-border transition-all duration-300 overflow-hidden bg-[#fafafa] ${isSidebarCollapsed ? 'w-0 border-r-0' : isMiniSidebar ? 'w-[60px]' : isPanelOpen ? 'w-96' : 'w-64'}`}>
         {/* Sidebar logo row - same height as content header */}
         <div className={`shrink-0 flex items-center h-12 ${isMiniSidebar ? 'justify-center px-2' : 'px-4'}`}>
           {isMiniSidebar ? (
