@@ -1,0 +1,1 @@
+DELETE FROM public.widget_configurations WHERE user_id = '7f1b6b08-3f42-4122-b09e-9d34df88e02e'

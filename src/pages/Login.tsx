@@ -34,6 +34,7 @@ const Login = () => {
         description: error.message,
       });
     } else {
+      // Builder will auto-detect if onboarding is needed
       navigate("/builder");
     }
 
