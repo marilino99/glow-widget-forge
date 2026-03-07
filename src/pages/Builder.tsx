@@ -59,29 +59,24 @@ const Builder = () => {
   
 
   // Auto-detect users who never completed onboarding (no widget config)
+  // Also check activity logs to avoid re-showing after completion
   useEffect(() => {
     if (isLoading || !user) return;
-    // If config has no id, it means no widget_configuration exists yet → show onboarding
-    if (!config?.id && !showWebsiteStep && !showTrainStep && !showBrandStep && !showTestStep) {
-      setShowWebsiteStep(true);
-    }
-  }, [isLoading, user, config?.id]);
+    if (config?.id) return; // Config exists → onboarding already done
+    if (showWebsiteStep || showTrainStep || showBrandStep || showTestStep || showSurveyDialog) return;
 
-  // Check if user already completed or skipped the survey (when coming via ?onboarding=true)
-  useEffect(() => {
-    if (!isNewUser || !user) return;
-    const checkSurvey = async () => {
+    const checkIfAlreadyCompleted = async () => {
       const { data } = await (supabase.from("user_activity_logs") as any)
         .select("id")
         .eq("user_id", user.id)
-        .in("event_type", ["survey_completed", "survey_skipped"])
+        .in("event_type", ["survey_completed", "survey_skipped", "onboarding_completed"])
         .limit(1);
       if (!data || data.length === 0) {
         setShowWebsiteStep(true);
       }
     };
-    checkSurvey();
-  }, [isNewUser, user]);
+    checkIfAlreadyCompleted();
+  }, [isLoading, user, config?.id]);
   const { hasUnread } = useUnreadMessages();
   const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
   const { 
@@ -1147,12 +1142,22 @@ const Builder = () => {
         open={showSurveyDialog}
         onComplete={async (answers: SurveyAnswers) => {
           setShowSurveyDialog(false);
+          searchParams.delete("onboarding");
+          setSearchParams(searchParams, { replace: true });
           if (user) {
-            await supabase.from("user_activity_logs").insert({
-              user_id: user.id,
-              event_type: "survey_completed",
-              metadata: answers as any,
-            });
+            const isSkipped = !answers.businessType && !answers.mainGoal && !answers.monthlyVisitors;
+            await (supabase.from("user_activity_logs") as any).insert([
+              {
+                user_id: user.id,
+                event_type: isSkipped ? "survey_skipped" : "survey_completed",
+                metadata: answers as any,
+              },
+              {
+                user_id: user.id,
+                event_type: "onboarding_completed",
+                metadata: {} as any,
+              },
+            ]);
           }
         }}
       />
