@@ -1,21 +1,21 @@
 
 
-## Problem
+# Fix: Timestamp troncato nella lista conversazioni
 
-The sidebar uses `hidden lg:flex` which hides it entirely below 1024px. When the window shrinks to ~50% of a desktop screen (~960px), it crosses the `lg` breakpoint and the sidebar disappears completely instead of just shrinking to mini mode.
+## Problema
+Il viewport interno di Radix ScrollArea usa `overflow: scroll` inline, ignorando le classi CSS applicate dall'esterno. Il contenuto si espande oltre la larghezza della sidebar e il timestamp sparisce.
 
-## Solution
+## Soluzione
 
-Change the sidebar visibility breakpoint from `lg:flex` (1024px) to `md:flex` (768px). This way:
-- Below 768px (true mobile): sidebar hidden, bottom bar shown
-- Between 768px and 1100px: sidebar visible but auto-collapsed to mini (60px) via the existing resize listener
-- Above 1100px: sidebar fully expanded
+### 1. Modificare `src/components/ui/scroll-area.tsx`
+Aggiungere al viewport la classe `[overflow-x:hidden!important]` per impedire lo scroll orizzontale e forzare il contenuto a rispettare la larghezza del parent.
 
-### Changes in `src/pages/Builder.tsx`
+```tsx
+<ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [overflow-x:hidden!important]">
+```
 
-**Line 392** - Change `hidden lg:flex` to `hidden md:flex` on the sidebar container.
+### 2. Pulire `src/components/builder/ConversationsPanel.tsx`
+Rimuovere il selettore CSS hack `[&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden` dalla ScrollArea, dato che il fix e ora nel componente base.
 
-Also update all other `lg:flex` / `lg:hidden` references related to sidebar elements (reopen button at line 626, toggle button at line 646) to use `md:` instead of `lg:` for consistency.
-
-This is a minimal change -- just swapping the Tailwind breakpoint prefix so the sidebar remains visible on tablet/half-screen sizes and the auto-mini logic at 1100px handles the shrinking.
+Queste due modifiche risolvono il problema alla radice: il viewport non permettera piu al contenuto di espandersi orizzontalmente, e il layout `grid-cols-[1fr_auto]` funzionera correttamente troncando il titolo e mostrando il timestamp.
 
