@@ -156,6 +156,24 @@ const Builder = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMiniSidebar, setIsMiniSidebar] = useState(false);
+  const [autoMini, setAutoMini] = useState(false);
+
+  // Auto-collapse sidebar when window is narrow (e.g. 50% split screen)
+  useEffect(() => {
+    const THRESHOLD = 1100;
+    const handleResize = () => {
+      if (window.innerWidth < THRESHOLD) {
+        setAutoMini(true);
+        setIsMiniSidebar(true);
+      } else if (autoMini) {
+        setAutoMini(false);
+        setIsMiniSidebar(false);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [autoMini]);
   const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
