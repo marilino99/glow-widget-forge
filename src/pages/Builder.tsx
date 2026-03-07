@@ -606,11 +606,11 @@ const Builder = () => {
           />
         </div>
       </div>
-      {/* Reopen sidebar button */}
+      {/* Reopen sidebar button - desktop only */}
       {isSidebarCollapsed && (
         <button
           onClick={() => setIsSidebarCollapsed(false)}
-          className="absolute left-2 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
+          className="hidden lg:flex absolute left-2 top-4 z-10 h-8 w-8 items-center justify-center rounded-lg bg-background border border-border shadow-sm transition-colors hover:bg-muted"
           title="Apri sidebar"
         >
           <ChevronsRight className="h-4 w-4 text-muted-foreground" />
