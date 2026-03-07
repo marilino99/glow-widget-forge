@@ -306,7 +306,6 @@ export type Database = {
           id: string
           last_name: string | null
           lovable_promo_claimed: boolean
-          promo_token: string | null
           updated_at: string
           user_id: string
         }
@@ -318,7 +317,6 @@ export type Database = {
           id?: string
           last_name?: string | null
           lovable_promo_claimed?: boolean
-          promo_token?: string | null
           updated_at?: string
           user_id: string
         }
@@ -330,7 +328,6 @@ export type Database = {
           id?: string
           last_name?: string | null
           lovable_promo_claimed?: boolean
-          promo_token?: string | null
           updated_at?: string
           user_id?: string
         }
