@@ -125,7 +125,7 @@ const OnboardingBrandStep = ({
       }}
     >
       {/* Stepper */}
-      <div className="flex items-center justify-center pt-10 pb-6 shrink-0">
+      <div className="flex items-center justify-center pt-8 pb-4 sm:pt-10 sm:pb-6 shrink-0 px-6">
         {Array.from({ length: totalSteps }).map((_, i) => {
           const stepNum = i + 1;
           const isActive = stepNum === currentStep;
@@ -134,18 +134,18 @@ const OnboardingBrandStep = ({
             <div key={i} className="flex items-center">
               {i > 0 && (
                 <div
-                  className="h-[2px] w-24"
+                  className="h-[2px] w-12 sm:w-24"
                   style={{ backgroundColor: isPast ? "#7c3aed" : "#e5e7eb" }}
                 />
               )}
               <div
                 className="flex items-center justify-center rounded-full font-bold transition-all"
                 style={{
-                  width: isActive ? "40px" : "14px",
-                  height: isActive ? "40px" : "14px",
+                  width: isActive ? "36px" : "12px",
+                  height: isActive ? "36px" : "12px",
                   backgroundColor: isActive ? "#7c3aed" : isPast ? "#7c3aed" : "#e5e7eb",
                   color: isActive ? "#fff" : "transparent",
-                  fontSize: isActive ? "16px" : "0",
+                  fontSize: isActive ? "14px" : "0",
                 }}
               >
                 {isActive ? stepNum : ""}
@@ -155,42 +155,42 @@ const OnboardingBrandStep = ({
         })}
       </div>
 
-      {/* Content: two columns */}
-      <div className="flex flex-1 overflow-hidden px-10 gap-10">
+      {/* Content: stacked on mobile, two columns on desktop */}
+      <div className="flex flex-1 overflow-hidden px-4 sm:px-10 gap-4 sm:gap-10 flex-col lg:flex-row">
         {/* Left: Form */}
-        <div className="flex-1 overflow-y-auto pr-4 pb-4">
-          <h1 className="text-3xl font-bold text-[#1a1a2e] mb-2">Brand Your Agent.</h1>
-          <p className="text-[#8a8fa8] text-base leading-relaxed mb-8 max-w-lg">
+        <div className="flex-1 overflow-y-auto pr-0 sm:pr-4 pb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a2e] mb-2">Brand Your Agent.</h1>
+          <p className="text-[#8a8fa8] text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 max-w-lg">
             Give it a name, color, and message — your AI assistant's first impression starts now.
           </p>
 
           {/* Logo + Brand name row */}
-          <div className="flex gap-8 mb-6">
+          <div className="flex gap-4 sm:gap-8 mb-6">
             <div>
               <p className="text-sm font-medium text-[#1a1a2e] mb-2">Logo</p>
-              <label className="flex h-28 w-28 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-[#d4d8e8] bg-[#f8f9fc] overflow-hidden hover:border-[#7c3aed] transition-colors">
+              <label className="flex h-20 w-20 sm:h-28 sm:w-28 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-[#d4d8e8] bg-[#f8f9fc] overflow-hidden hover:border-[#7c3aed] transition-colors">
                 {logoPreview ? (
                   <img src={logoPreview} alt="Logo" className="h-full w-full object-cover" />
                 ) : (
-                  <Upload className="h-6 w-6 text-[#b0b4c8]" />
+                  <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-[#b0b4c8]" />
                 )}
                 <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
               </label>
             </div>
 
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-3 sm:space-y-4">
               <div>
                 <p className="text-sm font-medium text-[#1a1a2e] mb-2">Brand name</p>
                 <input
                   type="text"
                   value={brandName}
                   onChange={(e) => setBrandName(e.target.value)}
-                  className="w-full rounded-xl border border-[#e0e3ef] bg-white px-4 py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#7c3aed] focus:ring-2 focus:ring-[#7c3aed]/20"
+                  className="w-full rounded-xl border border-[#e0e3ef] bg-white px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#7c3aed] focus:ring-2 focus:ring-[#7c3aed]/20"
                 />
               </div>
               <div>
                 <p className="text-sm font-medium text-[#1a1a2e] mb-2">Brand color</p>
-                <div className="flex items-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-4 py-3">
+                <div className="flex items-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-3 sm:px-4 py-2.5 sm:py-3">
                   <input
                     type="text"
                     value={brandColor}
@@ -215,8 +215,8 @@ const OnboardingBrandStep = ({
             <textarea
               value={welcomeMessage}
               onChange={(e) => setWelcomeMessage(e.target.value)}
-              rows={4}
-              className="w-full rounded-xl border border-[#e0e3ef] bg-[#f8f9fc] px-4 py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#7c3aed] focus:ring-2 focus:ring-[#7c3aed]/20 resize-none"
+              rows={3}
+              className="w-full rounded-xl border border-[#e0e3ef] bg-[#f8f9fc] px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-[#1a1a2e] outline-none focus:border-[#7c3aed] focus:ring-2 focus:ring-[#7c3aed]/20 resize-none"
             />
           </div>
 
@@ -243,7 +243,7 @@ const OnboardingBrandStep = ({
               <div className="space-y-2">
                 {suggestions.map((s, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <span className="text-[#b0b4c8] cursor-grab">⠿</span>
+                    <span className="text-[#b0b4c8] cursor-grab hidden sm:inline">⠿</span>
                     <input
                       type="text"
                       value={s}
@@ -264,8 +264,8 @@ const OnboardingBrandStep = ({
           </div>
         </div>
 
-        {/* Right: Widget Preview */}
-        <div className="w-[380px] shrink-0 flex flex-col items-center justify-center">
+        {/* Right: Widget Preview - hidden on mobile */}
+        <div className="hidden lg:flex w-[380px] shrink-0 flex-col items-center justify-center">
           <div className="w-[350px]">
             {isCollapsed && !isAnimatingCollapse ? (
               /* Collapsed: show only launcher button */
@@ -505,16 +505,16 @@ const OnboardingBrandStep = ({
       </div>
 
       {/* Bottom bar */}
-      <div className="flex items-center justify-end gap-3 px-10 py-6 shrink-0">
+      <div className="flex items-center justify-center sm:justify-end gap-3 px-4 sm:px-10 py-4 sm:py-6 shrink-0">
         <button
           onClick={onBack}
-          className="rounded-xl border border-[#e0e3ef] bg-white px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc]"
+          className="rounded-xl border border-[#e0e3ef] bg-white px-6 sm:px-8 py-3 text-[15px] font-semibold text-[#1a1a2e] transition-all hover:bg-[#f8f9fc]"
         >
           Back
         </button>
         <button
           onClick={onNext}
-          className="rounded-xl bg-[#7c3aed] px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
+          className="rounded-xl bg-[#7c3aed] px-6 sm:px-8 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[#6d28d9]"
         >
           Skip Customization
         </button>
