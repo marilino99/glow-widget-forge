@@ -128,7 +128,7 @@ const Signup = () => {
         title: "Email verified!",
         description: "Welcome to WidJet!",
       });
-      navigate("/onboarding");
+      navigate("/builder?onboarding=true");
     } catch (err: any) {
       toast({
         variant: "destructive",
