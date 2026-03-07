@@ -278,9 +278,12 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 2: Conversation list */}
-      <div className="flex w-72 shrink-0 flex-col border-r border-border bg-background overflow-hidden">
+      <div className={`${mobileView === "list" ? "flex" : "hidden"} lg:flex w-full lg:w-72 shrink-0 flex-col border-r border-border bg-background overflow-hidden`}>
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
+            <button onClick={() => setMobileView("filters")} className="lg:hidden rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors mr-1">
+              <SlidersHorizontal className="h-4 w-4" />
+            </button>
             <MessageCircle className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-semibold text-foreground">All conversations</span>
           </div>
@@ -316,7 +319,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 return (
                 <button
                   key={conv.id}
-                  onClick={() => { setSelectedConversation(conv); setAiOverviewData(null); setAiOverviewOpen(false); }}
+                  onClick={() => handleSelectConversation(conv)}
                   className={`flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors overflow-hidden ${
                     selectedConversation?.id === conv.id
                       ? "bg-blue-50"
@@ -359,13 +362,18 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 3: Chat area */}
-      <div className="flex flex-1 flex-col bg-background">
+      <div className={`${mobileView === "chat" || !selectedConversation ? "hidden lg:flex" : "hidden"} lg:flex flex-1 flex-col bg-background`}>
         {selectedConversation ? (
           <>
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
-              <h3 className="text-sm font-semibold text-foreground">
-                {selectedConversation.topic || selectedConversation.last_message?.split(/\s+/).slice(0, 4).join(" ") || "New Conversation"}
-              </h3>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setMobileView("list")} className="lg:hidden rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
+                  <ChevronRight className="h-4 w-4 rotate-180" />
+                </button>
+                <h3 className="text-sm font-semibold text-foreground">
+                  {selectedConversation.topic || selectedConversation.last_message?.split(/\s+/).slice(0, 4).join(" ") || "New Conversation"}
+                </h3>
+              </div>
               <button className="rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
                 <MoreVertical className="h-4 w-4" />
               </button>
