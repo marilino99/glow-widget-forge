@@ -362,7 +362,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 3: Chat area */}
-      <div className={`${mobileView === "chat" || !selectedConversation ? "hidden lg:flex" : "hidden"} lg:flex flex-1 flex-col bg-background`}>
+      <div className={`${mobileView === "chat" ? "flex" : "hidden"} lg:flex flex-1 flex-col bg-background`}>
         {selectedConversation ? (
           <>
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
