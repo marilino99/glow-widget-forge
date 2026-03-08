@@ -320,7 +320,23 @@ Deno.serve(async (req) => {
       knowledgeBase += "\n## === END OF FAQ ===\n";
     }
 
-    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, total chars: ${knowledgeBase.length}`);
+    // Add product catalog to knowledge base
+    let productCatalog = "";
+    if (productCardsData && productCardsData.length > 0) {
+      productCatalog = "\n## === PRODUCT CATALOG ===\n";
+      for (const p of productCardsData) {
+        productCatalog += `\n- **${p.title}**`;
+        if (p.subtitle) productCatalog += ` — ${p.subtitle}`;
+        if (p.price) productCatalog += ` | Price: ${p.price}`;
+        if (p.old_price) productCatalog += ` (was ${p.old_price})`;
+        if (p.promo_badge && p.promo_badge !== "none") productCatalog += ` [${p.promo_badge.toUpperCase()}]`;
+        productCatalog += "\n";
+      }
+      productCatalog += "\n## === END OF PRODUCT CATALOG ===\n";
+      knowledgeBase += productCatalog;
+    }
+
+    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, ${productCardsData?.length || 0} products, total chars: ${knowledgeBase.length}`);
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
