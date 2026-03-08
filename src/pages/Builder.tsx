@@ -8,7 +8,7 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
-import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ArrowRight, ExternalLink, Gift, Home, Palette } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ArrowRight, ExternalLink, Gift, Home, Palette, Puzzle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
@@ -31,6 +31,7 @@ import OnboardingBrandStep from "@/components/builder/OnboardingBrandStep";
 import OnboardingTestStep from "@/components/builder/OnboardingTestStep";
 import OnboardingSurveyDialog, { type SurveyAnswers } from "@/components/builder/OnboardingSurveyDialog";
 import AllChannelsOverlay from "@/components/builder/AllChannelsOverlay";
+import IntegrationsPanel from "@/components/builder/IntegrationsPanel";
 import SettingsDialog from "@/components/builder/SettingsDialog";
 import FeedbackPopover from "@/components/builder/FeedbackPopover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -111,11 +112,11 @@ const Builder = () => {
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null>(() => {
+  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
-    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai") : null;
+    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations") : null;
   });
-  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null) => {
+  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null) => {
     setBuilderViewRaw(view);
     if (view) {
       sessionStorage.setItem("widjet_builder_view", view);
@@ -384,7 +385,7 @@ const Builder = () => {
   }
 
   const userInitial = (userDisplayName || user?.email || "U").charAt(0).toUpperCase();
-  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", "data-sources": "Data Sources", ai: "AI & Automation" };
+  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", "data-sources": "Data Sources", ai: "AI & Automation", integrations: "Integrations" };
 
   return (
     <div className="flex h-screen bg-background">
@@ -1056,6 +1057,8 @@ const Builder = () => {
               />
             </div>
           </div>
+        ) : builderView === "integrations" ? (
+          <IntegrationsPanel />
         ) : (
           <>
             {/* Right header with actions */}

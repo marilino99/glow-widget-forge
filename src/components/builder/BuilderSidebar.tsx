@@ -31,6 +31,7 @@ import {
   LifeBuoy,
   ChevronRight,
   Bot,
+  Puzzle,
   BookOpen,
   LayoutTemplate,
   Home,
@@ -156,8 +157,8 @@ interface BuilderSidebarProps {
   onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
-  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null;
-  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null) => void;
+  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null;
+  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null) => void;
   isMiniSidebar?: boolean;
   widgetId?: string;
   aiResponsesThisMonth: number;
@@ -706,6 +707,13 @@ const BuilderSidebar = ({
               label="AI Chatbot"
               active={builderView === "ai"}
               onClick={() => onBuilderViewChange("ai")}
+              miniMode={isMiniSidebar}
+            />
+            <SidebarItem
+              icon={Puzzle}
+              label="Integrations"
+              active={builderView === "integrations"}
+              onClick={() => onBuilderViewChange("integrations")}
               miniMode={isMiniSidebar}
             />
           </div>
