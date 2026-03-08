@@ -83,6 +83,13 @@ Deno.serve(async (req) => {
       .eq("id", widgetId)
       .single();
 
+    // Fetch product cards for this user
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge")
+      .eq("user_id", claimsData.user.id)
+      .order("sort_order", { ascending: true });
+
     if (configError || !config) {
       return new Response(
         JSON.stringify({ error: "Widget not found" }),
