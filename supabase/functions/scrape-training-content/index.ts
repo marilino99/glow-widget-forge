@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
         }
 
         // Trigger RAG embedding generation in background
-        if (insertedSource?.id) {
+        if (effectiveSourceId) {
           const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
           const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
           fetch(`${supabaseUrl}/functions/v1/generate-embeddings`, {
@@ -137,7 +137,7 @@ Deno.serve(async (req) => {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${supabaseAnonKey}`,
             },
-            body: JSON.stringify({ sourceId: insertedSource.id }),
+            body: JSON.stringify({ sourceId: effectiveSourceId }),
           }).catch((err) => console.error('Failed to trigger embeddings:', err));
         }
 
