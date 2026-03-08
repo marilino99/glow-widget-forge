@@ -351,6 +351,24 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
                 </p>
               </div>
             </div>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 cursor-default shrink-0">
+                    <span className={`h-2 w-2 rounded-full ${usagePercent >= 90 ? 'bg-destructive' : usagePercent >= 70 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                    <span className="text-xs text-muted-foreground">
+                      <span className="font-semibold text-foreground">{formatBytes(usedBytes)}</span>
+                      {" / "}
+                      {formatBytes(limitBytes)}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="w-56 p-3">
+                  <p className="text-xs font-medium mb-2">RAG Storage — {formatBytes(usedBytes)} of {formatBytes(limitBytes)}</p>
+                  <Progress value={Math.min(usagePercent, 100)} className="h-1.5" />
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
 
