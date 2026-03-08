@@ -9,17 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { AlertTriangle, Copy, Check, ExternalLink, Send, X, Globe, Heart } from "lucide-react";
+import { Copy, Check, Globe, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   WixLogo,
   WordPressLogo,
   GoogleTagManagerLogo,
   ShopifyLogo,
-  SquarespaceLogo,
-  WooCommerceLogo,
-  BigCommerceLogo,
 } from "@/components/icons/PlatformLogos";
 
 interface AddToWebsiteDialogProps {
@@ -27,23 +23,14 @@ interface AddToWebsiteDialogProps {
   fullWidth?: boolean;
 }
 
-interface PlatformCardProps {
-  logo: React.ReactNode;
+type Platform = "manual" | "gtm" | "lovable" | "wix" | "shopify" | "wordpress";
+
+interface PlatformOption {
+  id: Platform;
   name: string;
-  onClick?: () => void;
+  icon: React.ReactNode;
   disabled?: boolean;
 }
-
-const PlatformCard = ({ logo, name, onClick, disabled }: PlatformCardProps) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className="flex flex-col items-center justify-center gap-3 rounded-xl bg-muted/50 p-6 transition-colors hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    <div className="h-12 w-12 flex items-center justify-center">{logo}</div>
-    <span className="text-sm font-medium text-foreground">{name}</span>
-  </button>
-);
 
 const LovableLogo = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" className={className}>
@@ -51,11 +38,24 @@ const LovableLogo = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const WebflowLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M17.802 8.56s-1.946 6.066-2.047 6.387c-.045-.32-1.076-6.387-1.076-6.387-1.856 0-2.847 1.397-3.396 2.874 0 0-1.29 3.47-1.357 3.652-.015-.25-.317-6.526-.317-6.526C9.4 6.83 7.625 8.56 7.625 8.56l1.36 8.428c1.96-.005 3.014-1.387 3.586-2.876 0 0 1.06-2.87 1.118-3.03.04.257 1.116 5.906 1.116 5.906 1.96-.005 3.012-1.31 3.59-2.792L20.375 8.56h-2.573z"/>
+  </svg>
+);
+
+const platforms: PlatformOption[] = [
+  { id: "manual", name: "Manual install", icon: <Globe className="h-5 w-5" /> },
+  { id: "gtm", name: "Google Tag Manager", icon: <GoogleTagManagerLogo className="h-5 w-5" /> },
+  { id: "lovable", name: "Lovable", icon: <LovableLogo className="h-5 w-5 text-rose-500" /> },
+  { id: "wix", name: "Wix", icon: <WixLogo className="h-5 w-auto" /> },
+  { id: "shopify", name: "Shopify", icon: <ShopifyLogo className="h-5 w-5" /> },
+  { id: "wordpress", name: "WordPress", icon: <WordPressLogo className="h-5 w-5" /> },
+];
+
 const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) => {
   const [copied, setCopied] = useState(false);
-  const [copiedLovable, setCopiedLovable] = useState(false);
-  const [showWixGuide, setShowWixGuide] = useState(false);
-  const [showLovableGuide, setShowLovableGuide] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>("manual");
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -97,39 +97,231 @@ useEffect(() => {
   };
 }, []);` : `// Widget ID not yet available. Save your configuration first.`;
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(embedCode);
+  const handleCopy = async (code: string) => {
+    await navigator.clipboard.writeText(code);
     setCopied(true);
-    toast({
-      title: "Copied!",
-      description: "The code has been copied to your clipboard.",
-    });
+    toast({ title: "Copied!", description: "The code has been copied to your clipboard." });
     setTimeout(() => setCopied(false), 2000);
     if (user) {
       supabase.from("user_activity_logs").insert({
         user_id: user.id,
         event_type: "widget_publish",
-        metadata: { widget_id: widgetId }
+        metadata: { widget_id: widgetId },
       });
     }
   };
 
-  const handleCopyLovable = async () => {
-    await navigator.clipboard.writeText(lovableReactCode);
-    setCopiedLovable(true);
-    toast({
-      title: "Copied!",
-      description: "React code copied to your clipboard.",
-    });
-    setTimeout(() => setCopiedLovable(false), 2000);
+  const getCodeForPlatform = () => {
+    if (selectedPlatform === "lovable") return lovableReactCode;
+    return embedCode;
   };
 
-  const handleWixClick = () => {
-    setShowWixGuide(true);
-  };
+  const renderPlatformGuide = () => {
+    switch (selectedPlatform) {
+      case "manual":
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Install Widjet in your website</h3>
+            <p className="text-sm text-muted-foreground">
+              Paste this code snippet just before the <code className="text-primary font-mono">&lt;/body&gt;</code> tag on your website.
+            </p>
+            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Installation tip: Don't host the script on CDNs to ensure your widget never goes offline when you need it the most.
+            </p>
+            <Button onClick={() => handleCopy(embedCode)} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied!" : "Copy code"}
+            </Button>
+          </div>
+        );
 
-  const handleLovableClick = () => {
-    setShowLovableGuide(true);
+      case "gtm":
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Install with Google Tag Manager</h3>
+            <ol className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">1.</span>
+                Open your <span className="font-medium text-foreground">Google Tag Manager</span> account
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">2.</span>
+                Create a new <span className="font-medium text-foreground">Custom HTML Tag</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">3.</span>
+                Paste the code below into the HTML field
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">4.</span>
+                Set the trigger to <span className="font-medium text-foreground">"All Pages"</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">5.</span>
+                Save and <span className="font-medium text-foreground">Publish</span> your container
+              </li>
+            </ol>
+            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
+            </div>
+            <Button onClick={() => handleCopy(embedCode)} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied!" : "Copy code"}
+            </Button>
+          </div>
+        );
+
+      case "lovable":
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Install on Lovable</h3>
+            <ol className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">1.</span>
+                Open your Lovable project
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">2.</span>
+                Copy the React code below
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">3.</span>
+                Ask Lovable: <span className="font-medium text-foreground">"Add this useEffect to my main page component"</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">4.</span>
+                Lovable will integrate it automatically ✨
+              </li>
+            </ol>
+            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+              <pre className="whitespace-pre-wrap break-all">{lovableReactCode}</pre>
+            </div>
+            <Button onClick={() => handleCopy(lovableReactCode)} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied!" : "Copy React code"}
+            </Button>
+          </div>
+        );
+
+      case "wix":
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Install on Wix</h3>
+            <ol className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">1.</span>
+                Open your <span className="font-medium text-foreground">Wix Editor</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">2.</span>
+                Click <span className="font-medium text-foreground">"Add Elements"</span> (+)
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">3.</span>
+                Select <span className="font-medium text-foreground">"Embed code"</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">4.</span>
+                Click the code box → <span className="font-medium text-foreground">"Enter Code"</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">5.</span>
+                Paste the widget code below
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">6.</span>
+                Position anywhere & <span className="font-medium text-foreground">Publish</span>
+              </li>
+            </ol>
+            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
+            </div>
+            <Button onClick={() => handleCopy(embedCode)} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied!" : "Copy code for Wix"}
+            </Button>
+          </div>
+        );
+
+      case "shopify":
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Install on Shopify</h3>
+            <ol className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">1.</span>
+                Go to your <span className="font-medium text-foreground">Shopify Admin</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">2.</span>
+                Navigate to <span className="font-medium text-foreground">Online Store → Themes</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">3.</span>
+                Click <span className="font-medium text-foreground">Actions → Edit code</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">4.</span>
+                Open <span className="font-medium text-foreground">theme.liquid</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">5.</span>
+                Paste the code just before <code className="text-primary font-mono">&lt;/body&gt;</code>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">6.</span>
+                Click <span className="font-medium text-foreground">Save</span>
+              </li>
+            </ol>
+            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
+            </div>
+            <Button onClick={() => handleCopy(embedCode)} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied!" : "Copy code for Shopify"}
+            </Button>
+          </div>
+        );
+
+      case "wordpress":
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Install on WordPress</h3>
+            <ol className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">1.</span>
+                Go to your <span className="font-medium text-foreground">WordPress Dashboard</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">2.</span>
+                Navigate to <span className="font-medium text-foreground">Appearance → Theme Editor</span> (or use a plugin like <span className="font-medium text-foreground">Insert Headers and Footers</span>)
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">3.</span>
+                Open <span className="font-medium text-foreground">footer.php</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">4.</span>
+                Paste the code just before <code className="text-primary font-mono">&lt;/body&gt;</code>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-semibold text-foreground shrink-0">5.</span>
+                Click <span className="font-medium text-foreground">Update File</span>
+              </li>
+            </ol>
+            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
+            </div>
+            <Button onClick={() => handleCopy(embedCode)} className="gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? "Copied!" : "Copy code for WordPress"}
+            </Button>
+          </div>
+        );
+    }
   };
 
   return (
@@ -142,225 +334,33 @@ useEffect(() => {
           </Button>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto overflow-x-hidden">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Add to website</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-6">
-          {/* Warning banner */}
-          <div className="rounded-lg bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 p-4">
-            <div className="flex gap-3">
-              <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-500 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-foreground">Widget not installed</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Install the widget on your website and start getting messages from customers. Just copy the code below and paste it into your website code.
-                </p>
-              </div>
-            </div>
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden p-0">
+        <div className="flex h-full min-h-[500px]">
+          {/* Left sidebar */}
+          <div className="w-56 shrink-0 border-r border-border bg-muted/30 p-4 space-y-1">
+            <DialogHeader className="pb-4">
+              <DialogTitle className="text-lg font-bold">Install widget</DialogTitle>
+            </DialogHeader>
+            {platforms.map((platform) => (
+              <button
+                key={platform.id}
+                onClick={() => !platform.disabled && setSelectedPlatform(platform.id)}
+                disabled={platform.disabled}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${
+                  selectedPlatform === platform.id
+                    ? "text-primary bg-primary/10"
+                    : "text-foreground hover:bg-muted"
+                } ${platform.disabled ? "opacity-40 cursor-not-allowed" : ""}`}
+              >
+                <span className="shrink-0">{platform.icon}</span>
+                {platform.name}
+              </button>
+            ))}
           </div>
 
-          {/* Ready message */}
-          <p className="font-semibold text-foreground">
-            Your Widjet is ready! Add it to your website and start helping your customers right away.
-          </p>
-
-          {/* Code section */}
-          <div className="rounded-xl bg-muted/50 p-5 space-y-4">
-            <Button 
-              onClick={handleCopy} 
-              className="gap-2"
-              size="lg"
-            >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied ? "Copied!" : "Copy code"}
-            </Button>
-
-            <p className="text-sm text-muted-foreground">
-              and paste it before the closing{" "}
-              <code className="text-primary font-mono">&lt;/body&gt;</code>{" "}
-              tag to install on your website.
-            </p>
-
-            {/* Code preview */}
-            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
-              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
-            </div>
-          </div>
-
-          {/* Help section */}
-          <div className="space-y-3">
-            <p className="font-semibold text-foreground">Need help with the installation?</p>
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="secondary" className="gap-2">
-                <ExternalLink className="h-4 w-4" />
-                Send instructions
-              </Button>
-              <Button variant="secondary" className="gap-2">
-                <Send className="h-4 w-4" />
-                Write to us
-              </Button>
-            </div>
-          </div>
-
-          {/* Seamless integration section */}
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">Try seamless integration with:</p>
-            <div className="grid grid-cols-2 gap-3">
-              <PlatformCard
-                logo={<LovableLogo className="h-10 w-10 text-rose-500" />}
-                name="Lovable"
-                onClick={handleLovableClick}
-              />
-              <PlatformCard
-                logo={<WixLogo className="h-10 w-auto text-foreground" />}
-                name="Wix"
-                onClick={handleWixClick}
-              />
-              <PlatformCard
-                logo={<WordPressLogo className="h-10 w-10" />}
-                name="WordPress"
-                disabled
-              />
-              <PlatformCard
-                logo={<GoogleTagManagerLogo className="h-10 w-10" />}
-                name="Google Tag Manager"
-                disabled
-              />
-            </div>
-          </div>
-
-          {/* Lovable Guide Collapsible */}
-          <Collapsible open={showLovableGuide} onOpenChange={setShowLovableGuide}>
-            <CollapsibleContent>
-              <div className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/20 p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-foreground flex items-center gap-2">
-                    <LovableLogo className="h-5 w-5 text-rose-500" />
-                    Install on Lovable
-                  </h4>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-6 w-6"
-                    onClick={() => setShowLovableGuide(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <ol className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">1.</span>
-                    Open your Lovable project
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">2.</span>
-                    Copy the React code below
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">3.</span>
-                    Ask Lovable: <span className="font-medium text-foreground">"Add this useEffect to my main page component"</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">4.</span>
-                    Lovable will integrate it automatically ✨
-                  </li>
-                </ol>
-
-                <Button onClick={handleCopyLovable} size="sm" className="gap-2">
-                  {copiedLovable ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  {copiedLovable ? "Copied!" : "Copy React code"}
-                </Button>
-
-                {/* React code preview */}
-                <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
-                  <pre className="whitespace-pre-wrap break-all">{lovableReactCode}</pre>
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-
-          {/* Wix Guide Collapsible */}
-          <Collapsible open={showWixGuide} onOpenChange={setShowWixGuide}>
-            <CollapsibleContent>
-              <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-foreground flex items-center gap-2">
-                    <WixLogo className="h-5 w-auto text-foreground" />
-                    Install on Wix
-                  </h4>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-6 w-6"
-                    onClick={() => setShowWixGuide(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <ol className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">1.</span>
-                    Open your Wix Editor
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">2.</span>
-                    Click <span className="font-medium text-foreground">"Add Elements"</span> (+)
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">3.</span>
-                    Select <span className="font-medium text-foreground">"Embed code"</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">4.</span>
-                    Click the code box → <span className="font-medium text-foreground">"Enter Code"</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">5.</span>
-                    Paste the widget code (copied above)
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="font-semibold text-foreground">6.</span>
-                    Position anywhere & <span className="font-medium text-foreground">Publish</span>
-                  </li>
-                </ol>
-
-                <Button onClick={handleCopy} size="sm" className="gap-2">
-                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  {copied ? "Copied!" : "Copy code for Wix"}
-                </Button>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-
-          {/* See how to install section */}
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">See how to install Widjet with:</p>
-            <div className="grid grid-cols-2 gap-3">
-              <PlatformCard
-                logo={<WooCommerceLogo className="h-10 w-10" />}
-                name="Woocommerce"
-                disabled
-              />
-              <PlatformCard
-                logo={<ShopifyLogo className="h-10 w-10" />}
-                name="Shopify"
-                disabled
-              />
-              <PlatformCard
-                logo={<SquarespaceLogo className="h-8 w-8" />}
-                name="Squarespace"
-                disabled
-              />
-              <PlatformCard
-                logo={<BigCommerceLogo className="h-10 w-10" />}
-                name="BigCommerce"
-                disabled
-              />
-            </div>
+          {/* Right content */}
+          <div className="flex-1 p-6 overflow-y-auto">
+            {renderPlatformGuide()}
           </div>
         </div>
       </DialogContent>
