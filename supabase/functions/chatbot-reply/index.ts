@@ -217,6 +217,13 @@ Deno.serve(async (req) => {
       .eq("user_id", config.user_id)
       .order("sort_order", { ascending: true });
 
+    // Fetch product cards
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
+
     // Get last 20 messages for context
     const { data: messages, error: msgError } = await supabase
       .from("chat_messages")
