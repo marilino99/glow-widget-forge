@@ -385,7 +385,7 @@ const Builder = () => {
   }
 
   const userInitial = (userDisplayName || user?.email || "U").charAt(0).toUpperCase();
-  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", "data-sources": "Data Sources", ai: "AI & Automation" };
+  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", "data-sources": "Data Sources", ai: "AI & Automation", integrations: "Integrations" };
 
   return (
     <div className="flex h-screen bg-background">
