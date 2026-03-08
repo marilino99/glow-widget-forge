@@ -374,7 +374,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 6. NEVER invent or fabricate information that is not in the knowledge base.
 7. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
 8. If the FAQ section contains a matching question, use that exact answer.
-9. PRODUCT RECOMMENDATIONS: When the visitor asks about products, recommends products, or you want to suggest specific items from the Product Catalog, append a special marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use the EXACT product titles from the catalog. Only include products that are relevant to the conversation. Do NOT mention this marker in your visible response text.`;
+9. PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND the Product Catalog section exists above, you MUST recommend relevant products. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products"), include ALL products. If they ask about a specific category, include matching ones. NEVER say you don't have product information if the Product Catalog section exists above.`;
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;
