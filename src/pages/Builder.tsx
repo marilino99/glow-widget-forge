@@ -1057,6 +1057,8 @@ const Builder = () => {
               />
             </div>
           </div>
+        ) : builderView === "integrations" ? (
+          <IntegrationsPanel />
         ) : (
           <>
             {/* Right header with actions */}
