@@ -141,6 +141,20 @@ serve(async (req) => {
       });
     }
 
+    // Trigger RAG embedding generation in background
+    if (extractedText && extractedText !== "[Failed to extract PDF content]") {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      fetch(`${supabaseUrl}/functions/v1/generate-embeddings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({ sourceId }),
+      }).catch((err) => console.error("Failed to trigger embeddings:", err));
+    }
+
     return new Response(
       JSON.stringify({ success: true, contentLength: extractedText.length }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
