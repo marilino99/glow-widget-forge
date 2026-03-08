@@ -243,13 +243,14 @@ Deno.serve(async (req) => {
       try {
         // Generate embedding for the query
         const embResponse = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${geminiApiKey}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              model: "models/text-embedding-004",
+              model: "models/gemini-embedding-001",
               content: { parts: [{ text: lastVisitorMessage }] },
+              outputDimensionality: 768,
             }),
           }
         );
@@ -395,6 +396,12 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
       const openaiData = await openaiResponse.json();
       aiReply = openaiData?.choices?.[0]?.message?.content;
     } else {
+      // Build Gemini conversation history from messages
+      const conversationHistory = (messages || []).map((msg: any) => ({
+        role: msg.sender_type === "visitor" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      }));
+
       const geminiResponse = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveApiKey}`,
         {
