@@ -147,15 +147,25 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
 
     if (!error && data) {
       setSources((prev) => [data, ...prev]);
-      // Trigger scraping in background
-      supabase.functions.invoke("scrape-training-content", { body: { urls: [formattedUrl], sourceId: data.id } }).then(({ error: scrapeErr, data: scrapeData }) => {
-        if (!scrapeErr) {
-          setSources((prev) => prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s));
-        } else {
-          setSources((prev) => prev.map((s) => s.id === data.id ? { ...s, status: "failed" } : s));
-          toast({ title: "Scraping failed", description: "Could not process the URL.", variant: "destructive" });
+      // Trigger scraping in background and poll for status
+      const sourceId = data.id;
+      supabase.functions.invoke("scrape-training-content", { body: { urls: [formattedUrl], sourceId } }).catch(console.error);
+      
+      // Poll DB for real status every 3s for up to 120s
+      const pollInterval = setInterval(async () => {
+        const { data: updated } = await supabase
+          .from("training_sources")
+          .select("status, title")
+          .eq("id", sourceId)
+          .single();
+        if (updated && updated.status !== "pending") {
+          setSources((prev) => prev.map((s) => s.id === sourceId ? { ...s, status: updated.status, title: updated.title || s.title } : s));
+          clearInterval(pollInterval);
         }
-      });
+      }, 3000);
+      // Stop polling after 120s
+      setTimeout(() => clearInterval(pollInterval), 120000);
+      
       toast({ title: "Source added", description: "The URL is being processed." });
     } else {
       toast({ title: "Error", description: "Failed to add source.", variant: "destructive" });
