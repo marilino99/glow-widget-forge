@@ -254,6 +254,9 @@ STRICT RULES:
     let cleanReply = aiReply.trim();
     let metadata: Record<string, unknown> | undefined = undefined;
 
+    console.log(`AI raw reply (last 100 chars): ...${cleanReply.slice(-100)}`);
+    console.log(`Product cards available: ${productCardsData?.length || 0}`);
+
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
     if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
