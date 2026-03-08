@@ -335,7 +335,7 @@ Deno.serve(async (req) => {
       : "";
 
     const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
-Language: ALWAYS respond in ${config.language || "en"}.
+Language: Your default language is ${config.language || "en"}, but you MUST detect the language the visitor is writing in and ALWAYS reply in that same language. If the visitor writes in Spanish, reply in Spanish. If they write in French, reply in French. Always match the visitor's language.
 
 ${knowledgeBase}
 ${additionalInstructions}
