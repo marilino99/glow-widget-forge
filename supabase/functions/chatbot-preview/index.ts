@@ -250,8 +250,31 @@ STRICT RULES:
       );
     }
 
+    // Parse product marker
+    let cleanReply = aiReply.trim();
+    let metadata: Record<string, unknown> | undefined = undefined;
+
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+    if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+      const matchedProducts = productCardsData.filter((p: any) =>
+        requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+      );
+      if (matchedProducts.length > 0) {
+        metadata = {
+          products: matchedProducts.map((p: any) => ({
+            title: p.title,
+            imageUrl: p.image_url || null,
+            productUrl: p.product_url || null,
+            price: p.price || null,
+          })),
+        };
+      }
+    }
+
     return new Response(
-      JSON.stringify({ reply: aiReply.trim() }),
+      JSON.stringify({ reply: cleanReply, metadata }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
