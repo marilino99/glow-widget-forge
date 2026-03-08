@@ -867,7 +867,7 @@ const Builder = () => {
         ) : builderView === "contacts" ? (
           <ContactsPanel />
         ) : builderView === "appearance" ? (
-          <div className="flex h-full">
+          <div className="flex flex-1 min-h-0">
             {/* Left column: header + panel */}
             <div className="flex flex-1 flex-col overflow-hidden">
               {/* Full-width header */}
@@ -993,7 +993,7 @@ const Builder = () => {
               </div>
             </div>
             {/* Right column: preview - hidden on mobile */}
-            <div className="hidden md:flex flex-col flex-1 overflow-hidden border-l border-border bg-[#f8f8f8]">
+            <div className="hidden md:flex flex-col flex-1 overflow-clip border-l border-border bg-[#f8f8f8]">
                 <WidgetPreviewPanel 
                   activeWidget={activeWidget}
                   selectedAvatar={config.selectedAvatar} 
