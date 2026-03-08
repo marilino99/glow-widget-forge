@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
             title: title,
             content: truncatedContent,
             url: formattedUrl,
-            status: 'scraped',
+            status: 'trained',
           }).select('id').single();
           effectiveSourceId = insertedSource?.id;
         }
