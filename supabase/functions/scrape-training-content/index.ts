@@ -103,14 +103,28 @@ Deno.serve(async (req) => {
         // Truncate content to 10k chars to avoid oversized prompts
         const truncatedContent = markdown.substring(0, 10000);
 
-        await supabase.from('training_sources').insert({
+        const { data: insertedSource } = await supabase.from('training_sources').insert({
           user_id: user.id,
           source_type: 'url',
           title: title,
           content: truncatedContent,
           url: formattedUrl,
           status: 'scraped',
-        });
+        }).select('id').single();
+
+        // Trigger RAG embedding generation in background
+        if (insertedSource?.id) {
+          const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+          const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+          fetch(`${supabaseUrl}/functions/v1/generate-embeddings`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+            },
+            body: JSON.stringify({ sourceId: insertedSource.id }),
+          }).catch((err) => console.error('Failed to trigger embeddings:', err));
+        }
 
         results.push({ url: formattedUrl, status: 'scraped' });
       } catch (err) {

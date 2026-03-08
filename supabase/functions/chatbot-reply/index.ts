@@ -210,11 +210,12 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch training sources and FAQ items
-    const [{ data: trainingSources }, { data: faqItems }] = await Promise.all([
-      supabase.from("training_sources").select("title, content, source_type").eq("user_id", config.user_id).neq("content", "").limit(20),
-      supabase.from("faq_items").select("question, answer").eq("user_id", config.user_id).order("sort_order", { ascending: true }),
-    ]);
+    // Fetch FAQ items
+    const { data: faqItems } = await supabase
+      .from("faq_items")
+      .select("question, answer")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
 
     // Get last 20 messages for context
     const { data: messages, error: msgError } = await supabase
@@ -231,21 +232,78 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Build conversation history for Gemini
-    const conversationHistory = (messages || []).map((msg) => ({
-      role: msg.sender_type === "visitor" ? "user" : "model",
-      parts: [{ text: msg.content }],
-    }));
+    // Get the last visitor message for RAG query
+    const lastVisitorMessage = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
 
-    // Build knowledge base
-    let knowledgeBase = "";
-    if (trainingSources && trainingSources.length > 0) {
-      knowledgeBase += "\n## === OFFICIAL KNOWLEDGE BASE (USE THIS TO ANSWER) ===\n";
-      for (const source of trainingSources) {
-        knowledgeBase += `\n### ${source.title}\n${source.content.substring(0, 6000)}\n`;
+    // === RAG RETRIEVAL ===
+    let ragContext = "";
+    let ragUsed = false;
+
+    if (lastVisitorMessage && geminiApiKey) {
+      try {
+        // Generate embedding for the query
+        const embResponse = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${geminiApiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "models/text-embedding-004",
+              content: { parts: [{ text: lastVisitorMessage }] },
+            }),
+          }
+        );
+
+        if (embResponse.ok) {
+          const embData = await embResponse.json();
+          const queryEmbedding = embData?.embedding?.values;
+
+          if (queryEmbedding) {
+            // Search for relevant chunks
+            const { data: chunks, error: matchError } = await supabase.rpc("match_training_chunks", {
+              query_embedding: JSON.stringify(queryEmbedding),
+              match_user_id: config.user_id,
+              match_threshold: 0.25,
+              match_count: 8,
+            });
+
+            if (!matchError && chunks && chunks.length > 0) {
+              ragUsed = true;
+              ragContext = "\n## === RELEVANT KNOWLEDGE BASE EXCERPTS (retrieved via semantic search) ===\n";
+              for (const chunk of chunks) {
+                ragContext += `\n[Relevance: ${(chunk.similarity * 100).toFixed(0)}%]\n${chunk.content}\n`;
+              }
+              ragContext += "\n## === END OF KNOWLEDGE BASE EXCERPTS ===\n";
+              console.log(`RAG: found ${chunks.length} relevant chunks (best similarity: ${(chunks[0].similarity * 100).toFixed(0)}%)`);
+            }
+          }
+        }
+      } catch (ragError) {
+        console.error("RAG retrieval error:", ragError);
       }
-      knowledgeBase += "\n## === END OF KNOWLEDGE BASE ===\n";
     }
+
+    // Fallback to context stuffing if RAG didn't find results
+    if (!ragUsed) {
+      const { data: trainingSources } = await supabase
+        .from("training_sources")
+        .select("title, content, source_type")
+        .eq("user_id", config.user_id)
+        .neq("content", "")
+        .limit(20);
+
+      if (trainingSources && trainingSources.length > 0) {
+        ragContext = "\n## === OFFICIAL KNOWLEDGE BASE ===\n";
+        for (const source of trainingSources) {
+          ragContext += `\n### ${source.title}\n${source.content.substring(0, 6000)}\n`;
+        }
+        ragContext += "\n## === END OF KNOWLEDGE BASE ===\n";
+        console.log(`Fallback: using ${trainingSources.length} full sources (context stuffing)`);
+      }
+    }
+
+    // Build knowledge base string
+    let knowledgeBase = ragContext;
     if (faqItems && faqItems.length > 0) {
       knowledgeBase += "\n## === FREQUENTLY ASKED QUESTIONS ===\n";
       for (const faq of faqItems) {
@@ -254,7 +312,7 @@ Deno.serve(async (req) => {
       knowledgeBase += "\n## === END OF FAQ ===\n";
     }
 
-    console.log(`Knowledge base: ${trainingSources?.length || 0} sources, ${faqItems?.length || 0} FAQs, total chars: ${knowledgeBase.length}`);
+    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, total chars: ${knowledgeBase.length}`);
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`

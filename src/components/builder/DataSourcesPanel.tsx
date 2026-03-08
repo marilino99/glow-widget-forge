@@ -145,6 +145,8 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
       supabase.functions.invoke("scrape-training-content", { body: { sourceId: data.id, url: formattedUrl } }).then(({ error: scrapeErr }) => {
         if (!scrapeErr) {
           setSources((prev) => prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s));
+          // Generate RAG embeddings in background
+          supabase.functions.invoke("generate-embeddings", { body: { sourceId: data.id } }).catch(console.error);
         }
       });
       toast({ title: "Source added", description: "The URL is being processed." });
@@ -168,6 +170,8 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
     if (!error && data) {
       setSources((prev) => [data, ...prev]);
       toast({ title: "Source added" });
+      // Generate RAG embeddings in background
+      supabase.functions.invoke("generate-embeddings", { body: { sourceId: data.id } }).catch(console.error);
     } else {
       toast({ title: "Error", description: "Failed to add source.", variant: "destructive" });
     }
@@ -252,6 +256,8 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
           setSources((prev) =>
             prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s)
           );
+          // Generate RAG embeddings in background
+          supabase.functions.invoke("generate-embeddings", { body: { sourceId: data.id } }).catch(console.error);
         } else {
           setSources((prev) =>
             prev.map((s) => s.id === data.id ? { ...s, status: "error" } : s)

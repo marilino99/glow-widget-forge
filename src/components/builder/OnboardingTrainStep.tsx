@@ -163,13 +163,18 @@ const OnboardingTrainStep = ({
         if (parseError) throw parseError;
 
         // Save as training source
-        await (supabase.from("training_sources") as any).insert({
+        const { data: sourceData } = await (supabase.from("training_sources") as any).insert({
           user_id: user.id,
           source_type: "document",
           title: file.name,
           content: parseData?.content || "",
           status: "trained",
-        });
+        }).select().single();
+
+        // Generate RAG embeddings in background
+        if (sourceData?.id) {
+          supabase.functions.invoke("generate-embeddings", { body: { sourceId: sourceData.id } }).catch(console.error);
+        }
 
         setUploadedDocs((prev) =>
           prev.map((d) => (d.name === file.name ? { ...d, status: "done" } : d))

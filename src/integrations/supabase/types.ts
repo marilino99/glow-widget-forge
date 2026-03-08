@@ -333,6 +333,44 @@ export type Database = {
         }
         Relationships: []
       }
+      training_chunks: {
+        Row: {
+          chunk_index: number
+          content: string
+          created_at: string
+          embedding: string | null
+          id: string
+          source_id: string
+          user_id: string
+        }
+        Insert: {
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source_id: string
+          user_id: string
+        }
+        Update: {
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_chunks_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "training_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       training_sources: {
         Row: {
           content: string
@@ -589,7 +627,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      match_training_chunks: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          match_user_id: string
+          query_embedding: string
+        }
+        Returns: {
+          chunk_index: number
+          content: string
+          id: string
+          similarity: number
+          source_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
