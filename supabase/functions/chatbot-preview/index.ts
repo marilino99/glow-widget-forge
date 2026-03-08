@@ -220,7 +220,7 @@ STRICT RULES:
           contents: conversationHistory,
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 500,
+            maxOutputTokens: 800,
           },
         }),
       }
