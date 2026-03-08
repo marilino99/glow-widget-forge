@@ -64,6 +64,9 @@ const Hero = () => {
               </span>
             </div>
 
+            {/* Security badges */}
+            <img src={securityBadges} alt="SOC 2 Type II, GDPR, ISO 27001 certified" className="h-7 w-auto opacity-60" />
+
             {/* Social proof */}
             <div className="flex items-center gap-1.5">
               <div className="relative h-8 w-14">
