@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
     // Build query for messages
     let query = supabase
       .from("chat_messages")
-      .select("*")
+      .select("id, conversation_id, content, sender_type, is_ai_response, created_at, metadata")
       .eq("conversation_id", conversation.id)
       .order("created_at", { ascending: true });
 

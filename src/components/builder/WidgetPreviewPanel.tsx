@@ -284,7 +284,7 @@ const WidgetPreviewPanel = ({
   const [faqAiLoading, setFaqAiLoading] = useState<string | null>(null);
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
-  const [chatMessages, setChatMessages] = useState<{text: string; sender: "user" | "bot"}[]>([]);
+  const [chatMessages, setChatMessages] = useState<{text: string; sender: "user" | "bot"; metadata?: { products?: { title: string; imageUrl?: string; productUrl?: string; price?: string }[] }}[]>([]);
   const [chatInputValue, setChatInputValue] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -414,7 +414,7 @@ const WidgetPreviewPanel = ({
           setChatMessages(prev => [...prev, { text: "⚠️ Si è verificato un errore. Riprova più tardi.", sender: "bot" as const }]);
         }
       } else if (data?.reply) {
-        setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const }]);
+        setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
       }
     } catch (err) {
       console.error('Preview chatbot error:', err);
@@ -1013,8 +1013,32 @@ const WidgetPreviewPanel = ({
                                 {contactName?.charAt(0)?.toUpperCase() || "?"}
                               </div>
                             )}
-                            <div className="rounded-2xl px-4 py-2.5 text-white text-sm max-w-[70%]" style={{ backgroundColor: actualHexColor }}>
-                              {msg.text}
+                            <div className="max-w-[70%]">
+                              <div className="rounded-2xl px-4 py-2.5 text-white text-sm" style={{ backgroundColor: actualHexColor }}>
+                                {msg.text}
+                              </div>
+                              {msg.metadata?.products && msg.metadata.products.length > 0 && (
+                                <div className="flex gap-2 mt-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                                  {msg.metadata.products.map((prod, pi) => (
+                                    <a
+                                      key={pi}
+                                      href={prod.productUrl || '#'}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="shrink-0 w-16 h-16 rounded-xl overflow-hidden block"
+                                      style={{ background: isLight ? '#e2e8f0' : '#374151' }}
+                                    >
+                                      {prod.imageUrl ? (
+                                        <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
+                                          {prod.title}
+                                        </div>
+                                      )}
+                                    </a>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                         )
@@ -1353,8 +1377,32 @@ const WidgetPreviewPanel = ({
                             {contactName?.charAt(0)?.toUpperCase() || "?"}
                           </div>
                         )}
-                        <div className={`rounded-2xl px-4 py-3 text-white max-w-[80%] ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
-                          <p className="text-sm">{msg.text}</p>
+                        <div className="max-w-[80%]">
+                          <div className={`rounded-2xl px-4 py-3 text-white ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
+                            <p className="text-sm">{msg.text}</p>
+                          </div>
+                          {msg.metadata?.products && msg.metadata.products.length > 0 && (
+                            <div className="flex gap-2 mt-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                              {msg.metadata.products.map((prod, pi) => (
+                                <a
+                                  key={pi}
+                                  href={prod.productUrl || '#'}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="shrink-0 w-16 h-16 rounded-xl overflow-hidden block"
+                                  style={{ background: isLight ? '#e2e8f0' : '#374151' }}
+                                >
+                                  {prod.imageUrl ? (
+                                    <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
+                                      {prod.title}
+                                    </div>
+                                  )}
+                                </a>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     )

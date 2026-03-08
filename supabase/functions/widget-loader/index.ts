@@ -1183,7 +1183,28 @@ Deno.serve(async (req) => {
       if (msg.sender_type === 'visitor') {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
-        bubble.innerHTML = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>') + '<div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:70%">' + esc(msg.content) + '</div>';
+        var msgHtml = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>');
+        msgHtml += '<div style="max-width:70%"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
+        
+        // Render product thumbnails if metadata contains products
+        if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
+          msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none">';
+          msg.metadata.products.forEach(function(prod) {
+            var imgSrc = prod.imageUrl || '';
+            var url = prod.productUrl || '#';
+            msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="flex-shrink:0;width:64px;height:64px;border-radius:12px;overflow:hidden;display:block;background:' + (dark ? '#374151' : '#e2e8f0') + '">';
+            if (imgSrc) {
+              msgHtml += '<img src="' + esc(imgSrc) + '" alt="' + esc(prod.title || '') + '" style="width:100%;height:100%;object-fit:cover"/>';
+            } else {
+              msgHtml += '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:' + textSub + ';text-align:center;padding:4px">' + esc(prod.title || '') + '</div>';
+            }
+            msgHtml += '</a>';
+          });
+          msgHtml += '</div>';
+        }
+        
+        msgHtml += '</div>';
+        bubble.innerHTML = msgHtml;
         aiMessageCount++;
       }
       chatMsgs.appendChild(bubble);

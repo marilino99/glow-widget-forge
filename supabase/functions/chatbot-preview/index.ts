@@ -83,6 +83,13 @@ Deno.serve(async (req) => {
       .eq("id", widgetId)
       .single();
 
+    // Fetch product cards for this user
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge")
+      .eq("user_id", claimsData.user.id)
+      .order("sort_order", { ascending: true });
+
     if (configError || !config) {
       return new Response(
         JSON.stringify({ error: "Widget not found" }),
@@ -164,6 +171,19 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Add product catalog
+    if (productCardsData && productCardsData.length > 0) {
+      knowledgeBase += "\n## PRODUCT CATALOG\n";
+      for (const p of productCardsData) {
+        knowledgeBase += `\n- **${p.title}**`;
+        if (p.subtitle) knowledgeBase += ` — ${p.subtitle}`;
+        if (p.price) knowledgeBase += ` | Price: ${p.price}`;
+        if (p.old_price) knowledgeBase += ` (was ${p.old_price})`;
+        if (p.promo_badge && p.promo_badge !== "none") knowledgeBase += ` [${p.promo_badge.toUpperCase()}]`;
+        knowledgeBase += "\n";
+      }
+    }
+
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
@@ -180,7 +200,8 @@ STRICT RULES:
 - If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat.
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
-- Do not make up information.`;
+- Do not make up information.
+- PRODUCT RECOMMENDATIONS: When recommending products from the Product Catalog, append a marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use EXACT product titles. Do NOT mention this marker in visible text.`;
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",
@@ -229,8 +250,31 @@ STRICT RULES:
       );
     }
 
+    // Parse product marker
+    let cleanReply = aiReply.trim();
+    let metadata: Record<string, unknown> | undefined = undefined;
+
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+    if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+      const matchedProducts = productCardsData.filter((p: any) =>
+        requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+      );
+      if (matchedProducts.length > 0) {
+        metadata = {
+          products: matchedProducts.map((p: any) => ({
+            title: p.title,
+            imageUrl: p.image_url || null,
+            productUrl: p.product_url || null,
+            price: p.price || null,
+          })),
+        };
+      }
+    }
+
     return new Response(
-      JSON.stringify({ reply: aiReply.trim() }),
+      JSON.stringify({ reply: cleanReply, metadata }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

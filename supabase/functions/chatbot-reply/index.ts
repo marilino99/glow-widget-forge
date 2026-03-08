@@ -217,6 +217,13 @@ Deno.serve(async (req) => {
       .eq("user_id", config.user_id)
       .order("sort_order", { ascending: true });
 
+    // Fetch product cards
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
+
     // Get last 20 messages for context
     const { data: messages, error: msgError } = await supabase
       .from("chat_messages")
@@ -313,7 +320,23 @@ Deno.serve(async (req) => {
       knowledgeBase += "\n## === END OF FAQ ===\n";
     }
 
-    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, total chars: ${knowledgeBase.length}`);
+    // Add product catalog to knowledge base
+    let productCatalog = "";
+    if (productCardsData && productCardsData.length > 0) {
+      productCatalog = "\n## === PRODUCT CATALOG ===\n";
+      for (const p of productCardsData) {
+        productCatalog += `\n- **${p.title}**`;
+        if (p.subtitle) productCatalog += ` — ${p.subtitle}`;
+        if (p.price) productCatalog += ` | Price: ${p.price}`;
+        if (p.old_price) productCatalog += ` (was ${p.old_price})`;
+        if (p.promo_badge && p.promo_badge !== "none") productCatalog += ` [${p.promo_badge.toUpperCase()}]`;
+        productCatalog += "\n";
+      }
+      productCatalog += "\n## === END OF PRODUCT CATALOG ===\n";
+      knowledgeBase += productCatalog;
+    }
+
+    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, ${productCardsData?.length || 0} products, total chars: ${knowledgeBase.length}`);
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
@@ -350,7 +373,8 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 5. If the user asks something truly NOT covered by the knowledge base and you cannot reasonably infer a connection, clearly state that you don't have that specific information and suggest they contact the business directly via chat.
 6. NEVER invent or fabricate information that is not in the knowledge base.
 7. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
-8. If the FAQ section contains a matching question, use that exact answer.`;
+8. If the FAQ section contains a matching question, use that exact answer.
+9. PRODUCT RECOMMENDATIONS: When the visitor asks about products, recommends products, or you want to suggest specific items from the Product Catalog, append a special marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use the EXACT product titles from the catalog. Only include products that are relevant to the conversation. Do NOT mention this marker in your visible response text.`;
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;
@@ -435,13 +459,48 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
       );
     }
 
+    // Parse product marker from AI reply
+    let cleanReply = aiReply.trim();
+    let metadata: Record<string, unknown> | null = null;
+
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+    if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
+      // Strip marker from visible text
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+      
+      // Parse product titles from marker
+      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+      
+      // Match to actual product cards
+      const matchedProducts = productCardsData.filter((p: any) =>
+        requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+      );
+
+      if (matchedProducts.length > 0) {
+        metadata = {
+          products: matchedProducts.map((p: any) => ({
+            title: p.title,
+            imageUrl: p.image_url || null,
+            productUrl: p.product_url || null,
+            price: p.price || null,
+          })),
+        };
+        console.log(`Product cards matched: ${matchedProducts.length}`);
+      }
+    }
+
     // Save the AI reply
-    const { error: insertError } = await supabase.from("chat_messages").insert({
+    const insertData: Record<string, unknown> = {
       conversation_id: conversationId,
       sender_type: "owner",
-      content: aiReply.trim(),
+      content: cleanReply,
       is_ai_response: true,
-    });
+    };
+    if (metadata) {
+      insertData.metadata = metadata;
+    }
+
+    const { error: insertError } = await supabase.from("chat_messages").insert(insertData);
 
     if (insertError) {
       return new Response(
@@ -451,7 +510,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
     }
 
     await supabase.from("conversations").update({
-      last_message: aiReply.trim(),
+      last_message: cleanReply,
       last_message_at: new Date().toISOString(),
     }).eq("id", conversationId);
 
