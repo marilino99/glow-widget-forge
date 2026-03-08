@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import widgetPreview from "@/assets/widget-preview-hero.png";
+import securityBadges from "@/assets/security-badges.png";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const fadeUp = {
@@ -63,6 +64,9 @@ const Hero = () => {
                 {t("hero.note1")}<br />{t("hero.note2")}
               </span>
             </div>
+
+            {/* Security badges */}
+            <img src={securityBadges} alt="SOC 2 Type II, GDPR, ISO 27001 certified" className="h-7 w-auto opacity-60" />
 
             {/* Social proof */}
             <div className="flex items-center gap-1.5">
