@@ -1377,8 +1377,32 @@ const WidgetPreviewPanel = ({
                             {contactName?.charAt(0)?.toUpperCase() || "?"}
                           </div>
                         )}
-                        <div className={`rounded-2xl px-4 py-3 text-white max-w-[80%] ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
-                          <p className="text-sm">{msg.text}</p>
+                        <div className="max-w-[80%]">
+                          <div className={`rounded-2xl px-4 py-3 text-white ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
+                            <p className="text-sm">{msg.text}</p>
+                          </div>
+                          {msg.metadata?.products && msg.metadata.products.length > 0 && (
+                            <div className="flex gap-2 mt-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                              {msg.metadata.products.map((prod, pi) => (
+                                <a
+                                  key={pi}
+                                  href={prod.productUrl || '#'}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="shrink-0 w-16 h-16 rounded-xl overflow-hidden block"
+                                  style={{ background: isLight ? '#e2e8f0' : '#374151' }}
+                                >
+                                  {prod.imageUrl ? (
+                                    <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
+                                      {prod.title}
+                                    </div>
+                                  )}
+                                </a>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     )
