@@ -79,7 +79,6 @@ const Builder = () => {
   }, [isLoading, user, config?.id]);
   const { hasUnread } = useUnreadMessages();
   const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
-  const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
   const { 
     productCards, 
     isLoading: isLoadingCards, 
