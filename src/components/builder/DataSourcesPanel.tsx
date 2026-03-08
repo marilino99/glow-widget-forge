@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X, Check } from "lucide-react";
+import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X, Check, Database } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useRagStorage, formatBytes } from "@/hooks/useRagStorage";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
 
 interface TrainingSource {
   id: string;
@@ -42,6 +46,8 @@ interface DataSourcesPanelProps {
 const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { plan } = useSubscription();
+  const { usedBytes, limitBytes, usagePercent } = useRagStorage(plan);
   const [sources, setSources] = useState<TrainingSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -345,6 +351,24 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
                 </p>
               </div>
             </div>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 cursor-default shrink-0">
+                    <span className={`h-2 w-2 rounded-full ${usagePercent >= 90 ? 'bg-destructive' : usagePercent >= 70 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                    <span className="text-xs text-muted-foreground">
+                      <span className="font-semibold text-foreground">{formatBytes(usedBytes)}</span>
+                      {" / "}
+                      {formatBytes(limitBytes)}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="w-56 p-3">
+                  <p className="text-xs font-medium mb-2">RAG Storage — {formatBytes(usedBytes)} of {formatBytes(limitBytes)}</p>
+                  <Progress value={Math.min(usagePercent, 100)} className="h-1.5" />
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
 
