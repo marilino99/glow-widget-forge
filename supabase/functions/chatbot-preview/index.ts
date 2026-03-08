@@ -171,6 +171,19 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Add product catalog
+    if (productCardsData && productCardsData.length > 0) {
+      knowledgeBase += "\n## PRODUCT CATALOG\n";
+      for (const p of productCardsData) {
+        knowledgeBase += `\n- **${p.title}**`;
+        if (p.subtitle) knowledgeBase += ` — ${p.subtitle}`;
+        if (p.price) knowledgeBase += ` | Price: ${p.price}`;
+        if (p.old_price) knowledgeBase += ` (was ${p.old_price})`;
+        if (p.promo_badge && p.promo_badge !== "none") knowledgeBase += ` [${p.promo_badge.toUpperCase()}]`;
+        knowledgeBase += "\n";
+      }
+    }
+
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
@@ -187,7 +200,8 @@ STRICT RULES:
 - If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat.
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
-- Do not make up information.`;
+- Do not make up information.
+- PRODUCT RECOMMENDATIONS: When recommending products from the Product Catalog, append a marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use EXACT product titles. Do NOT mention this marker in visible text.`;
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",
