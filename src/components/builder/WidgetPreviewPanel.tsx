@@ -414,7 +414,7 @@ const WidgetPreviewPanel = ({
           setChatMessages(prev => [...prev, { text: "⚠️ Si è verificato un errore. Riprova più tardi.", sender: "bot" as const }]);
         }
       } else if (data?.reply) {
-        setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const }]);
+        setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
       }
     } catch (err) {
       console.error('Preview chatbot error:', err);
