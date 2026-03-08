@@ -170,6 +170,8 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
     if (!error && data) {
       setSources((prev) => [data, ...prev]);
       toast({ title: "Source added" });
+      // Generate RAG embeddings in background
+      supabase.functions.invoke("generate-embeddings", { body: { sourceId: data.id } }).catch(console.error);
     } else {
       toast({ title: "Error", description: "Failed to add source.", variant: "destructive" });
     }
