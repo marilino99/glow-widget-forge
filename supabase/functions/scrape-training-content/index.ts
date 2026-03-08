@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
 
     // Parse body BEFORE auth (body stream can only be read once)
     const body = await req.json();
-    const { urls } = body;
+    const { urls, sourceId } = body;
 
     if (!urls || !Array.isArray(urls) || urls.length === 0) {
       return new Response(
