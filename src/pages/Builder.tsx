@@ -112,11 +112,11 @@ const Builder = () => {
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
-  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null>(() => {
+  const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
-    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai") : null;
+    return saved ? (saved as "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations") : null;
   });
-  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | null) => {
+  const setBuilderView = (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null) => {
     setBuilderViewRaw(view);
     if (view) {
       sessionStorage.setItem("widjet_builder_view", view);
