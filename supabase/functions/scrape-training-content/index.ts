@@ -105,14 +105,27 @@ Deno.serve(async (req) => {
         // Truncate content to 10k chars to avoid oversized prompts
         const truncatedContent = markdown.substring(0, 10000);
 
-        const { data: insertedSource } = await supabase.from('training_sources').insert({
-          user_id: user.id,
-          source_type: 'url',
-          title: title,
-          content: truncatedContent,
-          url: formattedUrl,
-          status: 'scraped',
-        }).select('id').single();
+        let effectiveSourceId = sourceId;
+
+        if (sourceId) {
+          // Update existing source row (pre-created by the UI)
+          await supabase.from('training_sources').update({
+            title: title,
+            content: truncatedContent,
+            status: 'scraped',
+          }).eq('id', sourceId);
+        } else {
+          // Insert new source row
+          const { data: insertedSource } = await supabase.from('training_sources').insert({
+            user_id: user.id,
+            source_type: 'url',
+            title: title,
+            content: truncatedContent,
+            url: formattedUrl,
+            status: 'scraped',
+          }).select('id').single();
+          effectiveSourceId = insertedSource?.id;
+        }
 
         // Trigger RAG embedding generation in background
         if (insertedSource?.id) {
