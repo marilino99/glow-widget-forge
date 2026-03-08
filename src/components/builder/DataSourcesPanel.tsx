@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X } from "lucide-react";
+import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
