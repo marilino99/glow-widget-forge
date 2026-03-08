@@ -112,7 +112,7 @@ Deno.serve(async (req) => {
           await supabase.from('training_sources').update({
             title: title,
             content: truncatedContent,
-            status: 'scraped',
+            status: 'trained',
           }).eq('id', sourceId);
         } else {
           // Insert new source row
