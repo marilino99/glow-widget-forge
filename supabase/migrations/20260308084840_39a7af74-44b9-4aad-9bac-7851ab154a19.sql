@@ -1,0 +1,1 @@
+UPDATE profiles SET g2_review_approved = true WHERE user_id = '6cfff6e0-c743-464d-827b-b883cbcbacc7';
