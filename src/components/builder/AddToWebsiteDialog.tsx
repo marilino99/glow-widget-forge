@@ -46,11 +46,6 @@ const WebflowLogo = ({ className }: { className?: string }) => (
 
 const platforms: PlatformOption[] = [
   { id: "manual", name: "Manual install", icon: <Globe className="h-5 w-5" /> },
-  { id: "gtm", name: "Google Tag Manager", icon: <GoogleTagManagerLogo className="h-5 w-5" /> },
-  { id: "lovable", name: "Lovable", icon: <LovableLogo className="h-5 w-5 text-rose-500" /> },
-  { id: "wix", name: "Wix", icon: <WixLogo className="h-5 w-auto" /> },
-  { id: "shopify", name: "Shopify", icon: <ShopifyLogo className="h-5 w-5" /> },
-  { id: "wordpress", name: "WordPress", icon: <WordPressLogo className="h-5 w-5" /> },
 ];
 
 const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) => {
