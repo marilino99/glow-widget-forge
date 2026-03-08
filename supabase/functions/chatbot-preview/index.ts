@@ -6,6 +6,28 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function generateEmbedding(text: string, apiKey: string): Promise<number[] | null> {
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "models/text-embedding-004",
+          content: { parts: [{ text }] },
+          outputDimensionality: 768,
+        }),
+      }
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data?.embedding?.values || null;
+  } catch {
+    return null;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -43,7 +65,6 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Verify user owns this widget
     const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -83,13 +104,51 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch training sources
-    const { data: trainingSources } = await supabase
-      .from("training_sources")
-      .select("title, content, source_type")
-      .eq("user_id", config.user_id)
-      .eq("status", "scraped")
-      .limit(20);
+    // Get user's last message for RAG query
+    const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
+    const queryText = lastUserMessage?.text || "";
+
+    // RAG: Try similarity search first
+    let knowledgeBase = "";
+    let usedRag = false;
+
+    if (queryText) {
+      const queryEmbedding = await generateEmbedding(queryText, geminiApiKey);
+      if (queryEmbedding) {
+        const { data: chunks } = await supabase.rpc("match_training_chunks", {
+          query_embedding: JSON.stringify(queryEmbedding),
+          match_user_id: config.user_id,
+          match_threshold: 0.25,
+          match_count: 8,
+        });
+
+        if (chunks && chunks.length > 0) {
+          usedRag = true;
+          knowledgeBase += "\n## RELEVANT KNOWLEDGE BASE EXCERPTS\n";
+          for (const chunk of chunks) {
+            knowledgeBase += `\n---\n${chunk.content}\n`;
+          }
+        }
+      }
+    }
+
+    // Fallback: load training sources directly if RAG returned nothing
+    if (!usedRag) {
+      const { data: trainingSources } = await supabase
+        .from("training_sources")
+        .select("title, content, source_type")
+        .eq("user_id", config.user_id)
+        .neq("content", "")
+        .limit(20);
+
+      if (trainingSources && trainingSources.length > 0) {
+        knowledgeBase += "\n## Website Knowledge Base\n";
+        for (const source of trainingSources) {
+          const content = source.content.substring(0, 3000);
+          knowledgeBase += `\n### ${source.title}\n${content}\n`;
+        }
+      }
+    }
 
     // Fetch FAQ items
     const { data: faqItems } = await supabase
@@ -97,17 +156,6 @@ Deno.serve(async (req) => {
       .select("question, answer")
       .eq("user_id", config.user_id)
       .order("sort_order", { ascending: true });
-
-    // Build knowledge base
-    let knowledgeBase = "";
-
-    if (trainingSources && trainingSources.length > 0) {
-      knowledgeBase += "\n## Website Knowledge Base\n";
-      for (const source of trainingSources) {
-        const content = source.content.substring(0, 3000);
-        knowledgeBase += `\n### ${source.title}\n${content}\n`;
-      }
-    }
 
     if (faqItems && faqItems.length > 0) {
       knowledgeBase += "\n## Frequently Asked Questions\n";
@@ -134,7 +182,6 @@ STRICT RULES:
 - Keep responses short (2-3 sentences max).
 - Do not make up information.`;
 
-    // Build Gemini-compatible messages
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",
       parts: [{ text: msg.text }],
