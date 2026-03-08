@@ -256,6 +256,8 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
           setSources((prev) =>
             prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s)
           );
+          // Generate RAG embeddings in background
+          supabase.functions.invoke("generate-embeddings", { body: { sourceId: data.id } }).catch(console.error);
         } else {
           setSources((prev) =>
             prev.map((s) => s.id === data.id ? { ...s, status: "error" } : s)
