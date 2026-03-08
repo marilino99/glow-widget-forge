@@ -373,7 +373,8 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 5. If the user asks something truly NOT covered by the knowledge base and you cannot reasonably infer a connection, clearly state that you don't have that specific information and suggest they contact the business directly via chat.
 6. NEVER invent or fabricate information that is not in the knowledge base.
 7. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
-8. If the FAQ section contains a matching question, use that exact answer.`;
+8. If the FAQ section contains a matching question, use that exact answer.
+9. PRODUCT RECOMMENDATIONS: When the visitor asks about products, recommends products, or you want to suggest specific items from the Product Catalog, append a special marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use the EXACT product titles from the catalog. Only include products that are relevant to the conversation. Do NOT mention this marker in your visible response text.`;
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;
