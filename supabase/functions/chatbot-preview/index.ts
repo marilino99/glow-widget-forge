@@ -83,13 +83,6 @@ Deno.serve(async (req) => {
       .eq("id", widgetId)
       .single();
 
-    // Fetch product cards for this user
-    const { data: productCardsData } = await supabase
-      .from("product_cards")
-      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge")
-      .eq("user_id", claimsData.user.id)
-      .order("sort_order", { ascending: true });
-
     if (configError || !config) {
       return new Response(
         JSON.stringify({ error: "Widget not found" }),
@@ -110,6 +103,13 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Fetch product cards for this user
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
 
     // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
@@ -220,7 +220,7 @@ STRICT RULES:
           contents: conversationHistory,
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 500,
+            maxOutputTokens: 800,
           },
         }),
       }
