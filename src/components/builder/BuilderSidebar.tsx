@@ -709,6 +709,13 @@ const BuilderSidebar = ({
               onClick={() => onBuilderViewChange("ai")}
               miniMode={isMiniSidebar}
             />
+            <SidebarItem
+              icon={Puzzle}
+              label="Integrations"
+              active={builderView === "integrations"}
+              onClick={() => onBuilderViewChange("integrations")}
+              miniMode={isMiniSidebar}
+            />
           </div>
         </div>
 
