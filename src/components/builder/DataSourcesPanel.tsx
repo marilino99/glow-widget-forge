@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X } from "lucide-react";
+import { Search, Plus, FolderOpen, MoreVertical, FileText, Link2, SlidersHorizontal, HelpCircle, Trash2, RefreshCw, Upload, MessageSquareText, X, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -458,14 +458,19 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
 
                   {/* Status */}
                   <div>
-                    {source.status === "trained" ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    {source.status === "trained" || source.status === "scraped" ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+                        <Check className="h-3.5 w-3.5" />
                         Trained
+                      </span>
+                    ) : source.status === "failed" ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-destructive">
+                        <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
+                        Failed
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600">
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
                         Pending
                       </span>
                     )}
