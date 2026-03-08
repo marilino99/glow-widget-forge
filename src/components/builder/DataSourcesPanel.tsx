@@ -46,6 +46,8 @@ interface DataSourcesPanelProps {
 const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { plan } = useSubscription();
+  const { usedBytes, limitBytes, usagePercent } = useRagStorage(plan);
   const [sources, setSources] = useState<TrainingSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
