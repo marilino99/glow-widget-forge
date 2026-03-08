@@ -201,7 +201,7 @@ STRICT RULES:
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
-- PRODUCT RECOMMENDATIONS: When recommending products from the Product Catalog, append a marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use EXACT product titles. Do NOT mention this marker in visible text.`;
+- PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products from the catalog. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER say you don't have product information if the Product Catalog section exists above.`;
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",
@@ -253,6 +253,9 @@ STRICT RULES:
     // Parse product marker
     let cleanReply = aiReply.trim();
     let metadata: Record<string, unknown> | undefined = undefined;
+
+    console.log(`AI raw reply (last 100 chars): ...${cleanReply.slice(-100)}`);
+    console.log(`Product cards available: ${productCardsData?.length || 0}`);
 
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
     if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
