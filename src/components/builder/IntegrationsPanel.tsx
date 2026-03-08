@@ -16,62 +16,6 @@ const integrations: Integration[] = [
     iconBg: "bg-[#96bf48]/10",
     available: false,
   },
-  {
-    name: "WooCommerce",
-    description: "Connect your WooCommerce store to auto-import products.",
-    icon: "🛒",
-    iconBg: "bg-[#7f54b3]/10",
-    available: false,
-  },
-  {
-    name: "WhatsApp",
-    description: "Chat with customers on WhatsApp — Widjet handles the replies.",
-    icon: "💬",
-    iconBg: "bg-[#25d366]/10",
-    available: true,
-  },
-  {
-    name: "Telegram",
-    description: "Let Widjet talk to your customers on Telegram 24/7.",
-    icon: "✈️",
-    iconBg: "bg-[#0088cc]/10",
-    available: false,
-  },
-  {
-    name: "Slack",
-    description: "Let your team step in when AI gets stuck — alerts go straight to Slack.",
-    icon: "🔔",
-    iconBg: "bg-[#4a154b]/10",
-    available: false,
-  },
-  {
-    name: "Instagram",
-    description: "Use Widjet to answer DMs on Instagram — always-on support.",
-    icon: "📸",
-    iconBg: "bg-[#e1306c]/10",
-    available: true,
-  },
-  {
-    name: "Messenger",
-    description: "Your bot answers questions on Messenger — and sends follow-ups.",
-    icon: "💭",
-    iconBg: "bg-[#0084ff]/10",
-    available: false,
-  },
-  {
-    name: "Calendly",
-    description: "Let visitors book meetings directly from the chat widget.",
-    icon: "📅",
-    iconBg: "bg-[#006bff]/10",
-    available: false,
-  },
-  {
-    name: "Zapier",
-    description: "Connect Widjet to 5,000+ apps with Zapier automations.",
-    icon: "⚡",
-    iconBg: "bg-[#ff4a00]/10",
-    available: false,
-  },
 ];
 
 const IntegrationsPanel = () => {
