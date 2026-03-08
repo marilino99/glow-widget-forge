@@ -8,6 +8,9 @@ import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useRagStorage, formatBytes } from "@/hooks/useRagStorage";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
 import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ArrowRight, ExternalLink, Gift, Home, Palette } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -79,6 +82,7 @@ const Builder = () => {
   }, [isLoading, user, config?.id]);
   const { hasUnread } = useUnreadMessages();
   const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
+  const { usedBytes, limitBytes, usagePercent, isLoading: ragLoading } = useRagStorage(plan);
   const { 
     productCards, 
     isLoading: isLoadingCards, 
@@ -652,6 +656,24 @@ const Builder = () => {
             <span className="hidden md:inline text-sm font-medium text-foreground">{viewLabels[builderView] || "Home"}</span>
           </div>
           <div className="flex items-center gap-2">
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="hidden md:flex items-center gap-2 rounded-full border border-border px-3 py-1.5 cursor-default">
+                    <span className={`h-2 w-2 rounded-full ${usagePercent >= 90 ? 'bg-destructive' : usagePercent >= 70 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                    <span className="text-xs text-muted-foreground">
+                      <span className="font-semibold text-foreground">{formatBytes(usedBytes)}</span>
+                      {" / "}
+                      {formatBytes(limitBytes)}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="w-56 p-3">
+                  <p className="text-xs font-medium mb-2">RAG Storage — {formatBytes(usedBytes)} of {formatBytes(limitBytes)}</p>
+                  <Progress value={Math.min(usagePercent, 100)} className="h-1.5" />
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <FeedbackPopover userEmail={user?.email} />
             <Popover onOpenChange={(open) => { if (!open) setChangelogDetailOpen(false); }}>
               <PopoverTrigger asChild>
