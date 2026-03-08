@@ -395,6 +395,12 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
       const openaiData = await openaiResponse.json();
       aiReply = openaiData?.choices?.[0]?.message?.content;
     } else {
+      // Build Gemini conversation history from messages
+      const conversationHistory = (messages || []).map((msg: any) => ({
+        role: msg.sender_type === "visitor" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      }));
+
       const geminiResponse = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveApiKey}`,
         {
