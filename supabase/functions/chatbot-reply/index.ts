@@ -459,13 +459,48 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
       );
     }
 
+    // Parse product marker from AI reply
+    let cleanReply = aiReply.trim();
+    let metadata: Record<string, unknown> | null = null;
+
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+    if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
+      // Strip marker from visible text
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+      
+      // Parse product titles from marker
+      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+      
+      // Match to actual product cards
+      const matchedProducts = productCardsData.filter((p: any) =>
+        requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+      );
+
+      if (matchedProducts.length > 0) {
+        metadata = {
+          products: matchedProducts.map((p: any) => ({
+            title: p.title,
+            imageUrl: p.image_url || null,
+            productUrl: p.product_url || null,
+            price: p.price || null,
+          })),
+        };
+        console.log(`Product cards matched: ${matchedProducts.length}`);
+      }
+    }
+
     // Save the AI reply
-    const { error: insertError } = await supabase.from("chat_messages").insert({
+    const insertData: Record<string, unknown> = {
       conversation_id: conversationId,
       sender_type: "owner",
-      content: aiReply.trim(),
+      content: cleanReply,
       is_ai_response: true,
-    });
+    };
+    if (metadata) {
+      insertData.metadata = metadata;
+    }
+
+    const { error: insertError } = await supabase.from("chat_messages").insert(insertData);
 
     if (insertError) {
       return new Response(
@@ -475,7 +510,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
     }
 
     await supabase.from("conversations").update({
-      last_message: aiReply.trim(),
+      last_message: cleanReply,
       last_message_at: new Date().toISOString(),
     }).eq("id", conversationId);
 
