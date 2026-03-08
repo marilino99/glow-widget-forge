@@ -142,7 +142,7 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
     if (!error && data) {
       setSources((prev) => [data, ...prev]);
       // Trigger scraping in background
-      supabase.functions.invoke("scrape-training-content", { body: { sourceId: data.id, url: formattedUrl } }).then(({ error: scrapeErr }) => {
+      supabase.functions.invoke("scrape-training-content", { body: { urls: [formattedUrl], sourceId: data.id } }).then(({ error: scrapeErr }) => {
         if (!scrapeErr) {
           setSources((prev) => prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s));
           // Generate RAG embeddings in background
