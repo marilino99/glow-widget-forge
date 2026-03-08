@@ -142,11 +142,12 @@ const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
     if (!error && data) {
       setSources((prev) => [data, ...prev]);
       // Trigger scraping in background
-      supabase.functions.invoke("scrape-training-content", { body: { urls: [formattedUrl], sourceId: data.id } }).then(({ error: scrapeErr }) => {
+      supabase.functions.invoke("scrape-training-content", { body: { urls: [formattedUrl], sourceId: data.id } }).then(({ error: scrapeErr, data: scrapeData }) => {
         if (!scrapeErr) {
           setSources((prev) => prev.map((s) => s.id === data.id ? { ...s, status: "trained" } : s));
-          // Generate RAG embeddings in background
-          supabase.functions.invoke("generate-embeddings", { body: { sourceId: data.id } }).catch(console.error);
+        } else {
+          setSources((prev) => prev.map((s) => s.id === data.id ? { ...s, status: "failed" } : s));
+          toast({ title: "Scraping failed", description: "Could not process the URL.", variant: "destructive" });
         }
       });
       toast({ title: "Source added", description: "The URL is being processed." });
