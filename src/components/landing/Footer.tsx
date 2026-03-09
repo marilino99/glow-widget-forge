@@ -36,7 +36,8 @@ const Footer = () => {
       title: t("footer.company"),
       links: [
         { name: t("footer.security"), href: "#" },
-        { name: t("footer.termsPrivacy"), href: "/terms" },
+        { name: t("footer.terms"), href: "/terms" },
+        { name: t("footer.privacy"), href: "/privacy" },
         { name: t("footer.contact"), href: "mailto:support@getwidjet.com" },
       ],
     },
