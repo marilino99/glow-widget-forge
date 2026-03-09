@@ -150,6 +150,7 @@ export const useWidgetConfiguration = () => {
             googleBusinessUrl: (data as any).google_business_url || null,
             googleBusinessPlaceId: (data as any).google_business_place_id || null,
             ctaText: (data as any).cta_text || "Contact us",
+            productCarouselEnabled: (data as any).product_carousel_enabled ?? true,
           });
         }
       } catch (error) {
