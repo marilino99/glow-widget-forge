@@ -107,6 +107,7 @@ Deno.serve(async (req) => {
           user_id: stateData.user_id,
           store_domain: shop,
           storefront_token: storefrontToken,
+          admin_access_token: accessToken,
         },
         { onConflict: "user_id" }
       );
