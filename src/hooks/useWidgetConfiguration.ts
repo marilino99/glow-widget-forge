@@ -41,6 +41,7 @@ export interface WidgetConfiguration {
   googleBusinessUrl: string | null;
   googleBusinessPlaceId: string | null;
   ctaText: string;
+  productCarouselEnabled: boolean;
 }
 
 const defaultConfig: WidgetConfiguration = {
