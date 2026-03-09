@@ -204,11 +204,11 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
     { icon: MessageSquareText, label: "Conversations", value: conversations, color: "#5b5b65" },
   ];
 
-  const securityCerts = [
-    { icon: CloudOff, name: "Zero-Training Guarantee", description: "Your documents and conversations are never used to train any AI model. Inference-only mode." },
-    { icon: Lock, name: "SSL Encrypted", description: "All data encrypted in transit via HTTPS/TLS" },
-    { icon: ShieldCheck, name: "Data Isolation", description: "Each account's data is logically isolated with row-level security policies" },
-    { icon: UserX, name: "No Third-Party Sharing", description: "Your data is never sold or shared with third parties" },
+  const securityFeatures = [
+    { icon: CloudOff, name: "No AI Training on Your Data", description: "Your documents and conversations are used for inference only — never for training AI models." },
+    { icon: Lock, name: "Encrypted Connections", description: "All data is transmitted over HTTPS/TLS encrypted connections." },
+    { icon: ShieldCheck, name: "Per-Account Data Isolation", description: "Each account's data is logically separated using row-level security policies." },
+    { icon: UserX, name: "No Data Sold to Third Parties", description: "We do not sell or share your data with any third party." },
   ];
 
   return (
@@ -446,25 +446,24 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
             </div>
           </div>
 
-          {/* Security Certificates */}
+          {/* Infrastructure Security */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Security</h2>
+            <h2 className="mb-4 text-lg font-semibold" style={{ color: "#5b5b65" }}>Infrastructure Security</h2>
             <div className="space-y-3">
-              {securityCerts.map((cert) => {
-                const IconComp = cert.icon;
+              {securityFeatures.map((feature) => {
+                const IconComp = feature.icon;
                 return (
                 <div
-                  key={cert.name}
+                  key={feature.name}
                   className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10">
                     <IconComp className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{cert.name}</p>
-                    <p className="text-xs text-muted-foreground">{cert.description}</p>
+                    <p className="text-sm font-medium text-foreground">{feature.name}</p>
+                    <p className="text-xs text-muted-foreground">{feature.description}</p>
                   </div>
-                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                 </div>
                 );
               })}
