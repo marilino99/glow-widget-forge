@@ -3,32 +3,25 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface ShopifyConnectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConnect: (storeDomain: string, token: string) => Promise<boolean>;
-  onSyncAfterConnect: () => Promise<boolean>;
+  onConnect: (shopDomain: string) => Promise<boolean>;
 }
 
-const ShopifyConnectDialog = ({ open, onOpenChange, onConnect, onSyncAfterConnect }: ShopifyConnectDialogProps) => {
+const ShopifyConnectDialog = ({ open, onOpenChange, onConnect }: ShopifyConnectDialogProps) => {
   const [domain, setDomain] = useState("");
-  const [token, setToken] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!domain.trim() || !token.trim()) return;
+    if (!domain.trim()) return;
 
     setIsSubmitting(true);
-    const ok = await onConnect(domain, token);
-    if (ok) {
-      await onSyncAfterConnect();
-      onOpenChange(false);
-      setDomain("");
-      setToken("");
-    }
+    await onConnect(domain);
+    // Note: if OAuth succeeds, page will redirect — no need to close dialog
     setIsSubmitting(false);
   };
 
@@ -38,7 +31,7 @@ const ShopifyConnectDialog = ({ open, onOpenChange, onConnect, onSyncAfterConnec
         <DialogHeader>
           <DialogTitle>Connect Shopify Store</DialogTitle>
           <DialogDescription>
-            Enter your store domain and a Storefront Access Token to sync your product catalog.
+            Enter your Shopify store domain. You'll be redirected to Shopify to authorize the connection.
           </DialogDescription>
         </DialogHeader>
 
@@ -52,37 +45,19 @@ const ShopifyConnectDialog = ({ open, onOpenChange, onConnect, onSyncAfterConnec
               onChange={(e) => setDomain(e.target.value)}
               disabled={isSubmitting}
             />
+            <p className="text-xs text-muted-foreground">
+              Enter your full Shopify store domain (e.g. mystore.myshopify.com)
+            </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="storefront-token">Storefront Access Token</Label>
-            <Input
-              id="storefront-token"
-              type="password"
-              placeholder="shpat_xxxxxxxxxxxxx"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              disabled={isSubmitting}
-            />
-            <a
-              href="https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/getting-started"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              How to generate a Storefront Access Token
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isSubmitting || !domain.trim() || !token.trim()}>
+          <Button type="submit" className="w-full" disabled={isSubmitting || !domain.trim()}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Connecting & syncing…
+                Redirecting to Shopify…
               </>
             ) : (
-              "Connect & Sync"
+              "Connect with Shopify"
             )}
           </Button>
         </form>

@@ -16,6 +16,19 @@ export const useShopifyConnection = () => {
   const [connection, setConnection] = useState<ShopifyConnection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Check for OAuth callback success
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("shopify_connected") === "true") {
+      toast({ title: "Shopify connesso!", description: "Lo store è stato collegato con successo." });
+      // Clean up URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("shopify_connected");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [toast]);
 
   useEffect(() => {
     if (!user) {
@@ -44,6 +57,38 @@ export const useShopifyConnection = () => {
     load();
   }, [user]);
 
+  // OAuth-based connect: ask for shop domain, get auth URL, redirect
+  const connectOAuth = useCallback(
+    async (shopDomain: string) => {
+      if (!user) return false;
+      setIsConnecting(true);
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await supabase.functions.invoke("shopify-oauth-start", {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+          body: { shop: shopDomain },
+        });
+
+        if (res.error) throw res.error;
+        const { url } = res.data as { url: string };
+
+        if (url) {
+          window.location.href = url;
+          return true;
+        }
+        throw new Error("No authorization URL returned");
+      } catch (e: any) {
+        console.error("OAuth start error:", e);
+        toast({ title: "Errore", description: e.message || "Impossibile avviare la connessione.", variant: "destructive" });
+        setIsConnecting(false);
+        return false;
+      }
+    },
+    [user, toast]
+  );
+
+  // Legacy manual connect (kept for fallback)
   const connect = useCallback(
     async (storeDomain: string, storefrontToken: string) => {
       if (!user) return false;
@@ -121,5 +166,5 @@ export const useShopifyConnection = () => {
     }
   }, [user, connection, toast]);
 
-  return { connection, isLoading, isSyncing, connect, sync, disconnect };
+  return { connection, isLoading, isSyncing, isConnecting, connect, connectOAuth, sync, disconnect };
 };
