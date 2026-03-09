@@ -338,6 +338,7 @@ export type Database = {
       }
       shopify_connections: {
         Row: {
+          admin_access_token: string | null
           created_at: string
           id: string
           last_synced_at: string | null
@@ -348,6 +349,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          admin_access_token?: string | null
           created_at?: string
           id?: string
           last_synced_at?: string | null
@@ -358,6 +360,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          admin_access_token?: string | null
           created_at?: string
           id?: string
           last_synced_at?: string | null

@@ -19,6 +19,21 @@ Deno.serve(async (req) => {
   'use strict';
   
   var c = w.__wj || {};
+  
+  // Support widgetId from query string (for Shopify ScriptTag)
+  if (!c.widgetId) {
+    try {
+      var scripts = d.getElementsByTagName('script');
+      for (var i = 0; i < scripts.length; i++) {
+        var src = scripts[i].src || '';
+        if (src.indexOf('widget-loader') !== -1) {
+          var match = src.match(/[?&]widgetId=([^&]+)/);
+          if (match) { c.widgetId = match[1]; w.__wj = c; break; }
+        }
+      }
+    } catch(e) {}
+  }
+  
   var id = c.widgetId;
   
   if (!id) {
