@@ -100,7 +100,7 @@ const Navbar1 = ({
 
         {/* Mobile */}
         <div className="block lg:hidden">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between -mx-4 px-4 sm:-mx-2 sm:px-2">
             <a href={logo.url} className="flex items-center gap-2">
               {logo.src && (
                 <img src={logo.src} className="h-10 w-auto" alt={logo.alt || "logo"} />
