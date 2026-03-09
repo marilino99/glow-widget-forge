@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import greenBlob from "@/assets/green-blob.png";
 import yellowBlob from "@/assets/yellow-blob.png";
-import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare, Shield, ShieldCheck, Scale, CloudOff } from "lucide-react";
+import { ArrowRight, Bot, FileText, Globe, BarChart3, MessageSquare, Lock, ShieldCheck, Database, CloudOff } from "lucide-react";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import wordpressLogo from "@/assets/logo-wordpress.png";
@@ -33,10 +33,10 @@ const i18n: Record<string, {
 }> = {
   en: {
     headline1: "AI you ", headlineAccent: "control", headline2: ". Completely.",
-    secTitle: "Enterprise-grade security", secSubtitle: "Built on Google Cloud certified infrastructure",
-    badge1: "ISO/IEC 27001", badge1Desc: "Certified information security management via Google Cloud",
-    badge2: "SOC 2 Type II", badge2Desc: "Independently audited security controls and data protection",
-    badge3: "GDPR Ready", badge3Desc: "Full compliance with European data privacy regulations",
+    secTitle: "Your data, protected", secSubtitle: "Built on Google Cloud infrastructure with industry-standard protections",
+    badge1: "Encrypted Connections", badge1Desc: "All data transmitted over HTTPS/TLS encrypted channels.",
+    badge2: "Per-Account Isolation", badge2Desc: "Row-level security policies keep each account's data fully separated.",
+    badge3: "EU-Hosted Infrastructure", badge3Desc: "Data stored on European cloud infrastructure for low latency and compliance.",
     badge4: "Zero-Training Guarantee", badge4Desc: "Your data is never used to train AI models. Inference-only.",
     card2Title: "You set the rules. AI plays by them.", card2Desc: "Upload your knowledge base, define boundaries, and let AI handle the rest — exactly how you want.",
     card3Title: "Live insights into your team and AI.", card3Desc: "Track performance, response times, and conversions in one dashboard.",
@@ -44,10 +44,10 @@ const i18n: Record<string, {
   },
   it: {
     headline1: "AI che ", headlineAccent: "controlli", headline2: ". Completamente.",
-    secTitle: "Sicurezza enterprise-grade", secSubtitle: "Costruito su infrastruttura certificata Google Cloud",
-    badge1: "ISO/IEC 27001", badge1Desc: "Gestione certificata della sicurezza delle informazioni via Google Cloud",
-    badge2: "SOC 2 Type II", badge2Desc: "Controlli di sicurezza verificati da revisori indipendenti",
-    badge3: "GDPR Ready", badge3Desc: "Piena conformità alle normative europee sulla privacy dei dati",
+    secTitle: "I tuoi dati, protetti", secSubtitle: "Costruito su infrastruttura Google Cloud con protezioni standard di settore",
+    badge1: "Connessioni crittografate", badge1Desc: "Tutti i dati trasmessi su canali crittografati HTTPS/TLS.",
+    badge2: "Isolamento per account", badge2Desc: "Policy di sicurezza a livello di riga mantengono i dati di ogni account completamente separati.",
+    badge3: "Infrastruttura in UE", badge3Desc: "Dati archiviati su infrastruttura cloud europea per bassa latenza e conformità.",
     badge4: "Zero-Training Guarantee", badge4Desc: "I tuoi dati non vengono mai usati per addestrare modelli AI. Solo inferenza.",
     card2Title: "Tu stabilisci le regole. L'AI le rispetta.", card2Desc: "Carica la tua knowledge base, definisci i limiti e lascia che l'AI gestisca il resto — esattamente come vuoi.",
     card3Title: "Insights in tempo reale sul team e l'AI.", card3Desc: "Monitora performance, tempi di risposta e conversioni in un'unica dashboard.",
@@ -57,9 +57,9 @@ const i18n: Record<string, {
 
 /* ── Security badges data ── */
 const securityBadges = (t: typeof i18n.en) => [
-  { icon: ShieldCheck, name: t.badge1, desc: t.badge1Desc },
-  { icon: Shield, name: t.badge2, desc: t.badge2Desc },
-  { icon: Scale, name: t.badge3, desc: t.badge3Desc },
+  { icon: Lock, name: t.badge1, desc: t.badge1Desc },
+  { icon: Database, name: t.badge2, desc: t.badge2Desc },
+  { icon: ShieldCheck, name: t.badge3, desc: t.badge3Desc },
   { icon: CloudOff, name: t.badge4, desc: t.badge4Desc },
 ];
 
