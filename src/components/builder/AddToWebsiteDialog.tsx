@@ -46,6 +46,7 @@ const WebflowLogo = ({ className }: { className?: string }) => (
 
 const platforms: PlatformOption[] = [
   { id: "manual", name: "Manual install", icon: <Globe className="h-5 w-5" /> },
+  { id: "shopify", name: "Shopify", icon: <ShopifyLogo className="h-5 w-5" /> },
 ];
 
 const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) => {
