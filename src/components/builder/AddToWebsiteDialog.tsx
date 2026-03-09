@@ -111,6 +111,41 @@ useEffect(() => {
     }
   };
 
+  const handleShopifyOneClick = async () => {
+    setIsInstallingShopify(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await supabase.functions.invoke("shopify-install-widget", {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+
+      if (res.error) throw res.error;
+      const result = res.data as { success?: boolean; alreadyInstalled?: boolean; error?: string };
+
+      if (result.error) {
+        toast({ title: "Error", description: result.error, variant: "destructive" });
+      } else if (result.alreadyInstalled) {
+        setShopifyInstalled(true);
+        toast({ title: "Already installed!", description: "The widget is already active on your Shopify store." });
+      } else if (result.success) {
+        setShopifyInstalled(true);
+        toast({ title: "Installed!", description: "Widget is now live on your Shopify store." });
+        if (user) {
+          supabase.from("user_activity_logs").insert({
+            user_id: user.id,
+            event_type: "widget_shopify_install",
+            metadata: { widget_id: widgetId },
+          });
+        }
+      }
+    } catch (e: any) {
+      console.error("Shopify install error:", e);
+      toast({ title: "Installation failed", description: e.message || "Could not install widget.", variant: "destructive" });
+    } finally {
+      setIsInstallingShopify(false);
+    }
+  };
+
   const getCodeForPlatform = () => {
     if (selectedPlatform === "lovable") return lovableReactCode;
     return embedCode;
