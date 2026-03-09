@@ -258,21 +258,23 @@ STRICT RULES:
     console.log(`Product cards available: ${productCardsData?.length || 0}`);
 
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
-    if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
+    if (productMarkerMatch) {
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-      const matchedProducts = productCardsData.filter((p: any) =>
-        requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-      );
-      if (matchedProducts.length > 0) {
-        metadata = {
-          products: matchedProducts.map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-          })),
-        };
+      if (productCardsData && productCardsData.length > 0) {
+        const matchedProducts = productCardsData.filter((p: any) =>
+          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+        );
+        if (matchedProducts.length > 0) {
+          metadata = {
+            products: matchedProducts.map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+            })),
+          };
+        }
       }
     }
 
