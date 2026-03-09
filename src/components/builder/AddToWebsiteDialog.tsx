@@ -250,39 +250,90 @@ useEffect(() => {
         return (
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Install on Shopify</h3>
-            <ol className="space-y-3 text-sm text-muted-foreground">
-              <li className="flex gap-2">
-                <span className="font-semibold text-foreground shrink-0">1.</span>
-                Go to your <span className="font-medium text-foreground">Shopify Admin</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-semibold text-foreground shrink-0">2.</span>
-                Navigate to <span className="font-medium text-foreground">Online Store → Themes</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-semibold text-foreground shrink-0">3.</span>
-                Click <span className="font-medium text-foreground">Actions → Edit code</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-semibold text-foreground shrink-0">4.</span>
-                Open <span className="font-medium text-foreground">theme.liquid</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-semibold text-foreground shrink-0">5.</span>
-                Paste the code just before <code className="text-primary font-mono">&lt;/body&gt;</code>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-semibold text-foreground shrink-0">6.</span>
-                Click <span className="font-medium text-foreground">Save</span>
-              </li>
-            </ol>
-            <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
-              <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
-            </div>
-            <Button onClick={() => handleCopy(embedCode)} className="gap-2">
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied ? "Copied!" : "Copy code for Shopify"}
-            </Button>
+            
+            {shopifyConnection ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 p-3">
+                  <CheckCircle className="h-4 w-4 text-green-600 shrink-0" />
+                  <p className="text-sm text-green-800 dark:text-green-300">
+                    Connected to <span className="font-semibold">{shopifyConnection.store_domain}</span>
+                  </p>
+                </div>
+                
+                {shopifyInstalled ? (
+                  <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 p-4">
+                    <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Widget installed!</p>
+                      <p className="text-xs text-muted-foreground">The widget is now live on your Shopify store.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      Install the Widjet widget on your Shopify store with one click. The script will be automatically added to all pages.
+                    </p>
+                    <Button 
+                      onClick={handleShopifyOneClick} 
+                      disabled={isInstallingShopify}
+                      className="gap-2 w-full"
+                      size="lg"
+                    >
+                      {isInstallingShopify ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Installing...
+                        </>
+                      ) : (
+                        <>
+                          <ShopifyLogo className="h-4 w-4" />
+                          Install on Shopify — One click
+                        </>
+                      )}
+                    </Button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Connect your Shopify store first in <span className="font-medium text-foreground">Integrations</span> to enable one-click install. Or use the manual instructions below.
+                </p>
+                <ol className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground shrink-0">1.</span>
+                    Go to your <span className="font-medium text-foreground">Shopify Admin</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground shrink-0">2.</span>
+                    Navigate to <span className="font-medium text-foreground">Online Store → Themes</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground shrink-0">3.</span>
+                    Click <span className="font-medium text-foreground">Actions → Edit code</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground shrink-0">4.</span>
+                    Open <span className="font-medium text-foreground">theme.liquid</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground shrink-0">5.</span>
+                    Paste the code just before <code className="text-primary font-mono">&lt;/body&gt;</code>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="font-semibold text-foreground shrink-0">6.</span>
+                    Click <span className="font-medium text-foreground">Save</span>
+                  </li>
+                </ol>
+                <div className="rounded-lg bg-muted p-4 font-mono text-xs text-muted-foreground overflow-hidden">
+                  <pre className="whitespace-pre-wrap break-all">{embedCode}</pre>
+                </div>
+                <Button onClick={() => handleCopy(embedCode)} className="gap-2">
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? "Copied!" : "Copy code for Shopify"}
+                </Button>
+              </div>
+            )}
           </div>
         );
 
