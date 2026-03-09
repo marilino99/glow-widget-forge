@@ -192,6 +192,7 @@ const WidgetPreviewPanel = ({
   backgroundType = "gradient",
   backgroundImage = null,
   productCards = [],
+  productCarouselEnabled = true,
   sayHello = "Hello, nice to see you here 👋",
   language = "en",
   faqItems = [],
