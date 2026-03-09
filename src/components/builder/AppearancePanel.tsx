@@ -1168,7 +1168,7 @@ const AppearancePanel = ({
                 </div>
                 <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
               </div>
-              {productCards.length > 0 && (
+              {productCarouselEnabled && (
                 <div className="border-t border-border px-3 py-2.5 space-y-2">
                   {productCards.map((card) => (
                     <div key={card.id} className="flex items-start gap-1.5 group">

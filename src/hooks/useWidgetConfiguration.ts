@@ -213,6 +213,7 @@ export const useWidgetConfiguration = () => {
           google_business_url: updatedConfig.googleBusinessUrl,
           google_business_place_id: updatedConfig.googleBusinessPlaceId,
           cta_text: updatedConfig.ctaText,
+          product_carousel_enabled: updatedConfig.productCarouselEnabled,
         }, {
           onConflict: "user_id"
         })

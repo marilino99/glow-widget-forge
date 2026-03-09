@@ -2176,7 +2176,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Product Cards Section - horizontal carousel */}
-                {productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
+                {productCarouselEnabled && productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
                     {/* Solid mode background band - stops at ~1/4 of first card */}
                     {isSolidMode && (
                       <div 
