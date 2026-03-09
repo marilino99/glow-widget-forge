@@ -6,7 +6,7 @@ import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 
 const IntegrationsPanel = () => {
-  const { connection, isLoading, isSyncing, connect, sync, disconnect } = useShopifyConnection();
+  const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const isConnected = !!connection;
@@ -84,9 +84,17 @@ const IntegrationsPanel = () => {
               ) : (
                 <button
                   onClick={() => setDialogOpen(true)}
-                  className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                  disabled={isConnecting}
+                  className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
                 >
-                  Connect
+                  {isConnecting ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Connecting…
+                    </>
+                  ) : (
+                    "Connect"
+                  )}
                 </button>
               )}
               <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
@@ -100,8 +108,7 @@ const IntegrationsPanel = () => {
       <ShopifyConnectDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        onConnect={connect}
-        onSyncAfterConnect={sync}
+        onConnect={connectOAuth}
       />
     </div>
   );
