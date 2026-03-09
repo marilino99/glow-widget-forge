@@ -3,31 +3,27 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SHOPIFY_PRODUCTS_QUERY = `
+const SHOPIFY_ADMIN_PRODUCTS_QUERY = `
   query ($first: Int!, $after: String) {
     products(first: $first, after: $after) {
       edges {
         node {
           id
           title
-          description
+          descriptionHtml
           onlineStoreUrl
           featuredImage {
             url
           }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          compareAtPriceRange {
-            maxVariantPrice {
-              amount
-              currencyCode
+          variants(first: 1) {
+            edges {
+              node {
+                price
+                compareAtPrice
+              }
             }
           }
         }
@@ -57,7 +53,6 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify user with their JWT
     const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -69,7 +64,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Use service role to read the storefront token
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
     const { data: connection, error: connError } = await adminClient
@@ -87,22 +81,22 @@ Deno.serve(async (req) => {
 
     const { store_domain, storefront_token } = connection;
 
-    // Fetch products from Shopify Storefront API
+    // Use Admin API GraphQL endpoint with the access token
     const allProducts: any[] = [];
     let hasNextPage = true;
     let after: string | null = null;
 
     while (hasNextPage && allProducts.length < 50) {
       const res = await fetch(
-        `https://${store_domain}/api/2024-01/graphql.json`,
+        `https://${store_domain}/admin/api/2024-01/graphql.json`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-Shopify-Storefront-Access-Token": storefront_token,
+            "X-Shopify-Access-Token": storefront_token,
           },
           body: JSON.stringify({
-            query: SHOPIFY_PRODUCTS_QUERY,
+            query: SHOPIFY_ADMIN_PRODUCTS_QUERY,
             variables: { first: 50, after },
           }),
         }
@@ -110,7 +104,7 @@ Deno.serve(async (req) => {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Shopify API error [${res.status}]: ${text}`);
+        throw new Error(`Shopify Admin API error [${res.status}]: ${text}`);
       }
 
       const json = await res.json();
@@ -120,22 +114,23 @@ Deno.serve(async (req) => {
 
       const { edges, pageInfo } = json.data.products;
       for (const { node } of edges) {
-        const price = node.priceRange?.minVariantPrice;
-        const compareAt = node.compareAtPriceRange?.maxVariantPrice;
-        const hasDiscount =
-          compareAt &&
-          parseFloat(compareAt.amount) > 0 &&
-          parseFloat(compareAt.amount) > parseFloat(price?.amount || "0");
+        const variant = node.variants?.edges?.[0]?.node;
+        const price = variant?.price ? parseFloat(variant.price) : null;
+        const compareAt = variant?.compareAtPrice ? parseFloat(variant.compareAtPrice) : null;
+        const hasDiscount = compareAt && price && compareAt > price;
+
+        // Strip HTML tags from description
+        const plainDesc = node.descriptionHtml
+          ? node.descriptionHtml.replace(/<[^>]*>/g, "").substring(0, 120)
+          : null;
 
         allProducts.push({
           title: node.title,
-          subtitle: node.description?.substring(0, 120) || null,
+          subtitle: plainDesc || null,
           product_url: node.onlineStoreUrl || null,
           image_url: node.featuredImage?.url || null,
-          price: price ? `${parseFloat(price.amount).toFixed(2)} ${price.currencyCode}` : null,
-          old_price: hasDiscount
-            ? `${parseFloat(compareAt.amount).toFixed(2)} ${compareAt.currencyCode}`
-            : null,
+          price: price !== null ? `${price.toFixed(2)}` : null,
+          old_price: hasDiscount ? `${compareAt!.toFixed(2)}` : null,
           promo_badge: hasDiscount ? "sale" : null,
         });
       }
@@ -144,13 +139,12 @@ Deno.serve(async (req) => {
       after = pageInfo.endCursor;
     }
 
-    // Delete existing product cards for this user (synced ones will be replaced)
+    // Replace existing product cards
     await adminClient
       .from("product_cards")
       .delete()
       .eq("user_id", user.id);
 
-    // Insert new products
     if (allProducts.length > 0) {
       const rows = allProducts.map((p, i) => ({
         user_id: user.id,
@@ -171,7 +165,6 @@ Deno.serve(async (req) => {
       if (insertError) throw insertError;
     }
 
-    // Update last_synced_at and product_count
     await adminClient
       .from("shopify_connections")
       .update({
