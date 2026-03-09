@@ -1090,6 +1090,7 @@ const Builder = () => {
                 backgroundImage={config.backgroundImage}
                 logo={config.logo}
                 productCards={previewProductCards}
+                productCarouselEnabled={config.productCarouselEnabled}
                 sayHello={config.sayHello}
                 language={config.language}
                 faqItems={faqItems}
