@@ -20,7 +20,7 @@ const Footer = () => {
       title: t("footer.product"),
       links: [
         { name: t("footer.widgetBuilder"), href: "#features" },
-        { name: t("footer.liveChat"), href: "#features" },
+        { name: t("footer.liveChat"), href: "#dashboard" },
         { name: t("footer.analytics"), href: "#features" },
         { name: t("footer.integrations"), href: "#" },
       ],
