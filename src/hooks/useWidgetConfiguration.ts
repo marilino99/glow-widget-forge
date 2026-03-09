@@ -82,6 +82,7 @@ const defaultConfig: WidgetConfiguration = {
   googleBusinessUrl: null,
   googleBusinessPlaceId: null,
   ctaText: "Contact us",
+  productCarouselEnabled: true,
 };
 
 export const useWidgetConfiguration = () => {
