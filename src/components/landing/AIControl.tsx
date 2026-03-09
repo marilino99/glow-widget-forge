@@ -57,9 +57,9 @@ const i18n: Record<string, {
 
 /* ── Security badges data ── */
 const securityBadges = (t: typeof i18n.en) => [
-  { icon: ShieldCheck, name: t.badge1, desc: t.badge1Desc },
-  { icon: Shield, name: t.badge2, desc: t.badge2Desc },
-  { icon: Scale, name: t.badge3, desc: t.badge3Desc },
+  { icon: Lock, name: t.badge1, desc: t.badge1Desc },
+  { icon: Database, name: t.badge2, desc: t.badge2Desc },
+  { icon: ShieldCheck, name: t.badge3, desc: t.badge3Desc },
   { icon: CloudOff, name: t.badge4, desc: t.badge4Desc },
 ];
 
