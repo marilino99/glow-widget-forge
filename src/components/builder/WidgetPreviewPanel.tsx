@@ -27,6 +27,7 @@ interface WidgetPreviewPanelProps {
   backgroundType?: "solid" | "gradient" | "image";
   backgroundImage?: string | null;
   productCards?: ProductCardData[];
+  productCarouselEnabled?: boolean;
   sayHello?: string;
   language?: string;
   faqItems?: FaqItemData[];
