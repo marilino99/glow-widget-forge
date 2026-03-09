@@ -336,6 +336,39 @@ export type Database = {
         }
         Relationships: []
       }
+      shopify_connections: {
+        Row: {
+          created_at: string
+          id: string
+          last_synced_at: string | null
+          product_count: number | null
+          store_domain: string
+          storefront_token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          product_count?: number | null
+          store_domain: string
+          storefront_token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          product_count?: number | null
+          store_domain?: string
+          storefront_token?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       training_chunks: {
         Row: {
           chunk_index: number
