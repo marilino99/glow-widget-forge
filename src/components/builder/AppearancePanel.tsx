@@ -93,6 +93,8 @@ interface AppearancePanelProps {
   onReorderCustomLinks: (reordered: CustomLinkData[]) => void;
   // Product Carousel
   productCards: ProductCardData[];
+  productCarouselEnabled: boolean;
+  onProductCarouselToggle: (enabled: boolean) => void;
   onAddProductCard: (card: ProductCardData) => void;
   onUpdateProductCard: (id: string, updates: Partial<ProductCardData>) => void;
   onDeleteProductCard: (id: string) => void;
@@ -181,6 +183,8 @@ const AppearancePanel = ({
   onDeleteCustomLink,
   onReorderCustomLinks,
   productCards,
+  productCarouselEnabled,
+  onProductCarouselToggle,
   onAddProductCard,
   onUpdateProductCard,
   onDeleteProductCard,
@@ -1164,17 +1168,9 @@ const AppearancePanel = ({
                     <p className="text-[11px] text-muted-foreground">Showcase products</p>
                   </div>
                 </div>
-                <Switch checked={productCards.length > 0} onCheckedChange={(enabled) => {
-                  if (!enabled) {
-                    // Delete all product cards to disable
-                    productCards.forEach(card => onDeleteProductCard(card.id));
-                  } else {
-                    // Add a blank card to enable
-                    onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false });
-                  }
-                }} />
+                <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
               </div>
-              {productCards.length > 0 && (
+              {productCarouselEnabled && (
                 <div className="border-t border-border px-3 py-2.5 space-y-2">
                   {productCards.map((card) => (
                     <div key={card.id} className="flex items-start gap-1.5 group">

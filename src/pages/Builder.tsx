@@ -945,6 +945,8 @@ const Builder = () => {
                   onDeleteCustomLink={deleteCustomLink}
                   onReorderCustomLinks={reorderCustomLinks}
                   productCards={productCards}
+                  productCarouselEnabled={config.productCarouselEnabled}
+                  onProductCarouselToggle={(enabled) => saveConfig({ productCarouselEnabled: enabled })}
                   onAddProductCard={handleAddProductCard}
                   onUpdateProductCard={handleUpdateProductCard}
                   onDeleteProductCard={handleDeleteProductCard}
@@ -1007,7 +1009,8 @@ const Builder = () => {
                   backgroundType={config.backgroundType}
                   backgroundImage={config.backgroundImage}
                   logo={config.logo}
-                  productCards={previewProductCards}
+                productCards={previewProductCards}
+                productCarouselEnabled={config.productCarouselEnabled}
                   sayHello={config.sayHello}
                   language={config.language}
                   faqItems={faqItems}
@@ -1087,6 +1090,7 @@ const Builder = () => {
                 backgroundImage={config.backgroundImage}
                 logo={config.logo}
                 productCards={previewProductCards}
+                productCarouselEnabled={config.productCarouselEnabled}
                 sayHello={config.sayHello}
                 language={config.language}
                 faqItems={faqItems}

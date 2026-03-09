@@ -41,6 +41,7 @@ export interface WidgetConfiguration {
   googleBusinessUrl: string | null;
   googleBusinessPlaceId: string | null;
   ctaText: string;
+  productCarouselEnabled: boolean;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -81,6 +82,7 @@ const defaultConfig: WidgetConfiguration = {
   googleBusinessUrl: null,
   googleBusinessPlaceId: null,
   ctaText: "Contact us",
+  productCarouselEnabled: true,
 };
 
 export const useWidgetConfiguration = () => {
@@ -148,6 +150,7 @@ export const useWidgetConfiguration = () => {
             googleBusinessUrl: (data as any).google_business_url || null,
             googleBusinessPlaceId: (data as any).google_business_place_id || null,
             ctaText: (data as any).cta_text || "Contact us",
+            productCarouselEnabled: (data as any).product_carousel_enabled ?? true,
           });
         }
       } catch (error) {
@@ -210,6 +213,7 @@ export const useWidgetConfiguration = () => {
           google_business_url: updatedConfig.googleBusinessUrl,
           google_business_place_id: updatedConfig.googleBusinessPlaceId,
           cta_text: updatedConfig.ctaText,
+          product_carousel_enabled: updatedConfig.productCarouselEnabled,
         }, {
           onConflict: "user_id"
         })

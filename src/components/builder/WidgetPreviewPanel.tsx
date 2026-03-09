@@ -27,6 +27,7 @@ interface WidgetPreviewPanelProps {
   backgroundType?: "solid" | "gradient" | "image";
   backgroundImage?: string | null;
   productCards?: ProductCardData[];
+  productCarouselEnabled?: boolean;
   sayHello?: string;
   language?: string;
   faqItems?: FaqItemData[];
@@ -191,6 +192,7 @@ const WidgetPreviewPanel = ({
   backgroundType = "gradient",
   backgroundImage = null,
   productCards = [],
+  productCarouselEnabled = true,
   sayHello = "Hello, nice to see you here 👋",
   language = "en",
   faqItems = [],
@@ -2174,7 +2176,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Product Cards Section - horizontal carousel */}
-                {productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
+                {productCarouselEnabled && productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
                     {/* Solid mode background band - stops at ~1/4 of first card */}
                     {isSolidMode && (
                       <div 
