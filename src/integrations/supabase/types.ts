@@ -523,6 +523,7 @@ export type Database = {
           language: string
           logo: string | null
           offer_help: string
+          product_carousel_enabled: boolean
           say_hello: string
           selected_avatar: string | null
           show_branding: boolean
@@ -565,6 +566,7 @@ export type Database = {
           language?: string
           logo?: string | null
           offer_help?: string
+          product_carousel_enabled?: boolean
           say_hello?: string
           selected_avatar?: string | null
           show_branding?: boolean
@@ -607,6 +609,7 @@ export type Database = {
           language?: string
           logo?: string | null
           offer_help?: string
+          product_carousel_enabled?: boolean
           say_hello?: string
           selected_avatar?: string | null
           show_branding?: boolean
