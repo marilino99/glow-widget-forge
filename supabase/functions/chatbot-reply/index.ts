@@ -475,15 +475,16 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
         );
 
         if (matchedProducts.length > 0) {
-        metadata = {
-          products: matchedProducts.map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-          })),
-        };
-        console.log(`Product cards matched: ${matchedProducts.length}`);
+          metadata = {
+            products: matchedProducts.map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+            })),
+          };
+          console.log(`Product cards matched: ${matchedProducts.length}`);
+        }
       }
     }
 
