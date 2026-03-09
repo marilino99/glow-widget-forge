@@ -204,11 +204,11 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
     { icon: MessageSquareText, label: "Conversations", value: conversations, color: "#5b5b65" },
   ];
 
-  const securityCerts = [
-    { icon: CloudOff, name: "Zero-Training Guarantee", description: "Your documents and conversations are never used to train any AI model. Inference-only mode." },
-    { icon: Lock, name: "SSL Encrypted", description: "All data encrypted in transit via HTTPS/TLS" },
-    { icon: ShieldCheck, name: "Data Isolation", description: "Each account's data is logically isolated with row-level security policies" },
-    { icon: UserX, name: "No Third-Party Sharing", description: "Your data is never sold or shared with third parties" },
+  const securityFeatures = [
+    { icon: CloudOff, name: "No AI Training on Your Data", description: "Your documents and conversations are used for inference only — never for training AI models." },
+    { icon: Lock, name: "Encrypted Connections", description: "All data is transmitted over HTTPS/TLS encrypted connections." },
+    { icon: ShieldCheck, name: "Per-Account Data Isolation", description: "Each account's data is logically separated using row-level security policies." },
+    { icon: UserX, name: "No Data Sold to Third Parties", description: "We do not sell or share your data with any third party." },
   ];
 
   return (
