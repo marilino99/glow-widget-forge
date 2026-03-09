@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2 } from "lucide-react";
+import shopifyLogo from "@/assets/logo-shopify.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
