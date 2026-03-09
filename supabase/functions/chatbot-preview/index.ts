@@ -265,14 +265,16 @@ STRICT RULES:
         const matchedProducts = productCardsData.filter((p: any) =>
           requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
         );
-        metadata = {
-          products: matchedProducts.map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-          })),
-        };
+        if (matchedProducts.length > 0) {
+          metadata = {
+            products: matchedProducts.map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+            })),
+          };
+        }
       }
     }
 
