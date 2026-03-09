@@ -93,6 +93,8 @@ interface AppearancePanelProps {
   onReorderCustomLinks: (reordered: CustomLinkData[]) => void;
   // Product Carousel
   productCards: ProductCardData[];
+  productCarouselEnabled: boolean;
+  onProductCarouselToggle: (enabled: boolean) => void;
   onAddProductCard: (card: ProductCardData) => void;
   onUpdateProductCard: (id: string, updates: Partial<ProductCardData>) => void;
   onDeleteProductCard: (id: string) => void;
