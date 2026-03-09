@@ -468,15 +468,13 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
       // Always strip marker from visible text
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       
-      // Parse product titles from marker
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-      
-      // Match to actual product cards
-      const matchedProducts = productCardsData.filter((p: any) =>
-        requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-      );
+      if (productCardsData && productCardsData.length > 0) {
+        const matchedProducts = productCardsData.filter((p: any) =>
+          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+        );
 
-      if (matchedProducts.length > 0) {
+        if (matchedProducts.length > 0) {
         metadata = {
           products: matchedProducts.map((p: any) => ({
             title: p.title,

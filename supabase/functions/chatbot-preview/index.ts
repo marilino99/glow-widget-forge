@@ -261,10 +261,10 @@ STRICT RULES:
     if (productMarkerMatch) {
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-      const matchedProducts = productCardsData.filter((p: any) =>
-        requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-      );
-      if (matchedProducts.length > 0) {
+      if (productCardsData && productCardsData.length > 0) {
+        const matchedProducts = productCardsData.filter((p: any) =>
+          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+        );
         metadata = {
           products: matchedProducts.map((p: any) => ({
             title: p.title,
