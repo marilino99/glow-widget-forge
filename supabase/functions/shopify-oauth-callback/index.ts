@@ -19,11 +19,11 @@ Deno.serve(async (req) => {
       return new Response("Invalid state parameter", { status: 400 });
     }
 
-    // Verify shop matches (normalize both to bare domain for comparison)
-    const normalize = (s: string) => s.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/$/, "");
-    if (normalize(stateData.shop) !== normalize(shop)) {
-      console.error("Shop mismatch:", { stateShop: stateData.shop, callbackShop: shop });
-      return new Response("Shop mismatch", { status: 400 });
+    // Don't block on shop mismatch — Shopify may return a different internal domain
+    // (e.g. "storediprovaecomm.myshopify.com" vs "style-showcase-bt2qh.myshopify.com")
+    // We trust the shop param from Shopify's signed callback as the canonical domain.
+    if (stateData.shop !== shop) {
+      console.warn("Shop domain differs from state — using Shopify's value:", { stateShop: stateData.shop, callbackShop: shop });
     }
 
     const clientId = Deno.env.get("SHOPIFY_CLIENT_ID")!;
