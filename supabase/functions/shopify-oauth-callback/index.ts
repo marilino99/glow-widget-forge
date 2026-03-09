@@ -19,8 +19,10 @@ Deno.serve(async (req) => {
       return new Response("Invalid state parameter", { status: 400 });
     }
 
-    // Verify shop matches
-    if (stateData.shop !== shop) {
+    // Verify shop matches (normalize both to bare domain for comparison)
+    const normalize = (s: string) => s.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/$/, "");
+    if (normalize(stateData.shop) !== normalize(shop)) {
+      console.error("Shop mismatch:", { stateShop: stateData.shop, callbackShop: shop });
       return new Response("Shop mismatch", { status: 400 });
     }
 
