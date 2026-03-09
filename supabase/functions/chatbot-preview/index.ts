@@ -258,7 +258,7 @@ STRICT RULES:
     console.log(`Product cards available: ${productCardsData?.length || 0}`);
 
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
-    if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
+    if (productMarkerMatch) {
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
       const matchedProducts = productCardsData.filter((p: any) =>

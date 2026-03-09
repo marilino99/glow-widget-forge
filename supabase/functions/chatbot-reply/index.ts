@@ -464,8 +464,8 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
     let metadata: Record<string, unknown> | null = null;
 
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
-    if (productMarkerMatch && productCardsData && productCardsData.length > 0) {
-      // Strip marker from visible text
+    if (productMarkerMatch) {
+      // Always strip marker from visible text
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       
       // Parse product titles from marker
