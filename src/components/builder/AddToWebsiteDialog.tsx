@@ -53,8 +53,11 @@ const platforms: PlatformOption[] = [
 const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) => {
   const [copied, setCopied] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>("manual");
+  const [isInstallingShopify, setIsInstallingShopify] = useState(false);
+  const [shopifyInstalled, setShopifyInstalled] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { connection: shopifyConnection } = useShopifyConnection();
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
