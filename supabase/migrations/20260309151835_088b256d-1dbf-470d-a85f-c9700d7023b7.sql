@@ -1,0 +1,1 @@
+ALTER TABLE public.shopify_connections ADD COLUMN admin_access_token text DEFAULT NULL;
