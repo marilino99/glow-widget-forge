@@ -183,6 +183,8 @@ const AppearancePanel = ({
   onDeleteCustomLink,
   onReorderCustomLinks,
   productCards,
+  productCarouselEnabled,
+  onProductCarouselToggle,
   onAddProductCard,
   onUpdateProductCard,
   onDeleteProductCard,

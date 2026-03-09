@@ -945,6 +945,8 @@ const Builder = () => {
                   onDeleteCustomLink={deleteCustomLink}
                   onReorderCustomLinks={reorderCustomLinks}
                   productCards={productCards}
+                  productCarouselEnabled={config.productCarouselEnabled}
+                  onProductCarouselToggle={(enabled) => saveConfig({ productCarouselEnabled: enabled })}
                   onAddProductCard={handleAddProductCard}
                   onUpdateProductCard={handleUpdateProductCard}
                   onDeleteProductCard={handleDeleteProductCard}
