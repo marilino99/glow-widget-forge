@@ -265,10 +265,28 @@ STRICT RULES:
         const matchedProducts = productCardsData.filter((p: any) =>
           requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
         );
-        // Use matched products, or fallback to first 3 from catalog
         const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
+        // Ensure at least 2-3 products
+        const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
+          ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
+          : productsToShow;
         metadata = {
-          products: productsToShow.map((p: any) => ({
+          products: finalProducts.map((p: any) => ({
+            title: p.title,
+            imageUrl: p.image_url || null,
+            productUrl: p.product_url || null,
+            price: p.price || null,
+          })),
+        };
+      }
+    } else if (productCardsData && productCardsData.length > 0) {
+      // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
+      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text?.toLowerCase() || "";
+      const productKeywords = ["product", "prodott", "buy", "compra", "acquist", "shop", "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo", "cosa avete", "what do you have", "show me"];
+      const mentionsProducts = productKeywords.some(kw => lastUserMsg.includes(kw));
+      if (mentionsProducts) {
+        metadata = {
+          products: productCardsData.slice(0, 3).map((p: any) => ({
             title: p.title,
             imageUrl: p.image_url || null,
             productUrl: p.product_url || null,
