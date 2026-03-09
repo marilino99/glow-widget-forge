@@ -415,8 +415,8 @@ useEffect(() => {
       <DialogTrigger asChild>
         <div className={`group relative p-[2px] rounded-md overflow-hidden cursor-pointer ${fullWidth ? 'w-full' : ''}`}>
           <div className="absolute inset-[-100%] bg-[conic-gradient(from_0deg,red,orange,yellow,green,cyan,blue,purple,red)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ animation: "rainbow-spin 8s linear infinite" }} />
-          <Button size={fullWidth ? "default" : "sm"} className={`relative bg-primary hover:bg-primary text-primary-foreground border-0 ${fullWidth ? 'w-full' : 'w-full px-0'}`} style={!fullWidth ? { boxShadow: '0 0 12px 4px hsla(270, 80%, 65%, 0.45)' } : undefined}>
-            {fullWidth ? "Publish" : "🚀"}
+          <Button size={fullWidth ? "default" : "sm"} className={`relative bg-primary hover:bg-primary text-primary-foreground border-0 ${fullWidth ? 'w-full' : 'w-full px-0'}`}>
+            {fullWidth ? "Publish" : <span className="relative inline-flex items-center justify-center" style={{ filter: 'drop-shadow(0 0 6px hsla(270, 80%, 65%, 0.7)) drop-shadow(0 0 12px hsla(270, 80%, 65%, 0.4))' }}>🚀</span>}
           </Button>
         </div>
       </DialogTrigger>
