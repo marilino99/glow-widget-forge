@@ -1164,49 +1164,59 @@ const AppearancePanel = ({
                     <p className="text-[11px] text-muted-foreground">Showcase products</p>
                   </div>
                 </div>
-                <span className="text-[11px] text-muted-foreground">{productCards.length} products</span>
+                <Switch checked={productCards.length > 0} onCheckedChange={(enabled) => {
+                  if (!enabled) {
+                    // Delete all product cards to disable
+                    productCards.forEach(card => onDeleteProductCard(card.id));
+                  } else {
+                    // Add a blank card to enable
+                    onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false });
+                  }
+                }} />
               </div>
-              <div className="border-t border-border px-3 py-2.5 space-y-2">
-                {productCards.map((card) => (
-                  <div key={card.id} className="flex items-start gap-1.5 group">
-                    <div className="flex-1 space-y-1">
-                      <Input
-                        value={card.title}
-                        onChange={(e) => onUpdateProductCard(card.id, { title: e.target.value })}
-                        placeholder="Product title"
-                        className="h-7 rounded-md border-border bg-muted/50 text-xs"
-                      />
-                      <div className="flex gap-1">
+              {productCards.length > 0 && (
+                <div className="border-t border-border px-3 py-2.5 space-y-2">
+                  {productCards.map((card) => (
+                    <div key={card.id} className="flex items-start gap-1.5 group">
+                      <div className="flex-1 space-y-1">
                         <Input
-                          value={card.price || ""}
-                          onChange={(e) => onUpdateProductCard(card.id, { price: e.target.value })}
-                          placeholder="Price"
-                          className="h-7 w-20 rounded-md border-border bg-muted/50 text-xs"
+                          value={card.title}
+                          onChange={(e) => onUpdateProductCard(card.id, { title: e.target.value })}
+                          placeholder="Product title"
+                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
                         />
-                        <Input
-                          value={card.productUrl || ""}
-                          onChange={(e) => onUpdateProductCard(card.id, { productUrl: e.target.value })}
-                          placeholder="Product URL"
-                          className="h-7 flex-1 rounded-md border-border bg-muted/50 text-xs"
-                        />
+                        <div className="flex gap-1">
+                          <Input
+                            value={card.price || ""}
+                            onChange={(e) => onUpdateProductCard(card.id, { price: e.target.value })}
+                            placeholder="Price"
+                            className="h-7 w-20 rounded-md border-border bg-muted/50 text-xs"
+                          />
+                          <Input
+                            value={card.productUrl || ""}
+                            onChange={(e) => onUpdateProductCard(card.id, { productUrl: e.target.value })}
+                            placeholder="Product URL"
+                            className="h-7 flex-1 rounded-md border-border bg-muted/50 text-xs"
+                          />
+                        </div>
                       </div>
+                      <button
+                        onClick={() => onDeleteProductCard(card.id)}
+                        className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => onDeleteProductCard(card.id)}
-                      className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  onClick={() => onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false })}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                >
-                  <Plus className="h-3 w-3" />
-                  Add product
-                </button>
-              </div>
+                  ))}
+                  <button
+                    onClick={() => onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false })}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add product
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Instagram UGC */}
