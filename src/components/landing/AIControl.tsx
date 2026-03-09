@@ -172,7 +172,7 @@ const AIControl = () => {
         </motion.div>
 
         {/* Card 1 — Security & Compliance */}
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#ffffff" }}>
+        <motion.div id="security" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="rounded-3xl p-8 md:p-10" style={{ backgroundColor: "#ffffff" }}>
           <div className="mb-6">
             <h3 className="text-xl md:text-2xl font-bold text-[#2a2a2a]">{t.secTitle}</h3>
             <p className="mt-1.5 text-sm text-[#6b6760]">{t.secSubtitle}</p>
