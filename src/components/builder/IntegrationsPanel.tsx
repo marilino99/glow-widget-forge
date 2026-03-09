@@ -27,8 +27,8 @@ const IntegrationsPanel = () => {
           {/* Shopify Card */}
           <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
             <div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl text-xl bg-[#96bf48]/10">
-                🛍️
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#96bf48]/10">
+                <img src={shopifyLogo} alt="Shopify" className="h-7 w-7 object-contain" />
               </div>
 
               <h3 className="mt-3.5 text-sm font-semibold text-foreground">Shopify</h3>
