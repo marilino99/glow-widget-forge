@@ -1262,16 +1262,12 @@ const WidgetPreviewPanel = ({
                         ].map((suggestion, i) => (
                           <div 
                             key={i}
-                            className={`flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors ${
+                            className={`flex items-center px-4 py-2 cursor-pointer transition-colors ${
                               !isLight 
                                 ? 'hover:bg-zinc-800 text-zinc-300' 
                                 : 'hover:bg-slate-50 text-slate-700'
                             }`}
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 flex-shrink-0 ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <circle cx="11" cy="11" r="8" />
-                              <path d="m21 21-4.3-4.3" />
-                            </svg>
                             <span className="text-xs">{suggestion}</span>
                           </div>
                         ))}
