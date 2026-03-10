@@ -874,7 +874,300 @@ Deno.serve(async (req) => {
       return;
     }
 
-    // ============ POPUP LAYOUT (existing code) ============
+    // ============ SEARCH BAR LAYOUT ============
+    if (widgetType === 'search-bar') {
+      // Visitor tracking
+      var visitorId = localStorage.getItem('wj_visitor_id');
+      if (!visitorId) { visitorId = 'v_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now(); localStorage.setItem('wj_visitor_id', visitorId); }
+      var visitorToken = localStorage.getItem('wj_visitor_token') || '';
+      var lastMessageId = null;
+      var renderedMessageIds = {};
+
+      // Create overlay
+      var sbOverlay = d.createElement('div');
+      sbOverlay.id = 'wj-sb-overlay';
+
+      // Create container
+      var sbContainer = d.createElement('div');
+      sbContainer.id = 'wj-sb-container';
+
+      // Create search box
+      var sbBox = d.createElement('div');
+      sbBox.id = 'wj-sb-box';
+
+      // Input wrap
+      var sbInputWrap = d.createElement('div');
+      sbInputWrap.id = 'wj-sb-input-wrap';
+      sbInputWrap.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="wj-sb-input" type="text" placeholder="' + esc(hello || 'Search products...') + '" autocomplete="off"/><button id="wj-sb-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button>';
+      sbBox.appendChild(sbInputWrap);
+
+      // Results area
+      var sbResults = d.createElement('div');
+      sbResults.id = 'wj-sb-results';
+      sbBox.appendChild(sbResults);
+
+      // Powered by
+      if (showBranding) {
+        var sbPowered = d.createElement('div');
+        sbPowered.id = 'wj-sb-powered';
+        sbPowered.innerHTML = poweredHtml;
+        sbBox.appendChild(sbPowered);
+      }
+
+      sbContainer.appendChild(sbBox);
+      root.appendChild(sbOverlay);
+      root.appendChild(sbContainer);
+
+      // Track impression
+      trackEvent('impression');
+
+      // Hijack existing search inputs on the page
+      function hijackSearchInputs() {
+        var searchSelectors = [
+          'input[type="search"]',
+          'input[name="q"]',
+          'input[name="search"]',
+          'input[name="query"]',
+          '.search-input input',
+          '.search__input',
+          '#Search',
+          '#SearchModal input',
+          'predictive-search input',
+          '[data-search-input]',
+          'form[action="/search"] input[type="text"]',
+          'form[action="/search"] input[type="search"]'
+        ];
+
+        searchSelectors.forEach(function(sel) {
+          try {
+            var inputs = d.querySelectorAll(sel);
+            inputs.forEach(function(inp) {
+              if (inp.dataset.wjHijacked) return;
+              inp.dataset.wjHijacked = 'true';
+              inp.addEventListener('focus', function(e) {
+                e.preventDefault();
+                e.target.blur();
+                openSearchBar();
+              });
+              inp.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openSearchBar();
+              });
+            });
+          } catch(e) {}
+        });
+
+        // Also hijack search icons/buttons
+        var iconSelectors = [
+          'a[href="/search"]',
+          'button[data-action*="search"]',
+          '.search-modal__toggle-open',
+          'details-modal[data-modal-content*="search"] summary',
+          '[data-search-toggle]'
+        ];
+        iconSelectors.forEach(function(sel) {
+          try {
+            var els = d.querySelectorAll(sel);
+            els.forEach(function(el) {
+              if (el.dataset.wjHijacked) return;
+              el.dataset.wjHijacked = 'true';
+              el.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openSearchBar();
+              });
+            });
+          } catch(e) {}
+        });
+      }
+
+      // Run hijack after DOM is ready and also observe for dynamically added elements
+      hijackSearchInputs();
+      setTimeout(hijackSearchInputs, 1000);
+      setTimeout(hijackSearchInputs, 3000);
+
+      // Also observe DOM changes (for Shopify themes that load search modals lazily)
+      try {
+        var observer = new MutationObserver(function() { hijackSearchInputs(); });
+        observer.observe(d.body, { childList: true, subtree: true });
+        // Stop observing after 10s to avoid performance issues
+        setTimeout(function() { observer.disconnect(); }, 10000);
+      } catch(e) {}
+
+      function openSearchBar() {
+        sbOverlay.classList.add('open');
+        sbContainer.classList.add('open');
+        var sbInput = d.getElementById('wj-sb-input');
+        if (sbInput) { setTimeout(function() { sbInput.focus(); }, 100); }
+        trackEvent('click');
+      }
+
+      function closeSearchBar() {
+        sbOverlay.classList.remove('open');
+        sbContainer.classList.remove('open');
+        sbResults.innerHTML = '';
+        var sbInput = d.getElementById('wj-sb-input');
+        if (sbInput) sbInput.value = '';
+      }
+
+      // Close handlers
+      sbOverlay.onclick = closeSearchBar;
+      d.getElementById('wj-sb-close').onclick = closeSearchBar;
+      d.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sbContainer.classList.contains('open')) closeSearchBar();
+      });
+
+      // Search input handler
+      var sbInput = d.getElementById('wj-sb-input');
+      var searchTimeout = null;
+
+      function showLoading() {
+        sbResults.innerHTML = '<div class="wj-sb-loading"><div class="wj-sb-loading-dot"></div><div class="wj-sb-loading-dot"></div><div class="wj-sb-loading-dot"></div></div>';
+      }
+
+      function renderSearchResults(msg) {
+        var html = '';
+        // AI text response
+        if (msg.content) {
+          html += '<div class="wj-sb-ai-msg">' + esc(msg.content) + '</div>';
+        }
+        // Product cards
+        if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
+          html += '<div class="wj-sb-products">';
+          msg.metadata.products.forEach(function(prod) {
+            var url = prod.productUrl || '#';
+            var imgHtml = prod.imageUrl
+              ? '<img src="' + esc(prod.imageUrl) + '" alt="' + esc(prod.title || '') + '"/>'
+              : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:' + textSub + ';padding:8px;text-align:center">' + esc(prod.title || '') + '</div>';
+            html += '<a class="wj-sb-prod" href="' + esc(url) + '" target="_blank" rel="noopener">';
+            html += '<div class="wj-sb-prod-img">' + imgHtml + '</div>';
+            html += '<div class="wj-sb-prod-info">';
+            html += '<div class="wj-sb-prod-title">' + esc(prod.title || '') + '</div>';
+            if (prod.price) {
+              html += '<div class="wj-sb-prod-price">' + esc(prod.price);
+              if (prod.oldPrice) html += '<span class="wj-sb-prod-old">' + esc(prod.oldPrice) + '</span>';
+              html += '</div>';
+            }
+            html += '</div></a>';
+          });
+          html += '</div>';
+        }
+        sbResults.innerHTML = html;
+      }
+
+      // Also show product cards from config as initial suggestions
+      function showProductSuggestions() {
+        if (products.length > 0) {
+          var html = '<div class="wj-sb-products">';
+          products.forEach(function(p) {
+            var url = p.product_url || '#';
+            var imgHtml = p.image_url
+              ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.title || '') + '"/>'
+              : '';
+            html += '<a class="wj-sb-prod" href="' + esc(url) + '" target="_blank" rel="noopener">';
+            html += '<div class="wj-sb-prod-img">' + imgHtml + '</div>';
+            html += '<div class="wj-sb-prod-info">';
+            html += '<div class="wj-sb-prod-title">' + esc(p.title || '') + '</div>';
+            if (p.price) {
+              html += '<div class="wj-sb-prod-price">' + esc(p.price);
+              if (p.old_price) html += '<span class="wj-sb-prod-old">' + esc(p.old_price) + '</span>';
+              html += '</div>';
+            }
+            html += '</div></a>';
+          });
+          html += '</div>';
+          sbResults.innerHTML = html;
+        }
+      }
+
+      function sendSearchQuery(query) {
+        if (!query || !query.trim()) { sbResults.innerHTML = ''; showProductSuggestions(); return; }
+        showLoading();
+        var tempId = 'temp_' + Date.now();
+        renderedMessageIds[tempId] = true;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', u + '/functions/v1/send-chat-message', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState !== 4) return;
+          if (xhr.status === 200) {
+            try {
+              var res = JSON.parse(xhr.responseText);
+              if (res.visitorToken) { visitorToken = res.visitorToken; localStorage.setItem('wj_visitor_token', visitorToken); }
+              if (res.messageId) { renderedMessageIds[res.messageId] = true; lastMessageId = res.messageId; }
+              // Now poll for the AI response
+              pollForAnswer();
+            } catch(e) { sbResults.innerHTML = ''; }
+          } else {
+            sbResults.innerHTML = '';
+          }
+        };
+        xhr.send(JSON.stringify({
+          widgetId: id,
+          visitorId: visitorId,
+          visitorToken: visitorToken,
+          message: query.trim(),
+          visitorName: 'Visitor',
+          visitorCountry: visitorCountry,
+          visitorRegion: visitorRegion,
+          visitorCity: visitorCity,
+          visitorBrowser: visitorBrowser,
+          visitorSystem: visitorSystem
+        }));
+      }
+
+      function pollForAnswer() {
+        var attempts = 0;
+        var maxAttempts = 20;
+        var pollTimer = setInterval(function() {
+          attempts++;
+          if (attempts > maxAttempts) { clearInterval(pollTimer); sbResults.innerHTML = ''; return; }
+          var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
+          if (lastMessageId) pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', pollUrl, true);
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4 || xhr.status !== 200) return;
+            try {
+              var res = JSON.parse(xhr.responseText);
+              if (res.messages && res.messages.length > 0) {
+                var aiMsg = null;
+                res.messages.forEach(function(msg) {
+                  if (!renderedMessageIds[msg.id]) {
+                    renderedMessageIds[msg.id] = true;
+                    lastMessageId = msg.id;
+                    if (msg.sender_type !== 'visitor') aiMsg = msg;
+                  }
+                });
+                if (aiMsg) {
+                  clearInterval(pollTimer);
+                  renderSearchResults(aiMsg);
+                }
+              }
+            } catch(e) {}
+          };
+          xhr.send();
+        }, 1500);
+      }
+
+      if (sbInput) {
+        sbInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            sendSearchQuery(sbInput.value);
+          }
+        });
+      }
+
+      d.body.appendChild(root);
+
+      // Inject custom JS
+      if (customJs) { try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
+      return;
+    }
+
     var pop = d.createElement('div');
     pop.id = 'wj-pop';
 
