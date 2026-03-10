@@ -404,7 +404,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
             })),
           ],
           temperature: 0.7,
-          max_tokens: 500,
+          max_tokens: 800,
         }),
       });
 
