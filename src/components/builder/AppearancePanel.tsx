@@ -798,11 +798,12 @@ const AppearancePanel = ({
                       : "border-border bg-card/50"
                   }`}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
-                    <Search className="h-5 w-5 text-foreground" />
-                  </div>
-                  <span className="text-xs font-medium text-foreground">Search Bar</span>
-                </button>
+                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
+                     <Search className="h-5 w-5 text-foreground" />
+                   </div>
+                   <span className="text-xs font-medium text-foreground">Search Bar</span>
+                   <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">Coming soon</span>
+                 </button>
               </div>
             </div>
 
