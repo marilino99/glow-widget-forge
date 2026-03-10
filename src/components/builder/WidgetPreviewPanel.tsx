@@ -1206,14 +1206,14 @@ const WidgetPreviewPanel = ({
           {/* Search Bar widget type */}
           {widgetType === "search-bar" && (
             <div className="absolute inset-0">
-              <div className={`h-full w-full p-8 space-y-5 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
+              <div className={`h-full w-full px-6 py-4 space-y-3 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
                 {/* Header placeholder */}
                 <div className="flex items-center justify-between">
-                  <div className={`h-10 w-1/4 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                  <div className="flex gap-3 items-center">
-                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  <div className={`h-7 w-1/5 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  <div className="flex gap-2 items-center">
+                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                   </div>
                 </div>
 
