@@ -1239,7 +1239,7 @@ const WidgetPreviewPanel = ({
                       </button>
                     )}
                     {/* Widget FAB menu */}
-                    <div className="relative flex-shrink-0">
+                    <div className="flex-shrink-0">
                       <div 
                         className={`h-6 w-6 rounded-full flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-200 ${widgetMenuOpen ? '' : 'animate-[glow-pulse_2.5s_ease-in-out_infinite]'}`}
                         style={{ 
@@ -1256,33 +1256,33 @@ const WidgetPreviewPanel = ({
                             : <HelpCircle className="h-3 w-3 text-white" />
                         }
                       </div>
-                      
-                      {/* FAB expanded options */}
-                      {widgetMenuOpen && (
-                        <div className="absolute right-0 top-full mt-2 flex flex-col items-end gap-1.5 z-50">
-                          {[
-                            { icon: <MessageCircle className="h-3 w-3" />, label: "Chat" },
-                            { icon: <HelpCircle className="h-3 w-3" />, label: "FAQ" },
-                            { icon: <Home className="h-3 w-3" />, label: "Home" },
-                          ].map((item, i) => (
-                            <div
-                              key={i}
-                              className={`flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full shadow-md cursor-pointer transition-all text-white text-[10px] font-medium opacity-0 animate-[fade-in_0.2s_ease-out_forwards]`}
-                              style={{ 
-                                backgroundColor: actualHexColor,
-                                animationDelay: `${i * 60}ms`,
-                              }}
-                            >
-                              <span>{item.label}</span>
-                              <div className="h-5 w-5 rounded-full bg-white/20 flex items-center justify-center">
-                                {item.icon}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
+
+                  {/* FAB expanded options */}
+                  {widgetMenuOpen && (
+                    <div className="flex flex-col items-end gap-1.5 mt-2">
+                      {[
+                        { icon: <MessageCircle className="h-3 w-3" />, label: "Chat" },
+                        { icon: <HelpCircle className="h-3 w-3" />, label: "FAQ" },
+                        { icon: <Home className="h-3 w-3" />, label: "Home" },
+                      ].map((item, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full shadow-md cursor-pointer transition-all text-white text-[10px] font-medium opacity-0 animate-[fade-in_0.2s_ease-out_forwards]"
+                          style={{ 
+                            backgroundColor: actualHexColor,
+                            animationDelay: `${i * 60}ms`,
+                          }}
+                        >
+                          <span>{item.label}</span>
+                          <div className="h-5 w-5 rounded-full bg-white/20 flex items-center justify-center">
+                            {item.icon}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   {/* Suggestions dropdown */}
                   {searchBarOpen && (
