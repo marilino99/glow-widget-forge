@@ -1259,7 +1259,7 @@ const WidgetPreviewPanel = ({
                       
                       {/* FAB expanded options */}
                       {widgetMenuOpen && (
-                        <div className="absolute right-0 bottom-full mb-2 flex flex-col items-end gap-1.5 z-50">
+                        <div className="absolute right-0 top-full mt-2 flex flex-col items-end gap-1.5 z-50">
                           {[
                             { icon: <MessageCircle className="h-3 w-3" />, label: "Chat" },
                             { icon: <HelpCircle className="h-3 w-3" />, label: "FAQ" },
