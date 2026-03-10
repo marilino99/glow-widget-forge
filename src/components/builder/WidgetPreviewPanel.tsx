@@ -1243,6 +1243,13 @@ const WidgetPreviewPanel = ({
                           <X className={`h-4 w-4 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
                         </button>
                       )}
+                      {/* Small widget logo inside search bar */}
+                      <div 
+                        className="flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center overflow-hidden"
+                        style={{ backgroundColor: actualHexColor }}
+                      >
+                        {buttonLogo ? <img src={buttonLogo} alt="" className="h-full w-full object-cover" /> : <HelpCircle className="h-4 w-4 text-white" />}
+                      </div>
                     </div>
 
                     {/* Expanded search results */}
