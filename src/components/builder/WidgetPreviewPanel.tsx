@@ -1249,34 +1249,14 @@ const WidgetPreviewPanel = ({
                     </div>
                   </div>
 
-                  {/* Suggestions dropdown */}
-                  {searchBarOpen && (
-                    <div className={`mt-1 rounded-xl border shadow-lg overflow-hidden ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}>
-                      {[
-                        "summer dress",
-                        "sneakers men",
-                        "wireless headphones",
-                        "kitchen accessories",
-                        "yoga mat",
-                        "sunglasses polarized",
-                      ].map((suggestion, i) => (
-                        <div 
-                          key={i}
-                          className={`flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors ${
-                            !isLight 
-                              ? 'hover:bg-zinc-800 text-zinc-300' 
-                              : 'hover:bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 flex-shrink-0 ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.3-4.3" />
-                          </svg>
-                          <span className="text-xs">{suggestion}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                   {/* Suggestions dropdown */}
+                   {searchBarOpen && (
+                     <div className={`mt-1 rounded-xl border shadow-lg overflow-hidden ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}>
+                       <div className={`flex items-center justify-center py-6 ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>
+                         <span className="text-xs font-medium tracking-wide uppercase">Coming soon</span>
+                       </div>
+                     </div>
+                   )}
                   </div>
                   
                   <div className={`flex gap-2 items-center flex-shrink-0 transition-all duration-300 ${searchBarOpen ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100'}`}>
