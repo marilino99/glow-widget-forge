@@ -1212,7 +1212,7 @@ const WidgetPreviewPanel = ({
                   <div className={`h-8 w-[18%] flex-shrink-0 rounded-xl ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                   
                   {/* Search Bar - centered */}
-                  <div className="relative flex-1 max-w-[65%]">
+                  <div className={`relative flex-1 transition-all duration-300 ${searchBarOpen ? 'max-w-full' : 'max-w-[65%]'}`}>
                   {/* Search input bar */}
                   <div 
                     className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all cursor-pointer ${
