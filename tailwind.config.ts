@@ -118,6 +118,14 @@ export default {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
+        "glow-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 4px 1px var(--glow-color, #3b82f6)30, 0 0 8px 3px var(--glow-color, #3b82f6)15",
+          },
+          "50%": {
+            boxShadow: "0 0 8px 3px var(--glow-color, #3b82f6)50, 0 0 16px 6px var(--glow-color, #3b82f6)25",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
