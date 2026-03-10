@@ -1310,6 +1310,8 @@ const WidgetPreviewPanel = ({
                   <div className={`h-2 w-16 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
                 </div>
               </div>
+              {/* Bottom fade gradient */}
+              <div className={`absolute bottom-0 left-0 right-0 h-32 pointer-events-none ${!isLight ? 'bg-gradient-to-t from-zinc-950 to-transparent' : 'bg-gradient-to-t from-white to-transparent'}`} />
             </div>
           )}
 
