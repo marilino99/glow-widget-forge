@@ -228,6 +228,7 @@ const WidgetPreviewPanel = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAnimatingCollapse, setIsAnimatingCollapse] = useState(false);
   const [isAnimatingExpand, setIsAnimatingExpand] = useState(false);
+  const [searchBarOpen, setSearchBarOpen] = useState(false);
   const [showButtonPop, setShowButtonPop] = useState(false);
   const [showFaqPills, setShowFaqPills] = useState(false);
   const [isBottomBarExpanded, setIsBottomBarExpanded] = useState(false);
@@ -1203,7 +1204,28 @@ const WidgetPreviewPanel = ({
           )}
 
           {/* Search Bar widget type */}
-          {widgetType === "search-bar" && (
+          {widgetType === "search-bar" && !searchBarOpen && (
+            <div className="absolute inset-0 flex flex-col items-center justify-start pt-16 px-6">
+              <div 
+                className={`w-full max-w-[500px] rounded-xl border shadow-md overflow-hidden cursor-pointer transition-all hover:shadow-lg ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}
+                onClick={() => setSearchBarOpen(true)}
+              >
+                <div className={`flex items-center gap-3 px-5 py-4`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                  <span className={`flex-1 text-base ${!isLight ? 'text-zinc-300' : 'text-slate-500'}`}>
+                    {sayHello || "Search products..."}
+                  </span>
+                </div>
+              </div>
+              <p className={`mt-4 text-xs text-center max-w-[400px] ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>
+                This search bar replaces your store's search — customers get AI-powered product discovery
+              </p>
+            </div>
+          )}
+          {widgetType === "search-bar" && searchBarOpen && (
             <div className="absolute inset-0 flex flex-col items-center justify-start pt-16 px-6">
               <div className={`w-full max-w-[500px] rounded-xl border shadow-xl overflow-hidden ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}>
                 <div className={`flex items-center gap-3 px-5 py-4 border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}`}>
@@ -1214,9 +1236,12 @@ const WidgetPreviewPanel = ({
                   <span className={`flex-1 text-base ${!isLight ? 'text-zinc-300' : 'text-slate-500'}`}>
                     {sayHello || "Search products..."}
                   </span>
-                  <div className={`p-1.5 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-100'}`}>
+                  <button 
+                    onClick={() => setSearchBarOpen(false)}
+                    className={`p-1.5 rounded-lg cursor-pointer transition-colors ${!isLight ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                  >
                     <X className={`h-4 w-4 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
-                  </div>
+                  </button>
                 </div>
                 <div className={`px-5 py-3 border-b text-sm leading-relaxed ${!isLight ? 'border-zinc-700 text-zinc-300' : 'border-slate-50 text-slate-600'}`}>
                   {t.welcomeMessage || "I can help you find the perfect product!"}
