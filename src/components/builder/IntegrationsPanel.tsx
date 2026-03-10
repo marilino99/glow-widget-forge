@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
@@ -8,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 const IntegrationsPanel = () => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
 
   const isConnected = !!connection;
 
@@ -74,7 +76,7 @@ const IntegrationsPanel = () => {
                     {isSyncing ? "Syncing…" : "Sync now"}
                   </button>
                   <button
-                    onClick={() => disconnect()}
+                    onClick={() => setDisconnectDialogOpen(true)}
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                     title="Disconnect"
                   >
@@ -110,6 +112,26 @@ const IntegrationsPanel = () => {
         onOpenChange={setDialogOpen}
         onConnect={connectOAuth}
       />
+
+      <AlertDialog open={disconnectDialogOpen} onOpenChange={setDisconnectDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disconnect Shopify?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disconnect your Shopify store? You'll need to reconnect and re-authorize to use Shopify features again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => disconnect()}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Disconnect
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
