@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart, Heart } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -1022,22 +1022,38 @@ const WidgetPreviewPanel = ({
                               {msg.metadata?.products && msg.metadata.products.length > 0 && (
                                 <div className="flex gap-2 mt-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                                   {msg.metadata.products.map((prod, pi) => (
-                                    <a
+                                    <div
                                       key={pi}
-                                      href={prod.productUrl || '#'}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="shrink-0 w-16 h-16 rounded-xl overflow-hidden block"
+                                      className="shrink-0 w-28 rounded-xl overflow-hidden flex flex-col"
                                       style={{ background: isLight ? '#e2e8f0' : '#374151' }}
                                     >
-                                      {prod.imageUrl ? (
-                                        <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
-                                          {prod.title}
-                                        </div>
+                                      <a
+                                        href={prod.productUrl || '#'}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block w-full h-20 overflow-hidden"
+                                      >
+                                        {prod.imageUrl ? (
+                                          <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
+                                            {prod.title}
+                                          </div>
+                                        )}
+                                      </a>
+                                      {prod.price && (
+                                        <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
                                       )}
-                                    </a>
+                                      <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
+                                      <div className="flex gap-1 px-1.5 pb-1.5">
+                                        <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                          <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
+                                        </button>
+                                        <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                          <Heart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
+                                        </button>
+                                      </div>
+                                    </div>
                                   ))}
                                 </div>
                               )}
@@ -1386,22 +1402,38 @@ const WidgetPreviewPanel = ({
                           {msg.metadata?.products && msg.metadata.products.length > 0 && (
                             <div className="flex gap-2 mt-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                               {msg.metadata.products.map((prod, pi) => (
-                                <a
+                                <div
                                   key={pi}
-                                  href={prod.productUrl || '#'}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="shrink-0 w-16 h-16 rounded-xl overflow-hidden block"
+                                  className="shrink-0 w-28 rounded-xl overflow-hidden flex flex-col"
                                   style={{ background: isLight ? '#e2e8f0' : '#374151' }}
                                 >
-                                  {prod.imageUrl ? (
-                                    <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
-                                      {prod.title}
-                                    </div>
+                                  <a
+                                    href={prod.productUrl || '#'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full h-20 overflow-hidden"
+                                  >
+                                    {prod.imageUrl ? (
+                                      <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
+                                        {prod.title}
+                                      </div>
+                                    )}
+                                  </a>
+                                  {prod.price && (
+                                    <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
                                   )}
-                                </a>
+                                  <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
+                                  <div className="flex gap-1 px-1.5 pb-1.5">
+                                    <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                      <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
+                                    </button>
+                                    <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                      <Heart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
+                                    </button>
+                                  </div>
+                                </div>
                               ))}
                             </div>
                           )}
@@ -2228,6 +2260,29 @@ const WidgetPreviewPanel = ({
                                     {t.show}
                                   </Button>
                                 )}
+                                {/* Add to Cart & Favorites buttons */}
+                                <div className="flex gap-2 mt-2">
+                                  <button
+                                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors ${
+                                      isSolidMode || !isLight
+                                        ? "bg-white/10 hover:bg-white/20 text-white"
+                                        : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                                    }`}
+                                    onClick={(e) => e.preventDefault()}
+                                  >
+                                    <ShoppingCart className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors ${
+                                      isSolidMode || !isLight
+                                        ? "bg-white/10 hover:bg-white/20 text-white"
+                                        : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                                    }`}
+                                    onClick={(e) => e.preventDefault()}
+                                  >
+                                    <Heart className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
                               </div>
                             </div>)}
                         </div>
