@@ -1290,13 +1290,6 @@ const WidgetPreviewPanel = ({
                       </>
                     )}
                   </div>
-                  {/* Widget launcher button */}
-                  <div 
-                    className="flex-shrink-0 mt-1 h-10 w-10 rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-transform hover:scale-105 overflow-hidden"
-                    style={{ backgroundColor: actualHexColor }}
-                  >
-                    {buttonLogo ? <img src={buttonLogo} alt="Widget logo" className="h-full w-full object-cover" /> : <HelpCircle className="h-5 w-5 text-white" />}
-                  </div>
                 </div>
 
                 {/* Product grid placeholder (e-commerce template) */}
