@@ -1209,10 +1209,10 @@ const WidgetPreviewPanel = ({
               <div className={`h-full w-full px-6 py-3 space-y-2 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
                 {/* Header with nav items and search bar on same line */}
                 <div className="flex items-center justify-between gap-2">
-                  <div className={`h-8 w-[18%] flex-shrink-0 rounded-xl ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  <div className={`h-8 flex-shrink-0 rounded-xl transition-all duration-300 ${searchBarOpen ? 'w-0 opacity-0 overflow-hidden' : 'w-[18%] opacity-100'} ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                   
                   {/* Search Bar - centered */}
-                  <div className="relative flex-1 max-w-[65%]">
+                  <div className={`relative flex-1 transition-all duration-300 ${searchBarOpen ? 'max-w-full' : 'max-w-[65%]'}`}>
                   {/* Search input bar */}
                   <div 
                     className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all cursor-pointer ${
@@ -1284,7 +1284,7 @@ const WidgetPreviewPanel = ({
                   )}
                   </div>
                   
-                  <div className="flex gap-2 items-center flex-shrink-0">
+                  <div className={`flex gap-2 items-center flex-shrink-0 transition-all duration-300 ${searchBarOpen ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100'}`}>
                     <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                     <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                   </div>
