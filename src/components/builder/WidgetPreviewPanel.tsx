@@ -1204,81 +1204,105 @@ const WidgetPreviewPanel = ({
           )}
 
           {/* Search Bar widget type */}
-          {widgetType === "search-bar" && !searchBarOpen && (
-            <div className="absolute inset-0 flex flex-col items-center justify-start pt-16 px-6">
-              <div 
-                className={`w-full max-w-[500px] rounded-xl border shadow-md overflow-hidden cursor-pointer transition-all hover:shadow-lg ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}
-                onClick={() => setSearchBarOpen(true)}
-              >
-                <div className={`flex items-center gap-3 px-5 py-4`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
-                  <span className={`flex-1 text-base ${!isLight ? 'text-zinc-300' : 'text-slate-500'}`}>
-                    {sayHello || "Search products..."}
-                  </span>
+          {widgetType === "search-bar" && (
+            <div className="absolute inset-0">
+              <div className={`h-full w-full p-8 space-y-5 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
+                {/* Header placeholder */}
+                <div className="flex items-center justify-between">
+                  <div className={`h-10 w-1/4 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  <div className="flex gap-3 items-center">
+                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  </div>
                 </div>
-              </div>
-              <p className={`mt-4 text-xs text-center max-w-[400px] ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>
-                This search bar replaces your store's search — customers get AI-powered product discovery
-              </p>
-            </div>
-          )}
-          {widgetType === "search-bar" && searchBarOpen && (
-            <div className="absolute inset-0 flex flex-col items-center justify-start pt-16 px-6">
-              <div className={`w-full max-w-[500px] rounded-xl border shadow-xl overflow-hidden ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}>
-                <div className={`flex items-center gap-3 px-5 py-4 border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
-                  <span className={`flex-1 text-base ${!isLight ? 'text-zinc-300' : 'text-slate-500'}`}>
-                    {sayHello || "Search products..."}
-                  </span>
-                  <button 
-                    onClick={() => setSearchBarOpen(false)}
-                    className={`p-1.5 rounded-lg cursor-pointer transition-colors ${!isLight ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+
+                {/* Search Bar - integrated into template */}
+                <div className="relative">
+                  <div 
+                    className={`w-full rounded-xl border overflow-hidden transition-all cursor-pointer ${
+                      searchBarOpen 
+                        ? `shadow-xl ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-300'}` 
+                        : `shadow-sm ${!isLight ? 'bg-zinc-900 border-zinc-700 hover:border-zinc-600' : 'bg-white border-slate-200 hover:border-slate-300'} hover:shadow-md`
+                    }`}
+                    onClick={() => !searchBarOpen && setSearchBarOpen(true)}
                   >
-                    <X className={`h-4 w-4 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
-                  </button>
-                </div>
-                <div className={`px-5 py-3 border-b text-sm leading-relaxed ${!isLight ? 'border-zinc-700 text-zinc-300' : 'border-slate-50 text-slate-600'}`}>
-                  {t.welcomeMessage || "I can help you find the perfect product!"}
-                </div>
-                {productCards.length > 0 && (
-                  <div className="grid grid-cols-2 gap-3 p-4">
-                    {productCards.slice(0, 4).map((card) => (
-                      <div key={card.id} className={`rounded-xl overflow-hidden ${!isLight ? 'bg-zinc-800' : 'bg-slate-50'}`}>
-                        <div className={`aspect-square flex items-center justify-center ${!isLight ? 'bg-zinc-700' : 'bg-slate-100'}`}>
-                          {card.imageUrl ? (
-                            <img src={card.imageUrl} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <ShoppingCart className={`h-6 w-6 ${!isLight ? 'text-zinc-500' : 'text-slate-300'}`} />
-                          )}
+                    <div className={`flex items-center gap-3 px-5 py-3.5 ${searchBarOpen ? `border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}` : ''}`}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.3-4.3" />
+                      </svg>
+                      <span className={`flex-1 text-sm ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`}>
+                        {sayHello || "Search products..."}
+                      </span>
+                      {searchBarOpen && (
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setSearchBarOpen(false); }}
+                          className={`p-1.5 rounded-lg cursor-pointer transition-colors ${!isLight ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                        >
+                          <X className={`h-4 w-4 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Expanded search results */}
+                    {searchBarOpen && (
+                      <>
+                        <div className={`px-5 py-3 text-sm leading-relaxed ${!isLight ? 'text-zinc-300' : 'text-slate-600'}`}>
+                          {t.welcomeMessage || "I can help you find the perfect product!"}
                         </div>
-                        <div className="p-2.5">
-                          <div className={`text-xs font-semibold truncate ${!isLight ? 'text-white' : 'text-slate-900'}`}>{card.title}</div>
-                          {card.price && (
-                            <div className="text-xs font-semibold mt-0.5" style={{ color: actualHexColor }}>
-                              {card.price}
-                              {card.oldPrice && <span className={`ml-1 line-through ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>{card.oldPrice}</span>}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                        {productCards.length > 0 && (
+                          <div className="grid grid-cols-2 gap-3 p-4 pt-0">
+                            {productCards.slice(0, 4).map((card) => (
+                              <div key={card.id} className={`rounded-xl overflow-hidden ${!isLight ? 'bg-zinc-800' : 'bg-slate-50'}`}>
+                                <div className={`aspect-[4/3] flex items-center justify-center ${!isLight ? 'bg-zinc-700' : 'bg-slate-100'}`}>
+                                  {card.imageUrl ? (
+                                    <img src={card.imageUrl} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <ShoppingCart className={`h-6 w-6 ${!isLight ? 'text-zinc-500' : 'text-slate-300'}`} />
+                                  )}
+                                </div>
+                                <div className="p-2.5">
+                                  <div className={`text-xs font-semibold truncate ${!isLight ? 'text-white' : 'text-slate-900'}`}>{card.title}</div>
+                                  {card.price && (
+                                    <div className="text-xs font-semibold mt-0.5" style={{ color: actualHexColor }}>
+                                      {card.price}
+                                      {card.oldPrice && <span className={`ml-1 line-through ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>{card.oldPrice}</span>}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {showBranding && (
+                          <div className={`flex items-center justify-center gap-1 py-2.5 text-[10px] border-t ${!isLight ? 'border-zinc-800 text-zinc-600' : 'border-slate-50 text-slate-400'}`}>
+                            Powered by <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 ${!isLight ? 'opacity-30 invert' : 'opacity-40'}`} />
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
-                )}
-                {showBranding && (
-                  <div className={`flex items-center justify-center gap-1 py-2.5 text-[10px] border-t ${!isLight ? 'border-zinc-800 text-zinc-600' : 'border-slate-50 text-slate-400'}`}>
-                    Powered by <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 ${!isLight ? 'opacity-30 invert' : 'opacity-40'}`} />
-                  </div>
-                )}
+                </div>
+
+                {/* Product grid placeholder (e-commerce template) */}
+                <div className={`grid grid-cols-3 gap-4 w-full ${searchBarOpen ? 'opacity-30' : ''} transition-opacity`}>
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="space-y-2">
+                      <div className={`aspect-square rounded-xl ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                      <div className={`h-3 w-3/4 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                      <div className={`h-3 w-1/2 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Footer area */}
+                <div className="mt-4 flex gap-4">
+                  <div className={`h-3 w-20 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                  <div className={`h-3 w-20 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                  <div className={`h-3 w-20 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                </div>
               </div>
-              <p className={`mt-4 text-xs text-center max-w-[400px] ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>
-                This search bar replaces your store's search — customers get AI-powered product discovery
-              </p>
             </div>
           )}
 
