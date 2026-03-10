@@ -1206,7 +1206,7 @@ const WidgetPreviewPanel = ({
           {/* Search Bar widget type */}
           {widgetType === "search-bar" && (
             <div className="absolute inset-0">
-              <div className={`h-full w-full px-6 py-4 space-y-3 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
+              <div className={`h-full w-full px-6 py-3 space-y-2 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
                 {/* Header placeholder */}
                 <div className="flex items-center justify-between">
                   <div className={`h-7 w-1/5 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
