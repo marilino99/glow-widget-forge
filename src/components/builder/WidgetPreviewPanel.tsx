@@ -1218,16 +1218,16 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Search Bar - integrated into template */}
-                <div className="relative max-w-[50%]">
+                <div className="relative max-w-[50%] mx-auto">
                   <div 
-                    className={`flex-1 rounded-2xl border overflow-hidden transition-all cursor-pointer ${
+                    className={`flex-1 rounded-full border overflow-hidden transition-all cursor-pointer ${
                       searchBarOpen 
-                        ? `shadow-xl ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-300'}` 
+                        ? `rounded-3xl shadow-xl ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-300'}` 
                         : `shadow-sm ${!isLight ? 'bg-zinc-900 border-zinc-700 hover:border-zinc-600' : 'bg-white border-slate-200 hover:border-slate-300'} hover:shadow-md`
                     }`}
                     onClick={() => !searchBarOpen && setSearchBarOpen(true)}
                   >
-                    <div className={`flex items-center gap-3 px-5 py-3.5 ${searchBarOpen ? `border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}` : ''}`}>
+                    <div className={`flex items-center gap-2 px-4 py-2 ${searchBarOpen ? `border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}` : ''}`}>
                       <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.3-4.3" />
