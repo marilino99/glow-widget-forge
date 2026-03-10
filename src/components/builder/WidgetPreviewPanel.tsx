@@ -1275,11 +1275,6 @@ const WidgetPreviewPanel = ({
                           <span className="text-xs">{suggestion}</span>
                         </div>
                       ))}
-                      {showBranding && (
-                        <div className={`flex items-center justify-center gap-1 py-2 text-[10px] border-t ${!isLight ? 'border-zinc-800 text-zinc-600' : 'border-slate-100 text-slate-400'}`}>
-                          Powered by <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 ${!isLight ? 'opacity-30 invert' : 'opacity-40'}`} />
-                        </div>
-                      )}
                     </div>
                   )}
                   </div>
