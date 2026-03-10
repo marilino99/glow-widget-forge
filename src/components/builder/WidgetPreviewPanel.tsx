@@ -1213,72 +1213,75 @@ const WidgetPreviewPanel = ({
                   
                   {/* Search Bar - centered */}
                   <div className="relative flex-1 max-w-[65%]">
+                  {/* Search input bar */}
                   <div 
-                    className={`flex-1 rounded-full border overflow-hidden transition-all cursor-pointer ${
-                      searchBarOpen 
-                        ? `rounded-3xl shadow-xl ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-300'}` 
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all cursor-pointer ${
+                      searchBarOpen
+                        ? `shadow-md ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-300'}`
                         : `shadow-sm ${!isLight ? 'bg-zinc-900 border-zinc-700 hover:border-zinc-600' : 'bg-white border-slate-200 hover:border-slate-300'} hover:shadow-md`
                     }`}
                     onClick={() => !searchBarOpen && setSearchBarOpen(true)}
                   >
-                    <div className={`flex items-center gap-2 px-4 py-2 ${searchBarOpen ? `border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}` : ''}`}>
-                      <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.3-4.3" />
-                      </svg>
-                      <span className={`flex-1 text-xs ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`}>
-                        {sayHello || "Search products..."}
-                      </span>
-                      {searchBarOpen && (
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); setSearchBarOpen(false); }}
-                          className={`p-1 rounded-lg cursor-pointer transition-colors ${!isLight ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-slate-100 hover:bg-slate-200'}`}
-                        >
-                          <X className={`h-3 w-3 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
-                        </button>
-                      )}
-                      {/* Small widget logo inside search bar */}
-                      <div 
-                        className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center overflow-hidden animate-[glow-pulse_2.5s_ease-in-out_infinite]"
-                        style={{ 
-                          backgroundColor: actualHexColor,
-                          '--glow-color': actualHexColor,
-                        } as React.CSSProperties}
-                      >
-                        {buttonLogo ? <img src={buttonLogo} alt="" className="h-full w-full object-cover" /> : <HelpCircle className="h-3 w-3 text-white" />}
-                      </div>
-                    </div>
-
-                    {/* Search suggestions dropdown */}
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
+                    <span className={`flex-1 text-xs ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`}>
+                      {sayHello || "Search products..."}
+                    </span>
                     {searchBarOpen && (
-                      <div className={`py-1 ${!isLight ? 'border-t border-zinc-800' : ''}`}>
-                        {[
-                          "summer dress",
-                          "sneakers men",
-                          "wireless headphones",
-                          "kitchen accessories",
-                          "yoga mat",
-                          "sunglasses polarized",
-                        ].map((suggestion, i) => (
-                          <div 
-                            key={i}
-                            className={`flex items-center px-4 py-2 cursor-pointer transition-colors ${
-                              !isLight 
-                                ? 'hover:bg-zinc-800 text-zinc-300' 
-                                : 'hover:bg-slate-50 text-slate-700'
-                            }`}
-                          >
-                            <span className="text-xs">{suggestion}</span>
-                          </div>
-                        ))}
-                        {showBranding && (
-                          <div className={`flex items-center justify-center gap-1 py-2 text-[10px] border-t mt-1 ${!isLight ? 'border-zinc-800 text-zinc-600' : 'border-slate-100 text-slate-400'}`}>
-                            Powered by <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 ${!isLight ? 'opacity-30 invert' : 'opacity-40'}`} />
-                          </div>
-                        )}
-                      </div>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setSearchBarOpen(false); }}
+                        className={`p-1 rounded-lg cursor-pointer transition-colors ${!isLight ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                      >
+                        <X className={`h-3 w-3 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
+                      </button>
                     )}
+                    {/* Small widget logo */}
+                    <div 
+                      className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center overflow-hidden animate-[glow-pulse_2.5s_ease-in-out_infinite]"
+                      style={{ 
+                        backgroundColor: actualHexColor,
+                        '--glow-color': actualHexColor,
+                      } as React.CSSProperties}
+                    >
+                      {buttonLogo ? <img src={buttonLogo} alt="" className="h-full w-full object-cover" /> : <HelpCircle className="h-3 w-3 text-white" />}
+                    </div>
                   </div>
+
+                  {/* Suggestions dropdown */}
+                  {searchBarOpen && (
+                    <div className={`mt-1 rounded-xl border shadow-lg overflow-hidden ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}>
+                      {[
+                        "summer dress",
+                        "sneakers men",
+                        "wireless headphones",
+                        "kitchen accessories",
+                        "yoga mat",
+                        "sunglasses polarized",
+                      ].map((suggestion, i) => (
+                        <div 
+                          key={i}
+                          className={`flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors ${
+                            !isLight 
+                              ? 'hover:bg-zinc-800 text-zinc-300' 
+                              : 'hover:bg-slate-50 text-slate-700'
+                          }`}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 flex-shrink-0 ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.3-4.3" />
+                          </svg>
+                          <span className="text-xs">{suggestion}</span>
+                        </div>
+                      ))}
+                      {showBranding && (
+                        <div className={`flex items-center justify-center gap-1 py-2 text-[10px] border-t ${!isLight ? 'border-zinc-800 text-zinc-600' : 'border-slate-100 text-slate-400'}`}>
+                          Powered by <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 ${!isLight ? 'opacity-30 invert' : 'opacity-40'}`} />
+                        </div>
+                      )}
+                    </div>
+                  )}
                   </div>
                   
                   <div className="flex gap-2 items-center flex-shrink-0">
