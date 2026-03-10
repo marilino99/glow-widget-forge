@@ -1283,6 +1283,13 @@ const WidgetPreviewPanel = ({
                       </>
                     )}
                   </div>
+                  {/* Widget launcher button */}
+                  <div 
+                    className="flex-shrink-0 mt-1 h-10 w-10 rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-transform hover:scale-105"
+                    style={{ backgroundColor: actualHexColor }}
+                  >
+                    <HelpCircle className="h-5 w-5" style={{ color: isHexColor(actualHexColor) && isLightColor(actualHexColor) ? '#1a1a1a' : '#ffffff' }} />
+                  </div>
                 </div>
 
                 {/* Product grid placeholder (e-commerce template) */}
