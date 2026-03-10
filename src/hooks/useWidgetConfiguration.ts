@@ -33,7 +33,7 @@ export interface WidgetConfiguration {
   aiTemperature: number;
   aiTone: string;
   widgetPosition: "left" | "right";
-  widgetType: "popup" | "bottom-bar";
+  widgetType: "popup" | "bottom-bar" | "search-bar";
   googleReviewsEnabled: boolean;
   googleBusinessName: string | null;
   googleBusinessRating: number | null;
@@ -142,7 +142,7 @@ export const useWidgetConfiguration = () => {
             aiTemperature: (data as any).ai_temperature ?? 0.5,
             aiTone: (data as any).ai_tone || "friendly",
             widgetPosition: ((data as any).widget_position === "left" ? "left" : "right") as "left" | "right",
-            widgetType: ((data as any).widget_type === "bottom-bar" ? "bottom-bar" : "popup") as "popup" | "bottom-bar",
+            widgetType: ((data as any).widget_type === "bottom-bar" ? "bottom-bar" : (data as any).widget_type === "search-bar" ? "search-bar" : "popup") as "popup" | "bottom-bar" | "search-bar",
             googleReviewsEnabled: (data as any).google_reviews_enabled ?? false,
             googleBusinessName: (data as any).google_business_name || null,
             googleBusinessRating: (data as any).google_business_rating ?? null,

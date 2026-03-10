@@ -112,8 +112,8 @@ interface AppearancePanelProps {
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
   // Style tab - widget type & google reviews
-  widgetType: "popup" | "bottom-bar";
-  onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
+  widgetType: "popup" | "bottom-bar" | "search-bar";
+  onWidgetTypeChange: (type: "popup" | "bottom-bar" | "search-bar") => void;
   hasGoogleBusiness?: boolean;
   googleReviewsEnabled?: boolean;
   onGoogleReviewsToggle?: (enabled: boolean) => void;
@@ -763,7 +763,7 @@ const AppearancePanel = ({
             {/* Widget Type Selector */}
             <div>
               <p className="mb-2 text-sm font-semibold text-foreground">Widget type</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={() => onWidgetTypeChange("popup")}
                   className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
@@ -772,8 +772,8 @@ const AppearancePanel = ({
                       : "border-border bg-card/50"
                   }`}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
-                    <MessageCircle className="h-6 w-6 text-foreground" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
+                    <MessageCircle className="h-5 w-5 text-foreground" />
                   </div>
                   <span className="text-xs font-medium text-foreground">Popup</span>
                 </button>
@@ -785,10 +785,23 @@ const AppearancePanel = ({
                       : "border-border bg-card/50"
                   }`}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
-                    <Star className="h-6 w-6 text-foreground" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
+                    <Star className="h-5 w-5 text-foreground" />
                   </div>
                   <span className="text-xs font-medium text-foreground">Bottom Bar</span>
+                </button>
+                <button
+                  onClick={() => onWidgetTypeChange("search-bar")}
+                  className={`relative flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-all duration-200 hover:shadow-md ${
+                    widgetType === "search-bar"
+                      ? "border-foreground bg-card shadow-sm"
+                      : "border-border bg-card/50"
+                  }`}
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
+                    <Search className="h-5 w-5 text-foreground" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">Search Bar</span>
                 </button>
               </div>
             </div>
