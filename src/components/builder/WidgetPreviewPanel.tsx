@@ -1206,14 +1206,14 @@ const WidgetPreviewPanel = ({
           {/* Search Bar widget type */}
           {widgetType === "search-bar" && (
             <div className="absolute inset-0">
-              <div className={`h-full w-full p-8 space-y-5 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
+              <div className={`h-full w-full px-6 py-4 space-y-3 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
                 {/* Header placeholder */}
                 <div className="flex items-center justify-between">
-                  <div className={`h-10 w-1/4 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                  <div className="flex gap-3 items-center">
-                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                    <div className={`h-3 w-14 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  <div className={`h-7 w-1/5 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  <div className="flex gap-2 items-center">
+                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                   </div>
                 </div>
 
@@ -1293,21 +1293,21 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Product grid placeholder (e-commerce template) */}
-                <div className={`grid grid-cols-3 gap-4 w-full ${searchBarOpen ? 'opacity-30' : ''} transition-opacity`}>
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="space-y-2">
-                      <div className={`aspect-square rounded-xl ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                      <div className={`h-3 w-3/4 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                      <div className={`h-3 w-1/2 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                <div className={`grid grid-cols-4 gap-3 w-full ${searchBarOpen ? 'opacity-30' : ''} transition-opacity`}>
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="space-y-1.5">
+                      <div className={`aspect-square rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                      <div className={`h-2 w-3/4 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                      <div className={`h-2 w-1/2 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
                     </div>
                   ))}
                 </div>
 
                 {/* Footer area */}
-                <div className="mt-4 flex gap-4">
-                  <div className={`h-3 w-20 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
-                  <div className={`h-3 w-20 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
-                  <div className={`h-3 w-20 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                <div className="mt-2 flex gap-3">
+                  <div className={`h-2 w-16 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                  <div className={`h-2 w-16 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
+                  <div className={`h-2 w-16 rounded-md ${!isLight ? 'bg-zinc-800/60' : 'bg-slate-100/80'}`} />
                 </div>
               </div>
             </div>
