@@ -1208,11 +1208,11 @@ const WidgetPreviewPanel = ({
             <div className="absolute inset-0">
               <div className={`h-full w-full px-6 py-3 space-y-2 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
                 {/* Header with nav items and search bar on same line */}
-                <div className="flex items-center justify-between gap-4">
-                  <div className={`h-7 w-1/5 flex-shrink-0 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                <div className="flex items-center justify-between gap-2">
+                  <div className={`h-7 w-[15%] flex-shrink-0 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                   
                   {/* Search Bar - centered */}
-                  <div className="relative flex-1 max-w-[55%]">
+                  <div className="relative flex-1 max-w-[65%]">
                   <div 
                     className={`flex-1 rounded-full border overflow-hidden transition-all cursor-pointer ${
                       searchBarOpen 
