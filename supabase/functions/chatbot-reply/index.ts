@@ -434,7 +434,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemInstruction }] },
             contents: conversationHistory,
-            generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
+            generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
           }),
         }
       );
