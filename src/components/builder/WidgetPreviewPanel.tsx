@@ -1240,7 +1240,10 @@ const WidgetPreviewPanel = ({
                       {/* Small widget logo inside search bar */}
                       <div 
                         className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center overflow-hidden"
-                        style={{ backgroundColor: actualHexColor }}
+                        style={{ 
+                          backgroundColor: actualHexColor,
+                          boxShadow: `0 0 8px 3px ${actualHexColor}80, 0 0 16px 6px ${actualHexColor}40, 0 0 24px 10px ${actualHexColor}20`
+                        }}
                       >
                         {buttonLogo ? <img src={buttonLogo} alt="" className="h-full w-full object-cover" /> : <HelpCircle className="h-3 w-3 text-white" />}
                       </div>
