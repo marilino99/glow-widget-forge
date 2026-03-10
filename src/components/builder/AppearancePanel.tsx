@@ -112,8 +112,8 @@ interface AppearancePanelProps {
   buttonLogo: string | null;
   onButtonLogoChange: (logo: string | null) => void;
   // Style tab - widget type & google reviews
-  widgetType: "popup" | "bottom-bar";
-  onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
+  widgetType: "popup" | "bottom-bar" | "search-bar";
+  onWidgetTypeChange: (type: "popup" | "bottom-bar" | "search-bar") => void;
   hasGoogleBusiness?: boolean;
   googleReviewsEnabled?: boolean;
   onGoogleReviewsToggle?: (enabled: boolean) => void;
