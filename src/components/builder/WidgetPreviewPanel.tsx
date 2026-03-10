@@ -1218,7 +1218,7 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Search Bar - integrated into template */}
-                <div className="relative flex items-start gap-3">
+                <div className="relative">
                   <div 
                     className={`flex-1 rounded-xl border overflow-hidden transition-all cursor-pointer ${
                       searchBarOpen 
