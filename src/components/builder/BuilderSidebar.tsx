@@ -153,8 +153,8 @@ interface BuilderSidebarProps {
   onSaveChatbotConfig: (config: Record<string, unknown>) => void;
   widgetPosition: "left" | "right";
   onWidgetPositionChange: (position: "left" | "right") => void;
-  widgetType: "popup" | "bottom-bar";
-  onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
+  widgetType: "popup" | "bottom-bar" | "search-bar";
+  onWidgetTypeChange: (type: "popup" | "bottom-bar" | "search-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
   builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null;

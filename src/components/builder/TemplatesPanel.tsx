@@ -122,8 +122,8 @@ interface TemplatesPanelProps {
   isPro: boolean;
   onUpgrade: () => void;
   onApplyTemplate: (template: WidgetTemplate) => void;
-  widgetType: "popup" | "bottom-bar";
-  onWidgetTypeChange: (type: "popup" | "bottom-bar") => void;
+  widgetType: "popup" | "bottom-bar" | "search-bar";
+  onWidgetTypeChange: (type: "popup" | "bottom-bar" | "search-bar") => void;
   hasGoogleBusiness?: boolean;
   googleReviewsEnabled?: boolean;
   onGoogleReviewsToggle?: (enabled: boolean) => void;

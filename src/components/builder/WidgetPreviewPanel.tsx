@@ -47,7 +47,7 @@ interface WidgetPreviewPanelProps {
   customJs?: string;
   showBranding?: boolean;
   widgetPosition?: "left" | "right";
-  widgetType?: "popup" | "bottom-bar";
+  widgetType?: "popup" | "bottom-bar" | "search-bar";
   minimal?: boolean;
   ctaText?: string;
 }
