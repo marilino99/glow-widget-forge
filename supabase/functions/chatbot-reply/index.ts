@@ -463,10 +463,15 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
     let cleanReply = aiReply.trim();
     let metadata: Record<string, unknown> | null = null;
 
-    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/);
+    // Match complete or truncated product markers: [PRODUCTS: ...] or [PRODUCTS: ... (no closing bracket)
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/s);
+    
+    // Also catch cases where the response was truncated mid-marker, e.g. ending with "options: [" or "[PROD"
+    const truncatedMarkerMatch = !productMarkerMatch && cleanReply.match(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s);
+
     if (productMarkerMatch) {
       // Always strip marker from visible text
-      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/, "").trim();
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "").trim();
       
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
       if (productCardsData && productCardsData.length > 0) {
@@ -489,10 +494,22 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
         };
         console.log(`Product cards: ${matchedProducts.length} matched, showing ${finalProducts.length}`);
       }
+    } else if (truncatedMarkerMatch && productCardsData && productCardsData.length > 0) {
+      // The AI started the marker but got truncated — strip the partial marker and show products
+      cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
+      metadata = {
+        products: productCardsData.slice(0, 3).map((p: any) => ({
+          title: p.title,
+          imageUrl: p.image_url || null,
+          productUrl: p.product_url || null,
+          price: p.price || null,
+        })),
+      };
+      console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
     } else if (productCardsData && productCardsData.length > 0) {
       // Fallback: if the AI talked about products but forgot the marker
       const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content?.toLowerCase() || "";
-      const productKeywords = ["product", "prodott", "buy", "compra", "acquist", "shop", "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo", "cosa avete", "what do you have", "show me"];
+      const productKeywords = ["product", "prodott", "buy", "compra", "acquist", "shop", "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo", "cosa avete", "what do you have", "show me", "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag", "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want"];
       const mentionsProducts = productKeywords.some(kw => lastUserMsg.includes(kw));
       if (mentionsProducts) {
         metadata = {
