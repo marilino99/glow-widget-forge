@@ -1284,7 +1284,7 @@ const WidgetPreviewPanel = ({
                   )}
                   </div>
                   
-                  <div className="flex gap-2 items-center flex-shrink-0">
+                  <div className={`flex gap-2 items-center flex-shrink-0 transition-all duration-300 ${searchBarOpen ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100'}`}>
                     <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                     <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                   </div>
