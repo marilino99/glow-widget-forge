@@ -229,6 +229,7 @@ const WidgetPreviewPanel = ({
   const [isAnimatingCollapse, setIsAnimatingCollapse] = useState(false);
   const [isAnimatingExpand, setIsAnimatingExpand] = useState(false);
   const [searchBarOpen, setSearchBarOpen] = useState(false);
+  const [widgetMenuOpen, setWidgetMenuOpen] = useState(false);
   const [showButtonPop, setShowButtonPop] = useState(false);
   const [showFaqPills, setShowFaqPills] = useState(false);
   const [isBottomBarExpanded, setIsBottomBarExpanded] = useState(false);
