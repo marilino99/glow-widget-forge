@@ -463,10 +463,10 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
     let cleanReply = aiReply.trim();
     let metadata: Record<string, unknown> | null = null;
 
-    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/);
     if (productMarkerMatch) {
       // Always strip marker from visible text
-      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/, "").trim();
       
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
       if (productCardsData && productCardsData.length > 0) {
