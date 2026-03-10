@@ -33,7 +33,7 @@ export interface WidgetConfiguration {
   aiTemperature: number;
   aiTone: string;
   widgetPosition: "left" | "right";
-  widgetType: "popup" | "bottom-bar";
+  widgetType: "popup" | "bottom-bar" | "search-bar";
   googleReviewsEnabled: boolean;
   googleBusinessName: string | null;
   googleBusinessRating: number | null;
