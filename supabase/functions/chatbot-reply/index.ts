@@ -404,7 +404,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
             })),
           ],
           temperature: 0.7,
-          max_tokens: 500,
+          max_tokens: 800,
         }),
       });
 
@@ -434,7 +434,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemInstruction }] },
             contents: conversationHistory,
-            generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
+            generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
           }),
         }
       );
@@ -463,10 +463,10 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
     let cleanReply = aiReply.trim();
     let metadata: Record<string, unknown> | null = null;
 
-    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/);
     if (productMarkerMatch) {
       // Always strip marker from visible text
-      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/, "").trim();
       
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
       if (productCardsData && productCardsData.length > 0) {
