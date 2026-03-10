@@ -120,12 +120,10 @@ export default {
         },
         "glow-pulse": {
           "0%, 100%": {
-            transform: "scale(1)",
-            boxShadow: "0 0 3px 1px var(--glow-color, #3b82f6)20",
+            boxShadow: "0 0 2px 1px var(--glow-color, #3b82f6)15",
           },
           "50%": {
-            transform: "scale(1.06)",
-            boxShadow: "0 0 6px 2px var(--glow-color, #3b82f6)35",
+            boxShadow: "0 0 10px 4px var(--glow-color, #3b82f6)50, 0 0 20px 8px var(--glow-color, #3b82f6)20",
           },
         },
       },
