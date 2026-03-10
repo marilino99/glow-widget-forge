@@ -2228,6 +2228,29 @@ const WidgetPreviewPanel = ({
                                     {t.show}
                                   </Button>
                                 )}
+                                {/* Add to Cart & Favorites buttons */}
+                                <div className="flex gap-2 mt-2">
+                                  <button
+                                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors ${
+                                      isSolidMode || !isLight
+                                        ? "bg-white/10 hover:bg-white/20 text-white"
+                                        : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                                    }`}
+                                    onClick={(e) => e.preventDefault()}
+                                  >
+                                    <ShoppingCart className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button
+                                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors ${
+                                      isSolidMode || !isLight
+                                        ? "bg-white/10 hover:bg-white/20 text-white"
+                                        : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                                    }`}
+                                    onClick={(e) => e.preventDefault()}
+                                  >
+                                    <Heart className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
                               </div>
                             </div>)}
                         </div>
