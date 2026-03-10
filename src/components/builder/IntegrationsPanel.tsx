@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
