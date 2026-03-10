@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
 
     const clientId = Deno.env.get("SHOPIFY_CLIENT_ID")!;
     const callbackUrl = `${supabaseUrl}/functions/v1/shopify-oauth-callback`;
-    const scopes = "read_products,write_script_tags";
+    const scopes = "read_products,write_themes";
 
     // Generate a state token to prevent CSRF — encode user_id + shop
     const statePayload = btoa(JSON.stringify({ user_id: user.id, shop: cleanShop }));
