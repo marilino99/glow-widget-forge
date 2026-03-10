@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 const IntegrationsPanel = () => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
 
   const isConnected = !!connection;
 
