@@ -1205,39 +1205,39 @@ const WidgetPreviewPanel = ({
           {/* Search Bar widget type */}
           {widgetType === "search-bar" && (
             <div className="absolute inset-0 flex flex-col items-center justify-start pt-16 px-6">
-              <div className={`w-full max-w-[500px] rounded-xl border shadow-xl overflow-hidden ${isDark ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}>
-                <div className={`flex items-center gap-3 px-5 py-4 border-b ${isDark ? 'border-zinc-700' : 'border-slate-100'}`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${isDark ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <div className={`w-full max-w-[500px] rounded-xl border shadow-xl overflow-hidden ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-200'}`}>
+                <div className={`flex items-center gap-3 px-5 py-4 border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <circle cx="11" cy="11" r="8" />
                     <path d="m21 21-4.3-4.3" />
                   </svg>
-                  <span className={`flex-1 text-base ${isDark ? 'text-zinc-300' : 'text-slate-500'}`}>
+                  <span className={`flex-1 text-base ${!isLight ? 'text-zinc-300' : 'text-slate-500'}`}>
                     {sayHello || "Search products..."}
                   </span>
-                  <div className={`p-1.5 rounded-lg ${isDark ? 'bg-zinc-800' : 'bg-slate-100'}`}>
-                    <X className={`h-4 w-4 ${isDark ? 'text-zinc-400' : 'text-slate-400'}`} />
+                  <div className={`p-1.5 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-100'}`}>
+                    <X className={`h-4 w-4 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
                   </div>
                 </div>
-                <div className={`px-5 py-3 border-b text-sm leading-relaxed ${isDark ? 'border-zinc-700 text-zinc-300' : 'border-slate-50 text-slate-600'}`}>
-                  {translations.welcomeMessage || "I can help you find the perfect product!"}
+                <div className={`px-5 py-3 border-b text-sm leading-relaxed ${!isLight ? 'border-zinc-700 text-zinc-300' : 'border-slate-50 text-slate-600'}`}>
+                  {t.welcomeMessage || "I can help you find the perfect product!"}
                 </div>
                 {productCards.length > 0 && (
                   <div className="grid grid-cols-2 gap-3 p-4">
                     {productCards.slice(0, 4).map((card) => (
-                      <div key={card.id} className={`rounded-xl overflow-hidden ${isDark ? 'bg-zinc-800' : 'bg-slate-50'}`}>
-                        <div className={`aspect-square flex items-center justify-center ${isDark ? 'bg-zinc-700' : 'bg-slate-100'}`}>
-                          {card.image_url ? (
-                            <img src={card.image_url} alt="" className="w-full h-full object-cover" />
+                      <div key={card.id} className={`rounded-xl overflow-hidden ${!isLight ? 'bg-zinc-800' : 'bg-slate-50'}`}>
+                        <div className={`aspect-square flex items-center justify-center ${!isLight ? 'bg-zinc-700' : 'bg-slate-100'}`}>
+                          {card.imageUrl ? (
+                            <img src={card.imageUrl} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <ShoppingCart className={`h-6 w-6 ${isDark ? 'text-zinc-500' : 'text-slate-300'}`} />
+                            <ShoppingCart className={`h-6 w-6 ${!isLight ? 'text-zinc-500' : 'text-slate-300'}`} />
                           )}
                         </div>
                         <div className="p-2.5">
-                          <div className={`text-xs font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{card.title}</div>
+                          <div className={`text-xs font-semibold truncate ${!isLight ? 'text-white' : 'text-slate-900'}`}>{card.title}</div>
                           {card.price && (
-                            <div className="text-xs font-semibold mt-0.5" style={{ color: resolvedColor }}>
+                            <div className="text-xs font-semibold mt-0.5" style={{ color: actualHexColor }}>
                               {card.price}
-                              {card.old_price && <span className={`ml-1 line-through ${isDark ? 'text-zinc-500' : 'text-slate-400'}`}>{card.old_price}</span>}
+                              {card.oldPrice && <span className={`ml-1 line-through ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>{card.oldPrice}</span>}
                             </div>
                           )}
                         </div>
@@ -1246,12 +1246,12 @@ const WidgetPreviewPanel = ({
                   </div>
                 )}
                 {showBranding && (
-                  <div className={`flex items-center justify-center gap-1 py-2.5 text-[10px] border-t ${isDark ? 'border-zinc-800 text-zinc-600' : 'border-slate-50 text-slate-400'}`}>
-                    Powered by <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 ${isDark ? 'opacity-30 invert' : 'opacity-40'}`} />
+                  <div className={`flex items-center justify-center gap-1 py-2.5 text-[10px] border-t ${!isLight ? 'border-zinc-800 text-zinc-600' : 'border-slate-50 text-slate-400'}`}>
+                    Powered by <img src={widjetLogoNavbar} alt="Widjet" className={`h-4 ${!isLight ? 'opacity-30 invert' : 'opacity-40'}`} />
                   </div>
                 )}
               </div>
-              <p className={`mt-4 text-xs text-center max-w-[400px] ${isDark ? 'text-zinc-500' : 'text-slate-400'}`}>
+              <p className={`mt-4 text-xs text-center max-w-[400px] ${!isLight ? 'text-zinc-500' : 'text-slate-400'}`}>
                 This search bar replaces your store's search — customers get AI-powered product discovery
               </p>
             </div>
