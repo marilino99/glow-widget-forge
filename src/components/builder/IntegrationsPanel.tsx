@@ -76,7 +76,7 @@ const IntegrationsPanel = () => {
                     {isSyncing ? "Syncing…" : "Sync now"}
                   </button>
                   <button
-                    onClick={() => disconnect()}
+                    onClick={() => setDisconnectDialogOpen(true)}
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                     title="Disconnect"
                   >
