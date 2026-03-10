@@ -1293,8 +1293,8 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Product grid placeholder (e-commerce template) */}
-                <div className={`grid grid-cols-4 gap-3 w-full ${searchBarOpen ? 'opacity-30' : ''} transition-opacity`}>
-                  {[...Array(8)].map((_, i) => (
+                <div className={`grid grid-cols-3 gap-3 w-full ${searchBarOpen ? 'opacity-30' : ''} transition-opacity`}>
+                  {[...Array(12)].map((_, i) => (
                     <div key={i} className="space-y-1.5">
                       <div className={`aspect-square rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
                       <div className={`h-2 w-3/4 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
