@@ -1207,17 +1207,12 @@ const WidgetPreviewPanel = ({
           {widgetType === "search-bar" && (
             <div className="absolute inset-0">
               <div className={`h-full w-full px-6 py-3 space-y-2 ${!isLight ? 'bg-zinc-950' : 'bg-white'}`}>
-                {/* Header placeholder */}
-                <div className="flex items-center justify-between">
-                  <div className={`h-7 w-1/5 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                  <div className="flex gap-2 items-center">
-                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                    <div className={`h-2.5 w-12 rounded-md ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
-                  </div>
-                </div>
-
-                {/* Search Bar - integrated into template */}
-                <div className="relative max-w-[50%] mx-auto">
+                {/* Header with nav items and search bar on same line */}
+                <div className="flex items-center justify-between gap-4">
+                  <div className={`h-7 w-1/5 flex-shrink-0 rounded-lg ${!isLight ? 'bg-zinc-800' : 'bg-slate-200/80'}`} />
+                  
+                  {/* Search Bar - centered */}
+                  <div className="relative flex-1 max-w-[45%]">
                   <div 
                     className={`flex-1 rounded-full border overflow-hidden transition-all cursor-pointer ${
                       searchBarOpen 
