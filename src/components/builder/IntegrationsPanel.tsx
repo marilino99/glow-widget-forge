@@ -112,6 +112,26 @@ const IntegrationsPanel = () => {
         onOpenChange={setDialogOpen}
         onConnect={connectOAuth}
       />
+
+      <AlertDialog open={disconnectDialogOpen} onOpenChange={setDisconnectDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disconnect Shopify?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disconnect your Shopify store? You'll need to reconnect and re-authorize to use Shopify features again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => disconnect()}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Disconnect
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
