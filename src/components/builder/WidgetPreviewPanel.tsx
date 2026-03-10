@@ -1218,9 +1218,9 @@ const WidgetPreviewPanel = ({
                 </div>
 
                 {/* Search Bar - integrated into template */}
-                <div className="relative">
+                <div className="relative flex items-start gap-3">
                   <div 
-                    className={`w-full rounded-xl border overflow-hidden transition-all cursor-pointer ${
+                    className={`flex-1 rounded-xl border overflow-hidden transition-all cursor-pointer ${
                       searchBarOpen 
                         ? `shadow-xl ${!isLight ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-slate-300'}` 
                         : `shadow-sm ${!isLight ? 'bg-zinc-900 border-zinc-700 hover:border-zinc-600' : 'bg-white border-slate-200 hover:border-slate-300'} hover:shadow-md`
@@ -1282,6 +1282,13 @@ const WidgetPreviewPanel = ({
                         )}
                       </>
                     )}
+                  </div>
+                  {/* Widget launcher button */}
+                  <div 
+                    className="flex-shrink-0 mt-1 h-10 w-10 rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-transform hover:scale-105"
+                    style={{ backgroundColor: actualHexColor }}
+                  >
+                    <HelpCircle className="h-5 w-5" style={{ color: isHexColor(actualHexColor) && isLightColor(actualHexColor) ? '#1a1a1a' : '#ffffff' }} />
                   </div>
                 </div>
 
