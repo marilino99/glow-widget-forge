@@ -1228,27 +1228,27 @@ const WidgetPreviewPanel = ({
                     onClick={() => !searchBarOpen && setSearchBarOpen(true)}
                   >
                     <div className={`flex items-center gap-2 px-4 py-2 ${searchBarOpen ? `border-b ${!isLight ? 'border-zinc-700' : 'border-slate-100'}` : ''}`}>
-                      <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 flex-shrink-0 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <circle cx="11" cy="11" r="8" />
                         <path d="m21 21-4.3-4.3" />
                       </svg>
-                      <span className={`flex-1 text-sm ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`}>
+                      <span className={`flex-1 text-xs ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`}>
                         {sayHello || "Search products..."}
                       </span>
                       {searchBarOpen && (
                         <button 
                           onClick={(e) => { e.stopPropagation(); setSearchBarOpen(false); }}
-                          className={`p-1.5 rounded-lg cursor-pointer transition-colors ${!isLight ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                          className={`p-1 rounded-lg cursor-pointer transition-colors ${!isLight ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-slate-100 hover:bg-slate-200'}`}
                         >
-                          <X className={`h-4 w-4 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
+                          <X className={`h-3 w-3 ${!isLight ? 'text-zinc-400' : 'text-slate-400'}`} />
                         </button>
                       )}
                       {/* Small widget logo inside search bar */}
                       <div 
-                        className="flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center overflow-hidden"
+                        className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center overflow-hidden"
                         style={{ backgroundColor: actualHexColor }}
                       >
-                        {buttonLogo ? <img src={buttonLogo} alt="" className="h-full w-full object-cover" /> : <HelpCircle className="h-4 w-4 text-white" />}
+                        {buttonLogo ? <img src={buttonLogo} alt="" className="h-full w-full object-cover" /> : <HelpCircle className="h-3 w-3 text-white" />}
                       </div>
                     </div>
 
