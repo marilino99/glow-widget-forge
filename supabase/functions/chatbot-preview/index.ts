@@ -164,6 +164,7 @@ Deno.serve(async (req) => {
     // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
     const queryText = lastUserMessage?.text || "";
+    const productIntent = isProductIntent(queryText);
 
     // RAG: Try similarity search first
     let knowledgeBase = "";
@@ -189,8 +190,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Fallback: load training sources directly if RAG returned nothing
-    if (!usedRag) {
+    // Fallback: load training sources directly if RAG returned nothing.
+    // For product intent without Shopify, avoid broad fallback context to prevent product hallucinations.
+    if (!usedRag && !(productIntent && !shopifyConn)) {
       const { data: trainingSources } = await supabase
         .from("training_sources")
         .select("title, content, source_type")
@@ -221,8 +223,10 @@ Deno.serve(async (req) => {
       }
     }
 
-    // If no knowledge base content and product intent without Shopify, suggest connecting
-    if (!shopifyConn && isProductIntent(queryText) && !knowledgeBase.trim()) {
+    // If Shopify is disconnected and product intent has no semantically relevant knowledge,
+    // force the deterministic connect message.
+    const faqHasProductSignal = productIntent && hasProductSignalInFaq(faqItems);
+    if (!shopifyConn && productIntent && !usedRag && !faqHasProductSignal) {
       const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
       return new Response(
         JSON.stringify({ reply: connectReply }),
