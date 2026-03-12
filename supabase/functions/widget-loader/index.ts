@@ -1835,25 +1835,17 @@ Deno.serve(async (req) => {
   }
 
   function addToShopifyCart(variantId) {
-    if (!shopifyDomain || !variantId) return;
-    // Try same-origin /cart/add.js first (widget is on the Shopify store)
-    var sameOrigin = false;
-    try { sameOrigin = w.location.hostname.indexOf(shopifyDomain) !== -1 || shopifyDomain.indexOf(w.location.hostname) !== -1; } catch(e) {}
-    
-    if (sameOrigin) {
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: [{ id: parseInt(variantId), quantity: 1 }] })
-      }).then(function(r) {
-        if (r.ok) { showCartToast(true); } 
-        else { w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank'); }
-      }).catch(function() {
-        w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
-      });
-    } else {
-      w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
-    }
+    if (!variantId) return;
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ id: parseInt(variantId), quantity: 1 }] })
+    }).then(function(r) {
+      if (r.ok) { showCartToast(); }
+      else { console.error('[Widjet] Cart add failed', r.status); }
+    }).catch(function(e) {
+      console.error('[Widjet] Cart add error', e);
+    });
   }
 
   function showCartToast(success) {
