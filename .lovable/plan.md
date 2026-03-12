@@ -1,21 +1,34 @@
 
 
-# Fix: Timestamp troncato nella lista conversazioni
-
 ## Problema
-Il viewport interno di Radix ScrollArea usa `overflow: scroll` inline, ignorando le classi CSS applicate dall'esterno. Il contenuto si espande oltre la larghezza della sidebar e il timestamp sparisce.
 
-## Soluzione
+Il widget non appare sullo store Shopify perché lo script `widget-loader` contiene un bug che causa un crash JavaScript nel browser del visitatore.
 
-### 1. Modificare `src/components/ui/scroll-area.tsx`
-Aggiungere al viewport la classe `[overflow-x:hidden!important]` per impedire lo scroll orizzontale e forzare il contenuto a rispettare la larghezza del parent.
+## Causa principale
 
-```tsx
-<ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [overflow-x:hidden!important]">
+Alla riga 259-260 di `widget-loader/index.ts`, il CSS usa una variabile `lt` che **non è mai definita** nella funzione `render()`:
+
+```
+background:${lt?'#f1f5f9':'rgba(255,255,255,0.1)'}
 ```
 
-### 2. Pulire `src/components/builder/ConversationsPanel.tsx`
-Rimuovere il selettore CSS hack `[&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden` dalla ScrollArea, dato che il fix e ora nel componente base.
+Questo causa un `ReferenceError: lt is not defined` nel browser, che blocca l'esecuzione dell'intera funzione `render()` e impedisce la creazione del widget. La variabile `lt` dovrebbe essere `!dark` (light theme mode).
 
-Queste due modifiche risolvono il problema alla radice: il viewport non permettera piu al contenuto di espandersi orizzontalmente, e il layout `grid-cols-[1fr_auto]` funzionera correttamente troncando il titolo e mostrando il timestamp.
+Il widget funziona nel builder preview perché lì il pannello usa componenti React, non il `widget-loader` edge function.
+
+## Piano
+
+### 1. Fix variabile `lt` nel widget-loader
+
+In `supabase/functions/widget-loader/index.ts`, riga 259-260:
+- Aggiungere `var lt = !dark;` nella funzione `render()`, subito dopo la definizione di `var dark = ...` (riga 152)
+- Oppure sostituire tutte le occorrenze di `lt` con `!dark`
+
+### 2. Re-deploy del widget-loader
+
+Deploy della edge function aggiornata.
+
+### 3. Verifica
+
+Non serve reinstallare lo snippet: la URL dello script è la stessa, quindi al prossimo caricamento della pagina Shopify il widget comparirà.
 
