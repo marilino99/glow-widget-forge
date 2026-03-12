@@ -82,12 +82,15 @@ const Builder = () => {
   const { hasUnread } = useUnreadMessages();
   const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
   const { 
-    productCards, 
+    productCards: rawProductCards, 
     isLoading: isLoadingCards, 
     addProductCard, 
     updateProductCard, 
     deleteProductCard 
   } = useProductCards();
+  const { connection: shopifyConnection } = useShopifyConnection();
+  // Only expose product cards when Shopify is connected
+  const productCards = shopifyConnection ? rawProductCards : [];
   const {
     faqItems,
     isLoading: isLoadingFaq,
