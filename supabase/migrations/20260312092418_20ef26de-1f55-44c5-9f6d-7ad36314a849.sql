@@ -1,0 +1,1 @@
+ALTER TABLE public.product_cards ADD COLUMN IF NOT EXISTS shopify_variant_id text DEFAULT NULL;
