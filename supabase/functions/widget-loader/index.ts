@@ -253,8 +253,11 @@ Deno.serve(async (req) => {
       .wj-prod-old{font-size:14px;color:\${textSub};text-decoration:line-through;margin-left:8px}
       .wj-prod-title{font-weight:700;font-size:16px;color:\${textMain}}
       .wj-prod-sub{font-size:14px;color:\${textSub};margin-top:2px;margin-bottom:12px}
-      .wj-prod-btn{width:100%;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
+      .wj-prod-actions{display:flex;gap:6px;align-items:stretch}
+      .wj-prod-btn{flex:1;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
       .wj-prod-btn:hover{background:\${color.hover}}
+      .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
+      .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
