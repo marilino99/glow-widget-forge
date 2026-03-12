@@ -73,6 +73,7 @@ const LandingContent = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-clip">
+      <CookieConsent />
       <Navbar />
       <main>
         <Hero />
