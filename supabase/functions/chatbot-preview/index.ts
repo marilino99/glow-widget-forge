@@ -157,14 +157,6 @@ Deno.serve(async (req) => {
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
     const queryText = lastUserMessage?.text || "";
 
-    if (!shopifyConn && isProductIntent(queryText)) {
-      const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
-      return new Response(
-        JSON.stringify({ reply: connectReply }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     // RAG: Try similarity search first
     let knowledgeBase = "";
     let usedRag = false;
@@ -219,6 +211,15 @@ Deno.serve(async (req) => {
       for (const faq of faqItems) {
         knowledgeBase += `\n**Q: ${faq.question}**\nA: ${faq.answer}\n`;
       }
+    }
+
+    // If no knowledge base content and product intent without Shopify, suggest connecting
+    if (!shopifyConn && isProductIntent(queryText) && !knowledgeBase.trim()) {
+      const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
+      return new Response(
+        JSON.stringify({ reply: connectReply }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Add product catalog

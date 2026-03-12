@@ -284,27 +284,6 @@ Deno.serve(async (req) => {
     // Get the last visitor message for RAG query
     const lastVisitorMessage = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
 
-    if (!shopifyConn && isProductIntent(lastVisitorMessage)) {
-      const connectReply = getConnectShopifyMessage(lastVisitorMessage, config.language || "en");
-
-      await supabase.from("chat_messages").insert({
-        conversation_id: conversationId,
-        sender_type: "owner",
-        content: connectReply,
-        is_ai_response: true,
-      });
-
-      await supabase.from("conversations").update({
-        last_message: connectReply,
-        last_message_at: new Date().toISOString(),
-      }).eq("id", conversationId);
-
-      return new Response(
-        JSON.stringify({ success: true, shopify_required: true }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     // === RAG RETRIEVAL ===
     let ragContext = "";
     let ragUsed = false;
@@ -381,6 +360,28 @@ Deno.serve(async (req) => {
         knowledgeBase += `\n**Q: ${faq.question}**\nA: ${faq.answer}\n`;
       }
       knowledgeBase += "\n## === END OF FAQ ===\n";
+    }
+
+    // If no knowledge base content and product intent without Shopify, suggest connecting
+    if (!shopifyConn && isProductIntent(lastVisitorMessage) && !knowledgeBase.trim()) {
+      const connectReply = getConnectShopifyMessage(lastVisitorMessage, config.language || "en");
+
+      await supabase.from("chat_messages").insert({
+        conversation_id: conversationId,
+        sender_type: "owner",
+        content: connectReply,
+        is_ai_response: true,
+      });
+
+      await supabase.from("conversations").update({
+        last_message: connectReply,
+        last_message_at: new Date().toISOString(),
+      }).eq("id", conversationId);
+
+      return new Response(
+        JSON.stringify({ success: true, shopify_required: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Add product catalog to knowledge base
