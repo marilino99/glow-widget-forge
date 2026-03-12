@@ -80,7 +80,7 @@ const Hero = () => {
 
         <motion.div custom={3} initial="hidden" animate="visible" variants={fadeUp} className="relative flex-1 max-w-md lg:max-w-lg flex flex-col overflow-hidden w-full min-w-0">
           <div className="relative rounded-3xl overflow-hidden bg-background">
-            <img src={widgetPreview} alt="Widjet widget preview showing chat, FAQ and contact features" className="w-full h-full object-cover block" />
+            <img src={widgetPreview} alt="Widjet widget preview showing chat, FAQ and contact features" className="w-full h-full object-cover block" fetchPriority="high" width={512} height={545} />
           </div>
           <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp} className="flex justify-start mt-4">
             <button

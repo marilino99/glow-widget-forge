@@ -15,7 +15,7 @@ const Features = () => {
       description: t("features.1.desc"),
       mockup: (
         <div className="flex items-center justify-center">
-          <img src={featureBuilder} alt="Widget builder drag and drop interface demo" className="w-full max-w-sm rounded-xl" />
+          <img src={featureBuilder} alt="Widget builder drag and drop interface demo" className="w-full max-w-sm rounded-xl" loading="lazy" width={384} height={288} />
         </div>
       ),
     },
@@ -25,7 +25,7 @@ const Features = () => {
       description: t("features.2.desc"),
       mockup: (
         <div className="flex items-center justify-center">
-          <img src={featureFaq} alt="FAQ accordion widget" className="w-full max-w-sm rounded-xl" />
+          <img src={featureFaq} alt="FAQ accordion widget" className="w-full max-w-sm rounded-xl" loading="lazy" width={384} height={384} />
         </div>
       ),
     },
@@ -35,7 +35,7 @@ const Features = () => {
       description: t("features.3.desc"),
       mockup: (
         <div className="flex items-center justify-center">
-          <img src={featureProductCards} alt="Product cards carousel" className="w-full max-w-sm rounded-xl" />
+          <img src={featureProductCards} alt="Product cards carousel" className="w-full max-w-sm rounded-xl" loading="lazy" width={384} height={384} />
         </div>
       ),
     },

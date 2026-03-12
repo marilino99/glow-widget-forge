@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,15 +6,16 @@ import { LandingLanguageProvider } from "@/contexts/LandingLanguageContext";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import { Logos3 } from "@/components/ui/logos3";
-import Features from "@/components/landing/Features";
-import DashboardPreview from "@/components/landing/DashboardPreview";
-
-import Pricing from "@/components/landing/Pricing";
-import FAQs from "@/components/landing/FAQs";
-import Footer from "@/components/landing/Footer";
-import Solutions from "@/components/landing/Solutions";
-import AIControl from "@/components/landing/AIControl";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
+
+// Lazy load below-fold sections to reduce initial bundle
+const Solutions = lazy(() => import("@/components/landing/Solutions"));
+const AIControl = lazy(() => import("@/components/landing/AIControl"));
+const Features = lazy(() => import("@/components/landing/Features"));
+const DashboardPreview = lazy(() => import("@/components/landing/DashboardPreview"));
+const Pricing = lazy(() => import("@/components/landing/Pricing"));
+const FAQs = lazy(() => import("@/components/landing/FAQs"));
+const Footer = lazy(() => import("@/components/landing/Footer"));
 
 const LandingContent = () => {
   const { user, loading } = useAuth();
@@ -86,13 +87,15 @@ const LandingContent = () => {
             { id: "helix", description: "Helix Studio", image: "", className: "h-6 w-auto opacity-70" },
           ]}
         />
-        <Solutions />
-        <AIControl />
-        <Features />
-        <DashboardPreview />
-        <Pricing />
-        <FAQs />
-        <Footer />
+        <Suspense fallback={<div className="min-h-[200px]" />}>
+          <Solutions />
+          <AIControl />
+          <Features />
+          <DashboardPreview />
+          <Pricing />
+          <FAQs />
+          <Footer />
+        </Suspense>
       </main>
     </div>
   );
