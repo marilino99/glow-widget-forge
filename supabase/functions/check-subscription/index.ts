@@ -69,7 +69,7 @@ serve(async (req) => {
         .from("chat_messages")
         .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
         .eq("is_ai_response", true)
-        .eq("conversations.widget_owner_id", user.id)
+        .eq("conversations.widget_owner_id", userId)
         .gte("created_at", startOfMonth);
 
       return new Response(JSON.stringify({ subscribed: false, plan: "free", ai_responses_this_month: aiCount ?? 0 }), {
