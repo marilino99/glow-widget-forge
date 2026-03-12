@@ -28,6 +28,39 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
   }
 }
 
+const PRODUCT_KEYWORDS = [
+  "product", "products", "prodott", "buy", "compra", "acquist", "shop", "store",
+  "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo",
+  "cosa avete", "what do you have", "show me", "range", "collection",
+  "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag",
+  "gonna", "vestit", "pantalone", "scarpe", "borsa", "cerco", "vorrei", "want"
+];
+
+function isProductIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): string {
+  const text = (userText || "").toLowerCase();
+  const lang = (fallbackLanguage || "en").toLowerCase();
+
+  if (lang.startsWith("it") || /(prodott|catalogo|mostra|negozio|vedere)/.test(text)) {
+    return "Per vedere i prodotti in preview, collega prima il tuo store Shopify a Widjet dalla sezione Integrations.";
+  }
+  if (lang.startsWith("es") || /(producto|tienda|mostrar|catalogo)/.test(text)) {
+    return "Para ver productos en la vista previa, conecta primero tu tienda Shopify a Widjet desde Integrations.";
+  }
+  if (lang.startsWith("fr") || /(produit|boutique|catalogue|montrer)/.test(text)) {
+    return "Pour voir les produits dans l'aperçu, connectez d'abord votre boutique Shopify à Widjet depuis Integrations.";
+  }
+  if (lang.startsWith("de") || /(produkt|shop|katalog|zeigen)/.test(text)) {
+    return "Um Produkte in der Vorschau zu sehen, verbinde zuerst deinen Shopify-Store mit Widjet unter Integrations.";
+  }
+
+  return "To see products in preview, first connect your Shopify store to Widjet from Integrations.";
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -123,6 +156,14 @@ Deno.serve(async (req) => {
     // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
     const queryText = lastUserMessage?.text || "";
+
+    if (!shopifyConn && isProductIntent(queryText)) {
+      const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
+      return new Response(
+        JSON.stringify({ reply: connectReply }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // RAG: Try similarity search first
     let knowledgeBase = "";
@@ -291,9 +332,8 @@ ${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If 
       }
     } else if (productCardsData && productCardsData.length > 0) {
       // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
-      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text?.toLowerCase() || "";
-      const productKeywords = ["product", "prodott", "buy", "compra", "acquist", "shop", "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo", "cosa avete", "what do you have", "show me"];
-      const mentionsProducts = productKeywords.some(kw => lastUserMsg.includes(kw));
+      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
+      const mentionsProducts = isProductIntent(lastUserMsg);
       if (mentionsProducts) {
         metadata = {
           products: productCardsData.slice(0, 3).map((p: any) => ({

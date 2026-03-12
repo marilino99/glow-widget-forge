@@ -10,6 +10,39 @@ const corsHeaders = {
 const FREE_LIMIT = 100;
 const PRO_LIMIT = 10000;
 
+const PRODUCT_KEYWORDS = [
+  "product", "products", "prodott", "buy", "compra", "acquist", "shop", "store",
+  "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo",
+  "cosa avete", "what do you have", "show me", "range", "collection",
+  "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag",
+  "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want"
+];
+
+function isProductIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): string {
+  const text = (userText || "").toLowerCase();
+  const lang = (fallbackLanguage || "en").toLowerCase();
+
+  if (lang.startsWith("it") || /(prodott|catalogo|mostra|negozio|vedere)/.test(text)) {
+    return "Per vedere i prodotti, collega prima il tuo store Shopify a Widjet dalla sezione Integrations.";
+  }
+  if (lang.startsWith("es") || /(producto|tienda|mostrar|catalogo)/.test(text)) {
+    return "Para ver productos, conecta primero tu tienda Shopify a Widjet desde Integrations.";
+  }
+  if (lang.startsWith("fr") || /(produit|boutique|catalogue|montrer)/.test(text)) {
+    return "Pour voir les produits, connectez d'abord votre boutique Shopify à Widjet depuis Integrations.";
+  }
+  if (lang.startsWith("de") || /(produkt|shop|katalog|zeigen)/.test(text)) {
+    return "Um Produkte zu sehen, verbinde zuerst deinen Shopify-Store mit Widjet unter Integrations.";
+  }
+
+  return "To see products, first connect your Shopify store to Widjet from Integrations.";
+}
+
 async function getMonthlyAiCount(supabase: any, userId: string): Promise<number> {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
@@ -250,6 +283,27 @@ Deno.serve(async (req) => {
 
     // Get the last visitor message for RAG query
     const lastVisitorMessage = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
+
+    if (!shopifyConn && isProductIntent(lastVisitorMessage)) {
+      const connectReply = getConnectShopifyMessage(lastVisitorMessage, config.language || "en");
+
+      await supabase.from("chat_messages").insert({
+        conversation_id: conversationId,
+        sender_type: "owner",
+        content: connectReply,
+        is_ai_response: true,
+      });
+
+      await supabase.from("conversations").update({
+        last_message: connectReply,
+        last_message_at: new Date().toISOString(),
+      }).eq("id", conversationId);
+
+      return new Response(
+        JSON.stringify({ success: true, shopify_required: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // === RAG RETRIEVAL ===
     let ragContext = "";
@@ -518,9 +572,8 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
       console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
     } else if (productCardsData && productCardsData.length > 0) {
       // Fallback: if the AI talked about products but forgot the marker
-      const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content?.toLowerCase() || "";
-      const productKeywords = ["product", "prodott", "buy", "compra", "acquist", "shop", "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo", "cosa avete", "what do you have", "show me", "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag", "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want"];
-      const mentionsProducts = productKeywords.some(kw => lastUserMsg.includes(kw));
+      const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
+      const mentionsProducts = isProductIntent(lastUserMsg);
       if (mentionsProducts) {
         metadata = {
           products: productCardsData.slice(0, 3).map((p: any) => ({
