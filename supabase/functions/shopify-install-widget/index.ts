@@ -184,7 +184,7 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           asset: {
             key: "layout/theme.liquid",
-            value: themeContent,
+            value: updatedThemeContent,
           },
         }),
       }

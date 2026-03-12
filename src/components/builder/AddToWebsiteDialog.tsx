@@ -81,6 +81,10 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
   }, [shopifyConnection, user, shopifyInstalled]);
 
   useEffect(() => {
+    setShopifyInstalled(false);
+  }, [shopifyConnection?.store_domain, widgetId]);
+
+  useEffect(() => {
     if (selectedPlatform === "shopify" && shopifyConnection) {
       checkShopifyInstallation();
     }
