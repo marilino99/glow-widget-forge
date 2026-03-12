@@ -1247,6 +1247,8 @@ Deno.serve(async (req) => {
           body: JSON.stringify({ id: parseInt(variantId), quantity: 1 })
         }).then(function(res) {
           if (!res.ok) throw new Error('Cart add failed');
+          // Show toast
+          showCartToast();
           // Update Shopify cart count badge if theme supports it
           try {
             fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
@@ -1257,13 +1259,25 @@ Deno.serve(async (req) => {
           if (btnEl) { setTimeout(function() { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }, 1500); }
         }).catch(function() {
           // Fallback: redirect to cart with add params
+          if (btnEl) { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }
           w.location.href = '/cart/add?id=' + variantId + '&quantity=1';
         });
       } else {
-        // Cross-origin: open product or cart page directly (CORS blocks /cart/add.js)
-        if (btnEl) { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }
+        // Cross-origin: open Shopify cart permalink directly (CORS blocks /cart/add.js)
+        if (btnEl) { setTimeout(function() { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }, 1500); }
         w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
       }
+    }
+
+    function showCartToast() {
+      var existing = d.getElementById('wj-cart-toast');
+      if (existing) existing.remove();
+      var toast = d.createElement('div');
+      toast.id = 'wj-cart-toast';
+      toast.style.cssText = 'position:fixed;bottom:90px;right:24px;background:#10b981;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:2147483647;transition:opacity 0.3s;font-family:-apple-system,BlinkMacSystemFont,sans-serif';
+      toast.textContent = '✓ Added to cart!';
+      d.body.appendChild(toast);
+      setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
     // Product cards
@@ -1925,31 +1939,6 @@ Deno.serve(async (req) => {
     // Inject custom JS if provided
     if (customJs) {
       try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
-  }
-
-  function addToShopifyCart(variantId) {
-    if (!variantId) return;
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: [{ id: parseInt(variantId), quantity: 1 }] })
-    }).then(function(r) {
-      if (r.ok) { showCartToast(); }
-      else { console.error('[Widjet] Cart add failed', r.status); }
-    }).catch(function(e) {
-      console.error('[Widjet] Cart add error', e);
-    });
-  }
-
-  function showCartToast() {
-    var existing = d.getElementById('wj-cart-toast');
-    if (existing) existing.remove();
-    var toast = d.createElement('div');
-    toast.id = 'wj-cart-toast';
-    toast.style.cssText = 'position:fixed;bottom:90px;right:24px;background:#10b981;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:2147483647;transition:opacity 0.3s;font-family:-apple-system,BlinkMacSystemFont,sans-serif';
-    toast.textContent = '✓ Added to cart!';
-    d.body.appendChild(toast);
-    setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
   }
 }
 
