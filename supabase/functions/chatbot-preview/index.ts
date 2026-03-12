@@ -332,9 +332,8 @@ ${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If 
       }
     } else if (productCardsData && productCardsData.length > 0) {
       // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
-      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text?.toLowerCase() || "";
-      const productKeywords = ["product", "prodott", "buy", "compra", "acquist", "shop", "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo", "cosa avete", "what do you have", "show me"];
-      const mentionsProducts = productKeywords.some(kw => lastUserMsg.includes(kw));
+      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
+      const mentionsProducts = isProductIntent(lastUserMsg);
       if (mentionsProducts) {
         metadata = {
           products: productCardsData.slice(0, 3).map((p: any) => ({

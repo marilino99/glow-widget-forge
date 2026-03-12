@@ -572,9 +572,8 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
       console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
     } else if (productCardsData && productCardsData.length > 0) {
       // Fallback: if the AI talked about products but forgot the marker
-      const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content?.toLowerCase() || "";
-      const productKeywords = ["product", "prodott", "buy", "compra", "acquist", "shop", "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo", "cosa avete", "what do you have", "show me", "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag", "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want"];
-      const mentionsProducts = productKeywords.some(kw => lastUserMsg.includes(kw));
+      const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
+      const mentionsProducts = isProductIntent(lastUserMsg);
       if (mentionsProducts) {
         metadata = {
           products: productCardsData.slice(0, 3).map((p: any) => ({
