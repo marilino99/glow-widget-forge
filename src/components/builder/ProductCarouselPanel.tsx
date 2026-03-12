@@ -1,5 +1,7 @@
-import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2 } from "lucide-react";
+import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2, ShoppingBag } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useShopifyConnection } from "@/hooks/useShopifyConnection";
+import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
