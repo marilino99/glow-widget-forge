@@ -1226,11 +1226,8 @@ Deno.serve(async (req) => {
     // Add to Shopify cart helper
     function addToShopifyCart(variantId, btnEl) {
       if (!variantId) return;
-      // Detect if we are on the same Shopify domain (widget injected in theme)
-      var onShopify = shopifyDomain && w.location.hostname.indexOf(shopifyDomain.replace('.myshopify.com','')) > -1;
-      var cartUrl = onShopify ? '/cart/add.js' : 'https://' + shopifyDomain + '/cart/add.js';
       
-      // Visual feedback: show checkmark
+      // Visual feedback: show checkmark immediately
       var origHtml = '';
       if (btnEl) {
         origHtml = btnEl.innerHTML;
@@ -1239,34 +1236,39 @@ Deno.serve(async (req) => {
         btnEl.style.color = '#fff';
       }
 
-      if (onShopify) {
-        // Same-origin: use fetch for reliable cart add
-        fetch(cartUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: parseInt(variantId), quantity: 1 })
-        }).then(function(res) {
-          if (!res.ok) throw new Error('Cart add failed');
-          // Show toast
-          showCartToast();
-          // Update Shopify cart count badge if theme supports it
-          try {
-            fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+      function resetBtn() {
+        if (btnEl) { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }
+      }
+
+      // Always try same-origin /cart/add.js first (works when widget is on the Shopify store)
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: parseInt(variantId), quantity: 1 })
+      }).then(function(res) {
+        if (!res.ok) throw new Error('Cart add failed');
+        return res.json();
+      }).then(function(data) {
+        // Verify it's a real Shopify response (has variant_id or id)
+        if (!data || (!data.id && !data.variant_id && !data.items)) throw new Error('Not a Shopify response');
+        showCartToast();
+        // Update Shopify cart count badge if theme supports it
+        try {
+          fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+            if (cart && cart.item_count != null) {
               var badges = d.querySelectorAll('.cart-count-bubble span, .cart-count, [data-cart-count]');
               badges.forEach(function(b) { b.textContent = cart.item_count; });
-            });
-          } catch(e) {}
-          if (btnEl) { setTimeout(function() { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }, 1500); }
-        }).catch(function() {
-          // Fallback: redirect to cart with add params
-          if (btnEl) { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }
-          w.location.href = '/cart/add?id=' + variantId + '&quantity=1';
-        });
-      } else {
-        // Cross-origin: open Shopify cart permalink directly (CORS blocks /cart/add.js)
-        if (btnEl) { setTimeout(function() { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }, 1500); }
-        w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
-      }
+            }
+          });
+        } catch(e) {}
+        setTimeout(resetBtn, 1500);
+      }).catch(function() {
+        // Not on Shopify store — fallback: open cart permalink in new tab
+        resetBtn();
+        if (shopifyDomain) {
+          w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
+        }
+      });
     }
 
     function showCartToast() {
