@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import featureProductCards from "@/assets/feature-product-cards.png";
 import featureFaq from "@/assets/feature-faq.png";
-import featureBuilder from "@/assets/feature-builder.gif";
+import featureBuilder from "@/assets/feature-builder.webp";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const Features = () => {
