@@ -555,6 +555,7 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
             imageUrl: p.image_url || null,
             productUrl: p.product_url || null,
             price: p.price || null,
+            shopifyVariantId: p.shopify_variant_id || null,
           })),
         };
         console.log(`Product cards: ${matchedProducts.length} matched, showing ${finalProducts.length}`);
