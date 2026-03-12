@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import widjetIcon from "@/assets/widjet-icon.png";
 import changelogFeatured from "@/assets/changelog-featured.png";
+import shopifyLogo from "@/assets/logo-shopify.png";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import BuilderHome from "@/components/builder/BuilderHome";
@@ -193,18 +194,23 @@ const Builder = () => {
   const [phReviewUrl, setPhReviewUrl] = useState("");
   const [phReviewSaved, setPhReviewSaved] = useState(false);
   const [g2ReviewApproved, setG2ReviewApproved] = useState(false);
+  const [isRecentUser, setIsRecentUser] = useState(false);
 
   // Load user profile for top bar
   useEffect(() => {
     const loadProfile = async () => {
       if (!user) return;
-      const { data } = await supabase.from("profiles").select("avatar_url, first_name, lovable_promo_claimed, g2_review_approved").eq("user_id", user.id).single();
+      const { data } = await supabase.from("profiles").select("avatar_url, first_name, lovable_promo_claimed, g2_review_approved, created_at").eq("user_id", user.id).single();
       if (data?.avatar_url) setUserAvatarUrl(data.avatar_url);
       if (data?.first_name) setUserDisplayName(data.first_name);
       if ((data as any)?.lovable_promo_claimed) setPromoClaimed(true);
       if ((data as any)?.g2_review_approved) {
         setG2ReviewApproved(true);
         setPhReviewSaved(true);
+      }
+      // Users created from March 12, 2026 onwards see the Shopify announcement
+      if (data?.created_at && new Date(data.created_at) >= new Date("2026-03-12T00:00:00Z")) {
+        setIsRecentUser(true);
       }
     };
     loadProfile();
@@ -666,7 +672,24 @@ const Builder = () => {
               </PopoverTrigger>
               <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
                 <div className="max-h-[480px] overflow-y-auto">
-                  {!changelogDetailOpen ? (
+                  {isRecentUser ? (
+                    /* New users: Shopify integration announcement */
+                    <div className="p-5">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#96bf48]/10 mb-3">
+                        <img src={shopifyLogo} alt="Shopify" className="h-7 w-7 object-contain" />
+                      </div>
+                      <h3 className="text-base font-bold text-foreground mb-1.5">Shopify integration coming soon 🚀</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                        We're building a native Shopify integration so your AI chatbot can recommend products directly from your catalog. Stay tuned!
+                      </p>
+                      <div className="rounded-xl border border-border bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          <span className="font-medium text-foreground">What to expect:</span> automatic product sync, smart recommendations, and seamless checkout links — all powered by AI.
+                        </p>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-3">Just now</p>
+                    </div>
+                  ) : !changelogDetailOpen ? (
                     <>
                       {/* Featured update */}
                       <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group" onClick={() => setChangelogDetailOpen(true)}>
