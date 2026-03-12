@@ -7,6 +7,7 @@ import { useFaqItems } from "@/hooks/useFaqItems";
 import { useInstagramPosts } from "@/hooks/useInstagramPosts";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
+import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import { useSubscription } from "@/hooks/useSubscription";
 import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ArrowRight, ExternalLink, Gift, Home, Palette, Puzzle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
