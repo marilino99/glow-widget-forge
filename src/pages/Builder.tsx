@@ -816,7 +816,7 @@ const Builder = () => {
                       )}
                       <p className="text-[10px] text-muted-foreground mt-3 leading-tight">*Valid only for new Lovable accounts.</p>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </PopoverContent>
             </Popover>
