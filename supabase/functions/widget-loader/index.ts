@@ -1848,13 +1848,13 @@ Deno.serve(async (req) => {
     });
   }
 
-  function showCartToast(success) {
+  function showCartToast() {
     var existing = d.getElementById('wj-cart-toast');
     if (existing) existing.remove();
     var toast = d.createElement('div');
     toast.id = 'wj-cart-toast';
     toast.style.cssText = 'position:fixed;bottom:90px;right:24px;background:#10b981;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:2147483647;transition:opacity 0.3s;font-family:-apple-system,BlinkMacSystemFont,sans-serif';
-    toast.textContent = success ? '✓ Added to cart!' : '→ Opening cart...';
+    toast.textContent = '✓ Added to cart!';
     d.body.appendChild(toast);
     setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
   }
