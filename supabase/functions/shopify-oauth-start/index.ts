@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     }
 
     // Clean shop domain
-    const cleanShop = shop.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
+    const cleanShop = shop.trim().replace(/^https?:\/\//, "").replace(/\/$/, "").toLowerCase();
 
     const clientId = Deno.env.get("SHOPIFY_CLIENT_ID")!;
     const callbackUrl = `${supabaseUrl}/functions/v1/shopify-oauth-callback`;
@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
       `client_id=${clientId}` +
       `&scope=${scopes}` +
       `&redirect_uri=${encodeURIComponent(callbackUrl)}` +
-      `&state=${statePayload}`;
+      `&state=${encodeURIComponent(statePayload)}`;
 
     return new Response(JSON.stringify({ url: authUrl }), {
       status: 200,
