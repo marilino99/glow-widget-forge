@@ -1218,6 +1218,23 @@ Deno.serve(async (req) => {
       scroll.appendChild(contact);
     }
 
+    // Add to Shopify cart helper
+    function addToShopifyCart(variantId) {
+      if (!shopifyDomain || !variantId) return;
+      var cartUrl = 'https://' + shopifyDomain + '/cart/add.js';
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', cartUrl, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+          // Brief visual feedback - could open cart drawer
+          try { w.location.href = 'https://' + shopifyDomain + '/cart'; } catch(e) {}
+        }
+      };
+      xhr.send(JSON.stringify({ id: parseInt(variantId), quantity: 1 }));
+    }
+
     // Product cards
     if (products.length > 0) {
       var prodCont = d.createElement('div');
@@ -1564,19 +1581,36 @@ Deno.serve(async (req) => {
         var msgHtml = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>');
         msgHtml += '<div style="max-width:70%"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
         
-        // Render product thumbnails if metadata contains products
+        // Render product cards if metadata contains products
         if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
           msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none">';
           msg.metadata.products.forEach(function(prod) {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
-            msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="flex-shrink:0;width:64px;height:64px;border-radius:12px;overflow:hidden;display:block;background:' + (dark ? '#374151' : '#e2e8f0') + '">';
+            var varId = prod.shopifyVariantId || '';
+            var cardBg = dark ? '#374151' : '#e2e8f0';
+            var btnBg = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9';
+            var btnColor = dark ? 'rgba(255,255,255,0.7)' : '#475569';
+            msgHtml += '<div style="flex-shrink:0;width:112px;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:' + cardBg + '">';
+            msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;height:80px;overflow:hidden">';
             if (imgSrc) {
               msgHtml += '<img src="' + esc(imgSrc) + '" alt="' + esc(prod.title || '') + '" style="width:100%;height:100%;object-fit:cover"/>';
             } else {
               msgHtml += '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:' + textSub + ';text-align:center;padding:4px">' + esc(prod.title || '') + '</div>';
             }
             msgHtml += '</a>';
+            if (prod.price) {
+              msgHtml += '<p style="font-size:10px;font-weight:600;padding:4px 6px 0;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:' + textMain + '">' + esc(prod.price) + '</p>';
+            }
+            msgHtml += '<p style="font-size:9px;padding:0 6px 4px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:' + textSub + '">' + esc(prod.title || '') + '</p>';
+            msgHtml += '<div style="display:flex;gap:4px;padding:0 6px 6px">';
+            if (shopifyDomain && varId) {
+              msgHtml += '<button class="wj-chat-cart-btn" data-variant="' + esc(varId) + '" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;border:none;cursor:pointer;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>';
+            } else {
+              msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;text-decoration:none;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></a>';
+            }
+            msgHtml += '<button class="wj-chat-fav-btn" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;border:none;cursor:pointer;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
+            msgHtml += '</div></div>';
           });
           msgHtml += '</div>';
         }
@@ -1586,6 +1620,29 @@ Deno.serve(async (req) => {
         aiMessageCount++;
       }
       chatMsgs.appendChild(bubble);
+      // Bind cart buttons in chat product cards
+      var chatCartBtns = bubble.querySelectorAll('.wj-chat-cart-btn');
+      chatCartBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          addToShopifyCart(this.getAttribute('data-variant'));
+        });
+      });
+      // Bind favorite buttons (toggle heart fill)
+      var chatFavBtns = bubble.querySelectorAll('.wj-chat-fav-btn');
+      chatFavBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          var svg = this.querySelector('svg');
+          if (svg) {
+            var isFilled = svg.getAttribute('fill') !== 'none';
+            svg.setAttribute('fill', isFilled ? 'none' : '#ef4444');
+            svg.setAttribute('stroke', isFilled ? 'currentColor' : '#ef4444');
+          }
+        });
+      });
       lastMessageId = msg.id;
 
       // Show feedback thumbs after AI responses (from 2nd AI message onward, max once)

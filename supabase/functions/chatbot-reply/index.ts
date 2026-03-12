@@ -261,7 +261,7 @@ Deno.serve(async (req) => {
     const { data: productCardsData } = shopifyConn
       ? await supabase
           .from("product_cards")
-          .select("title, subtitle, product_url, image_url, price, old_price, promo_badge")
+          .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
           .eq("user_id", config.user_id)
           .order("sort_order", { ascending: true })
       : { data: null };
@@ -555,6 +555,7 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
             imageUrl: p.image_url || null,
             productUrl: p.product_url || null,
             price: p.price || null,
+            shopifyVariantId: p.shopify_variant_id || null,
           })),
         };
         console.log(`Product cards: ${matchedProducts.length} matched, showing ${finalProducts.length}`);
@@ -568,6 +569,7 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
           imageUrl: p.image_url || null,
           productUrl: p.product_url || null,
           price: p.price || null,
+          shopifyVariantId: p.shopify_variant_id || null,
         })),
       };
       console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
@@ -582,6 +584,7 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
             imageUrl: p.image_url || null,
             productUrl: p.product_url || null,
             price: p.price || null,
+            shopifyVariantId: p.shopify_variant_id || null,
           })),
         };
         console.log(`Product cards fallback: showing ${Math.min(3, productCardsData.length)} products`);
