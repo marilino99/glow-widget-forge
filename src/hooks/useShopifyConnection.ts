@@ -25,10 +25,21 @@ export const useShopifyConnection = () => {
     const params = new URLSearchParams(window.location.search);
     const connected = params.get("shopify_connected") === "true";
     const errorCode = params.get("shopify_error");
+    const warningCode = params.get("shopify_warning");
+    const connectedShop = params.get("shop");
 
     if (connected) {
       toast({ title: "Shopify connesso!", description: "Lo store è stato collegato con successo. Sincronizzazione in corso…" });
       setJustConnected(true);
+    }
+
+    if (warningCode === "shop_mismatch") {
+      toast({
+        title: "Attenzione dominio Shopify",
+        description: connectedShop
+          ? `Shopify ha autorizzato ${connectedShop}. È stato collegato questo store.`
+          : "Shopify ha autorizzato un dominio diverso da quello richiesto.",
+      });
     }
 
     if (errorCode === "shop_mismatch") {
@@ -39,10 +50,12 @@ export const useShopifyConnection = () => {
       });
     }
 
-    if (connected || errorCode) {
+    if (connected || errorCode || warningCode || connectedShop) {
       const url = new URL(window.location.href);
       url.searchParams.delete("shopify_connected");
       url.searchParams.delete("shopify_error");
+      url.searchParams.delete("shopify_warning");
+      url.searchParams.delete("shop");
       window.history.replaceState({}, "", url.toString());
     }
   }, [toast]);

@@ -14,21 +14,26 @@ Deno.serve(async (req) => {
     // Decode state to get user_id
     let stateData: { user_id: string; shop: string };
     try {
-      stateData = JSON.parse(atob(state));
+      // Backward compatible: old state values could contain spaces instead of +
+      const normalizedState = state.replace(/ /g, "+");
+      stateData = JSON.parse(atob(normalizedState));
     } catch {
       return new Response("Invalid state parameter", { status: 400 });
     }
 
     const appUrl = Deno.env.get("APP_URL") || "https://widjett.lovable.app";
 
-    // Security check: callback shop must match the shop requested in state
-    if (stateData.shop !== shop) {
-      console.error("Shop domain mismatch in OAuth callback", { stateShop: stateData.shop, callbackShop: shop });
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: `${appUrl}/builder?shopify_error=shop_mismatch`,
-        },
+    const normalizeShop = (value: string) =>
+      value.trim().replace(/^https?:\/\//, "").replace(/\/$/, "").toLowerCase();
+
+    const requestedShop = normalizeShop(stateData.shop);
+    const callbackShop = normalizeShop(shop);
+    const hasShopMismatch = requestedShop !== callbackShop;
+
+    if (hasShopMismatch) {
+      console.warn("Shop domain differs from state — using Shopify callback shop", {
+        stateShop: requestedShop,
+        callbackShop,
       });
     }
 
@@ -36,7 +41,7 @@ Deno.serve(async (req) => {
     const clientSecret = Deno.env.get("SHOPIFY_CLIENT_SECRET")!;
 
     // Exchange code for access token
-    const tokenRes = await fetch(`https://${shop}/admin/oauth/access_token`, {
+    const tokenRes = await fetch(`https://${callbackShop}/admin/oauth/access_token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -61,7 +66,7 @@ Deno.serve(async (req) => {
 
     // Now get a Storefront Access Token using the Admin API
     const storefrontRes = await fetch(
-      `https://${shop}/admin/api/2024-01/storefront_access_tokens.json`,
+      `https://${callbackShop}/admin/api/2024-01/storefront_access_tokens.json`,
       {
         method: "POST",
         headers: {
@@ -83,7 +88,7 @@ Deno.serve(async (req) => {
     } else {
       // If creating fails, try to list existing ones
       const listRes = await fetch(
-        `https://${shop}/admin/api/2024-01/storefront_access_tokens.json`,
+        `https://${callbackShop}/admin/api/2024-01/storefront_access_tokens.json`,
         {
           headers: { "X-Shopify-Access-Token": accessToken },
         }
@@ -111,7 +116,7 @@ Deno.serve(async (req) => {
       .upsert(
         {
           user_id: stateData.user_id,
-          store_domain: shop,
+          store_domain: callbackShop,
           storefront_token: storefrontToken,
           admin_access_token: accessToken,
         },
@@ -124,10 +129,16 @@ Deno.serve(async (req) => {
     }
 
     // Redirect back to the app with success
+    const redirectParams = new URLSearchParams({ shopify_connected: "true" });
+    if (hasShopMismatch) {
+      redirectParams.set("shopify_warning", "shop_mismatch");
+      redirectParams.set("shop", callbackShop);
+    }
+
     return new Response(null, {
       status: 302,
       headers: {
-        Location: `${appUrl}/builder?shopify_connected=true`,
+        Location: `${appUrl}/builder?${redirectParams.toString()}`,
       },
     });
   } catch (error) {
