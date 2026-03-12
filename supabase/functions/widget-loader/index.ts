@@ -1220,20 +1220,45 @@ Deno.serve(async (req) => {
 
     // Add to Shopify cart helper
     function addToShopifyCart(variantId, btnEl) {
-      if (!shopifyDomain || !variantId) return;
+      if (!variantId) return;
+      // Detect if we are on the same Shopify domain (widget injected in theme)
+      var onShopify = shopifyDomain && w.location.hostname.indexOf(shopifyDomain.replace('.myshopify.com','')) > -1;
+      var cartUrl = onShopify ? '/cart/add.js' : 'https://' + shopifyDomain + '/cart/add.js';
+      
       // Visual feedback: show checkmark
+      var origHtml = '';
       if (btnEl) {
-        var origHtml = btnEl.innerHTML;
+        origHtml = btnEl.innerHTML;
         btnEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
         btnEl.style.background = '#22c55e';
         btnEl.style.color = '#fff';
-        setTimeout(function() { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }, 1500);
       }
-      var cartUrl = 'https://' + shopifyDomain + '/cart/add.js';
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', cartUrl, true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.send(JSON.stringify({ id: parseInt(variantId), quantity: 1 }));
+
+      if (onShopify) {
+        // Same-origin: use fetch for reliable cart add
+        fetch(cartUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: parseInt(variantId), quantity: 1 })
+        }).then(function(res) {
+          if (!res.ok) throw new Error('Cart add failed');
+          // Update Shopify cart count badge if theme supports it
+          try {
+            fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+              var badges = d.querySelectorAll('.cart-count-bubble span, .cart-count, [data-cart-count]');
+              badges.forEach(function(b) { b.textContent = cart.item_count; });
+            });
+          } catch(e) {}
+          if (btnEl) { setTimeout(function() { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }, 1500); }
+        }).catch(function() {
+          // Fallback: redirect to cart with add params
+          w.location.href = '/cart/add?id=' + variantId + '&quantity=1';
+        });
+      } else {
+        // Cross-origin: open product or cart page directly (CORS blocks /cart/add.js)
+        if (btnEl) { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }
+        w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
+      }
     }
 
     // Product cards
