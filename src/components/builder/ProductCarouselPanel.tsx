@@ -368,6 +368,47 @@ const ProductCarouselPanel = ({
     );
   }
 
+  // Gate: if Shopify is not connected, show connect prompt
+  if (!shopifyLoading && !shopifyConnection) {
+    return (
+      <div className="flex h-full flex-col" style={{ backgroundColor: '#fafafa' }}>
+        {/* Header */}
+        <div className="border-b border-border p-4">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-foreground hover:text-muted-foreground transition-colors"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            <span className="text-xl font-bold">Product carousel</span>
+          </button>
+        </div>
+
+        {/* Connect Shopify prompt */}
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+          <div className="rounded-full bg-muted p-4 mb-4">
+            <ShoppingBag className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Connect Shopify</h3>
+          <p className="text-sm text-muted-foreground mb-6 max-w-[280px]">
+            Connect your Shopify store to display and manage your products in the widget carousel.
+          </p>
+          <Button
+            onClick={() => setShopifyDialogOpen(true)}
+            className="rounded-full px-6"
+          >
+            Connect Shopify
+          </Button>
+        </div>
+
+        <ShopifyConnectDialog
+          open={shopifyDialogOpen}
+          onOpenChange={setShopifyDialogOpen}
+          onConnect={connectOAuth}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col" style={{ backgroundColor: '#fafafa' }}>
       {/* Header */}
