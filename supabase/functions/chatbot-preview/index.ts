@@ -349,6 +349,7 @@ ${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If 
             imageUrl: p.image_url || null,
             productUrl: p.product_url || null,
             price: p.price || null,
+            shopifyVariantId: p.shopify_variant_id || null,
           })),
         };
       }
