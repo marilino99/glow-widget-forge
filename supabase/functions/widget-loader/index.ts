@@ -1252,12 +1252,12 @@ Deno.serve(async (req) => {
         // Verify it's a real Shopify response (has variant_id or id)
         if (!data || (!data.id && !data.variant_id && !data.items)) throw new Error('Not a Shopify response');
         showCartToast();
-        // Force Shopify theme to update cart UI
+        // Force Shopify theme/cart UI to update immediately (with retries for async themes)
         try {
-          fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
-            if (!cart || cart.item_count == null) return;
-            var count = cart.item_count;
-            // Update all known cart count selectors across popular Shopify themes
+          var syncAttempt = 0;
+          var maxSyncAttempts = 4;
+
+          function applyCartCount(count) {
             var selectors = [
               '.cart-count-bubble span',
               '.cart-count',
@@ -1278,32 +1278,85 @@ Deno.serve(async (req) => {
             selectors.forEach(function(sel) {
               try {
                 var els = d.querySelectorAll(sel);
-                els.forEach(function(b) { b.textContent = count; });
+                els.forEach(function(el) {
+                  el.textContent = count;
+                  if (el.setAttribute) el.setAttribute('data-cart-count', String(count));
+                });
               } catch(e) {}
             });
-            // Dispatch events that Shopify themes listen for to refresh cart sections
+          }
+
+          function refreshThemeSections() {
             try {
-              d.dispatchEvent(new CustomEvent('cart:refresh'));
-              d.dispatchEvent(new CustomEvent('cart:update', { detail: { cart: cart } }));
-              // Dawn theme and Section Rendering API
-              if (w.Shopify && w.Shopify.theme && w.Shopify.theme.sections) {
-                try { w.Shopify.theme.sections.dispatchEvent('cart:refresh'); } catch(e) {}
+              var sectionIds = [];
+              var seen = {};
+              var sectionEls = d.querySelectorAll('[id^="shopify-section-"]');
+              sectionEls.forEach(function(el) {
+                var sid = (el.id || '').replace('shopify-section-', '');
+                if (!sid) return;
+                if (!/cart|header|mini|drawer|icon/i.test(sid)) return;
+                if (seen[sid]) return;
+                seen[sid] = true;
+                sectionIds.push(sid);
+              });
+
+              if (sectionIds.length === 0) {
+                sectionIds = ['cart-icon-bubble', 'cart-drawer', 'header', 'cart-notification', 'mini-cart'];
               }
-              // Trigger Shopify Section Rendering API to re-render cart drawer/header
-              fetch('/?sections=cart-icon-bubble,cart-drawer,header,cart-notification,mini-cart')
+
+              fetch('/?sections=' + encodeURIComponent(sectionIds.join(',')) + '&_=' + Date.now(), { cache: 'no-store' })
                 .then(function(r) { return r.json(); })
                 .then(function(sections) {
+                  if (!sections) return;
                   Object.keys(sections).forEach(function(key) {
                     var sectionEl = d.getElementById('shopify-section-' + key);
-                    if (sectionEl && sections[key]) {
-                      sectionEl.innerHTML = new DOMParser().parseFromString(sections[key], 'text/html').body.innerHTML;
-                    }
+                    if (!sectionEl || !sections[key]) return;
+                    sectionEl.innerHTML = new DOMParser().parseFromString(sections[key], 'text/html').body.innerHTML;
                   });
                 }).catch(function() {});
             } catch(e) {}
-          });
+          }
+
+          function emitThemeEvents(cart) {
+            try {
+              d.dispatchEvent(new CustomEvent('cart:refresh'));
+              d.dispatchEvent(new CustomEvent('cart:update', { detail: { cart: cart } }));
+              d.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: cart } }));
+            } catch(e) {}
+
+            // Dawn / modern Shopify pubsub
+            try {
+              if (w.publish && w.PUB_SUB_EVENTS && w.PUB_SUB_EVENTS.cartUpdate) {
+                w.publish(w.PUB_SUB_EVENTS.cartUpdate, {
+                  source: 'widjet',
+                  cartData: cart,
+                  variantId: parseInt(variantId, 10)
+                });
+              }
+            } catch(e) {}
+          }
+
+          function syncCartUi() {
+            syncAttempt += 1;
+            fetch('/cart.js?ts=' + Date.now(), { cache: 'no-store' })
+              .then(function(r) { return r.json(); })
+              .then(function(cart) {
+                if (!cart || cart.item_count == null) return;
+                applyCartCount(cart.item_count);
+                emitThemeEvents(cart);
+                if (syncAttempt === 1) refreshThemeSections();
+              })
+              .catch(function() {})
+              .then(function() {
+                if (syncAttempt < maxSyncAttempts) {
+                  setTimeout(syncCartUi, syncAttempt === 1 ? 180 : 450);
+                }
+              });
+          }
+
+          syncCartUi();
         } catch(e) {}
-        setTimeout(resetBtn, 1500);
+        setTimeout(resetBtn, 1200);
       }).catch(function() {
         // Not on Shopify store — fallback: open cart permalink in new tab
         resetBtn();
