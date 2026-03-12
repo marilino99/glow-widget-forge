@@ -672,26 +672,26 @@ const Builder = () => {
               </PopoverTrigger>
               <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
                 <div className="max-h-[480px] overflow-y-auto">
-                  {isRecentUser ? (
-                    /* New users: Shopify integration announcement */
-                    <div className="p-5">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#96bf48]/10 mb-3">
-                        <img src={shopifyLogo} alt="Shopify" className="h-7 w-7 object-contain" />
-                      </div>
-                      <h3 className="text-base font-bold text-foreground mb-1.5">Shopify integration coming soon 🚀</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                        We're building a native Shopify integration so your AI chatbot can recommend products directly from your catalog. Stay tuned!
-                      </p>
-                      <div className="rounded-xl border border-border bg-muted/50 p-3">
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          <span className="font-medium text-foreground">What to expect:</span> automatic product sync, smart recommendations, and seamless checkout links — all powered by AI.
-                        </p>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-3">Just now</p>
+                  {/* Shopify announcement — always visible */}
+                  <div className="p-5 border-b border-border">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#96bf48]/10 mb-3">
+                      <img src={shopifyLogo} alt="Shopify" className="h-7 w-7 object-contain" />
                     </div>
-                  ) : !changelogDetailOpen ? (
+                    <h3 className="text-base font-bold text-foreground mb-1.5">Shopify integration coming soon 🚀</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                      We're building a native Shopify integration so your AI chatbot can recommend products directly from your catalog. Stay tuned!
+                    </p>
+                    <div className="rounded-xl border border-border bg-muted/50 p-3">
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        <span className="font-medium text-foreground">What to expect:</span> automatic product sync, smart recommendations, and seamless checkout links — all powered by AI.
+                      </p>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-3">Just now</p>
+                  </div>
+
+                  {!isRecentUser && !changelogDetailOpen ? (
                     <>
-                      {/* Featured update */}
+                      {/* Lovable promo for existing users */}
                       <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group" onClick={() => setChangelogDetailOpen(true)}>
                         <h3 className="text-base font-bold text-foreground mb-1.5 flex items-center gap-1.5">Get 3 months of Lovable Pro for free <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
                         <p className="text-sm text-muted-foreground leading-relaxed mb-3">
@@ -701,7 +701,7 @@ const Builder = () => {
                         <p className="text-xs text-muted-foreground mt-2">Just now</p>
                       </div>
                     </>
-                  ) : (
+                  ) : !isRecentUser && changelogDetailOpen ? (
                     <div className="p-5">
                       <button onClick={() => setChangelogDetailOpen(false)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
                         <ChevronLeft className="h-4 w-4" />
