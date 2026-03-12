@@ -1614,6 +1614,10 @@ Deno.serve(async (req) => {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
             var varId = prod.shopifyVariantId || '';
+            if (!varId && products.length > 0) {
+              var matchedProd = products.find(function(p) { return p.title === prod.title; });
+              if (matchedProd && matchedProd.shopify_variant_id) varId = matchedProd.shopify_variant_id;
+            }
             var cardBg = dark ? '#374151' : '#e2e8f0';
             var btnBg = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9';
             var btnColor = dark ? 'rgba(255,255,255,0.7)' : '#475569';
