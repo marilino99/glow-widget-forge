@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     const clientSecret = Deno.env.get("SHOPIFY_CLIENT_SECRET")!;
 
     // Exchange code for access token
-    const tokenRes = await fetch(`https://${shop}/admin/oauth/access_token`, {
+    const tokenRes = await fetch(`https://${callbackShop}/admin/oauth/access_token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
