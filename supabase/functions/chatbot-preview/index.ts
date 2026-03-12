@@ -213,6 +213,15 @@ Deno.serve(async (req) => {
       }
     }
 
+    // If no knowledge base content and product intent without Shopify, suggest connecting
+    if (!shopifyConn && isProductIntent(queryText) && !knowledgeBase.trim()) {
+      const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
+      return new Response(
+        JSON.stringify({ reply: connectReply }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Add product catalog
     if (productCardsData && productCardsData.length > 0) {
       knowledgeBase += "\n## PRODUCT CATALOG\n";
