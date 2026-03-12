@@ -1254,9 +1254,6 @@ Deno.serve(async (req) => {
         showCartToast();
         // Force Shopify theme/cart UI to update immediately (with retries for async themes)
         try {
-          var syncAttempt = 0;
-          var maxSyncAttempts = 4;
-
           function applyCartCount(count) {
             var selectors = [
               '.cart-count-bubble span',
