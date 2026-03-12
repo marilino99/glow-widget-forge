@@ -87,13 +87,15 @@ const LandingContent = () => {
             { id: "helix", description: "Helix Studio", image: "", className: "h-6 w-auto opacity-70" },
           ]}
         />
-        <Solutions />
-        <AIControl />
-        <Features />
-        <DashboardPreview />
-        <Pricing />
-        <FAQs />
-        <Footer />
+        <Suspense fallback={<div className="min-h-[200px]" />}>
+          <Solutions />
+          <AIControl />
+          <Features />
+          <DashboardPreview />
+          <Pricing />
+          <FAQs />
+          <Footer />
+        </Suspense>
       </main>
     </div>
   );
