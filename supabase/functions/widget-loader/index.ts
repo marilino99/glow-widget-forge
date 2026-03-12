@@ -1603,6 +1603,29 @@ Deno.serve(async (req) => {
         aiMessageCount++;
       }
       chatMsgs.appendChild(bubble);
+      // Bind cart buttons in chat product cards
+      var chatCartBtns = bubble.querySelectorAll('.wj-chat-cart-btn');
+      chatCartBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          addToShopifyCart(this.getAttribute('data-variant'));
+        });
+      });
+      // Bind favorite buttons (toggle heart fill)
+      var chatFavBtns = bubble.querySelectorAll('.wj-chat-fav-btn');
+      chatFavBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          var svg = this.querySelector('svg');
+          if (svg) {
+            var isFilled = svg.getAttribute('fill') !== 'none';
+            svg.setAttribute('fill', isFilled ? 'none' : '#ef4444');
+            svg.setAttribute('stroke', isFilled ? 'currentColor' : '#ef4444');
+          }
+        });
+      });
       lastMessageId = msg.id;
 
       // Show feedback thumbs after AI responses (from 2nd AI message onward, max once)
