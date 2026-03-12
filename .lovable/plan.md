@@ -1,21 +1,38 @@
 
 
-# Fix: Timestamp troncato nella lista conversazioni
+## Fix: Add-to-Cart nel widget chat
 
-## Problema
-Il viewport interno di Radix ScrollArea usa `overflow: scroll` inline, ignorando le classi CSS applicate dall'esterno. Il contenuto si espande oltre la larghezza della sidebar e il timestamp sparisce.
+### Problema identificato
 
-## Soluzione
+Ho analizzato l'intero flusso dati dal database al widget. Il codice sorgente delle edge functions (`chatbot-reply`, `chatbot-preview`) include correttamente `shopifyVariantId` nei metadati dei messaggi. Tuttavia, i messaggi **gia salvati** nel database (come quello delle 13:50 di oggi) **non contengono `shopifyVariantId`** nei metadati. Questo significa che:
 
-### 1. Modificare `src/components/ui/scroll-area.tsx`
-Aggiungere al viewport la classe `[overflow-x:hidden!important]` per impedire lo scroll orizzontale e forzare il contenuto a rispettare la larghezza del parent.
+- Quando il widget carica messaggi vecchi dalla chat, il `varId` è vuoto
+- Il widget mostra un link `<a>` alla pagina prodotto invece del `<button>` cart
+- Cliccando si viene reindirizzati alla pagina prodotto
 
-```tsx
-<ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [overflow-x:hidden!important]">
+### Piano di fix
+
+**1. Fallback lato widget-loader per messaggi senza variant ID**
+
+Nella funzione `renderMessage` del `widget-loader`, quando un prodotto nella chat non ha `shopifyVariantId` nei metadati, cercare il variant ID nella lista prodotti già caricata dal config (`products` array) facendo match per titolo. Questo risolve il problema per tutti i messaggi vecchi senza dover modificare il database.
+
+```text
+renderMessage(msg):
+  per ogni prod in msg.metadata.products:
+    varId = prod.shopifyVariantId
+    SE varId è vuoto:
+      cercare in products[] (dal config) un match per titolo
+      SE trovato → usare il suo shopify_variant_id
 ```
 
-### 2. Pulire `src/components/builder/ConversationsPanel.tsx`
-Rimuovere il selettore CSS hack `[&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden` dalla ScrollArea, dato che il fix e ora nel componente base.
+**2. Stesso fallback per la sidebar search (`renderSearchResults`)**
 
-Queste due modifiche risolvono il problema alla radice: il viewport non permettera piu al contenuto di espandersi orizzontalmente, e il layout `grid-cols-[1fr_auto]` funzionera correttamente troncando il titolo e mostrando il timestamp.
+Applicare la stessa logica di lookup anche nella funzione `renderSearchResults` del widget-loader.
+
+**3. Verifica deployment**
+
+Le funzioni `chatbot-reply` e `chatbot-preview` contengono già il codice corretto per salvare `shopifyVariantId` nei metadati — i nuovi messaggi saranno completi. Il fallback lato widget risolve i messaggi storici.
+
+### File da modificare
+- `supabase/functions/widget-loader/index.ts` — aggiungere lookup fallback per variant ID in `renderMessage` e `renderSearchResults`
 
