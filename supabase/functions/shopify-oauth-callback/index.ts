@@ -124,7 +124,6 @@ Deno.serve(async (req) => {
     }
 
     // Redirect back to the app with success
-    const appUrl = Deno.env.get("APP_URL") || "https://widjett.lovable.app";
     return new Response(null, {
       status: 302,
       headers: {
