@@ -1314,45 +1314,12 @@ Deno.serve(async (req) => {
             } catch(e) {}
           }
 
-          function emitThemeEvents(cart) {
-            // Horizon theme: uses cart:update with detail.data.itemCount + source
-            try {
-              d.dispatchEvent(new CustomEvent('cart:update', {
-                bubbles: true,
-                detail: {
-                  data: {
-                    itemCount: cart.item_count,
-                    source: 'product-form-component'
-                  }
-                }
-              }));
-            } catch(e) {}
-
-            // Also dispatch variants for other themes (Dawn, Debut, etc.)
-            try {
-              d.dispatchEvent(new CustomEvent('cart:refresh'));
-              d.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: cart } }));
-            } catch(e) {}
-
-            // Dawn / modern Shopify pubsub
-            try {
-              if (w.publish && w.PUB_SUB_EVENTS && w.PUB_SUB_EVENTS.cartUpdate) {
-                w.publish(w.PUB_SUB_EVENTS.cartUpdate, {
-                  source: 'product-form-component',
-                  cartData: cart,
-                  variantId: parseInt(variantId, 10)
-                });
-              }
-            } catch(e) {}
-          }
-
           setTimeout(function() {
             fetch('/cart.js?ts=' + Date.now(), { cache: 'no-store' })
               .then(function(r) { return r.json(); })
               .then(function(cart) {
                 if (!cart || cart.item_count == null) return;
                 applyCartCount(cart.item_count);
-                emitThemeEvents(cart);
                 refreshThemeSections();
               })
               .catch(function() {});
