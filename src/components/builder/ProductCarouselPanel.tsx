@@ -49,6 +49,8 @@ const ProductCarouselPanel = ({
   onPreviewUpdate
 }: ProductCarouselPanelProps) => {
   const { toast } = useToast();
+  const { connection: shopifyConnection, isLoading: shopifyLoading, connectOAuth } = useShopifyConnection();
+  const [shopifyDialogOpen, setShopifyDialogOpen] = useState(false);
   const [productUrl, setProductUrl] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
