@@ -43,15 +43,26 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch product cards for this user
-    const { data: productCards, error: cardsError } = await supabase
-      .from("product_cards")
-      .select("*")
+    // Check if user has an active Shopify connection
+    const { data: shopifyConn } = await supabase
+      .from("shopify_connections")
+      .select("id")
       .eq("user_id", config.user_id)
-      .order("sort_order", { ascending: true });
+      .maybeSingle();
 
-    if (cardsError) {
-      console.error("Product cards error:", cardsError);
+    // Fetch product cards only if Shopify is connected
+    let productCards: any[] = [];
+    if (shopifyConn) {
+      const { data: cardsData, error: cardsError } = await supabase
+        .from("product_cards")
+        .select("*")
+        .eq("user_id", config.user_id)
+        .order("sort_order", { ascending: true });
+
+      if (cardsError) {
+        console.error("Product cards error:", cardsError);
+      }
+      productCards = cardsData || [];
     }
 
     // Fetch FAQ items for this user
