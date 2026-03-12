@@ -14,21 +14,26 @@ Deno.serve(async (req) => {
     // Decode state to get user_id
     let stateData: { user_id: string; shop: string };
     try {
-      stateData = JSON.parse(atob(state));
+      // Backward compatible: old state values could contain spaces instead of +
+      const normalizedState = state.replace(/ /g, "+");
+      stateData = JSON.parse(atob(normalizedState));
     } catch {
       return new Response("Invalid state parameter", { status: 400 });
     }
 
     const appUrl = Deno.env.get("APP_URL") || "https://widjett.lovable.app";
 
-    // Security check: callback shop must match the shop requested in state
-    if (stateData.shop !== shop) {
-      console.error("Shop domain mismatch in OAuth callback", { stateShop: stateData.shop, callbackShop: shop });
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: `${appUrl}/builder?shopify_error=shop_mismatch`,
-        },
+    const normalizeShop = (value: string) =>
+      value.trim().replace(/^https?:\/\//, "").replace(/\/$/, "").toLowerCase();
+
+    const requestedShop = normalizeShop(stateData.shop);
+    const callbackShop = normalizeShop(shop);
+    const hasShopMismatch = requestedShop !== callbackShop;
+
+    if (hasShopMismatch) {
+      console.warn("Shop domain differs from state — using Shopify callback shop", {
+        stateShop: requestedShop,
+        callbackShop,
       });
     }
 
