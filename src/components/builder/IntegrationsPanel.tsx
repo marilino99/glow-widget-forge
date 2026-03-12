@@ -1,15 +1,45 @@
 import { useState } from "react";
-import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2 } from "lucide-react";
+import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Progress } from "@/components/ui/progress";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
+import { useEffect, useRef } from "react";
 
 const IntegrationsPanel = () => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [syncProgress, setSyncProgress] = useState(0);
+  const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Animate progress bar during sync
+  useEffect(() => {
+    if (isSyncing) {
+      setSyncProgress(5);
+      syncTimerRef.current = setInterval(() => {
+        setSyncProgress((prev) => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 12;
+        });
+      }, 400);
+    } else {
+      if (syncTimerRef.current) {
+        clearInterval(syncTimerRef.current);
+        syncTimerRef.current = null;
+      }
+      if (syncProgress > 0) {
+        setSyncProgress(100);
+        const t = setTimeout(() => setSyncProgress(0), 800);
+        return () => clearTimeout(t);
+      }
+    }
+    return () => {
+      if (syncTimerRef.current) clearInterval(syncTimerRef.current);
+    };
+  }, [isSyncing]);
 
   const isConnected = !!connection;
 
@@ -54,6 +84,22 @@ const IntegrationsPanel = () => {
                 </div>
               )}
             </div>
+
+            {/* Sync progress bar */}
+            {(isSyncing || syncProgress > 0) && (
+              <div className="mt-3 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="h-3.5 w-3.5 text-muted-foreground animate-pulse" />
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {syncProgress >= 100 ? "Sync complete!" : "Syncing products…"}
+                  </span>
+                </div>
+                <Progress
+                  value={Math.min(syncProgress, 100)}
+                  className="h-1.5 bg-muted"
+                />
+              </div>
+            )}
 
             {/* Actions */}
             <div className="mt-4 flex items-center gap-2">
