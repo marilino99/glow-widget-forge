@@ -150,6 +150,7 @@ Deno.serve(async (req) => {
       color = colors[wc] || colors.blue;
     }
     var dark = cfg.widget_theme === 'dark';
+    var lt = !dark;
     var widgetType = cfg.widget_type || 'popup';
     var solid = cfg.background_type === 'solid';
     var gradient = cfg.background_type === 'gradient';
