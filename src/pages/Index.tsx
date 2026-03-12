@@ -98,7 +98,6 @@ const LandingContent = () => {
           <Footer />
         </Suspense>
       </main>
-      <CookieConsent />
     </div>
   );
 };
