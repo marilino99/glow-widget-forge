@@ -12,6 +12,34 @@ const IntegrationsPanel = () => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [syncProgress, setSyncProgress] = useState(0);
+  const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Animate progress bar during sync
+  useEffect(() => {
+    if (isSyncing) {
+      setSyncProgress(5);
+      syncTimerRef.current = setInterval(() => {
+        setSyncProgress((prev) => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 12;
+        });
+      }, 400);
+    } else {
+      if (syncTimerRef.current) {
+        clearInterval(syncTimerRef.current);
+        syncTimerRef.current = null;
+      }
+      if (syncProgress > 0) {
+        setSyncProgress(100);
+        const t = setTimeout(() => setSyncProgress(0), 800);
+        return () => clearTimeout(t);
+      }
+    }
+    return () => {
+      if (syncTimerRef.current) clearInterval(syncTimerRef.current);
+    };
+  }, [isSyncing]);
 
   const isConnected = !!connection;
 
