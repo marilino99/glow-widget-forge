@@ -160,6 +160,7 @@ Deno.serve(async (req) => {
     var avatar = cfg.selected_avatar;
     var buttonLogo = cfg.button_logo;
     var products = cfg.product_cards || [];
+    var shopifyDomain = cfg.shopify_store_domain || '';
     var faqs = cfg.faq_items || [];
     var igPosts = cfg.instagram_posts || [];
     var customLinks = cfg.custom_links || [];
@@ -252,8 +253,11 @@ Deno.serve(async (req) => {
       .wj-prod-old{font-size:14px;color:\${textSub};text-decoration:line-through;margin-left:8px}
       .wj-prod-title{font-weight:700;font-size:16px;color:\${textMain}}
       .wj-prod-sub{font-size:14px;color:\${textSub};margin-top:2px;margin-bottom:12px}
-      .wj-prod-btn{width:100%;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
+      .wj-prod-actions{display:flex;gap:6px;align-items:stretch}
+      .wj-prod-btn{flex:1;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
       .wj-prod-btn:hover{background:\${color.hover}}
+      .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
+      .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -379,8 +383,11 @@ Deno.serve(async (req) => {
       .wj-prod-old{font-size:14px;color:\${textSub};text-decoration:line-through;margin-left:8px}
       .wj-prod-title{font-weight:700;font-size:16px;color:\${textMain}}
       .wj-prod-sub{font-size:14px;color:\${textSub};margin-top:2px;margin-bottom:12px}
-      .wj-prod-btn{width:100%;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
+      .wj-prod-actions{display:flex;gap:6px;align-items:stretch}
+      .wj-prod-btn{flex:1;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box}
       .wj-prod-btn:hover{background:\${color.hover}}
+      .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
+      .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -1229,7 +1236,20 @@ Deno.serve(async (req) => {
         var btnHtml = p.product_url 
           ? '<a href="' + esc(p.product_url) + '" target="_blank" rel="noopener" class="wj-prod-btn">' + esc(tr.show) + '</a>' 
           : '<button class="wj-prod-btn">' + esc(tr.show) + '</button>';
-        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + btnHtml + '</div>';
+        var cartBtnHtml = '';
+        if (shopifyDomain && p.shopify_variant_id) {
+          cartBtnHtml = '<button class="wj-prod-cart-btn" data-variant="' + esc(p.shopify_variant_id) + '"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>';
+        }
+        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + '<div class="wj-prod-actions">' + btnHtml + cartBtnHtml + '</div></div>';
+        // Bind cart click
+        var cartBtn = card.querySelector('.wj-prod-cart-btn');
+        if (cartBtn) {
+          cartBtn.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            addToShopifyCart(this.getAttribute('data-variant'));
+          });
+        }
         prodCont.appendChild(card);
       });
       scroll.appendChild(prodCont);
@@ -1812,8 +1832,41 @@ Deno.serve(async (req) => {
     // Inject custom JS if provided
     if (customJs) {
       try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
+  }
+
+  function addToShopifyCart(variantId) {
+    if (!shopifyDomain || !variantId) return;
+    // Try same-origin /cart/add.js first (widget is on the Shopify store)
+    var sameOrigin = false;
+    try { sameOrigin = w.location.hostname.indexOf(shopifyDomain) !== -1 || shopifyDomain.indexOf(w.location.hostname) !== -1; } catch(e) {}
+    
+    if (sameOrigin) {
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: [{ id: parseInt(variantId), quantity: 1 }] })
+      }).then(function(r) {
+        if (r.ok) { showCartToast(true); } 
+        else { w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank'); }
+      }).catch(function() {
+        w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
+      });
+    } else {
+      w.open('https://' + shopifyDomain + '/cart/' + variantId + ':1', '_blank');
     }
   }
+
+  function showCartToast(success) {
+    var existing = d.getElementById('wj-cart-toast');
+    if (existing) existing.remove();
+    var toast = d.createElement('div');
+    toast.id = 'wj-cart-toast';
+    toast.style.cssText = 'position:fixed;bottom:90px;right:24px;background:#10b981;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:2147483647;transition:opacity 0.3s;font-family:-apple-system,BlinkMacSystemFont,sans-serif';
+    toast.textContent = success ? '✓ Added to cart!' : '→ Opening cart...';
+    d.body.appendChild(toast);
+    setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
+  }
+}
 
   function esc(s) {
     if (!s) return '';

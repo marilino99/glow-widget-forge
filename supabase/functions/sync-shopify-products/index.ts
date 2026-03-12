@@ -21,6 +21,7 @@ const SHOPIFY_ADMIN_PRODUCTS_QUERY = `
           variants(first: 1) {
             edges {
               node {
+                id
                 price
                 compareAtPrice
               }
@@ -119,6 +120,13 @@ Deno.serve(async (req) => {
         const compareAt = variant?.compareAtPrice ? parseFloat(variant.compareAtPrice) : null;
         const hasDiscount = compareAt && price && compareAt > price;
 
+        // Extract numeric variant ID from GID (gid://shopify/ProductVariant/12345 -> 12345)
+        let variantId: string | null = null;
+        if (variant?.id) {
+          const match = variant.id.match(/(\d+)$/);
+          variantId = match ? match[1] : variant.id;
+        }
+
         // Strip HTML tags from description
         const plainDesc = node.descriptionHtml
           ? node.descriptionHtml.replace(/<[^>]*>/g, "").substring(0, 120)
@@ -132,6 +140,7 @@ Deno.serve(async (req) => {
           price: price !== null ? `${price.toFixed(2)}` : null,
           old_price: hasDiscount ? `${compareAt!.toFixed(2)}` : null,
           promo_badge: hasDiscount ? "sale" : null,
+          shopify_variant_id: variantId,
         });
       }
 
@@ -155,6 +164,7 @@ Deno.serve(async (req) => {
         price: p.price,
         old_price: p.old_price,
         promo_badge: p.promo_badge,
+        shopify_variant_id: p.shopify_variant_id,
         sort_order: i,
       }));
 

@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
     // Check if user has an active Shopify connection
     const { data: shopifyConn } = await supabase
       .from("shopify_connections")
-      .select("id")
+      .select("id, store_domain")
       .eq("user_id", config.user_id)
       .maybeSingle();
 
@@ -123,6 +123,7 @@ Deno.serve(async (req) => {
         chatbot_instructions: config.chatbot_instructions || "",
         ai_provider: config.ai_provider || "google",
         product_cards: productCards || [],
+        shopify_store_domain: shopifyConn?.store_domain || null,
         faq_items: faqItems || [],
         instagram_posts: instagramPosts || [],
         custom_links: customLinks || [],
