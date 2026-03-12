@@ -1627,7 +1627,7 @@ Deno.serve(async (req) => {
         btn.addEventListener('click', function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
-          addToShopifyCart(this.getAttribute('data-variant'));
+          addToShopifyCart(this.getAttribute('data-variant'), this);
         });
       });
       // Bind favorite buttons (toggle heart fill)
