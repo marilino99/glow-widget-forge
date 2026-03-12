@@ -2374,7 +2374,8 @@ const WidgetPreviewPanel = ({
                                         ? "bg-white/10 hover:bg-white/20 text-white"
                                         : "bg-slate-100 hover:bg-slate-200 text-slate-700"
                                     }`}
-                                    onClick={(e) => e.preventDefault()}
+                                    onClick={(e) => { e.preventDefault(); }}
+                                    title="Add to Shopify cart"
                                   >
                                     <ShoppingCart className="h-3.5 w-3.5" />
                                   </button>
