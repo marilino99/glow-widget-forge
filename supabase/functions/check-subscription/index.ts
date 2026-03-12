@@ -17,7 +17,12 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Missing authorization" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const token = authHeader.replace("Bearer ", "");
 
@@ -28,7 +33,16 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const { data: userData, error: userError } = await authClient.auth.getUser(token);
+    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims?.sub) {
+      return new Response(JSON.stringify({ subscribed: false, plan: "free", ai_responses_this_month: 0 }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
+    const userId = claimsData.claims.sub as string;
+    const userEmail = claimsData.claims.email as string;
 
     // Service role client for data queries
     const supabaseClient = createClient(
@@ -36,12 +50,16 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       { auth: { persistSession: false } }
     );
-    if (userError) throw new Error(`Auth error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated");
+
+    if (!userEmail) {
+      return new Response(JSON.stringify({ subscribed: false, plan: "free", ai_responses_this_month: 0 }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
 
     if (customers.data.length === 0) {
       // Count monthly AI responses even for free users
@@ -51,7 +69,7 @@ serve(async (req) => {
         .from("chat_messages")
         .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
         .eq("is_ai_response", true)
-        .eq("conversations.widget_owner_id", user.id)
+        .eq("conversations.widget_owner_id", userId)
         .gte("created_at", startOfMonth);
 
       return new Response(JSON.stringify({ subscribed: false, plan: "free", ai_responses_this_month: aiCount ?? 0 }), {
@@ -100,7 +118,7 @@ serve(async (req) => {
       .from("chat_messages")
       .select("id, conversations!inner(widget_owner_id)", { count: "exact", head: true })
       .eq("is_ai_response", true)
-      .eq("conversations.widget_owner_id", user.id)
+      .eq("conversations.widget_owner_id", userId)
       .gte("created_at", startOfMonth);
 
     return new Response(JSON.stringify({
