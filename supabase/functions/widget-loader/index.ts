@@ -1318,9 +1318,22 @@ Deno.serve(async (req) => {
           }
 
           function emitThemeEvents(cart) {
+            // Horizon theme: uses cart:update with detail.data.itemCount + source
+            try {
+              d.dispatchEvent(new CustomEvent('cart:update', {
+                bubbles: true,
+                detail: {
+                  data: {
+                    itemCount: cart.item_count,
+                    source: 'product-form-component'
+                  }
+                }
+              }));
+            } catch(e) {}
+
+            // Also dispatch variants for other themes (Dawn, Debut, etc.)
             try {
               d.dispatchEvent(new CustomEvent('cart:refresh'));
-              d.dispatchEvent(new CustomEvent('cart:update', { detail: { cart: cart } }));
               d.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: cart } }));
             } catch(e) {}
 
@@ -1328,7 +1341,7 @@ Deno.serve(async (req) => {
             try {
               if (w.publish && w.PUB_SUB_EVENTS && w.PUB_SUB_EVENTS.cartUpdate) {
                 w.publish(w.PUB_SUB_EVENTS.cartUpdate, {
-                  source: 'widjet',
+                  source: 'product-form-component',
                   cartData: cart,
                   variantId: parseInt(variantId, 10)
                 });
