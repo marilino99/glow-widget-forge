@@ -55,9 +55,36 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>("manual");
   const [isInstallingShopify, setIsInstallingShopify] = useState(false);
   const [shopifyInstalled, setShopifyInstalled] = useState(false);
+  const [isCheckingShopify, setIsCheckingShopify] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const { connection: shopifyConnection } = useShopifyConnection();
+
+  // Auto-check if widget is already installed on Shopify
+  const checkShopifyInstallation = useCallback(async () => {
+    if (!shopifyConnection || !user || shopifyInstalled) return;
+    setIsCheckingShopify(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await supabase.functions.invoke("shopify-install-widget", {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+        body: { checkOnly: true },
+      });
+      if (!res.error && res.data?.alreadyInstalled) {
+        setShopifyInstalled(true);
+      }
+    } catch (e) {
+      // Silent fail on check
+    } finally {
+      setIsCheckingShopify(false);
+    }
+  }, [shopifyConnection, user, shopifyInstalled]);
+
+  useEffect(() => {
+    if (selectedPlatform === "shopify" && shopifyConnection) {
+      checkShopifyInstallation();
+    }
+  }, [selectedPlatform, shopifyConnection, checkShopifyInstallation]);
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
