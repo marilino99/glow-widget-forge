@@ -152,6 +152,14 @@ export const useShopifyConnection = () => {
     }
   }, [user, toast]);
 
+  // Auto-sync after first successful connection
+  useEffect(() => {
+    if (justConnected && connection && !isSyncing) {
+      setJustConnected(false);
+      sync();
+    }
+  }, [justConnected, connection, isSyncing, sync]);
+
   const disconnect = useCallback(async () => {
     if (!user || !connection) return;
     try {
