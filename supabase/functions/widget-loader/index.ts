@@ -1254,9 +1254,6 @@ Deno.serve(async (req) => {
         showCartToast();
         // Force Shopify theme/cart UI to update immediately (with retries for async themes)
         try {
-          var syncAttempt = 0;
-          var maxSyncAttempts = 4;
-
           function applyCartCount(count) {
             var selectors = [
               '.cart-count-bubble span',
@@ -1349,25 +1346,17 @@ Deno.serve(async (req) => {
             } catch(e) {}
           }
 
-          function syncCartUi() {
-            syncAttempt += 1;
+          setTimeout(function() {
             fetch('/cart.js?ts=' + Date.now(), { cache: 'no-store' })
               .then(function(r) { return r.json(); })
               .then(function(cart) {
                 if (!cart || cart.item_count == null) return;
                 applyCartCount(cart.item_count);
                 emitThemeEvents(cart);
-                if (syncAttempt === 1) refreshThemeSections();
+                refreshThemeSections();
               })
-              .catch(function() {})
-              .then(function() {
-                if (syncAttempt < maxSyncAttempts) {
-                  setTimeout(syncCartUi, syncAttempt === 1 ? 180 : 450);
-                }
-              });
-          }
-
-          syncCartUi();
+              .catch(function() {});
+          }, 300);
         } catch(e) {}
         setTimeout(resetBtn, 1200);
       }).catch(function() {
