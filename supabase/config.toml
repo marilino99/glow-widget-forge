@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.shopify-oauth-callback]
 verify_jwt = false
+
+[functions.shopify-uninstall-widget]
+verify_jwt = false
