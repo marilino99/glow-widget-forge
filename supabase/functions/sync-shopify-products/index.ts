@@ -21,6 +21,7 @@ const SHOPIFY_ADMIN_PRODUCTS_QUERY = `
           variants(first: 1) {
             edges {
               node {
+                id
                 price
                 compareAtPrice
               }
