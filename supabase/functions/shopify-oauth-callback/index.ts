@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
     } else {
       // If creating fails, try to list existing ones
       const listRes = await fetch(
-        `https://${shop}/admin/api/2024-01/storefront_access_tokens.json`,
+        `https://${callbackShop}/admin/api/2024-01/storefront_access_tokens.json`,
         {
           headers: { "X-Shopify-Access-Token": accessToken },
         }
