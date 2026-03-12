@@ -164,6 +164,7 @@ Deno.serve(async (req) => {
         price: p.price,
         old_price: p.old_price,
         promo_badge: p.promo_badge,
+        shopify_variant_id: p.shopify_variant_id,
         sort_order: i,
       }));
 
