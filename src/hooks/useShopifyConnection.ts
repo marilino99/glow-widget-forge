@@ -18,17 +18,21 @@ export const useShopifyConnection = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
+  const [justConnected, setJustConnected] = useState(false);
+
   // Check for OAuth callback success
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("shopify_connected") === "true") {
-      toast({ title: "Shopify connesso!", description: "Lo store è stato collegato con successo." });
+      toast({ title: "Shopify connesso!", description: "Lo store è stato collegato con successo. Sincronizzazione in corso…" });
+      setJustConnected(true);
       // Clean up URL
       const url = new URL(window.location.href);
       url.searchParams.delete("shopify_connected");
       window.history.replaceState({}, "", url.toString());
     }
   }, [toast]);
+
 
   useEffect(() => {
     if (!user) {
@@ -147,6 +151,14 @@ export const useShopifyConnection = () => {
       setIsSyncing(false);
     }
   }, [user, toast]);
+
+  // Auto-sync after first successful connection
+  useEffect(() => {
+    if (justConnected && connection && !isSyncing) {
+      setJustConnected(false);
+      sync();
+    }
+  }, [justConnected, connection, isSyncing, sync]);
 
   const disconnect = useCallback(async () => {
     if (!user || !connection) return;
