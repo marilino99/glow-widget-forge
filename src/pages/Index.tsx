@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { LandingLanguageProvider } from "@/contexts/LandingLanguageContext";
 import Navbar from "@/components/landing/Navbar";
+import CookieConsent from "@/components/landing/CookieConsent";
 import Hero from "@/components/landing/Hero";
 import { Logos3 } from "@/components/ui/logos3";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
@@ -97,6 +98,7 @@ const LandingContent = () => {
           <Footer />
         </Suspense>
       </main>
+      <CookieConsent />
     </div>
   );
 };
