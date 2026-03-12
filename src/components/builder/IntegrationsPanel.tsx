@@ -85,6 +85,22 @@ const IntegrationsPanel = () => {
               )}
             </div>
 
+            {/* Sync progress bar */}
+            {(isSyncing || syncProgress > 0) && (
+              <div className="mt-3 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="h-3.5 w-3.5 text-muted-foreground animate-pulse" />
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {syncProgress >= 100 ? "Sync complete!" : "Syncing products…"}
+                  </span>
+                </div>
+                <Progress
+                  value={Math.min(syncProgress, 100)}
+                  className="h-1.5 bg-muted"
+                />
+              </div>
+            )}
+
             {/* Actions */}
             <div className="mt-4 flex items-center gap-2">
               {isLoading ? (
