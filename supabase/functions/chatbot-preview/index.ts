@@ -324,6 +324,14 @@ ${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If 
 
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
     if (productMarkerMatch) {
+      if (!shopifyConn) {
+        const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
+        return new Response(
+          JSON.stringify({ reply: connectReply }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
       if (productCardsData && productCardsData.length > 0) {
