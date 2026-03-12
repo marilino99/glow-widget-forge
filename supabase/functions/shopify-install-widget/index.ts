@@ -59,6 +59,13 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Parse body for checkOnly flag
+    let checkOnly = false;
+    try {
+      const body = await req.json();
+      checkOnly = body?.checkOnly === true;
+    } catch (_) {}
+
     // Get widget ID for this user
     const { data: widget } = await adminClient
       .from("widget_configurations")
