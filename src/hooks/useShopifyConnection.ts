@@ -33,13 +33,6 @@ export const useShopifyConnection = () => {
     }
   }, [toast]);
 
-  // Auto-sync after first successful connection
-  useEffect(() => {
-    if (justConnected && connection && !isSyncing) {
-      setJustConnected(false);
-      sync();
-    }
-  }, [justConnected, connection, isSyncing, sync]);
 
   useEffect(() => {
     if (!user) {
