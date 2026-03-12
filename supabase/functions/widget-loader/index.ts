@@ -1219,19 +1219,20 @@ Deno.serve(async (req) => {
     }
 
     // Add to Shopify cart helper
-    function addToShopifyCart(variantId) {
+    function addToShopifyCart(variantId, btnEl) {
       if (!shopifyDomain || !variantId) return;
+      // Visual feedback: show checkmark
+      if (btnEl) {
+        var origHtml = btnEl.innerHTML;
+        btnEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        btnEl.style.background = '#22c55e';
+        btnEl.style.color = '#fff';
+        setTimeout(function() { btnEl.innerHTML = origHtml; btnEl.style.background = ''; btnEl.style.color = ''; }, 1500);
+      }
       var cartUrl = 'https://' + shopifyDomain + '/cart/add.js';
       var xhr = new XMLHttpRequest();
       xhr.open('POST', cartUrl, true);
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState !== 4) return;
-        if (xhr.status === 200) {
-          // Brief visual feedback - could open cart drawer
-          try { w.location.href = 'https://' + shopifyDomain + '/cart'; } catch(e) {}
-        }
-      };
       xhr.send(JSON.stringify({ id: parseInt(variantId), quantity: 1 }));
     }
 
@@ -1265,7 +1266,7 @@ Deno.serve(async (req) => {
           cartBtn.addEventListener('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
-            addToShopifyCart(this.getAttribute('data-variant'));
+            addToShopifyCart(this.getAttribute('data-variant'), this);
           });
         }
         prodCont.appendChild(card);
@@ -1626,7 +1627,7 @@ Deno.serve(async (req) => {
         btn.addEventListener('click', function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
-          addToShopifyCart(this.getAttribute('data-variant'));
+          addToShopifyCart(this.getAttribute('data-variant'), this);
         });
       });
       // Bind favorite buttons (toggle heart fill)
