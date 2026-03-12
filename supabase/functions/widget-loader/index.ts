@@ -160,6 +160,7 @@ Deno.serve(async (req) => {
     var avatar = cfg.selected_avatar;
     var buttonLogo = cfg.button_logo;
     var products = cfg.product_cards || [];
+    var shopifyDomain = cfg.shopify_store_domain || '';
     var faqs = cfg.faq_items || [];
     var igPosts = cfg.instagram_posts || [];
     var customLinks = cfg.custom_links || [];
