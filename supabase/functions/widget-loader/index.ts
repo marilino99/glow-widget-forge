@@ -1266,7 +1266,7 @@ Deno.serve(async (req) => {
           cartBtn.addEventListener('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
-            addToShopifyCart(this.getAttribute('data-variant'));
+            addToShopifyCart(this.getAttribute('data-variant'), this);
           });
         }
         prodCont.appendChild(card);
