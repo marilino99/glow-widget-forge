@@ -133,9 +133,17 @@ Deno.serve(async (req) => {
     let themeContent = assetData.asset?.value || "";
 
     // Check if widget is already installed
-    if (themeContent.includes("widjet.com") || themeContent.includes("widjet")) {
+    if (themeContent.includes("widjet.com") || themeContent.includes("widget-loader")) {
       return new Response(
         JSON.stringify({ success: true, alreadyInstalled: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // If checkOnly, return not installed
+    if (checkOnly) {
+      return new Response(
+        JSON.stringify({ success: true, alreadyInstalled: false }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
