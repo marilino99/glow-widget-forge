@@ -1218,6 +1218,23 @@ Deno.serve(async (req) => {
       scroll.appendChild(contact);
     }
 
+    // Add to Shopify cart helper
+    function addToShopifyCart(variantId) {
+      if (!shopifyDomain || !variantId) return;
+      var cartUrl = 'https://' + shopifyDomain + '/cart/add.js';
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', cartUrl, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status === 200) {
+          // Brief visual feedback - could open cart drawer
+          try { w.location.href = 'https://' + shopifyDomain + '/cart'; } catch(e) {}
+        }
+      };
+      xhr.send(JSON.stringify({ id: parseInt(variantId), quantity: 1 }));
+    }
+
     // Product cards
     if (products.length > 0) {
       var prodCont = d.createElement('div');
