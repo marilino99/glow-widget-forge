@@ -671,7 +671,24 @@ const Builder = () => {
               </PopoverTrigger>
               <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
                 <div className="max-h-[480px] overflow-y-auto">
-                  {!changelogDetailOpen ? (
+                  {isRecentUser ? (
+                    /* New users: Shopify integration announcement */
+                    <div className="p-5">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#96bf48]/10 mb-3">
+                        <img src={shopifyLogo} alt="Shopify" className="h-7 w-7 object-contain" />
+                      </div>
+                      <h3 className="text-base font-bold text-foreground mb-1.5">Shopify integration coming soon 🚀</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                        We're building a native Shopify integration so your AI chatbot can recommend products directly from your catalog. Stay tuned!
+                      </p>
+                      <div className="rounded-xl border border-border bg-muted/50 p-3">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          <span className="font-medium text-foreground">What to expect:</span> automatic product sync, smart recommendations, and seamless checkout links — all powered by AI.
+                        </p>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-3">Just now</p>
+                    </div>
+                  ) : !changelogDetailOpen ? (
                     <>
                       {/* Featured update */}
                       <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group" onClick={() => setChangelogDetailOpen(true)}>
