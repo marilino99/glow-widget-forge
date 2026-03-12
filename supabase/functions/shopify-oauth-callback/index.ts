@@ -116,7 +116,7 @@ Deno.serve(async (req) => {
       .upsert(
         {
           user_id: stateData.user_id,
-          store_domain: shop,
+          store_domain: callbackShop,
           storefront_token: storefrontToken,
           admin_access_token: accessToken,
         },
