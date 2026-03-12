@@ -1252,13 +1252,55 @@ Deno.serve(async (req) => {
         // Verify it's a real Shopify response (has variant_id or id)
         if (!data || (!data.id && !data.variant_id && !data.items)) throw new Error('Not a Shopify response');
         showCartToast();
-        // Update Shopify cart count badge if theme supports it
+        // Force Shopify theme to update cart UI
         try {
           fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
-            if (cart && cart.item_count != null) {
-              var badges = d.querySelectorAll('.cart-count-bubble span, .cart-count, [data-cart-count]');
-              badges.forEach(function(b) { b.textContent = cart.item_count; });
-            }
+            if (!cart || cart.item_count == null) return;
+            var count = cart.item_count;
+            // Update all known cart count selectors across popular Shopify themes
+            var selectors = [
+              '.cart-count-bubble span',
+              '.cart-count',
+              '[data-cart-count]',
+              '.cart-count-badge',
+              '#cart-icon-bubble span',
+              '.header__cart-count',
+              '.site-header__cart-count',
+              '.js-cart-count',
+              '.cart-link__count',
+              '.cart__count',
+              '.CartCount',
+              'cart-count',
+              '.mini-cart__count',
+              '#HeaderCartCount',
+              '.cart-items-count'
+            ];
+            selectors.forEach(function(sel) {
+              try {
+                var els = d.querySelectorAll(sel);
+                els.forEach(function(b) { b.textContent = count; });
+              } catch(e) {}
+            });
+            // Dispatch events that Shopify themes listen for to refresh cart sections
+            try {
+              d.dispatchEvent(new CustomEvent('cart:refresh'));
+              d.dispatchEvent(new CustomEvent('cart:update', { detail: { cart: cart } }));
+              // Dawn theme and Section Rendering API
+              if (w.Shopify && w.Shopify.theme && w.Shopify.theme.sections) {
+                try { w.Shopify.theme.sections.dispatchEvent('cart:refresh'); } catch(e) {}
+              }
+              // Trigger Shopify Section Rendering API to re-render cart drawer/header
+              fetch('/?sections=cart-icon-bubble,cart-drawer,header,cart-notification,mini-cart')
+                .then(function(r) { return r.json(); })
+                .then(function(sections) {
+                  Object.keys(sections).forEach(function(key) {
+                    var sectionEl = d.getElementById('shopify-section-' + key);
+                    if (sectionEl && sections[key]) {
+                      sectionEl.innerHTML = new DOMParser().parseFromString(sections[key], 'text/html').body.innerHTML;
+                    }
+                  });
+                }).catch(function() {});
+            } catch(e) {}
           });
         } catch(e) {}
         setTimeout(resetBtn, 1500);
