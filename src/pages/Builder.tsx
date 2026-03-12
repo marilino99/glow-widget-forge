@@ -209,7 +209,7 @@ const Builder = () => {
       }
       // Users created from March 12, 2026 onwards see the Shopify announcement
       if (data?.created_at && new Date(data.created_at) >= new Date("2026-03-12T00:00:00Z")) {
-        setIsNewUser(true);
+        setIsRecentUser(true);
       }
     };
     loadProfile();
