@@ -32,6 +32,7 @@ const PRODUCT_KEYWORDS = [
   "product", "products", "prodott", "buy", "compra", "acquist", "shop", "store",
   "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo",
   "cosa avete", "what do you have", "show me", "range", "collection",
+  "what do you sell", "do you sell", "sell", "vend", "vendere", "vendita", "vendete", "cosa vendete",
   "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag",
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "cerco", "vorrei", "want"
 ];
@@ -323,6 +324,14 @@ ${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If 
 
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
     if (productMarkerMatch) {
+      if (!shopifyConn) {
+        const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
+        return new Response(
+          JSON.stringify({ reply: connectReply }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
       if (productCardsData && productCardsData.length > 0) {
