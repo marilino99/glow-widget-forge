@@ -81,6 +81,8 @@ Deno.serve(async (req) => {
     }
 
     const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader?widgetId=${widget.id}`;
+    const widgetIdMarker = `window.__wj.widgetId = "${widget.id}"`;
+    const widjetSnippetRegex = /<!-- Start of Widjet \(widjet\.com\) code -->[\s\S]*?<!-- End of Widjet code -->/;
 
     // Build the snippet to inject
     const widgetSnippet = `\n<!-- Start of Widjet (widjet.com) code -->\n<script>\n  window.__wj = window.__wj || {};\n  window.__wj.widgetId = "${widget.id}";\n  window.__wj.product_name = "widjet";\n  ;(function(w,d,s){\n    var f=d.getElementsByTagName(s)[0],\n    j=d.createElement(s);\n    j.async=true;\n    j.src="${widgetLoaderUrl}";\n    f.parentNode.insertBefore(j,f);\n  })(window,document,'script');\n</script>\n<noscript>Enable JavaScript to use the widget powered by Widjet</noscript>\n<!-- End of Widjet code -->\n`;
@@ -130,37 +132,45 @@ Deno.serve(async (req) => {
     }
 
     const assetData = await assetRes.json();
-    let themeContent = assetData.asset?.value || "";
+    const themeContent = assetData.asset?.value || "";
 
-    // Check if widget is already installed
-    if (themeContent.includes("widjet.com") || themeContent.includes("widget-loader")) {
+    const hasAnyWidjetSnippet = widjetSnippetRegex.test(themeContent);
+    const hasCurrentWidgetSnippet = hasAnyWidjetSnippet && themeContent.includes(widgetIdMarker);
+
+    // If checkOnly, return true only if the CURRENT widget is installed
+    if (checkOnly) {
+      return new Response(
+        JSON.stringify({ success: true, alreadyInstalled: hasCurrentWidgetSnippet }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (hasCurrentWidgetSnippet) {
       return new Response(
         JSON.stringify({ success: true, alreadyInstalled: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // If checkOnly, return not installed
-    if (checkOnly) {
-      return new Response(
-        JSON.stringify({ success: true, alreadyInstalled: false }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    // Step 3: Update old Widjet snippet or inject before </body>
+    let updatedThemeContent = themeContent;
 
-    // Step 3: Inject snippet before </body>
-    const bodyCloseIndex = themeContent.lastIndexOf("</body>");
-    if (bodyCloseIndex === -1) {
-      return new Response(
-        JSON.stringify({ error: "Could not find </body> tag in theme layout" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    if (hasAnyWidjetSnippet) {
+      updatedThemeContent = themeContent.replace(widjetSnippetRegex, widgetSnippet);
+    } else {
+      const bodyCloseIndex = themeContent.lastIndexOf("</body>");
+      if (bodyCloseIndex === -1) {
+        return new Response(
+          JSON.stringify({ error: "Could not find </body> tag in theme layout" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
-    themeContent =
-      themeContent.substring(0, bodyCloseIndex) +
-      widgetSnippet +
-      themeContent.substring(bodyCloseIndex);
+      updatedThemeContent =
+        themeContent.substring(0, bodyCloseIndex) +
+        widgetSnippet +
+        themeContent.substring(bodyCloseIndex);
+    }
 
     // Step 4: Update the theme.liquid
     const updateRes = await fetch(
