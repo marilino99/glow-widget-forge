@@ -1230,7 +1230,20 @@ Deno.serve(async (req) => {
         var btnHtml = p.product_url 
           ? '<a href="' + esc(p.product_url) + '" target="_blank" rel="noopener" class="wj-prod-btn">' + esc(tr.show) + '</a>' 
           : '<button class="wj-prod-btn">' + esc(tr.show) + '</button>';
-        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + btnHtml + '</div>';
+        var cartBtnHtml = '';
+        if (shopifyDomain && p.shopify_variant_id) {
+          cartBtnHtml = '<button class="wj-prod-cart-btn" data-variant="' + esc(p.shopify_variant_id) + '"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>';
+        }
+        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + '<div class="wj-prod-actions">' + btnHtml + cartBtnHtml + '</div></div>';
+        // Bind cart click
+        var cartBtn = card.querySelector('.wj-prod-cart-btn');
+        if (cartBtn) {
+          cartBtn.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            addToShopifyCart(this.getAttribute('data-variant'));
+          });
+        }
         prodCont.appendChild(card);
       });
       scroll.appendChild(prodCont);
