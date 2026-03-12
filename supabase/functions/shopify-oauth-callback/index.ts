@@ -19,11 +19,17 @@ Deno.serve(async (req) => {
       return new Response("Invalid state parameter", { status: 400 });
     }
 
-    // Don't block on shop mismatch — Shopify may return a different internal domain
-    // (e.g. "storediprovaecomm.myshopify.com" vs "style-showcase-bt2qh.myshopify.com")
-    // We trust the shop param from Shopify's signed callback as the canonical domain.
+    const appUrl = Deno.env.get("APP_URL") || "https://widjett.lovable.app";
+
+    // Security check: callback shop must match the shop requested in state
     if (stateData.shop !== shop) {
-      console.warn("Shop domain differs from state — using Shopify's value:", { stateShop: stateData.shop, callbackShop: shop });
+      console.error("Shop domain mismatch in OAuth callback", { stateShop: stateData.shop, callbackShop: shop });
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: `${appUrl}/builder?shopify_error=shop_mismatch`,
+        },
+      });
     }
 
     const clientId = Deno.env.get("SHOPIFY_CLIENT_ID")!;
@@ -118,7 +124,6 @@ Deno.serve(async (req) => {
     }
 
     // Redirect back to the app with success
-    const appUrl = Deno.env.get("APP_URL") || "https://widjett.lovable.app";
     return new Response(null, {
       status: 302,
       headers: {

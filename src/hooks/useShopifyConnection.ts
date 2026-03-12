@@ -23,12 +23,26 @@ export const useShopifyConnection = () => {
   // Check for OAuth callback success
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("shopify_connected") === "true") {
+    const connected = params.get("shopify_connected") === "true";
+    const errorCode = params.get("shopify_error");
+
+    if (connected) {
       toast({ title: "Shopify connesso!", description: "Lo store è stato collegato con successo. Sincronizzazione in corso…" });
       setJustConnected(true);
-      // Clean up URL
+    }
+
+    if (errorCode === "shop_mismatch") {
+      toast({
+        title: "Errore connessione Shopify",
+        description: "Il dominio ritornato da Shopify non corrisponde a quello richiesto. Riprova con il dominio corretto.",
+        variant: "destructive",
+      });
+    }
+
+    if (connected || errorCode) {
       const url = new URL(window.location.href);
       url.searchParams.delete("shopify_connected");
+      url.searchParams.delete("shopify_error");
       window.history.replaceState({}, "", url.toString());
     }
   }, [toast]);
