@@ -190,6 +190,15 @@ export const useShopifyConnection = () => {
   const disconnect = useCallback(async () => {
     if (!user || !connection) return;
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      // Best-effort: remove widget snippet from Shopify theme
+      try {
+        await supabase.functions.invoke("shopify-uninstall-widget", {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+      } catch (uninstallErr) {
+        console.warn("Could not uninstall widget from Shopify theme:", uninstallErr);
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase as any)
         .from("shopify_connections")
@@ -198,10 +207,10 @@ export const useShopifyConnection = () => {
 
       if (error) throw error;
       setConnection(null);
-      toast({ title: "Disconnected", description: "Shopify store disconnected." });
+      toast({ title: "Disconnesso", description: "Store Shopify scollegato e widget rimosso." });
     } catch (e: any) {
       console.error("Disconnect error:", e);
-      toast({ title: "Error", description: "Failed to disconnect.", variant: "destructive" });
+      toast({ title: "Errore", description: "Impossibile disconnettere lo store.", variant: "destructive" });
     }
   }, [user, connection, toast]);
 
