@@ -1,21 +1,27 @@
 
 
-# Fix: Timestamp troncato nella lista conversazioni
+## Problem
 
-## Problema
-Il viewport interno di Radix ScrollArea usa `overflow: scroll` inline, ignorando le classi CSS applicate dall'esterno. Il contenuto si espande oltre la larghezza della sidebar e il timestamp sparisce.
+The `syncCartUi` function (line 1352) runs **up to 4 times** with delays, and **each iteration** calls `emitThemeEvents(cart)` which dispatches `cart:update` CustomEvents to the Horizon theme. The Horizon theme reacts to each event by re-rendering the cart UI, causing the count to spike (multiple adds queued) then settle back down to the real count.
 
-## Soluzione
+Additionally, `refreshThemeSections()` replaces section HTML on the first attempt, which can trigger the theme's own JS to re-initialize and fire its own cart events — compounding the problem.
 
-### 1. Modificare `src/components/ui/scroll-area.tsx`
-Aggiungere al viewport la classe `[overflow-x:hidden!important]` per impedire lo scroll orizzontale e forzare il contenuto a rispettare la larghezza del parent.
+## Solution
 
-```tsx
-<ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [overflow-x:hidden!important]">
-```
+Simplify the cart sync to **emit theme events only once** and remove the aggressive retry loop:
 
-### 2. Pulire `src/components/builder/ConversationsPanel.tsx`
-Rimuovere il selettore CSS hack `[&>div[data-radix-scroll-area-viewport]]:!overflow-x-hidden` dalla ScrollArea, dato che il fix e ora nel componente base.
+### Changes to `supabase/functions/widget-loader/index.ts`
 
-Queste due modifiche risolvono il problema alla radice: il viewport non permettera piu al contenuto di espandersi orizzontalmente, e il layout `grid-cols-[1fr_auto]` funzionera correttamente troncando il titolo e mostrando il timestamp.
+**Replace the `syncCartUi` retry loop (lines 1352-1371) with a single fetch + emit:**
+
+1. Fetch `/cart.js` once after a short delay (~300ms)
+2. Call `applyCartCount()` to update badge selectors directly
+3. Call `emitThemeEvents()` **exactly once**
+4. Call `refreshThemeSections()` **exactly once**
+5. **No retries** — the duplicate events are what cause the "jumpy" counter
+
+This means:
+- Remove `syncAttempt`, `maxSyncAttempts` variables
+- Replace `syncCartUi` with a single `setTimeout` that fetches `/cart.js`, applies count, emits events, and refreshes sections — all once
+- Add a small delay (~300ms) before the sync to let Shopify's backend process the add
 
