@@ -333,10 +333,10 @@ Deno.serve(async (req) => {
           .order("sort_order", { ascending: true })
       : { data: null };
 
-    // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
     const queryText = lastUserMessage?.text || "";
     const productIntent = isProductIntent(queryText);
+    const bookingIntent = isBookingIntent(queryText);
 
     // RAG: Try similarity search first
     let knowledgeBase = "";
