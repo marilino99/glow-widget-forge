@@ -1,12 +1,23 @@
 import { useState } from "react";
-import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag } from "lucide-react";
+import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, Calendar } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import shopifyLogo from "@/assets/logo-shopify.png";
+import calendlyLogo from "@/assets/logo-calendly.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
+
+interface IntegrationsPanelProps {
+  calendlyEnabled?: boolean;
+  calendlyEventUrl?: string;
+  onCalendlyToggle?: (enabled: boolean) => void;
+  onCalendlyUrlChange?: (url: string) => void;
+  onSaveConfig?: (config: Record<string, unknown>) => void;
+}
 
 const IntegrationsPanel = () => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
