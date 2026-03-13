@@ -1442,15 +1442,22 @@ Deno.serve(async (req) => {
     }
     function toggleWishlist(product, btnEl) {
       if (swymReady && w._swat && product.shopify_product_id) {
+        var prodTitle = product.title || '';
+        var prodImg = product.image_url || product.imageUrl || '';
+        var prodUrl = product.product_url || product.productUrl || '';
         var swymProduct = {
           epi: parseInt(product.shopify_variant_id || '0'),
           empi: parseInt(product.shopify_product_id),
-          du: product.product_url || product.productUrl || ''
+          du: prodUrl,
+          dt: prodTitle,
+          iu: prodImg
         };
-        var isCurrentlyIn = swymWishlist.some(function(i) { return i.empi === swymProduct.empi; });
+        console.log('[Widjet] Swym toggle:', JSON.stringify(swymProduct));
+        var isCurrentlyIn = swymWishlist.some(function(i) { return String(i.empi) === String(swymProduct.empi); });
         if (isCurrentlyIn) {
           w._swat.removeFromWishList(swymProduct, function() {
-            swymWishlist = swymWishlist.filter(function(i) { return i.empi !== swymProduct.empi; });
+            console.log('[Widjet] Swym removed successfully');
+            swymWishlist = swymWishlist.filter(function(i) { return String(i.empi) !== String(swymProduct.empi); });
             if (btnEl) {
               btnEl.classList.remove('active');
               var svg = btnEl.querySelector('svg');
@@ -1458,9 +1465,10 @@ Deno.serve(async (req) => {
             }
             showWishlistToast(false);
             renderWishlistSection();
-          }, function() {});
+          }, function(err) { console.error('[Widjet] Swym remove error:', err); });
         } else {
-          w._swat.addToWishList(swymProduct, function() {
+          w._swat.addToWishList(swymProduct, function(result) {
+            console.log('[Widjet] Swym added successfully:', result);
             swymWishlist.push(swymProduct);
             if (btnEl) {
               btnEl.classList.add('active');
@@ -1469,7 +1477,7 @@ Deno.serve(async (req) => {
             }
             showWishlistToast(true);
             renderWishlistSection();
-          }, function() {});
+          }, function(err) { console.error('[Widjet] Swym add error:', err); });
         }
         return;
       }
