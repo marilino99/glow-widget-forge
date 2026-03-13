@@ -167,8 +167,53 @@ const IntegrationsPanel = ({
               </button>
             </div>
           </div>
+          </div>
+
+          {/* Calendly Card */}
+          <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
+            <div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#006BFF]/10">
+                <img src={calendlyLogo} alt="Calendly" className="h-7 w-7 object-contain" />
+              </div>
+
+              <h3 className="mt-3.5 text-sm font-semibold text-foreground">Calendly</h3>
+
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                Let visitors book appointments directly from your widget via Calendly.
+              </p>
+
+              {/* Toggle */}
+              <div className="mt-3 flex items-center gap-2">
+                <Switch
+                  checked={calendlyEnabled}
+                  onCheckedChange={(checked) => {
+                    onCalendlyToggle?.(checked);
+                    onSaveConfig?.({ calendlyEnabled: checked });
+                  }}
+                />
+                <span className="text-xs text-muted-foreground">{calendlyEnabled ? "Enabled" : "Disabled"}</span>
+              </div>
+
+              {/* URL input */}
+              {calendlyEnabled && (
+                <div className="mt-3 space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Event URL</label>
+                  <Input
+                    placeholder="https://calendly.com/your-name/session"
+                    value={calendlyEventUrl}
+                    onChange={(e) => onCalendlyUrlChange?.(e.target.value)}
+                    onBlur={() => onSaveConfig?.({ calendlyEventUrl: calendlyEventUrl })}
+                    className="h-9 text-sm"
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    Paste your Calendly event type link here.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
-      </div>
 
       <ShopifyConnectDialog
         open={dialogOpen}
