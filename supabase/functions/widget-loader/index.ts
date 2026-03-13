@@ -1352,6 +1352,53 @@ Deno.serve(async (req) => {
       setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
+    // Wishlist (localStorage-based)
+    var WISHLIST_KEY = 'wj_wishlist_' + id;
+    function getWishlist() {
+      try { return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function saveWishlist(list) {
+      try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e) {}
+    }
+    function isInWishlist(productTitle) {
+      return getWishlist().some(function(item) { return item.title === productTitle; });
+    }
+    function toggleWishlist(product, btnEl) {
+      var list = getWishlist();
+      var idx = list.findIndex(function(item) { return item.title === product.title; });
+      var added = false;
+      if (idx >= 0) {
+        list.splice(idx, 1);
+      } else {
+        list.push({ title: product.title, price: product.price || '', image_url: product.image_url || product.imageUrl || '', product_url: product.product_url || product.productUrl || '' });
+        added = true;
+      }
+      saveWishlist(list);
+      // Update button visual
+      if (btnEl) {
+        var svg = btnEl.querySelector('svg');
+        if (added) {
+          btnEl.classList.add('active');
+          if (svg) { svg.setAttribute('fill', '#ef4444'); svg.setAttribute('stroke', '#ef4444'); }
+        } else {
+          btnEl.classList.remove('active');
+          if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); }
+        }
+      }
+      showWishlistToast(added);
+    }
+    function showWishlistToast(added) {
+      var existing = d.getElementById('wj-wish-toast');
+      if (existing) existing.remove();
+      var toast = d.createElement('div');
+      toast.id = 'wj-wish-toast';
+      toast.style.cssText = 'position:fixed;bottom:90px;right:24px;background:' + (added ? '#ef4444' : '#64748b') + ';color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:2147483647;transition:opacity 0.3s;font-family:-apple-system,BlinkMacSystemFont,sans-serif';
+      toast.textContent = added ? '❤ Added to wishlist!' : '♡ Removed from wishlist';
+      d.body.appendChild(toast);
+      setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
+    }
+    var heartSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+
     // Product cards
     if (products.length > 0) {
       var prodCont = d.createElement('div');
