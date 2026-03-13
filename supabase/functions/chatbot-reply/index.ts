@@ -343,7 +343,7 @@ async function getCalendlyAvailability(
     // Get widget config with chatbot settings
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key, user_id")
+      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key, user_id, calendly_enabled, calendly_event_url")
       .eq("id", widgetId)
       .single();
 
