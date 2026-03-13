@@ -2027,7 +2027,7 @@ Deno.serve(async (req) => {
         btn.addEventListener('click', function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
-          var prodData = { title: this.getAttribute('data-product-title') || '', price: this.getAttribute('data-product-price') || '', imageUrl: this.getAttribute('data-product-image') || '', productUrl: this.getAttribute('data-product-url') || '' };
+          var prodData = { title: this.getAttribute('data-product-title') || '', price: this.getAttribute('data-product-price') || '', imageUrl: this.getAttribute('data-product-image') || '', productUrl: this.getAttribute('data-product-url') || '', shopify_product_id: this.getAttribute('data-product-id') || '', shopify_variant_id: this.getAttribute('data-variant-id') || '' };
           toggleWishlist(prodData, this);
         });
       });
