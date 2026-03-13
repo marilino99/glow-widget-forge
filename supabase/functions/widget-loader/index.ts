@@ -180,6 +180,8 @@ Deno.serve(async (req) => {
     var grRating = cfg.google_business_rating || 0;
     var grTotal = cfg.google_business_ratings_total || 0;
     var grUrl = cfg.google_business_url || '';
+    var calendlyEnabled = cfg.calendly_enabled || false;
+    var calendlyEventUrl = cfg.calendly_event_url || '';
 
     var t = {
       en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', yourFavorites: 'Your favorites', emptyWishlist: 'No favorites yet', remove: 'Remove' },
