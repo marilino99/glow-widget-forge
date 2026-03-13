@@ -181,23 +181,17 @@ const IntegrationsPanel = ({
                 </div>
               )}
             </div>
-            <div className="flex items-center border-t border-border">
-              <button
-                onClick={() => {
-                  const next = !calendlyEnabled;
-                  onCalendlyToggle?.(next);
-                  onSaveConfig?.({ calendlyEnabled: next });
+            <div className="flex items-center justify-between border-t border-border px-5 py-3">
+              <span className="text-sm font-medium text-foreground">
+                {calendlyEnabled ? "Connected" : "Disconnected"}
+              </span>
+              <Switch
+                checked={calendlyEnabled}
+                onCheckedChange={(checked) => {
+                  onCalendlyToggle?.(checked);
+                  onSaveConfig?.({ calendlyEnabled: checked });
                 }}
-                className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
-              >
-                {calendlyEnabled ? (
-                  <><CheckCircle2 className="h-3.5 w-3.5 text-green-600" />Connected</>
-                ) : "Connect"}
-              </button>
-              <div className="w-px h-6 bg-border" />
-              <button className="flex w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground py-3">
-                <BookOpen className="h-4 w-4" />
-              </button>
+              />
             </div>
           </div>
 
