@@ -259,6 +259,9 @@ Deno.serve(async (req) => {
       .wj-prod-btn:hover{background:\${color.hover}}
       .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
       .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
+      .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
+      .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
+      .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
