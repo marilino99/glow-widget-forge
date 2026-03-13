@@ -725,56 +725,49 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
     let cleanReply = aiReply.trim();
     let metadata: Record<string, unknown> | null = null;
 
-    // Match complete or truncated product markers: [PRODUCTS: ...] or [PRODUCTS: ... (no closing bracket)
-    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/s);
-    
-    // Also catch cases where the response was truncated mid-marker, e.g. ending with "options: [" or "[PROD"
-    const truncatedMarkerMatch = !productMarkerMatch && cleanReply.match(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s);
-
-    if (productMarkerMatch) {
-      // Always strip marker from visible text
+    // If booking intent, add calendly_url to metadata and skip product cards entirely
+    if (bookingIntent) {
+      // Strip any accidental product markers
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "").trim();
       
-      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-      if (productCardsData && productCardsData.length > 0) {
-        const matchedProducts = productCardsData.filter((p: any) =>
-          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-        );
-        // Use matched products, or fallback to first 3 from catalog
-        const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
-        // Ensure at least 2-3 products
-        const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
-          ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
-          : productsToShow;
-        metadata = {
-          products: finalProducts.map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-            shopifyVariantId: p.shopify_variant_id || null,
-          })),
-        };
-        console.log(`Product cards: ${matchedProducts.length} matched, showing ${finalProducts.length}`);
+      // Add calendly booking URL to metadata so the widget can show a booking button
+      const calendlyUrl = config.calendly_event_url || null;
+      if (calendlyUrl) {
+        metadata = { calendly_url: calendlyUrl };
+        console.log("Booking intent: attached calendly_url to metadata");
       }
-    } else if (truncatedMarkerMatch && productCardsData && productCardsData.length > 0) {
-      // The AI started the marker but got truncated — strip the partial marker and show products
-      cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
-      metadata = {
-        products: productCardsData.slice(0, 3).map((p: any) => ({
-          title: p.title,
-          imageUrl: p.image_url || null,
-          productUrl: p.product_url || null,
-          price: p.price || null,
-          shopifyVariantId: p.shopify_variant_id || null,
-        })),
-      };
-      console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
-    } else if (productCardsData && productCardsData.length > 0) {
-      // Fallback: if the AI talked about products but forgot the marker
-      const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
-      const mentionsProducts = isProductIntent(lastUserMsg);
-      if (mentionsProducts) {
+    } else {
+      // Match complete or truncated product markers: [PRODUCTS: ...] or [PRODUCTS: ... (no closing bracket)
+      const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/s);
+      
+      // Also catch cases where the response was truncated mid-marker
+      const truncatedMarkerMatch = !productMarkerMatch && cleanReply.match(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s);
+
+      if (productMarkerMatch) {
+        cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "").trim();
+        
+        const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+        if (productCardsData && productCardsData.length > 0) {
+          const matchedProducts = productCardsData.filter((p: any) =>
+            requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+          );
+          const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
+          const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
+            ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
+            : productsToShow;
+          metadata = {
+            products: finalProducts.map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+          console.log(`Product cards: ${matchedProducts.length} matched, showing ${finalProducts.length}`);
+        }
+      } else if (truncatedMarkerMatch && productCardsData && productCardsData.length > 0) {
+        cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
         metadata = {
           products: productCardsData.slice(0, 3).map((p: any) => ({
             title: p.title,
@@ -784,7 +777,22 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
             shopifyVariantId: p.shopify_variant_id || null,
           })),
         };
-        console.log(`Product cards fallback: showing ${Math.min(3, productCardsData.length)} products`);
+        console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
+      } else if (productCardsData && productCardsData.length > 0) {
+        const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
+        const mentionsProducts = isProductIntent(lastUserMsg);
+        if (mentionsProducts) {
+          metadata = {
+            products: productCardsData.slice(0, 3).map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+          console.log(`Product cards fallback: showing ${Math.min(3, productCardsData.length)} products`);
+        }
       }
     }
 
