@@ -1,46 +1,33 @@
 import { useState } from "react";
-import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, Calendar } from "lucide-react";
+import { BookOpen, Loader2, Unplug, CheckCircle2, ShoppingBag, RefreshCw } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import calendlyLogo from "@/assets/logo-calendly.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
+import { useCalendlyConnection } from "@/hooks/useCalendlyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
 
 interface IntegrationsPanelProps {
-  calendlyEnabled?: boolean;
-  calendlyEventUrl?: string;
-  onCalendlyToggle?: (enabled: boolean) => void;
-  onCalendlyUrlChange?: (url: string) => void;
   onSaveConfig?: (config: Record<string, unknown>) => void;
 }
 
-const IntegrationsPanel = ({
-  calendlyEnabled = false,
-  calendlyEventUrl = "",
-  onCalendlyToggle,
-  onCalendlyUrlChange,
-  onSaveConfig,
-}: IntegrationsPanelProps) => {
-  const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+const IntegrationsPanel = ({ onSaveConfig }: IntegrationsPanelProps) => {
+  const { connection: shopifyConn, isLoading: shopifyLoading, isSyncing, isConnecting: shopifyConnecting, connectOAuth: shopifyConnect, sync, disconnect: shopifyDisconnect } = useShopifyConnection();
+  const { isConnected: calendlyConnected, isLoading: calendlyLoading, isConnecting: calendlyConnecting, connectOAuth: calendlyConnect, disconnect: calendlyDisconnect, connection: calendlyConn } = useCalendlyConnection();
+
+  const [shopifyDialogOpen, setShopifyDialogOpen] = useState(false);
+  const [disconnectTarget, setDisconnectTarget] = useState<"shopify" | "calendly" | null>(null);
   const [syncProgress, setSyncProgress] = useState(0);
   const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Animate progress bar during sync
   useEffect(() => {
     if (isSyncing) {
       setSyncProgress(5);
       syncTimerRef.current = setInterval(() => {
-        setSyncProgress((prev) => {
-          if (prev >= 90) return prev;
-          return prev + Math.random() * 12;
-        });
+        setSyncProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 12));
       }, 400);
     } else {
       if (syncTimerRef.current) {
@@ -53,16 +40,17 @@ const IntegrationsPanel = ({
         return () => clearTimeout(t);
       }
     }
-    return () => {
-      if (syncTimerRef.current) clearInterval(syncTimerRef.current);
-    };
+    return () => { if (syncTimerRef.current) clearInterval(syncTimerRef.current); };
   }, [isSyncing]);
 
-  const isConnected = !!connection;
+  const handleDisconnectConfirm = () => {
+    if (disconnectTarget === "shopify") shopifyDisconnect();
+    if (disconnectTarget === "calendly") calendlyDisconnect();
+    setDisconnectTarget(null);
+  };
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      {/* Header */}
       <div className="shrink-0 px-8 pt-5 pb-6">
         <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -70,7 +58,6 @@ const IntegrationsPanel = ({
         </p>
       </div>
 
-      {/* Grid */}
       <div className="flex-1 overflow-y-auto px-8 pb-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
@@ -84,16 +71,16 @@ const IntegrationsPanel = ({
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 Sync your Shopify catalog and let the AI chatbot recommend products.
               </p>
-              {isConnected && connection && (
+              {!!shopifyConn && (
                 <div className="mt-2 flex flex-col gap-0.5">
                   <span className="inline-flex items-center gap-1 text-xs text-green-600">
                     <CheckCircle2 className="h-3 w-3" />
-                    Connected — {connection.store_domain}
+                    Connected — {shopifyConn.store_domain}
                   </span>
-                  {connection.last_synced_at && (
+                  {shopifyConn.last_synced_at && (
                     <span className="text-[11px] text-muted-foreground">
-                      {connection.product_count} products · synced{" "}
-                      {formatDistanceToNow(new Date(connection.last_synced_at), { addSuffix: true })}
+                      {shopifyConn.product_count} products · synced{" "}
+                      {formatDistanceToNow(new Date(shopifyConn.last_synced_at), { addSuffix: true })}
                     </span>
                   )}
                 </div>
@@ -111,39 +98,23 @@ const IntegrationsPanel = ({
               )}
             </div>
             <div className="flex items-center border-t border-border">
-              {isLoading ? (
-                <button disabled className="flex-1 py-3 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60">
-                  Loading…
-                </button>
-              ) : isConnected ? (
+              {shopifyLoading ? (
+                <button disabled className="flex-1 py-3 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60">Loading…</button>
+              ) : !!shopifyConn ? (
                 <>
-                  <button
-                    onClick={() => sync()}
-                    disabled={isSyncing}
-                    className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
-                  >
+                  <button onClick={() => sync()} disabled={isSyncing} className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5">
                     {isSyncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
                     {isSyncing ? "Syncing…" : "Sync now"}
                   </button>
                   <div className="w-px h-6 bg-border" />
-                  <button
-                    onClick={() => setDisconnectDialogOpen(true)}
-                    className="flex h-full w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive py-3"
-                    title="Disconnect"
-                  >
+                  <button onClick={() => setDisconnectTarget("shopify")} className="flex h-full w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive py-3" title="Disconnect">
                     <Unplug className="h-4 w-4" />
                   </button>
                 </>
               ) : (
                 <>
-                  <button
-                    onClick={() => setDialogOpen(true)}
-                    disabled={isConnecting}
-                    className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
-                  >
-                    {isConnecting ? (
-                      <><Loader2 className="h-3.5 w-3.5 animate-spin" />Connecting…</>
-                    ) : "Connect"}
+                  <button onClick={() => setShopifyDialogOpen(true)} disabled={shopifyConnecting} className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5">
+                    {shopifyConnecting ? <><Loader2 className="h-3.5 w-3.5 animate-spin" />Connecting…</> : "Connect"}
                   </button>
                   <div className="w-px h-6 bg-border" />
                   <button className="flex w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground py-3">
@@ -164,60 +135,61 @@ const IntegrationsPanel = ({
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 Let visitors book appointments directly from your widget via Calendly.
               </p>
-
-              {calendlyEnabled && (
-                <div className="mt-3 space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Event URL</label>
-                  <Input
-                    placeholder="https://calendly.com/your-name/session"
-                    value={calendlyEventUrl}
-                    onChange={(e) => onCalendlyUrlChange?.(e.target.value)}
-                    onBlur={() => onSaveConfig?.({ calendlyEventUrl: calendlyEventUrl })}
-                    className="h-9 text-sm"
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Paste your Calendly event type link here.
-                  </p>
+              {calendlyConnected && calendlyConn && (
+                <div className="mt-2 flex flex-col gap-0.5">
+                  <span className="inline-flex items-center gap-1 text-xs text-green-600">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Connected
+                  </span>
+                  {calendlyConn.scheduling_url && (
+                    <span className="text-[11px] text-muted-foreground truncate max-w-full">
+                      {calendlyConn.scheduling_url}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-between border-t border-border px-5 py-3">
-              <span className="text-sm font-medium text-foreground">
-                {calendlyEnabled ? "Connected" : "Disconnected"}
-              </span>
-              <Switch
-                checked={calendlyEnabled}
-                onCheckedChange={(checked) => {
-                  onCalendlyToggle?.(checked);
-                  onSaveConfig?.({ calendlyEnabled: checked });
-                }}
-              />
+            <div className="flex items-center border-t border-border">
+              {calendlyLoading ? (
+                <button disabled className="flex-1 py-3 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60">Loading…</button>
+              ) : calendlyConnected ? (
+                <>
+                  <span className="flex-1 py-3 text-sm font-medium text-green-600 text-center">Connected</span>
+                  <div className="w-px h-6 bg-border" />
+                  <button onClick={() => setDisconnectTarget("calendly")} className="flex h-full w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive py-3" title="Disconnect">
+                    <Unplug className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={calendlyConnect} disabled={calendlyConnecting} className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5">
+                    {calendlyConnecting ? <><Loader2 className="h-3.5 w-3.5 animate-spin" />Connecting…</> : "Connect"}
+                  </button>
+                  <div className="w-px h-6 bg-border" />
+                  <button className="flex w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground py-3">
+                    <BookOpen className="h-4 w-4" />
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
         </div>
       </div>
 
-      <ShopifyConnectDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onConnect={connectOAuth}
-      />
+      <ShopifyConnectDialog open={shopifyDialogOpen} onOpenChange={setShopifyDialogOpen} onConnect={shopifyConnect} />
 
-      <AlertDialog open={disconnectDialogOpen} onOpenChange={setDisconnectDialogOpen}>
+      <AlertDialog open={!!disconnectTarget} onOpenChange={(open) => !open && setDisconnectTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Disconnect Shopify?</AlertDialogTitle>
+            <AlertDialogTitle>Disconnect {disconnectTarget === "shopify" ? "Shopify" : "Calendly"}?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to disconnect your Shopify store? You'll need to reconnect and re-authorize to use Shopify features again.
+              Are you sure? You'll need to reconnect and re-authorize to use this integration again.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => disconnect()}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={handleDisconnectConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Disconnect
             </AlertDialogAction>
           </AlertDialogFooter>
