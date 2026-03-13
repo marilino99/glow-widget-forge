@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
     if (shopifyConn) {
       const { data: cardsData, error: cardsError } = await supabase
         .from("product_cards")
-        .select("*")
+        .select("*, shopify_product_id")
         .eq("user_id", config.user_id)
         .order("sort_order", { ascending: true });
 
