@@ -18,9 +18,23 @@ const PRODUCT_KEYWORDS = [
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want"
 ];
 
+const BOOKING_KEYWORDS = [
+  "appuntamento", "prenotare", "prenotazione", "prenota", "visita",
+  "appointment", "book", "booking", "schedule", "reservation",
+  "disponibilit", "availability", "available", "slot", "orari", "orario",
+  "when can", "quando posso", "libero", "free time", "sessione", "session",
+  "consulenza", "consultation", "rendez-vous", "réserver", "termin", "buchen",
+  "cita", "reservar", "agendar"
+];
+
 function isProductIntent(text: string): boolean {
   const normalized = (text || "").toLowerCase();
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function isBookingIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return BOOKING_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
 function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): string {
@@ -160,7 +174,152 @@ ${transcript}`;
   }
 }
 
-Deno.serve(async (req) => {
+async function refreshCalendlyToken(
+  supabase: any,
+  connection: any
+): Promise<string | null> {
+  if (!connection.refresh_token) return null;
+
+  const clientId = Deno.env.get("CALENDLY_CLIENT_ID");
+  const clientSecret = Deno.env.get("CALENDLY_CLIENT_SECRET");
+  if (!clientId || !clientSecret) return null;
+
+  try {
+    const res = await fetch("https://auth.calendly.com/oauth/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        grant_type: "refresh_token",
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: connection.refresh_token,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("Calendly token refresh failed:", await res.text());
+      return null;
+    }
+
+    const data = await res.json();
+    const newToken = data.access_token;
+    const newRefresh = data.refresh_token;
+    const expiresIn = data.expires_in;
+
+    // Update in DB
+    await supabase
+      .from("calendly_connections")
+      .update({
+        access_token: newToken,
+        refresh_token: newRefresh || connection.refresh_token,
+        expires_at: expiresIn
+          ? new Date(Date.now() + expiresIn * 1000).toISOString()
+          : null,
+      })
+      .eq("id", connection.id);
+
+    return newToken;
+  } catch (e) {
+    console.error("Calendly token refresh error:", e);
+    return null;
+  }
+}
+
+async function getCalendlyAvailability(
+  supabase: any,
+  userId: string
+): Promise<string> {
+  try {
+    const { data: conn } = await supabase
+      .from("calendly_connections")
+      .select("id, access_token, refresh_token, expires_at, scheduling_url, calendly_user_uri")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (!conn || !conn.access_token) return "";
+
+    let token = conn.access_token;
+
+    // Check if token is expired
+    if (conn.expires_at && new Date(conn.expires_at) < new Date()) {
+      const refreshed = await refreshCalendlyToken(supabase, conn);
+      if (!refreshed) return "";
+      token = refreshed;
+    }
+
+    // Get event types
+    const userUri = conn.calendly_user_uri;
+    if (!userUri) return "";
+
+    const eventTypesRes = await fetch(
+      `https://api.calendly.com/event_types?user=${encodeURIComponent(userUri)}&active=true`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (!eventTypesRes.ok) {
+      console.error("Calendly event_types error:", await eventTypesRes.text());
+      return "";
+    }
+
+    const eventTypesData = await eventTypesRes.json();
+    const eventTypes = eventTypesData.collection || [];
+
+    if (eventTypes.length === 0) return "";
+
+    // Get availability for the first event type (next 7 days)
+    const now = new Date();
+    const startTime = now.toISOString();
+    const endTime = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    let availabilityInfo = "\n## === CALENDLY BOOKING AVAILABILITY ===\n";
+    availabilityInfo += `Booking link: ${conn.scheduling_url || "Not available"}\n\n`;
+
+    for (const et of eventTypes.slice(0, 3)) {
+      const availRes = await fetch(
+        `https://api.calendly.com/event_type_available_times?event_type=${encodeURIComponent(et.uri)}&start_time=${startTime}&end_time=${endTime}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (!availRes.ok) {
+        const errText = await availRes.text();
+        console.error("Calendly availability error:", errText);
+        continue;
+      }
+
+      const availData = await availRes.json();
+      const slots = availData.collection || [];
+
+      availabilityInfo += `### ${et.name} (${et.duration} min)\n`;
+
+      if (slots.length === 0) {
+        availabilityInfo += "No available slots in the next 7 days.\n\n";
+        continue;
+      }
+
+      // Group slots by day
+      const byDay: Record<string, string[]> = {};
+      for (const slot of slots) {
+        const date = new Date(slot.start_time);
+        const dayKey = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+        const timeStr = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+        if (!byDay[dayKey]) byDay[dayKey] = [];
+        byDay[dayKey].push(timeStr);
+      }
+
+      for (const [day, times] of Object.entries(byDay)) {
+        availabilityInfo += `- **${day}**: ${times.join(", ")}\n`;
+      }
+      availabilityInfo += "\n";
+    }
+
+    availabilityInfo += "## === END OF CALENDLY AVAILABILITY ===\n";
+    return availabilityInfo;
+  } catch (e) {
+    console.error("Calendly availability error:", e);
+    return "";
+  }
+}
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -184,7 +343,7 @@ Deno.serve(async (req) => {
     // Get widget config with chatbot settings
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key, user_id")
+      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key, user_id, calendly_enabled, calendly_event_url")
       .eq("id", widgetId)
       .single();
 
@@ -400,7 +559,23 @@ Deno.serve(async (req) => {
       knowledgeBase += productCatalog;
     }
 
-    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, ${productCardsData?.length || 0} products, total chars: ${knowledgeBase.length}`);
+    // === CALENDLY AVAILABILITY (only if booking intent detected) ===
+    let calendlySection = "";
+    const bookingIntent = isBookingIntent(lastVisitorMessage);
+    if (bookingIntent) {
+      calendlySection = await getCalendlyAvailability(supabase, config.user_id);
+      if (calendlySection) {
+        knowledgeBase += calendlySection;
+        console.log("Calendly availability added to context");
+      }
+    }
+
+    // Also check if calendly is enabled but no booking intent — still add scheduling link for reference
+    if (!bookingIntent && config.calendly_enabled && config.calendly_event_url) {
+      knowledgeBase += `\n## === BOOKING INFO ===\nThis business offers appointment booking via Calendly: ${config.calendly_event_url}\n## === END BOOKING INFO ===\n`;
+    }
+
+    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, ${productCardsData?.length || 0} products, calendly: ${!!calendlySection}, total chars: ${knowledgeBase.length}`);
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
@@ -439,7 +614,8 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 7. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
 8. If the FAQ section contains a matching question, use that exact answer.
 9. PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND the Product Catalog section exists above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products"), include ALL products. If they ask about a specific category, include matching ones. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
-${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. Match the visitor's language." : ""}`;
+${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. Match the visitor's language." : ""}
+11. APPOINTMENT BOOKING: If the CALENDLY BOOKING AVAILABILITY section exists above, you CAN help visitors book appointments. When asked about availability, present the available time slots in a clear, friendly way grouped by day. Suggest 3-5 slots that seem most convenient. Always mention the session duration. If the visitor confirms a time, provide the booking link so they can finalize. If no Calendly data is available but the BOOKING INFO section exists, let the visitor know they can book via the provided link. NEVER invent availability times — only use data from the CALENDLY sections.`;
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;
