@@ -559,7 +559,23 @@ async function getCalendlyAvailability(
       knowledgeBase += productCatalog;
     }
 
-    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, ${productCardsData?.length || 0} products, total chars: ${knowledgeBase.length}`);
+    // === CALENDLY AVAILABILITY (only if booking intent detected) ===
+    let calendlySection = "";
+    const bookingIntent = isBookingIntent(lastVisitorMessage);
+    if (bookingIntent) {
+      calendlySection = await getCalendlyAvailability(supabase, config.user_id);
+      if (calendlySection) {
+        knowledgeBase += calendlySection;
+        console.log("Calendly availability added to context");
+      }
+    }
+
+    // Also check if calendly is enabled but no booking intent — still add scheduling link for reference
+    if (!bookingIntent && config.calendly_enabled && config.calendly_event_url) {
+      knowledgeBase += `\n## === BOOKING INFO ===\nThis business offers appointment booking via Calendly: ${config.calendly_event_url}\n## === END BOOKING INFO ===\n`;
+    }
+
+    console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, ${productCardsData?.length || 0} products, calendly: ${!!calendlySection}, total chars: ${knowledgeBase.length}`);
 
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
