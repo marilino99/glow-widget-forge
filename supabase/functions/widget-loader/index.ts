@@ -1479,6 +1479,66 @@ Deno.serve(async (req) => {
       scroll.appendChild(prodCont);
     }
 
+    // Wishlist section in home view
+    function renderWishlistSection() {
+      var existing = d.getElementById('wj-wishlist');
+      if (existing) existing.remove();
+      var list = getWishlist();
+      if (list.length === 0) return;
+      var wishCont = d.createElement('div');
+      wishCont.id = 'wj-wishlist';
+      wishCont.innerHTML = '<div id="wj-wishlist-head"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>' + esc(tr.yourFavorites) + ' <span id="wj-wishlist-count">(' + list.length + ')</span></span></div>';
+      var wishList = d.createElement('div');
+      wishList.id = 'wj-wishlist-list';
+      list.forEach(function(item) {
+        var el = d.createElement('div');
+        el.className = 'wj-wish-item';
+        var imgHtml = item.image_url ? '<img class="wj-wish-img" src="' + esc(item.image_url) + '" alt=""/>' : '<div class="wj-wish-img"></div>';
+        var priceHtml = item.price ? '<div class="wj-wish-price">' + esc(item.price) + '</div>' : '';
+        var linkStart = item.product_url ? '<a href="' + esc(item.product_url) + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-decoration:none;color:inherit">' : '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">';
+        var linkEnd = item.product_url ? '</a>' : '</div>';
+        el.innerHTML = linkStart + imgHtml + '<div class="wj-wish-info"><div class="wj-wish-title">' + esc(item.title) + '</div>' + priceHtml + '</div>' + linkEnd + '<button class="wj-wish-remove" title="' + esc(tr.remove) + '"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+        // Bind remove
+        var removeBtn = el.querySelector('.wj-wish-remove');
+        (function(title) {
+          removeBtn.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            var wl = getWishlist();
+            var filtered = wl.filter(function(i) { return i.title !== title; });
+            saveWishlist(filtered);
+            // Update any matching fav buttons in product cards
+            var allFavBtns = d.querySelectorAll('.wj-prod-fav-btn[data-product-title="' + title.replace(/"/g, '\\\\"') + '"]');
+            allFavBtns.forEach(function(fb) {
+              fb.classList.remove('active');
+              var s = fb.querySelector('svg');
+              if (s) { s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); }
+            });
+            showWishlistToast(false);
+            renderWishlistSection();
+          });
+        })(item.title);
+        wishList.appendChild(el);
+      });
+      wishCont.appendChild(wishList);
+      // Insert after products or after contact card
+      var prodEl = d.getElementById('wj-products');
+      if (prodEl && prodEl.nextSibling) {
+        prodEl.parentNode.insertBefore(wishCont, prodEl.nextSibling);
+      } else if (prodEl) {
+        prodEl.parentNode.appendChild(wishCont);
+      } else {
+        // Insert at beginning of scroll content, after contact
+        var contactEl = d.getElementById('wj-contact');
+        if (contactEl && contactEl.nextSibling) {
+          contactEl.parentNode.insertBefore(wishCont, contactEl.nextSibling);
+        } else {
+          scroll.appendChild(wishCont);
+        }
+      }
+    }
+    renderWishlistSection();
+
     // Instagram posts
     if (igEnabled && igPosts.length > 0) {
       var igCont = d.createElement('div');
