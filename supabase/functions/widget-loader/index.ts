@@ -1815,18 +1815,14 @@ Deno.serve(async (req) => {
           addToShopifyCart(this.getAttribute('data-variant'), this);
         });
       });
-      // Bind favorite buttons (toggle heart fill)
+      // Bind favorite buttons (persistent wishlist)
       var chatFavBtns = bubble.querySelectorAll('.wj-chat-fav-btn');
       chatFavBtns.forEach(function(btn) {
         btn.addEventListener('click', function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
-          var svg = this.querySelector('svg');
-          if (svg) {
-            var isFilled = svg.getAttribute('fill') !== 'none';
-            svg.setAttribute('fill', isFilled ? 'none' : '#ef4444');
-            svg.setAttribute('stroke', isFilled ? 'currentColor' : '#ef4444');
-          }
+          var prodData = { title: this.getAttribute('data-product-title') || '', price: this.getAttribute('data-product-price') || '', imageUrl: this.getAttribute('data-product-image') || '', productUrl: this.getAttribute('data-product-url') || '' };
+          toggleWishlist(prodData, this);
         });
       });
       lastMessageId = msg.id;
