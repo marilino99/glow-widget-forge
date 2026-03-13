@@ -320,6 +320,7 @@ async function getCalendlyAvailability(
   }
 }
 
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
