@@ -1560,9 +1560,7 @@ Deno.serve(async (req) => {
         if (shopifyDomain && p.shopify_variant_id) {
           cartBtnHtml = '<button class="wj-prod-cart-btn" data-variant="' + esc(p.shopify_variant_id) + '"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>';
         }
-        var isFav = isInWishlist(p.title, p.shopify_product_id || '');
-        var favBtnHtml = '<button class="wj-prod-fav-btn' + (isFav ? ' active' : '') + '" data-product-title="' + esc(p.title) + '" data-product-id="' + esc(p.shopify_product_id || '') + '" data-variant-id="' + esc(p.shopify_variant_id || '') + '">' + (isFav ? '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' : heartSvg) + '</button>';
-        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + '<div class="wj-prod-actions">' + btnHtml + cartBtnHtml + favBtnHtml + '</div></div>';
+        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + '<div class="wj-prod-actions">' + btnHtml + cartBtnHtml + '</div></div>';
         // Bind cart click
         var cartBtn = card.querySelector('.wj-prod-cart-btn');
         if (cartBtn) {
@@ -1571,17 +1569,6 @@ Deno.serve(async (req) => {
             ev.stopPropagation();
             addToShopifyCart(this.getAttribute('data-variant'), this);
           });
-        }
-        // Bind wishlist click
-        var favBtn = card.querySelector('.wj-prod-fav-btn');
-        if (favBtn) {
-          (function(product, btn) {
-            btn.addEventListener('click', function(ev) {
-              ev.preventDefault();
-              ev.stopPropagation();
-              toggleWishlist(product, btn);
-            });
-          })(p, favBtn);
         }
         prodCont.appendChild(card);
       });
@@ -2023,12 +2010,6 @@ Deno.serve(async (req) => {
             } else {
               msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;text-decoration:none;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></a>';
             }
-            var chatFavActive = isInWishlist(prod.title, prodId);
-            var chatFavFill = chatFavActive ? '#ef4444' : 'none';
-            var chatFavStroke = chatFavActive ? '#ef4444' : 'currentColor';
-            var chatFavBg = chatFavActive ? (dark ? 'rgba(239,68,68,0.15)' : '#fef2f2') : btnBg;
-            var chatFavColor = chatFavActive ? '#ef4444' : btnColor;
-            msgHtml += '<button class="wj-chat-fav-btn" data-product-title="' + esc(prod.title || '') + '" data-product-price="' + esc(prod.price || '') + '" data-product-image="' + esc(prod.imageUrl || '') + '" data-product-url="' + esc(prod.productUrl || '') + '" data-product-id="' + esc(prodId) + '" data-variant-id="' + esc(varId) + '" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;border:none;cursor:pointer;background:' + chatFavBg + ';color:' + chatFavColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="' + chatFavFill + '" stroke="' + chatFavStroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
             msgHtml += '</div></div>';
           });
           msgHtml += '</div>';
