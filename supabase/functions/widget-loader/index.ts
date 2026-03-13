@@ -262,6 +262,20 @@ Deno.serve(async (req) => {
       .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
       .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
       .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
+      #wj-wishlist{padding:0 16px 16px;margin-top:8px}
+      #wj-wishlist-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+      #wj-wishlist-head svg{width:16px;height:16px;color:#ef4444}
+      #wj-wishlist-head span{font-size:14px;font-weight:500;color:\${textMain}}
+      #wj-wishlist-count{font-size:12px;color:\${textSub};font-weight:400}
+      #wj-wishlist-list{display:flex;flex-direction:column;gap:8px}
+      .wj-wish-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;color:inherit;transition:background 0.15s}
+      .wj-wish-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
+      .wj-wish-img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:\${dark ? '#cbd5e1' : '#e2e8f0'};flex-shrink:0}
+      .wj-wish-info{flex:1;min-width:0}
+      .wj-wish-title{font-size:13px;font-weight:600;color:\${textMain};white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .wj-wish-price{font-size:12px;color:\${textSub};margin-top:2px}
+      .wj-wish-remove{width:28px;height:28px;border:none;border-radius:50%;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'};color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+      .wj-wish-remove:hover{background:\${lt?'#fee2e2':'rgba(239,68,68,0.25)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
