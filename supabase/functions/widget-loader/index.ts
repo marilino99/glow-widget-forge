@@ -1414,6 +1414,7 @@ Deno.serve(async (req) => {
         }
       }
       showWishlistToast(added);
+      renderWishlistSection();
     }
     function showWishlistToast(added) {
       var existing = d.getElementById('wj-wish-toast');
