@@ -1724,6 +1724,38 @@ Deno.serve(async (req) => {
       scroll.appendChild(faqCont);
     }
 
+    // Calendly booking button
+    if (calendlyEnabled && calendlyEventUrl) {
+      var bookCont = d.createElement('div');
+      bookCont.id = 'wj-booking';
+      bookCont.style.cssText = 'padding:0 16px 8px;margin-top:8px';
+      var bookBtn = d.createElement('button');
+      bookBtn.id = 'wj-book-btn';
+      bookBtn.style.cssText = 'width:100%;padding:12px 16px;border:1px solid ' + (dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0') + ';border-radius:12px;background:' + (dark ? 'rgba(255,255,255,0.05)' : '#fff') + ';color:' + textMain + ';font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .2s';
+      bookBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + color.bg + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>' + esc(tr.bookSession) + '</span>';
+      bookBtn.onmouseover = function() { this.style.background = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'; };
+      bookBtn.onmouseout = function() { this.style.background = dark ? 'rgba(255,255,255,0.05)' : '#fff'; };
+      bookBtn.onclick = function() {
+        // Load Calendly embed script if not already loaded
+        if (!w.Calendly) {
+          var link = d.createElement('link');
+          link.href = 'https://assets.calendly.com/assets/external/widget.css';
+          link.rel = 'stylesheet';
+          d.head.appendChild(link);
+          var script = d.createElement('script');
+          script.src = 'https://assets.calendly.com/assets/external/widget.js';
+          script.onload = function() {
+            w.Calendly.initPopupWidget({ url: calendlyEventUrl });
+          };
+          d.head.appendChild(script);
+        } else {
+          w.Calendly.initPopupWidget({ url: calendlyEventUrl });
+        }
+      };
+      bookCont.appendChild(bookBtn);
+      scroll.appendChild(bookCont);
+    }
+
     // Custom Links
     if (customLinks.length > 0) {
       var linksCont = d.createElement('div');
