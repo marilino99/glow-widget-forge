@@ -259,6 +259,9 @@ Deno.serve(async (req) => {
       .wj-prod-btn:hover{background:\${color.hover}}
       .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
       .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
+      .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
+      .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
+      .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -389,6 +392,9 @@ Deno.serve(async (req) => {
       .wj-prod-btn:hover{background:\${color.hover}}
       .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
       .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
+      .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
+      .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
+      .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -1346,6 +1352,53 @@ Deno.serve(async (req) => {
       setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
+    // Wishlist (localStorage-based)
+    var WISHLIST_KEY = 'wj_wishlist_' + id;
+    function getWishlist() {
+      try { return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]'); } catch(e) { return []; }
+    }
+    function saveWishlist(list) {
+      try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e) {}
+    }
+    function isInWishlist(productTitle) {
+      return getWishlist().some(function(item) { return item.title === productTitle; });
+    }
+    function toggleWishlist(product, btnEl) {
+      var list = getWishlist();
+      var idx = list.findIndex(function(item) { return item.title === product.title; });
+      var added = false;
+      if (idx >= 0) {
+        list.splice(idx, 1);
+      } else {
+        list.push({ title: product.title, price: product.price || '', image_url: product.image_url || product.imageUrl || '', product_url: product.product_url || product.productUrl || '' });
+        added = true;
+      }
+      saveWishlist(list);
+      // Update button visual
+      if (btnEl) {
+        var svg = btnEl.querySelector('svg');
+        if (added) {
+          btnEl.classList.add('active');
+          if (svg) { svg.setAttribute('fill', '#ef4444'); svg.setAttribute('stroke', '#ef4444'); }
+        } else {
+          btnEl.classList.remove('active');
+          if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); }
+        }
+      }
+      showWishlistToast(added);
+    }
+    function showWishlistToast(added) {
+      var existing = d.getElementById('wj-wish-toast');
+      if (existing) existing.remove();
+      var toast = d.createElement('div');
+      toast.id = 'wj-wish-toast';
+      toast.style.cssText = 'position:fixed;bottom:90px;right:24px;background:' + (added ? '#ef4444' : '#64748b') + ';color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:2147483647;transition:opacity 0.3s;font-family:-apple-system,BlinkMacSystemFont,sans-serif';
+      toast.textContent = added ? '❤ Added to wishlist!' : '♡ Removed from wishlist';
+      d.body.appendChild(toast);
+      setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
+    }
+    var heartSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+
     // Product cards
     if (products.length > 0) {
       var prodCont = d.createElement('div');
@@ -1369,7 +1422,9 @@ Deno.serve(async (req) => {
         if (shopifyDomain && p.shopify_variant_id) {
           cartBtnHtml = '<button class="wj-prod-cart-btn" data-variant="' + esc(p.shopify_variant_id) + '"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>';
         }
-        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + '<div class="wj-prod-actions">' + btnHtml + cartBtnHtml + '</div></div>';
+        var isFav = isInWishlist(p.title);
+        var favBtnHtml = '<button class="wj-prod-fav-btn' + (isFav ? ' active' : '') + '" data-product-title="' + esc(p.title) + '">' + (isFav ? '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' : heartSvg) + '</button>';
+        card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + '<div class="wj-prod-actions">' + btnHtml + cartBtnHtml + favBtnHtml + '</div></div>';
         // Bind cart click
         var cartBtn = card.querySelector('.wj-prod-cart-btn');
         if (cartBtn) {
@@ -1378,6 +1433,17 @@ Deno.serve(async (req) => {
             ev.stopPropagation();
             addToShopifyCart(this.getAttribute('data-variant'), this);
           });
+        }
+        // Bind wishlist click
+        var favBtn = card.querySelector('.wj-prod-fav-btn');
+        if (favBtn) {
+          (function(product, btn) {
+            btn.addEventListener('click', function(ev) {
+              ev.preventDefault();
+              ev.stopPropagation();
+              toggleWishlist(product, btn);
+            });
+          })(p, favBtn);
         }
         prodCont.appendChild(card);
       });
@@ -1724,7 +1790,12 @@ Deno.serve(async (req) => {
             } else {
               msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;text-decoration:none;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></a>';
             }
-            msgHtml += '<button class="wj-chat-fav-btn" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;border:none;cursor:pointer;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
+            var chatFavActive = isInWishlist(prod.title);
+            var chatFavFill = chatFavActive ? '#ef4444' : 'none';
+            var chatFavStroke = chatFavActive ? '#ef4444' : 'currentColor';
+            var chatFavBg = chatFavActive ? (dark ? 'rgba(239,68,68,0.15)' : '#fef2f2') : btnBg;
+            var chatFavColor = chatFavActive ? '#ef4444' : btnColor;
+            msgHtml += '<button class="wj-chat-fav-btn" data-product-title="' + esc(prod.title || '') + '" data-product-price="' + esc(prod.price || '') + '" data-product-image="' + esc(prod.imageUrl || '') + '" data-product-url="' + esc(prod.productUrl || '') + '" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;border:none;cursor:pointer;background:' + chatFavBg + ';color:' + chatFavColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="' + chatFavFill + '" stroke="' + chatFavStroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
             msgHtml += '</div></div>';
           });
           msgHtml += '</div>';
@@ -1744,18 +1815,14 @@ Deno.serve(async (req) => {
           addToShopifyCart(this.getAttribute('data-variant'), this);
         });
       });
-      // Bind favorite buttons (toggle heart fill)
+      // Bind favorite buttons (persistent wishlist)
       var chatFavBtns = bubble.querySelectorAll('.wj-chat-fav-btn');
       chatFavBtns.forEach(function(btn) {
         btn.addEventListener('click', function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
-          var svg = this.querySelector('svg');
-          if (svg) {
-            var isFilled = svg.getAttribute('fill') !== 'none';
-            svg.setAttribute('fill', isFilled ? 'none' : '#ef4444');
-            svg.setAttribute('stroke', isFilled ? 'currentColor' : '#ef4444');
-          }
+          var prodData = { title: this.getAttribute('data-product-title') || '', price: this.getAttribute('data-product-price') || '', imageUrl: this.getAttribute('data-product-image') || '', productUrl: this.getAttribute('data-product-url') || '' };
+          toggleWishlist(prodData, this);
         });
       });
       lastMessageId = msg.id;
