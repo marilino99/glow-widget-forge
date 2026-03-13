@@ -266,10 +266,10 @@ async function getCalendlyAvailability(
 
     if (eventTypes.length === 0) return "";
 
-    // Get availability for the first event type (next 7 days)
+    // Get availability for the first event type (next 90 days)
     const now = new Date();
     const startTime = now.toISOString();
-    const endTime = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const endTime = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString();
 
     let availabilityInfo = "\n## === CALENDLY BOOKING AVAILABILITY ===\n";
     availabilityInfo += `Booking link: ${conn.scheduling_url || "Not available"}\n\n`;
