@@ -419,6 +419,16 @@ Deno.serve(async (req) => {
       }
     }
 
+    let calendlyInfo = "";
+    if (bookingIntent) {
+      calendlyInfo = await getCalendlyAvailabilityPreview(supabase, config.user_id);
+      if (calendlyInfo) {
+        knowledgeBase += calendlyInfo;
+      }
+    } else if (config.calendly_enabled && config.calendly_event_url) {
+      knowledgeBase += `\n## BOOKING INFO\nBooking link: ${config.calendly_event_url}\n## END BOOKING INFO\n`;
+    }
+
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
@@ -430,14 +440,15 @@ ${knowledgeBase}
 ${additionalInstructions}
 
 STRICT RULES:
-- Use the knowledge base above to answer questions about the business, its products, services, and FAQ.
+- Use the knowledge base above to answer questions about the business, its products, services, FAQ, and booking availability.
 - If the knowledge base contains relevant information, use it to give accurate, helpful answers.
 - If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat.
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
 - PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
-${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. For example: 'Per mostrare i prodotti, collega il tuo store Shopify a Widjet dalle Integrazioni!' or 'To show products, connect your Shopify store to Widjet from Integrations!'. Match the visitor's language." : ""}`;
+${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. For example: 'Per mostrare i prodotti, collega il tuo store Shopify a Widjet dalle Integrazioni!' or 'To show products, connect your Shopify store to Widjet from Integrations!'. Match the visitor's language." : ""}
+- APPOINTMENT BOOKING: If CALENDLY BOOKING AVAILABILITY is present, suggest concrete available slots grouped by day and include the booking link to complete booking. If only BOOKING INFO is present, direct the user to that link. NEVER invent time slots.`;
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",
