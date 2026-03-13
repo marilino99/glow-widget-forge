@@ -266,48 +266,68 @@ async function getCalendlyAvailability(
 
     if (eventTypes.length === 0) return "";
 
-    // Get availability for the first event type (next 90 days)
     const now = new Date();
-    const startTime = now.toISOString();
-    const endTime = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString();
+    const ninetyDaysLater = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+    const CHUNK_DAYS = 7; // Calendly endpoint supports max 7-day range per request
 
     let availabilityInfo = "\n## === CALENDLY BOOKING AVAILABILITY ===\n";
-    availabilityInfo += `Booking link: ${conn.scheduling_url || "Not available"}\n\n`;
+    availabilityInfo += `Booking link: ${conn.scheduling_url || "Not available"}\n`;
+    availabilityInfo += `Window covered: next 90 days\n\n`;
 
     for (const et of eventTypes.slice(0, 3)) {
-      const availRes = await fetch(
-        `https://api.calendly.com/event_type_available_times?event_type=${encodeURIComponent(et.uri)}&start_time=${startTime}&end_time=${endTime}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const allSlots: Array<{ start_time: string }> = [];
 
-      if (!availRes.ok) {
-        const errText = await availRes.text();
-        console.error("Calendly availability error:", errText);
-        continue;
+      let windowStart = new Date(now);
+      while (windowStart < ninetyDaysLater) {
+        const windowEnd = new Date(
+          Math.min(
+            windowStart.getTime() + CHUNK_DAYS * 24 * 60 * 60 * 1000,
+            ninetyDaysLater.getTime()
+          )
+        );
+
+        const availRes = await fetch(
+          `https://api.calendly.com/event_type_available_times?event_type=${encodeURIComponent(et.uri)}&start_time=${windowStart.toISOString()}&end_time=${windowEnd.toISOString()}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (!availRes.ok) {
+          const errText = await availRes.text();
+          console.error("Calendly availability error:", errText);
+          // Move to next window even if one request fails
+          windowStart = new Date(windowEnd.getTime() + 1000);
+          continue;
+        }
+
+        const availData = await availRes.json();
+        const slots = availData.collection || [];
+        allSlots.push(...slots);
+
+        // Next chunk (add 1 second to avoid overlap duplicates)
+        windowStart = new Date(windowEnd.getTime() + 1000);
       }
-
-      const availData = await availRes.json();
-      const slots = availData.collection || [];
 
       availabilityInfo += `### ${et.name} (${et.duration} min)\n`;
 
-      if (slots.length === 0) {
-        availabilityInfo += "No available slots in the next 7 days.\n\n";
+      if (allSlots.length === 0) {
+        availabilityInfo += "No available slots in the next 90 days.\n\n";
         continue;
       }
 
       // Group slots by day
       const byDay: Record<string, string[]> = {};
-      for (const slot of slots) {
+      for (const slot of allSlots) {
         const date = new Date(slot.start_time);
         const dayKey = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
         const timeStr = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
         if (!byDay[dayKey]) byDay[dayKey] = [];
-        byDay[dayKey].push(timeStr);
+        if (!byDay[dayKey].includes(timeStr)) byDay[dayKey].push(timeStr);
       }
 
       for (const [day, times] of Object.entries(byDay)) {
-        availabilityInfo += `- **${day}**: ${times.join(", ")}\n`;
+        const limitedTimes = times.slice(0, 8);
+        const suffix = times.length > 8 ? " (+more)" : "";
+        availabilityInfo += `- **${day}**: ${limitedTimes.join(", ")}${suffix}\n`;
       }
       availabilityInfo += "\n";
     }
