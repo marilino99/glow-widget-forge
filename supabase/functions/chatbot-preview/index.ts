@@ -84,6 +84,163 @@ function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): st
   return "To see products in preview, first connect your Shopify store to Widjet from Integrations.";
 }
 
+async function refreshCalendlyToken(
+  supabase: any,
+  connection: any,
+): Promise<string | null> {
+  if (!connection.refresh_token) return null;
+
+  const clientId = Deno.env.get("CALENDLY_CLIENT_ID");
+  const clientSecret = Deno.env.get("CALENDLY_CLIENT_SECRET");
+  if (!clientId || !clientSecret) return null;
+
+  try {
+    const res = await fetch("https://auth.calendly.com/oauth/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        grant_type: "refresh_token",
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: connection.refresh_token,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("Calendly preview token refresh failed:", await res.text());
+      return null;
+    }
+
+    const data = await res.json();
+    const newToken = data.access_token;
+    const expiresIn = data.expires_in;
+
+    await supabase
+      .from("calendly_connections")
+      .update({
+        access_token: newToken,
+        refresh_token: data.refresh_token || connection.refresh_token,
+        expires_at: expiresIn
+          ? new Date(Date.now() + expiresIn * 1000).toISOString()
+          : null,
+      })
+      .eq("id", connection.id);
+
+    return newToken;
+  } catch (e) {
+    console.error("Calendly preview token refresh error:", e);
+    return null;
+  }
+}
+
+async function getCalendlyAvailabilityPreview(
+  supabase: any,
+  userId: string,
+): Promise<string> {
+  try {
+    const { data: conn } = await supabase
+      .from("calendly_connections")
+      .select("id, access_token, refresh_token, expires_at, scheduling_url, calendly_user_uri")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (!conn?.access_token || !conn.calendly_user_uri) return "";
+
+    let token = conn.access_token;
+    if (conn.expires_at && new Date(conn.expires_at) < new Date()) {
+      const refreshed = await refreshCalendlyToken(supabase, conn);
+      if (!refreshed) return "";
+      token = refreshed;
+    }
+
+    const eventTypesRes = await fetch(
+      `https://api.calendly.com/event_types?user=${encodeURIComponent(conn.calendly_user_uri)}&active=true`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    if (!eventTypesRes.ok) {
+      console.error("Calendly preview event types error:", await eventTypesRes.text());
+      return "";
+    }
+
+    const eventTypesData = await eventTypesRes.json();
+    const eventTypes = eventTypesData.collection || [];
+    if (eventTypes.length === 0) return "";
+
+    const now = new Date();
+    const ninetyDaysLater = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+    const CHUNK_DAYS = 7;
+
+    let availabilityInfo = "\n## CALENDLY BOOKING AVAILABILITY\n";
+    availabilityInfo += `Booking link: ${conn.scheduling_url || "Not available"}\n`;
+    availabilityInfo += "Window covered: next 90 days\n\n";
+
+    for (const et of eventTypes.slice(0, 2)) {
+      const allSlots: Array<{ start_time: string }> = [];
+      let windowStart = new Date(now);
+
+      while (windowStart < ninetyDaysLater) {
+        const windowEnd = new Date(
+          Math.min(
+            windowStart.getTime() + CHUNK_DAYS * 24 * 60 * 60 * 1000,
+            ninetyDaysLater.getTime(),
+          ),
+        );
+
+        const availRes = await fetch(
+          `https://api.calendly.com/event_type_available_times?event_type=${encodeURIComponent(et.uri)}&start_time=${windowStart.toISOString()}&end_time=${windowEnd.toISOString()}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+
+        if (!availRes.ok) {
+          console.error("Calendly preview availability error:", await availRes.text());
+          windowStart = new Date(windowEnd.getTime() + 1000);
+          continue;
+        }
+
+        const availData = await availRes.json();
+        const slots = availData.collection || [];
+        allSlots.push(...slots);
+        windowStart = new Date(windowEnd.getTime() + 1000);
+      }
+
+      availabilityInfo += `### ${et.name} (${et.duration} min)\n`;
+      if (allSlots.length === 0) {
+        availabilityInfo += "No available slots in the next 90 days.\n\n";
+        continue;
+      }
+
+      const byDay: Record<string, string[]> = {};
+      for (const slot of allSlots) {
+        const date = new Date(slot.start_time);
+        const dayKey = date.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        });
+        const timeStr = date.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+        if (!byDay[dayKey]) byDay[dayKey] = [];
+        if (!byDay[dayKey].includes(timeStr)) byDay[dayKey].push(timeStr);
+      }
+
+      for (const [day, times] of Object.entries(byDay)) {
+        availabilityInfo += `- **${day}**: ${times.slice(0, 8).join(", ")}\n`;
+      }
+      availabilityInfo += "\n";
+    }
+
+    availabilityInfo += "## END CALENDLY BOOKING AVAILABILITY\n";
+    return availabilityInfo;
+  } catch (e) {
+    console.error("Calendly preview availability exception:", e);
+    return "";
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
