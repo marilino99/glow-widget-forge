@@ -127,6 +127,13 @@ Deno.serve(async (req) => {
           variantId = match ? match[1] : variant.id;
         }
 
+        // Extract numeric product ID from GID (gid://shopify/Product/12345 -> 12345)
+        let productId: string | null = null;
+        if (node.id) {
+          const pMatch = node.id.match(/(\d+)$/);
+          productId = pMatch ? pMatch[1] : node.id;
+        }
+
         // Strip HTML tags from description
         const plainDesc = node.descriptionHtml
           ? node.descriptionHtml.replace(/<[^>]*>/g, "").substring(0, 120)
