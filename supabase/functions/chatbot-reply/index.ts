@@ -18,9 +18,23 @@ const PRODUCT_KEYWORDS = [
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want"
 ];
 
+const BOOKING_KEYWORDS = [
+  "appuntamento", "prenotare", "prenotazione", "prenota", "visita",
+  "appointment", "book", "booking", "schedule", "reservation",
+  "disponibilit", "availability", "available", "slot", "orari", "orario",
+  "when can", "quando posso", "libero", "free time", "sessione", "session",
+  "consulenza", "consultation", "rendez-vous", "réserver", "termin", "buchen",
+  "cita", "reservar", "agendar"
+];
+
 function isProductIntent(text: string): boolean {
   const normalized = (text || "").toLowerCase();
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function isBookingIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return BOOKING_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
 function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): string {
