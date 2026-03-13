@@ -148,6 +148,7 @@ Deno.serve(async (req) => {
           old_price: hasDiscount ? `${compareAt!.toFixed(2)}` : null,
           promo_badge: hasDiscount ? "sale" : null,
           shopify_variant_id: variantId,
+          shopify_product_id: productId,
         });
       }
 
