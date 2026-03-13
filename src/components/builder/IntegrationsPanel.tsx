@@ -19,7 +19,13 @@ interface IntegrationsPanelProps {
   onSaveConfig?: (config: Record<string, unknown>) => void;
 }
 
-const IntegrationsPanel = () => {
+const IntegrationsPanel = ({
+  calendlyEnabled = false,
+  calendlyEventUrl = "",
+  onCalendlyToggle,
+  onCalendlyUrlChange,
+  onSaveConfig,
+}: IntegrationsPanelProps) => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
