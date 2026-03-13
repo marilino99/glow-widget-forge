@@ -174,7 +174,152 @@ ${transcript}`;
   }
 }
 
-Deno.serve(async (req) => {
+async function refreshCalendlyToken(
+  supabase: any,
+  connection: any
+): Promise<string | null> {
+  if (!connection.refresh_token) return null;
+
+  const clientId = Deno.env.get("CALENDLY_CLIENT_ID");
+  const clientSecret = Deno.env.get("CALENDLY_CLIENT_SECRET");
+  if (!clientId || !clientSecret) return null;
+
+  try {
+    const res = await fetch("https://auth.calendly.com/oauth/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        grant_type: "refresh_token",
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: connection.refresh_token,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("Calendly token refresh failed:", await res.text());
+      return null;
+    }
+
+    const data = await res.json();
+    const newToken = data.access_token;
+    const newRefresh = data.refresh_token;
+    const expiresIn = data.expires_in;
+
+    // Update in DB
+    await supabase
+      .from("calendly_connections")
+      .update({
+        access_token: newToken,
+        refresh_token: newRefresh || connection.refresh_token,
+        expires_at: expiresIn
+          ? new Date(Date.now() + expiresIn * 1000).toISOString()
+          : null,
+      })
+      .eq("id", connection.id);
+
+    return newToken;
+  } catch (e) {
+    console.error("Calendly token refresh error:", e);
+    return null;
+  }
+}
+
+async function getCalendlyAvailability(
+  supabase: any,
+  userId: string
+): Promise<string> {
+  try {
+    const { data: conn } = await supabase
+      .from("calendly_connections")
+      .select("id, access_token, refresh_token, expires_at, scheduling_url, calendly_user_uri")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (!conn || !conn.access_token) return "";
+
+    let token = conn.access_token;
+
+    // Check if token is expired
+    if (conn.expires_at && new Date(conn.expires_at) < new Date()) {
+      const refreshed = await refreshCalendlyToken(supabase, conn);
+      if (!refreshed) return "";
+      token = refreshed;
+    }
+
+    // Get event types
+    const userUri = conn.calendly_user_uri;
+    if (!userUri) return "";
+
+    const eventTypesRes = await fetch(
+      `https://api.calendly.com/event_types?user=${encodeURIComponent(userUri)}&active=true`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (!eventTypesRes.ok) {
+      console.error("Calendly event_types error:", await eventTypesRes.text());
+      return "";
+    }
+
+    const eventTypesData = await eventTypesRes.json();
+    const eventTypes = eventTypesData.collection || [];
+
+    if (eventTypes.length === 0) return "";
+
+    // Get availability for the first event type (next 7 days)
+    const now = new Date();
+    const startTime = now.toISOString();
+    const endTime = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    let availabilityInfo = "\n## === CALENDLY BOOKING AVAILABILITY ===\n";
+    availabilityInfo += `Booking link: ${conn.scheduling_url || "Not available"}\n\n`;
+
+    for (const et of eventTypes.slice(0, 3)) {
+      const availRes = await fetch(
+        `https://api.calendly.com/event_type_available_times?event_type=${encodeURIComponent(et.uri)}&start_time=${startTime}&end_time=${endTime}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (!availRes.ok) {
+        const errText = await availRes.text();
+        console.error("Calendly availability error:", errText);
+        continue;
+      }
+
+      const availData = await availRes.json();
+      const slots = availData.collection || [];
+
+      availabilityInfo += `### ${et.name} (${et.duration} min)\n`;
+
+      if (slots.length === 0) {
+        availabilityInfo += "No available slots in the next 7 days.\n\n";
+        continue;
+      }
+
+      // Group slots by day
+      const byDay: Record<string, string[]> = {};
+      for (const slot of slots) {
+        const date = new Date(slot.start_time);
+        const dayKey = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+        const timeStr = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+        if (!byDay[dayKey]) byDay[dayKey] = [];
+        byDay[dayKey].push(timeStr);
+      }
+
+      for (const [day, times] of Object.entries(byDay)) {
+        availabilityInfo += `- **${day}**: ${times.join(", ")}\n`;
+      }
+      availabilityInfo += "\n";
+    }
+
+    availabilityInfo += "## === END OF CALENDLY AVAILABILITY ===\n";
+    return availabilityInfo;
+  } catch (e) {
+    console.error("Calendly availability error:", e);
+    return "";
+  }
+}
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
