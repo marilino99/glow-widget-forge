@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     // Fetch widget configuration
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("user_id, widget_color, widget_theme, contact_name, offer_help, say_hello, selected_avatar, faq_enabled, instagram_enabled, background_type, background_image, logo, button_logo, language, whatsapp_enabled, whatsapp_country_code, whatsapp_number, show_branding, forward_email, chatbot_enabled, chatbot_instructions, ai_provider, custom_css, custom_js, widget_position, widget_type, google_reviews_enabled, google_business_name, google_business_rating, google_business_ratings_total, google_business_url, cta_text")
+      .select("user_id, widget_color, widget_theme, contact_name, offer_help, say_hello, selected_avatar, faq_enabled, instagram_enabled, background_type, background_image, logo, button_logo, language, whatsapp_enabled, whatsapp_country_code, whatsapp_number, show_branding, forward_email, chatbot_enabled, chatbot_instructions, ai_provider, custom_css, custom_js, widget_position, widget_type, google_reviews_enabled, google_business_name, google_business_rating, google_business_ratings_total, google_business_url, cta_text, calendly_enabled, calendly_event_url")
       .eq("id", widgetId)
       .single();
 
@@ -137,6 +137,8 @@ Deno.serve(async (req) => {
         google_business_ratings_total: config.google_business_ratings_total ?? null,
         google_business_url: config.google_business_url || null,
         cta_text: config.cta_text || "Contact us",
+        calendly_enabled: config.calendly_enabled ?? false,
+        calendly_event_url: config.calendly_event_url || null,
       }),
       { headers: corsHeaders }
     );

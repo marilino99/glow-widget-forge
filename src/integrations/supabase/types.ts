@@ -512,6 +512,8 @@ export type Database = {
           background_image: string | null
           background_type: string
           button_logo: string | null
+          calendly_enabled: boolean
+          calendly_event_url: string | null
           chatbot_enabled: boolean
           chatbot_instructions: string | null
           contact_name: string
@@ -555,6 +557,8 @@ export type Database = {
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
+          calendly_enabled?: boolean
+          calendly_event_url?: string | null
           chatbot_enabled?: boolean
           chatbot_instructions?: string | null
           contact_name?: string
@@ -598,6 +602,8 @@ export type Database = {
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
+          calendly_enabled?: boolean
+          calendly_event_url?: string | null
           chatbot_enabled?: boolean
           chatbot_instructions?: string | null
           contact_name?: string

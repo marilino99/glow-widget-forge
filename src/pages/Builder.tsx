@@ -1088,7 +1088,13 @@ const Builder = () => {
             </div>
           </div>
         ) : builderView === "integrations" ? (
-          <IntegrationsPanel />
+          <IntegrationsPanel
+            calendlyEnabled={config.calendlyEnabled}
+            calendlyEventUrl={config.calendlyEventUrl}
+            onCalendlyToggle={(enabled) => updateConfig({ calendlyEnabled: enabled })}
+            onCalendlyUrlChange={(url) => updateConfig({ calendlyEventUrl: url })}
+            onSaveConfig={(cfg) => saveConfig(cfg)}
+          />
         ) : (
           <>
             {/* Right header with actions */}

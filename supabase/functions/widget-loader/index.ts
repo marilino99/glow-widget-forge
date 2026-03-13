@@ -180,15 +180,17 @@ Deno.serve(async (req) => {
     var grRating = cfg.google_business_rating || 0;
     var grTotal = cfg.google_business_ratings_total || 0;
     var grUrl = cfg.google_business_url || '';
+    var calendlyEnabled = cfg.calendly_enabled || false;
+    var calendlyEventUrl = cfg.calendly_event_url || '';
 
     var t = {
-      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', yourFavorites: 'Your favorites', emptyWishlist: 'No favorites yet', remove: 'Remove' },
-      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp', yourFavorites: 'Tus favoritos', emptyWishlist: 'Aún no hay favoritos', remove: 'Eliminar' },
-      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp', yourFavorites: 'Deine Favoriten', emptyWishlist: 'Noch keine Favoriten', remove: 'Entfernen' },
-      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...', contactWhatsApp: 'Contactez-nous sur WhatsApp', yourFavorites: 'Vos favoris', emptyWishlist: 'Pas encore de favoris', remove: 'Supprimer' },
-      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...', contactWhatsApp: 'Contattaci su WhatsApp', yourFavorites: 'I tuoi preferiti', emptyWishlist: 'Nessun preferito ancora', remove: 'Rimuovi' },
-      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...', contactWhatsApp: 'Contacte-nos no WhatsApp', yourFavorites: 'Os seus favoritos', emptyWishlist: 'Ainda sem favoritos', remove: 'Remover' },
-      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...', contactWhatsApp: 'Skontaktuj się z nami przez WhatsApp', yourFavorites: 'Twoje ulubione', emptyWishlist: 'Brak ulubionych', remove: 'Usuń' }
+      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', yourFavorites: 'Your favorites', emptyWishlist: 'No favorites yet', remove: 'Remove', bookSession: 'Book a session' },
+      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp', yourFavorites: 'Tus favoritos', emptyWishlist: 'Aún no hay favoritos', remove: 'Eliminar', bookSession: 'Reservar una sesión' },
+      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp', yourFavorites: 'Deine Favoriten', emptyWishlist: 'Noch keine Favoriten', remove: 'Entfernen', bookSession: 'Termin buchen' },
+      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...', contactWhatsApp: 'Contactez-nous sur WhatsApp', yourFavorites: 'Vos favoris', emptyWishlist: 'Pas encore de favoris', remove: 'Supprimer', bookSession: 'Réserver une séance' },
+      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...', contactWhatsApp: 'Contattaci su WhatsApp', yourFavorites: 'I tuoi preferiti', emptyWishlist: 'Nessun preferito ancora', remove: 'Rimuovi', bookSession: 'Prenota una sessione' },
+      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...', contactWhatsApp: 'Contacte-nos no WhatsApp', yourFavorites: 'Os seus favoritos', emptyWishlist: 'Ainda sem favoritos', remove: 'Remover', bookSession: 'Reservar uma sessão' },
+      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...', contactWhatsApp: 'Skontaktuj się z nami przez WhatsApp', yourFavorites: 'Twoje ulubione', emptyWishlist: 'Brak ulubionych', remove: 'Usuń', bookSession: 'Zarezerwuj sesję' }
     };
     var tr = t[lang] || t.en;
 
@@ -1720,6 +1722,38 @@ Deno.serve(async (req) => {
         faqItems.appendChild(item);
       });
       scroll.appendChild(faqCont);
+    }
+
+    // Calendly booking button
+    if (calendlyEnabled && calendlyEventUrl) {
+      var bookCont = d.createElement('div');
+      bookCont.id = 'wj-booking';
+      bookCont.style.cssText = 'padding:0 16px 8px;margin-top:8px';
+      var bookBtn = d.createElement('button');
+      bookBtn.id = 'wj-book-btn';
+      bookBtn.style.cssText = 'width:100%;padding:12px 16px;border:1px solid ' + (dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0') + ';border-radius:12px;background:' + (dark ? 'rgba(255,255,255,0.05)' : '#fff') + ';color:' + textMain + ';font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .2s';
+      bookBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + color.bg + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>' + esc(tr.bookSession) + '</span>';
+      bookBtn.onmouseover = function() { this.style.background = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'; };
+      bookBtn.onmouseout = function() { this.style.background = dark ? 'rgba(255,255,255,0.05)' : '#fff'; };
+      bookBtn.onclick = function() {
+        // Load Calendly embed script if not already loaded
+        if (!w.Calendly) {
+          var link = d.createElement('link');
+          link.href = 'https://assets.calendly.com/assets/external/widget.css';
+          link.rel = 'stylesheet';
+          d.head.appendChild(link);
+          var script = d.createElement('script');
+          script.src = 'https://assets.calendly.com/assets/external/widget.js';
+          script.onload = function() {
+            w.Calendly.initPopupWidget({ url: calendlyEventUrl });
+          };
+          d.head.appendChild(script);
+        } else {
+          w.Calendly.initPopupWidget({ url: calendlyEventUrl });
+        }
+      };
+      bookCont.appendChild(bookBtn);
+      scroll.appendChild(bookCont);
     }
 
     // Custom Links
