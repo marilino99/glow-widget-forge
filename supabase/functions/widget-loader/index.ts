@@ -1388,27 +1388,32 @@ Deno.serve(async (req) => {
     function initSwym() {
       if (w._swat) {
         swymReady = true;
+        console.log('[Widjet] Swym detected, fetching wishlist...');
         try {
           w._swat.fetch(function(items) {
             swymWishlist = items || [];
+            console.log('[Widjet] Swym wishlist loaded:', swymWishlist.length, 'items');
             syncHeartStates();
             renderWishlistSection();
           });
-        } catch(e) { swymReady = false; }
+        } catch(e) { console.error('[Widjet] Swym fetch error:', e); swymReady = false; }
       }
     }
     initSwym();
     if (!swymReady) {
+      console.log('[Widjet] Swym not found yet, registering callback...');
       w.SwymCallbacks = w.SwymCallbacks || [];
       w.SwymCallbacks.push(function(swat) {
         swymReady = true;
+        console.log('[Widjet] Swym ready via callback');
         try {
           swat.fetch(function(items) {
             swymWishlist = items || [];
+            console.log('[Widjet] Swym wishlist loaded via callback:', swymWishlist.length, 'items');
             syncHeartStates();
             renderWishlistSection();
           });
-        } catch(e) {}
+        } catch(e) { console.error('[Widjet] Swym callback fetch error:', e); }
       });
     }
 
