@@ -1385,36 +1385,50 @@ Deno.serve(async (req) => {
     var swymReady = false;
     var swymWishlist = [];
 
-    function initSwym() {
-      if (w._swat) {
-        swymReady = true;
-        console.log('[Widjet] Swym detected, fetching wishlist...');
-        try {
-          w._swat.fetch(function(items) {
-            swymWishlist = items || [];
-            console.log('[Widjet] Swym wishlist loaded:', swymWishlist.length, 'items');
-            syncHeartStates();
-            renderWishlistSection();
-          });
-        } catch(e) { console.error('[Widjet] Swym fetch error:', e); swymReady = false; }
-      }
+    function onSwymReady(swat) {
+      if (swymReady) return;
+      swymReady = true;
+      console.log('[Widjet] Swym ready! Methods:', Object.keys(swat).filter(function(k) { return typeof swat[k] === 'function'; }).join(', '));
+      try {
+        swat.fetch(function(items) {
+          swymWishlist = items || [];
+          console.log('[Widjet] Swym wishlist loaded:', swymWishlist.length, 'items');
+          syncHeartStates();
+          renderWishlistSection();
+        });
+      } catch(e) { console.error('[Widjet] Swym fetch error:', e); swymReady = false; }
     }
-    initSwym();
+
+    // Strategy 1: Direct check
+    if (w._swat && typeof w._swat.fetch === 'function') {
+      console.log('[Widjet] Swym found immediately');
+      onSwymReady(w._swat);
+    }
+
+    // Strategy 2: SwymCallbacks (official mechanism)
     if (!swymReady) {
-      console.log('[Widjet] Swym not found yet, registering callback...');
       w.SwymCallbacks = w.SwymCallbacks || [];
       w.SwymCallbacks.push(function(swat) {
-        swymReady = true;
-        console.log('[Widjet] Swym ready via callback');
-        try {
-          swat.fetch(function(items) {
-            swymWishlist = items || [];
-            console.log('[Widjet] Swym wishlist loaded via callback:', swymWishlist.length, 'items');
-            syncHeartStates();
-            renderWishlistSection();
-          });
-        } catch(e) { console.error('[Widjet] Swym callback fetch error:', e); }
+        console.log('[Widjet] Swym ready via SwymCallbacks');
+        onSwymReady(swat);
       });
+    }
+
+    // Strategy 3: Polling fallback (in case SwymCallbacks fires before our push, or doesn't fire at all)
+    if (!swymReady) {
+      var swymPollCount = 0;
+      var swymPollMax = 40; // 20 seconds
+      var swymPoller = setInterval(function() {
+        swymPollCount++;
+        if (w._swat && typeof w._swat.fetch === 'function') {
+          console.log('[Widjet] Swym found via polling after ' + (swymPollCount * 500) + 'ms');
+          clearInterval(swymPoller);
+          onSwymReady(w._swat);
+        } else if (swymPollCount >= swymPollMax) {
+          console.log('[Widjet] Swym not found after polling, using localStorage fallback');
+          clearInterval(swymPoller);
+        }
+      }, 500);
     }
 
     function syncHeartStates() {
