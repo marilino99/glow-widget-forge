@@ -137,6 +137,8 @@ Deno.serve(async (req) => {
         google_business_ratings_total: config.google_business_ratings_total ?? null,
         google_business_url: config.google_business_url || null,
         cta_text: config.cta_text || "Contact us",
+        calendly_enabled: config.calendly_enabled ?? false,
+        calendly_event_url: config.calendly_event_url || null,
       }),
       { headers: corsHeaders }
     );

@@ -220,6 +220,8 @@ export const useWidgetConfiguration = () => {
           google_business_place_id: updatedConfig.googleBusinessPlaceId,
           cta_text: updatedConfig.ctaText,
           product_carousel_enabled: updatedConfig.productCarouselEnabled,
+          calendly_enabled: updatedConfig.calendlyEnabled,
+          calendly_event_url: updatedConfig.calendlyEventUrl,
         }, {
           onConflict: "user_id"
         })
