@@ -264,6 +264,7 @@ export type Database = {
           price: string | null
           product_url: string | null
           promo_badge: string | null
+          shopify_product_id: string | null
           shopify_variant_id: string | null
           sort_order: number
           subtitle: string | null
@@ -279,6 +280,7 @@ export type Database = {
           price?: string | null
           product_url?: string | null
           promo_badge?: string | null
+          shopify_product_id?: string | null
           shopify_variant_id?: string | null
           sort_order?: number
           subtitle?: string | null
@@ -294,6 +296,7 @@ export type Database = {
           price?: string | null
           product_url?: string | null
           promo_badge?: string | null
+          shopify_product_id?: string | null
           shopify_variant_id?: string | null
           sort_order?: number
           subtitle?: string | null
