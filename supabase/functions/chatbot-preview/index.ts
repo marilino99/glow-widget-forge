@@ -504,51 +504,59 @@ ${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If 
     console.log(`AI raw reply (last 100 chars): ...${cleanReply.slice(-100)}`);
     console.log(`Product cards available: ${productCardsData?.length || 0}`);
 
-    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
-    if (productMarkerMatch) {
-      if (!shopifyConn) {
-        const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
-        return new Response(
-          JSON.stringify({ reply: connectReply }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
+    // If booking intent, add calendly_url to metadata and skip product cards
+    if (bookingIntent) {
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
-      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-      if (productCardsData && productCardsData.length > 0) {
-        const matchedProducts = productCardsData.filter((p: any) =>
-          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-        );
-        const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
-        // Ensure at least 2-3 products
-        const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
-          ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
-          : productsToShow;
-        metadata = {
-          products: finalProducts.map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-            shopifyVariantId: p.shopify_variant_id || null,
-          })),
-        };
+      const calendlyUrl = config.calendly_event_url || null;
+      if (calendlyUrl) {
+        metadata = { calendly_url: calendlyUrl };
+        console.log("Booking intent: attached calendly_url to metadata");
       }
-    } else if (productCardsData && productCardsData.length > 0) {
-      // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
-      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
-      const mentionsProducts = isProductIntent(lastUserMsg);
-      if (mentionsProducts) {
-        metadata = {
-          products: productCardsData.slice(0, 3).map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-            shopifyVariantId: p.shopify_variant_id || null,
-          })),
-        };
+    } else {
+      const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+      if (productMarkerMatch) {
+        if (!shopifyConn) {
+          const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
+          return new Response(
+            JSON.stringify({ reply: connectReply }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+        const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+        if (productCardsData && productCardsData.length > 0) {
+          const matchedProducts = productCardsData.filter((p: any) =>
+            requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+          );
+          const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
+          const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
+            ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
+            : productsToShow;
+          metadata = {
+            products: finalProducts.map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+        }
+      } else if (productCardsData && productCardsData.length > 0) {
+        const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
+        const mentionsProducts = isProductIntent(lastUserMsg);
+        if (mentionsProducts) {
+          metadata = {
+            products: productCardsData.slice(0, 3).map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+        }
       }
     }
 
