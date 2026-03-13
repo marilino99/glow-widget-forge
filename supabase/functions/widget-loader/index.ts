@@ -1102,6 +1102,12 @@ Deno.serve(async (req) => {
           });
           html += '</div>';
         }
+        // Calendly booking button in search results
+        if (msg.metadata && msg.metadata.calendly_url) {
+          var calUrl2 = msg.metadata.calendly_url;
+          var bookLabel2 = (cfg.language || 'en').startsWith('it') ? '📅 Prenota appuntamento' : (cfg.language || 'en').startsWith('es') ? '📅 Reservar cita' : (cfg.language || 'en').startsWith('fr') ? '📅 Prendre rendez-vous' : (cfg.language || 'en').startsWith('de') ? '📅 Termin buchen' : '📅 Book appointment';
+          html += '<div style="margin-top:12px"><button onclick="(function(){if(window.Calendly){Calendly.initPopupWidget({url:\\'' + calUrl2.replace(/'/g, "\\\\'") + '\\'});return;}var s=document.createElement(\\'script\\');s.src=\\'https://assets.calendly.com/assets/external/widget.js\\';s.onload=function(){Calendly.initPopupWidget({url:\\'' + calUrl2.replace(/'/g, "\\\\'") + '\\'});};document.head.appendChild(s);var l=document.createElement(\\'link\\');l.rel=\\'stylesheet\\';l.href=\\'https://assets.calendly.com/assets/external/widget.css\\';document.head.appendChild(l);})()" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:12px;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#fff;background:' + color.bg + ';transition:opacity 0.15s" onmouseover="this.style.opacity=\\'0.85\\'" onmouseout="this.style.opacity=\\'1\\'">' + bookLabel2 + '</button></div>';
+        }
         sbResults.innerHTML = html;
       }
 
