@@ -73,19 +73,17 @@ const IntegrationsPanel = ({
       {/* Grid */}
       <div className="flex-1 overflow-y-auto px-8 pb-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
           {/* Shopify Card */}
-          <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
-            <div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#96bf48]/10">
+          <div className="flex flex-col rounded-2xl border border-border bg-background overflow-hidden transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
+            <div className="flex-1 p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#96bf48]/10">
                 <img src={shopifyLogo} alt="Shopify" className="h-7 w-7 object-contain" />
               </div>
-
-              <h3 className="mt-3.5 text-sm font-semibold text-foreground">Shopify</h3>
-
-              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+              <h3 className="mt-4 text-base font-semibold text-foreground">Shopify</h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 Sync your Shopify catalog and let the AI chatbot recommend products.
               </p>
-
               {isConnected && connection && (
                 <div className="mt-2 flex flex-col gap-0.5">
                   <span className="inline-flex items-center gap-1 text-xs text-green-600">
@@ -100,28 +98,21 @@ const IntegrationsPanel = ({
                   )}
                 </div>
               )}
-            </div>
-
-            {/* Sync progress bar */}
-            {(isSyncing || syncProgress > 0) && (
-              <div className="mt-3 space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="h-3.5 w-3.5 text-muted-foreground animate-pulse" />
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {syncProgress >= 100 ? "Sync complete!" : "Syncing products…"}
-                  </span>
+              {(isSyncing || syncProgress > 0) && (
+                <div className="mt-3 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <ShoppingBag className="h-3.5 w-3.5 text-muted-foreground animate-pulse" />
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {syncProgress >= 100 ? "Sync complete!" : "Syncing products…"}
+                    </span>
+                  </div>
+                  <Progress value={Math.min(syncProgress, 100)} className="h-1.5 bg-muted" />
                 </div>
-                <Progress
-                  value={Math.min(syncProgress, 100)}
-                  className="h-1.5 bg-muted"
-                />
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="mt-4 flex items-center gap-2">
+              )}
+            </div>
+            <div className="flex items-center border-t border-border">
               {isLoading ? (
-                <button disabled className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60">
+                <button disabled className="flex-1 py-3 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60">
                   Loading…
                 </button>
               ) : isConnected ? (
@@ -129,72 +120,51 @@ const IntegrationsPanel = ({
                   <button
                     onClick={() => sync()}
                     disabled={isSyncing}
-                    className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
+                    className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
                   >
-                    {isSyncing ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <RefreshCw className="h-3.5 w-3.5" />
-                    )}
+                    {isSyncing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
                     {isSyncing ? "Syncing…" : "Sync now"}
                   </button>
+                  <div className="w-px h-6 bg-border" />
                   <button
                     onClick={() => setDisconnectDialogOpen(true)}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                    className="flex h-full w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive py-3"
                     title="Disconnect"
                   >
                     <Unplug className="h-4 w-4" />
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => setDialogOpen(true)}
-                  disabled={isConnecting}
-                  className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
-                >
-                  {isConnecting ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Connecting…
-                    </>
-                  ) : (
-                    "Connect"
-                  )}
-                </button>
+                <>
+                  <button
+                    onClick={() => setDialogOpen(true)}
+                    disabled={isConnecting}
+                    className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
+                  >
+                    {isConnecting ? (
+                      <><Loader2 className="h-3.5 w-3.5 animate-spin" />Connecting…</>
+                    ) : "Connect"}
+                  </button>
+                  <div className="w-px h-6 bg-border" />
+                  <button className="flex w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground py-3">
+                    <BookOpen className="h-4 w-4" />
+                  </button>
+                </>
               )}
-              <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-                <BookOpen className="h-4 w-4" />
-              </button>
             </div>
-          </div>
           </div>
 
           {/* Calendly Card */}
-          <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
-            <div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#006BFF]/10">
+          <div className="flex flex-col rounded-2xl border border-border bg-background overflow-hidden transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
+            <div className="flex-1 p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#006BFF]/10">
                 <img src={calendlyLogo} alt="Calendly" className="h-7 w-7 object-contain" />
               </div>
-
-              <h3 className="mt-3.5 text-sm font-semibold text-foreground">Calendly</h3>
-
-              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+              <h3 className="mt-4 text-base font-semibold text-foreground">Calendly</h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 Let visitors book appointments directly from your widget via Calendly.
               </p>
 
-              {/* Toggle */}
-              <div className="mt-3 flex items-center gap-2">
-                <Switch
-                  checked={calendlyEnabled}
-                  onCheckedChange={(checked) => {
-                    onCalendlyToggle?.(checked);
-                    onSaveConfig?.({ calendlyEnabled: checked });
-                  }}
-                />
-                <span className="text-xs text-muted-foreground">{calendlyEnabled ? "Enabled" : "Disabled"}</span>
-              </div>
-
-              {/* URL input */}
               {calendlyEnabled && (
                 <div className="mt-3 space-y-1.5">
                   <label className="text-xs font-medium text-muted-foreground">Event URL</label>
@@ -211,9 +181,28 @@ const IntegrationsPanel = ({
                 </div>
               )}
             </div>
+            <div className="flex items-center border-t border-border">
+              <button
+                onClick={() => {
+                  const next = !calendlyEnabled;
+                  onCalendlyToggle?.(next);
+                  onSaveConfig?.({ calendlyEnabled: next });
+                }}
+                className="flex-1 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
+              >
+                {calendlyEnabled ? (
+                  <><CheckCircle2 className="h-3.5 w-3.5 text-green-600" />Connected</>
+                ) : "Connect"}
+              </button>
+              <div className="w-px h-6 bg-border" />
+              <button className="flex w-14 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground py-3">
+                <BookOpen className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
         </div>
+      </div>
 
       <ShopifyConnectDialog
         open={dialogOpen}
