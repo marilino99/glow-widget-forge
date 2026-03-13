@@ -1380,25 +1380,107 @@ Deno.serve(async (req) => {
       setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
-    // Wishlist (localStorage-based)
+    // Wishlist (Swym Wishlist Plus integration with localStorage fallback)
     var WISHLIST_KEY = 'wj_wishlist_' + id;
+    var swymReady = false;
+    var swymWishlist = [];
+
+    function initSwym() {
+      if (w._swat) {
+        swymReady = true;
+        try {
+          w._swat.fetch(function(items) {
+            swymWishlist = items || [];
+            syncHeartStates();
+            renderWishlistSection();
+          });
+        } catch(e) { swymReady = false; }
+      }
+    }
+    initSwym();
+    if (!swymReady) {
+      w.SwymCallbacks = w.SwymCallbacks || [];
+      w.SwymCallbacks.push(function(swat) {
+        swymReady = true;
+        try {
+          swat.fetch(function(items) {
+            swymWishlist = items || [];
+            syncHeartStates();
+            renderWishlistSection();
+          });
+        } catch(e) {}
+      });
+    }
+
+    function syncHeartStates() {
+      var allFavBtns = d.querySelectorAll('.wj-prod-fav-btn');
+      allFavBtns.forEach(function(btn) {
+        var title = btn.getAttribute('data-product-title') || '';
+        var active = isInWishlist(title, btn.getAttribute('data-product-id') || '');
+        var svg = btn.querySelector('svg');
+        if (active) {
+          btn.classList.add('active');
+          if (svg) { svg.setAttribute('fill', '#ef4444'); svg.setAttribute('stroke', '#ef4444'); }
+        } else {
+          btn.classList.remove('active');
+          if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); }
+        }
+      });
+    }
+
     function getWishlist() {
       try { return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]'); } catch(e) { return []; }
     }
     function saveWishlist(list) {
       try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e) {}
     }
-    function isInWishlist(productTitle) {
+    function isInWishlist(productTitle, productId) {
+      if (swymReady && swymWishlist.length > 0 && productId) {
+        return swymWishlist.some(function(item) { return String(item.empi) === String(productId); });
+      }
       return getWishlist().some(function(item) { return item.title === productTitle; });
     }
     function toggleWishlist(product, btnEl) {
+      if (swymReady && w._swat && product.shopify_product_id) {
+        var swymProduct = {
+          epi: parseInt(product.shopify_variant_id || '0'),
+          empi: parseInt(product.shopify_product_id),
+          du: product.product_url || product.productUrl || ''
+        };
+        var isCurrentlyIn = swymWishlist.some(function(i) { return i.empi === swymProduct.empi; });
+        if (isCurrentlyIn) {
+          w._swat.removeFromWishList(swymProduct, function() {
+            swymWishlist = swymWishlist.filter(function(i) { return i.empi !== swymProduct.empi; });
+            if (btnEl) {
+              btnEl.classList.remove('active');
+              var svg = btnEl.querySelector('svg');
+              if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); }
+            }
+            showWishlistToast(false);
+            renderWishlistSection();
+          }, function() {});
+        } else {
+          w._swat.addToWishList(swymProduct, function() {
+            swymWishlist.push(swymProduct);
+            if (btnEl) {
+              btnEl.classList.add('active');
+              var svg = btnEl.querySelector('svg');
+              if (svg) { svg.setAttribute('fill', '#ef4444'); svg.setAttribute('stroke', '#ef4444'); }
+            }
+            showWishlistToast(true);
+            renderWishlistSection();
+          }, function() {});
+        }
+        return;
+      }
+      // Fallback: localStorage
       var list = getWishlist();
       var idx = list.findIndex(function(item) { return item.title === product.title; });
       var added = false;
       if (idx >= 0) {
         list.splice(idx, 1);
       } else {
-        list.push({ title: product.title, price: product.price || '', image_url: product.image_url || product.imageUrl || '', product_url: product.product_url || product.productUrl || '' });
+        list.push({ title: product.title, price: product.price || '', image_url: product.image_url || product.imageUrl || '', product_url: product.product_url || product.productUrl || '', shopify_variant_id: product.shopify_variant_id || '', shopify_product_id: product.shopify_product_id || '' });
         added = true;
       }
       saveWishlist(list);
