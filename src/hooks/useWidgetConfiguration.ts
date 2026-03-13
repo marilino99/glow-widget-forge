@@ -85,6 +85,8 @@ const defaultConfig: WidgetConfiguration = {
   googleBusinessPlaceId: null,
   ctaText: "Contact us",
   productCarouselEnabled: true,
+  calendlyEnabled: false,
+  calendlyEventUrl: "",
 };
 
 export const useWidgetConfiguration = () => {
