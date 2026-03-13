@@ -182,13 +182,13 @@ Deno.serve(async (req) => {
     var grUrl = cfg.google_business_url || '';
 
     var t = {
-      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp' },
-      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp' },
-      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp' },
-      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...', contactWhatsApp: 'Contactez-nous sur WhatsApp' },
-      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...', contactWhatsApp: 'Contattaci su WhatsApp' },
-      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...', contactWhatsApp: 'Contacte-nos no WhatsApp' },
-      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...', contactWhatsApp: 'Skontaktuj się z nami przez WhatsApp' }
+      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', yourFavorites: 'Your favorites', emptyWishlist: 'No favorites yet', remove: 'Remove' },
+      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp', yourFavorites: 'Tus favoritos', emptyWishlist: 'Aún no hay favoritos', remove: 'Eliminar' },
+      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp', yourFavorites: 'Deine Favoriten', emptyWishlist: 'Noch keine Favoriten', remove: 'Entfernen' },
+      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...', contactWhatsApp: 'Contactez-nous sur WhatsApp', yourFavorites: 'Vos favoris', emptyWishlist: 'Pas encore de favoris', remove: 'Supprimer' },
+      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...', contactWhatsApp: 'Contattaci su WhatsApp', yourFavorites: 'I tuoi preferiti', emptyWishlist: 'Nessun preferito ancora', remove: 'Rimuovi' },
+      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...', contactWhatsApp: 'Contacte-nos no WhatsApp', yourFavorites: 'Os seus favoritos', emptyWishlist: 'Ainda sem favoritos', remove: 'Remover' },
+      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...', contactWhatsApp: 'Skontaktuj się z nami przez WhatsApp', yourFavorites: 'Twoje ulubione', emptyWishlist: 'Brak ulubionych', remove: 'Usuń' }
     };
     var tr = t[lang] || t.en;
 
@@ -262,6 +262,20 @@ Deno.serve(async (req) => {
       .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
       .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
       .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
+      #wj-wishlist{padding:0 16px 16px;margin-top:8px}
+      #wj-wishlist-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+      #wj-wishlist-head svg{width:16px;height:16px;color:#ef4444}
+      #wj-wishlist-head span{font-size:14px;font-weight:500;color:\${textMain}}
+      #wj-wishlist-count{font-size:12px;color:\${textSub};font-weight:400}
+      #wj-wishlist-list{display:flex;flex-direction:column;gap:8px}
+      .wj-wish-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;color:inherit;transition:background 0.15s}
+      .wj-wish-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
+      .wj-wish-img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:\${dark ? '#cbd5e1' : '#e2e8f0'};flex-shrink:0}
+      .wj-wish-info{flex:1;min-width:0}
+      .wj-wish-title{font-size:13px;font-weight:600;color:\${textMain};white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .wj-wish-price{font-size:12px;color:\${textSub};margin-top:2px}
+      .wj-wish-remove{width:28px;height:28px;border:none;border-radius:50%;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'};color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+      .wj-wish-remove:hover{background:\${lt?'#fee2e2':'rgba(239,68,68,0.25)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -395,6 +409,20 @@ Deno.serve(async (req) => {
       .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
       .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
       .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
+      #wj-wishlist{padding:0 16px 16px;margin-top:8px}
+      #wj-wishlist-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+      #wj-wishlist-head svg{width:16px;height:16px;color:#ef4444}
+      #wj-wishlist-head span{font-size:14px;font-weight:500;color:\${textMain}}
+      #wj-wishlist-count{font-size:12px;color:\${textSub};font-weight:400}
+      #wj-wishlist-list{display:flex;flex-direction:column;gap:8px}
+      .wj-wish-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;color:inherit;transition:background 0.15s}
+      .wj-wish-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
+      .wj-wish-img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:\${dark ? '#cbd5e1' : '#e2e8f0'};flex-shrink:0}
+      .wj-wish-info{flex:1;min-width:0}
+      .wj-wish-title{font-size:13px;font-weight:600;color:\${textMain};white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .wj-wish-price{font-size:12px;color:\${textSub};margin-top:2px}
+      .wj-wish-remove{width:28px;height:28px;border:none;border-radius:50%;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'};color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+      .wj-wish-remove:hover{background:\${lt?'#fee2e2':'rgba(239,68,68,0.25)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -1386,6 +1414,7 @@ Deno.serve(async (req) => {
         }
       }
       showWishlistToast(added);
+      renderWishlistSection();
     }
     function showWishlistToast(added) {
       var existing = d.getElementById('wj-wish-toast');
@@ -1449,6 +1478,66 @@ Deno.serve(async (req) => {
       });
       scroll.appendChild(prodCont);
     }
+
+    // Wishlist section in home view
+    function renderWishlistSection() {
+      var existing = d.getElementById('wj-wishlist');
+      if (existing) existing.remove();
+      var list = getWishlist();
+      if (list.length === 0) return;
+      var wishCont = d.createElement('div');
+      wishCont.id = 'wj-wishlist';
+      wishCont.innerHTML = '<div id="wj-wishlist-head"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>' + esc(tr.yourFavorites) + ' <span id="wj-wishlist-count">(' + list.length + ')</span></span></div>';
+      var wishList = d.createElement('div');
+      wishList.id = 'wj-wishlist-list';
+      list.forEach(function(item) {
+        var el = d.createElement('div');
+        el.className = 'wj-wish-item';
+        var imgHtml = item.image_url ? '<img class="wj-wish-img" src="' + esc(item.image_url) + '" alt=""/>' : '<div class="wj-wish-img"></div>';
+        var priceHtml = item.price ? '<div class="wj-wish-price">' + esc(item.price) + '</div>' : '';
+        var linkStart = item.product_url ? '<a href="' + esc(item.product_url) + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-decoration:none;color:inherit">' : '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">';
+        var linkEnd = item.product_url ? '</a>' : '</div>';
+        el.innerHTML = linkStart + imgHtml + '<div class="wj-wish-info"><div class="wj-wish-title">' + esc(item.title) + '</div>' + priceHtml + '</div>' + linkEnd + '<button class="wj-wish-remove" title="' + esc(tr.remove) + '"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+        // Bind remove
+        var removeBtn = el.querySelector('.wj-wish-remove');
+        (function(title) {
+          removeBtn.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            var wl = getWishlist();
+            var filtered = wl.filter(function(i) { return i.title !== title; });
+            saveWishlist(filtered);
+            // Update any matching fav buttons in product cards
+            var allFavBtns = d.querySelectorAll('.wj-prod-fav-btn[data-product-title="' + title.replace(/"/g, '\\\\"') + '"]');
+            allFavBtns.forEach(function(fb) {
+              fb.classList.remove('active');
+              var s = fb.querySelector('svg');
+              if (s) { s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); }
+            });
+            showWishlistToast(false);
+            renderWishlistSection();
+          });
+        })(item.title);
+        wishList.appendChild(el);
+      });
+      wishCont.appendChild(wishList);
+      // Insert after products or after contact card
+      var prodEl = d.getElementById('wj-products');
+      if (prodEl && prodEl.nextSibling) {
+        prodEl.parentNode.insertBefore(wishCont, prodEl.nextSibling);
+      } else if (prodEl) {
+        prodEl.parentNode.appendChild(wishCont);
+      } else {
+        // Insert at beginning of scroll content, after contact
+        var contactEl = d.getElementById('wj-contact');
+        if (contactEl && contactEl.nextSibling) {
+          contactEl.parentNode.insertBefore(wishCont, contactEl.nextSibling);
+        } else {
+          scroll.appendChild(wishCont);
+        }
+      }
+    }
+    renderWishlistSection();
 
     // Instagram posts
     if (igEnabled && igPosts.length > 0) {
