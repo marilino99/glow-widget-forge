@@ -425,9 +425,9 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.title1": "Widgets, die Besucher",
     "hero.title2": "in Kunden verwandeln",
     "hero.subtitle": "Erstellen Sie No-Code-Website-Widgets für Live-Chat, FAQ und Verkauf. Passen Sie alles an und fügen Sie es mit einer Zeile Code zu jeder Website hinzu.",
-    "hero.cta": "Kostenlos starten",
-    "hero.note1": "Für immer kostenlos.",
-    "hero.note2": "Keine Kreditkarte nötig.",
+    "hero.cta": "Jetzt starten",
+    "hero.note1": "Keine Einrichtung nötig.",
+    "hero.note2": "In Minuten einsatzbereit.",
     "hero.demo": "Live-Demo anzeigen",
 
     "logos.heading": "Von über 200 Unternehmen weltweit vertraut",
