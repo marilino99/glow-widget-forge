@@ -794,7 +794,7 @@ const Builder = () => {
                                   <ExternalLink className="h-3 w-3" />
                                   Upvote on Product Hunt
                                 </a>
-                                {phLinkClicked && !phUpvotePending ? (
+                                {phLinkClicked && !phUpvotePending && (
                                   <button
                                     onClick={() => {
                                       setPhUpvotePending(true);
@@ -814,7 +814,8 @@ const Builder = () => {
                                   >
                                     I've upvoted ✓
                                   </button>
-                                ) : (
+                                )}
+                                {phUpvotePending && (
                                   <div className="flex items-center gap-2 text-xs text-amber-500 font-medium">
                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
                                     Verifying upvote…
