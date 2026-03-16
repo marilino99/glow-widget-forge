@@ -209,6 +209,9 @@ const Builder = () => {
         setG2ReviewApproved(true);
         setPhReviewSaved(true);
       }
+      // Check if PH upvote was already done
+      const { data: phLog } = await supabase.from("user_activity_logs").select("id").eq("user_id", user.id).eq("event_type", "ph_upvote_confirmed").limit(1);
+      if (phLog && phLog.length > 0) setPhUpvoted(true);
       // Users created from March 12, 2026 onwards see the Shopify announcement
       if (data?.created_at && new Date(data.created_at) >= new Date("2026-03-12T00:00:00Z")) {
         setIsRecentUser(true);
