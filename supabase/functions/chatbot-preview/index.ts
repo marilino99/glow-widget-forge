@@ -216,7 +216,7 @@ ${additionalInstructions}
 STRICT RULES:
 - Use the knowledge base above to answer questions about the business, its products, services, and FAQ.
 - If the knowledge base contains relevant information, use it to give accurate, helpful answers.
-- If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat.
+- If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat${config.forward_email ? ` or at ${config.forward_email}` : ""}.
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
