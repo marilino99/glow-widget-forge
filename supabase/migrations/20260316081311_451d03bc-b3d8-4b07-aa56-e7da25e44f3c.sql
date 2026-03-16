@@ -1,0 +1,1 @@
+UPDATE profiles SET lovable_promo_claimed = false WHERE user_id = '215b3c50-283d-48d2-b3ff-5ace50277216';
