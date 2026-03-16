@@ -843,8 +843,9 @@ const Builder = () => {
                           Already claimed
                         </div>
                       ) : widgetIsLive && phReviewSaved && phUpvoted && !g2ReviewApproved ? (
-                        <div className="flex items-center justify-center gap-2 w-full rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 font-medium py-3 text-sm cursor-default border border-amber-200 dark:border-amber-800">
-                          ⏳ Our team is reviewing your submission
+                        <div className="flex flex-col items-center gap-1 w-full rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 font-medium py-3 text-sm cursor-default border border-amber-200 dark:border-amber-800">
+                          <span>⏳ Our team is reviewing your submission</span>
+                          <span className="text-xs font-normal text-muted-foreground">We'll get back to you if you're selected!</span>
                         </div>
                       ) : (
                         <button
