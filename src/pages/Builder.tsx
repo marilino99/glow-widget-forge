@@ -197,6 +197,7 @@ const Builder = () => {
   const [phReviewSaved, setPhReviewSaved] = useState(false);
   const [g2ReviewApproved, setG2ReviewApproved] = useState(false);
   const [phUpvoted, setPhUpvoted] = useState(false);
+  const [phUpvotePending, setPhUpvotePending] = useState(false);
   const [isRecentUser, setIsRecentUser] = useState(false);
 
   // Load user profile for top bar
@@ -791,21 +792,32 @@ const Builder = () => {
                                   <ExternalLink className="h-3 w-3" />
                                   Upvote on Product Hunt
                                 </a>
-                                <button
-                                  onClick={() => {
-                                    setPhUpvoted(true);
-                                    if (user) {
-                                      supabase.from("user_activity_logs").insert({
-                                        user_id: user.id,
-                                        event_type: "ph_upvote_confirmed",
-                                        metadata: {},
-                                      });
-                                    }
-                                  }}
-                                  className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity w-fit"
-                                >
-                                  I've upvoted ✓
-                                </button>
+                                {!phUpvotePending ? (
+                                  <button
+                                    onClick={() => {
+                                      setPhUpvotePending(true);
+                                      if (user) {
+                                        supabase.from("user_activity_logs").insert({
+                                          user_id: user.id,
+                                          event_type: "ph_upvote_confirmed",
+                                          metadata: {},
+                                        });
+                                      }
+                                      setTimeout(() => {
+                                        setPhUpvotePending(false);
+                                        setPhUpvoted(true);
+                                      }, 3000);
+                                    }}
+                                    className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity w-fit"
+                                  >
+                                    I've upvoted ✓
+                                  </button>
+                                ) : (
+                                  <div className="flex items-center gap-2 text-xs text-amber-500 font-medium">
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    Verifying upvote…
+                                  </div>
+                                )}
                               </div>
                             ) : (
                               <p className="text-xs text-green-500 mt-0.5">Upvote confirmed ✓</p>
