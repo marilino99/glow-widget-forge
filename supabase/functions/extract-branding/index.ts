@@ -286,17 +286,16 @@ Deno.serve(async (req) => {
     
     // Extract email from mailto: links
     const links: string[] = data.data?.links || data.links || [];
-    let extractedEmail: string | null = null;
+    const extractedEmails: string[] = [];
     for (const link of links) {
       if (link.startsWith('mailto:')) {
         const email = link.replace('mailto:', '').split('?')[0].trim();
-        if (email && email.includes('@')) {
-          extractedEmail = email;
-          break;
+        if (email && email.includes('@') && !extractedEmails.includes(email)) {
+          extractedEmails.push(email);
         }
       }
     }
-    console.log('Extracted email:', extractedEmail);
+    console.log('Extracted emails:', extractedEmails);
     
     if (!branding) {
       console.log('No branding data found');
@@ -306,7 +305,8 @@ Deno.serve(async (req) => {
           logo: null,
           widgetColor: 'blue',
           primaryColor: null,
-          email: extractedEmail,
+          emails: extractedEmails,
+          email: extractedEmails[0] || null,
           message: 'No branding data found, using defaults'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -339,8 +339,9 @@ Deno.serve(async (req) => {
         widgetColor,
         widgetTheme,
         primaryColor,
-        email: extractedEmail,
-        branding, // Include full branding for debugging
+        emails: extractedEmails,
+        email: extractedEmails[0] || null,
+        branding,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
