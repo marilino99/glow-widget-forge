@@ -168,8 +168,8 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "footer.ctaTitle1": "Ready to engage",
     "footer.ctaTitle2": "your visitors?",
     "footer.ctaDesc": "Join 2,000+ businesses already using Widjet to connect with their customers.",
-    "footer.ctaCta": "Start for Free",
-    "footer.ctaNote": "Free forever. No credit card required.",
+    "footer.ctaCta": "Get Started",
+    "footer.ctaNote": "No setup needed. Ready in minutes.",
     "footer.madeInEu": "Made and hosted in the EU 🇪🇺",
     // Footer columns
     "footer.product": "Product",
