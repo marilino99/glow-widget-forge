@@ -286,17 +286,16 @@ Deno.serve(async (req) => {
     
     // Extract email from mailto: links
     const links: string[] = data.data?.links || data.links || [];
-    let extractedEmail: string | null = null;
+    const extractedEmails: string[] = [];
     for (const link of links) {
       if (link.startsWith('mailto:')) {
         const email = link.replace('mailto:', '').split('?')[0].trim();
-        if (email && email.includes('@')) {
-          extractedEmail = email;
-          break;
+        if (email && email.includes('@') && !extractedEmails.includes(email)) {
+          extractedEmails.push(email);
         }
       }
     }
-    console.log('Extracted email:', extractedEmail);
+    console.log('Extracted emails:', extractedEmails);
     
     if (!branding) {
       console.log('No branding data found');
