@@ -132,6 +132,7 @@ useEffect(() => {
   const handleCopy = async (code: string) => {
     await navigator.clipboard.writeText(code);
     setCopied(true);
+    posthog.capture("widget_published", { platform: selectedPlatform, widget_id: widgetId });
     toast({ title: "Copied!", description: "The code has been copied to your clipboard." });
     setTimeout(() => setCopied(false), 2000);
     if (user) {
