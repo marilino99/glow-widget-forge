@@ -35,6 +35,7 @@ const Onboarding = () => {
       let extractedLogo: string | null = null;
       let extractedColor: string = 'blue';
       let extractedTheme: 'light' | 'dark' = 'dark';
+      let extractedEmail: string | null = null;
 
       try {
         toast({
@@ -50,8 +51,9 @@ const Onboarding = () => {
           extractedLogo = brandingData.logo || null;
           extractedColor = brandingData.widgetColor || 'blue';
           extractedTheme = brandingData.widgetTheme || 'dark';
+          extractedEmail = brandingData.email || null;
           
-          console.log('Branding extracted:', { logo: extractedLogo, color: extractedColor, theme: extractedTheme, email: brandingData.email });
+          console.log('Branding extracted:', { logo: extractedLogo, color: extractedColor, theme: extractedTheme, email: extractedEmail });
           
           if (extractedLogo || extractedColor !== 'blue') {
             toast({
@@ -79,7 +81,7 @@ const Onboarding = () => {
           logo: extractedLogo,
           widget_color: extractedColor,
           widget_theme: extractedTheme,
-          ...(brandingData?.email ? { forward_email: brandingData.email } : {}),
+          ...(extractedEmail ? { forward_email: extractedEmail } : {}),
         }, {
           onConflict: "user_id"
         });
