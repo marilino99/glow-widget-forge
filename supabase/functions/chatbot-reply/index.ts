@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
     // Get widget config with chatbot settings
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key, user_id")
+      .select("chatbot_enabled, chatbot_instructions, contact_name, language, ai_provider, ai_api_key, user_id, forward_email")
       .eq("id", widgetId)
       .single();
 
@@ -415,7 +415,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 2. If the knowledge base contains information related to the user's question, you MUST use it in your answer. Do NOT generate answers from your own training data when relevant knowledge base content exists.
 3. CONTEXTUAL INFERENCE: When the user asks a vague or generic question (e.g. "what was my last experience?", "tell me about myself", "what do I do?"), ALWAYS try to match it against the knowledge base content. If the knowledge base contains a CV, resume, profile, or any personal/professional document, assume the user is asking about that content and answer accordingly. Use common sense to connect user questions to available data.
 4. When answering from the knowledge base, be accurate and cite the specific information found there.
-5. If the user asks something truly NOT covered by the knowledge base and you cannot reasonably infer a connection, clearly state that you don't have that specific information and suggest they contact the business directly via chat.
+5. If the user asks something truly NOT covered by the knowledge base and you cannot reasonably infer a connection, clearly state that you don't have that specific information and suggest they contact ${config.contact_name || "the business"} directly via chat${config.forward_email ? ` or at ${config.forward_email}` : ""}.
 6. NEVER invent or fabricate information that is not in the knowledge base.
 7. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
 8. If the FAQ section contains a matching question, use that exact answer.
