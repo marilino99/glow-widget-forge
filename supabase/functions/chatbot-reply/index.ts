@@ -233,13 +233,6 @@ Deno.serve(async (req) => {
       .eq("user_id", config.user_id)
       .order("sort_order", { ascending: true });
 
-    // Check if user has an active Shopify connection
-    const { data: shopifyConn } = await supabase
-      .from("shopify_connections")
-      .select("id")
-      .eq("user_id", config.user_id)
-      .maybeSingle();
-
     // Fetch product cards for ALL users (manual + Shopify)
     const { data: productCardsData } = await supabase
       .from("product_cards")
