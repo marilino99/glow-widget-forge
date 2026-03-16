@@ -701,7 +701,7 @@ const Builder = () => {
                         <p className="text-xs text-muted-foreground mt-2">Just now</p>
                       </div>
                     </>
-                  ) : !isRecentUser && changelogDetailOpen ? (
+                  ) : changelogDetailOpen ? (
                     <div className="p-5">
                       <button onClick={() => setChangelogDetailOpen(false)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
                         <ChevronLeft className="h-4 w-4" />
