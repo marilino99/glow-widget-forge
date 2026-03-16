@@ -196,16 +196,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // If Shopify is disconnected and product intent has no semantically relevant knowledge,
-    // force the deterministic connect message.
-    const faqHasProductSignal = productIntent && hasProductSignalInFaq(faqItems);
-    if (!shopifyConn && productIntent && !usedRag && !faqHasProductSignal) {
-      const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
-      return new Response(
-        JSON.stringify({ reply: connectReply }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
 
     // Add product catalog
     if (productCardsData && productCardsData.length > 0) {
