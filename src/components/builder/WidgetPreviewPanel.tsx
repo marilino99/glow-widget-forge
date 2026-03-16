@@ -474,11 +474,19 @@ const WidgetPreviewPanel = ({
     return () => { document.getElementById(id)?.remove(); };
   }, [customCss]);
 
-  // Execute custom JS when it changes
+  // Execute custom JS via script tag (CSP-safe)
   useEffect(() => {
     if (customJs) {
-      try { new Function(customJs)(); } catch(e) { console.error('[Widget Preview] Custom JS error:', e); }
+      try {
+        const scriptId = 'wj-custom-js-preview';
+        document.getElementById(scriptId)?.remove();
+        const s = document.createElement('script');
+        s.id = scriptId;
+        s.textContent = customJs;
+        document.body.appendChild(s);
+      } catch(e) { console.error('[Widget Preview] Custom JS error:', e); }
     }
+    return () => { document.getElementById('wj-custom-js-preview')?.remove(); };
   }, [customJs]);
 
   // Auto-scroll chat to bottom when messages change
