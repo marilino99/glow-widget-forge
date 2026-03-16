@@ -93,6 +93,7 @@ const Login = () => {
             variant="outline"
             className="w-full"
             onClick={async () => {
+              posthog.capture("login_started", { method: "google" });
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin,
               });

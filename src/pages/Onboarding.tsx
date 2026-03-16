@@ -107,6 +107,7 @@ const Onboarding = () => {
   };
 
   const handleSkip = async () => {
+    posthog.capture("onboarding_skipped");
     if (user) {
       // Create a minimal config so the user isn't sent back to onboarding
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -162,6 +162,7 @@ useEffect(() => {
         toast({ title: "Already installed!", description: "The widget is already active on your Shopify store." });
       } else if (result.success) {
         setShopifyInstalled(true);
+        posthog.capture("widget_shopify_installed", { widget_id: widgetId });
         toast({ title: "Installed!", description: "Widget is now live on your Shopify store." });
         if (user) {
           supabase.from("user_activity_logs").insert({
