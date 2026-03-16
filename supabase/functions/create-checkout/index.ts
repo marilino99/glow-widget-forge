@@ -50,6 +50,10 @@ serve(async (req) => {
         month: "price_1T1N439qkctgdXPWs0PudObs",
         year: "price_1T1N439qkctgdXPWJUIiKmGi",
       },
+      business: {
+        month: "price_1TBcqR9qkctgdXPWpr4OBKAV",
+        year: "price_1TBcqk9qkctgdXPWWi8tCwHj",
+      },
     };
 
     const priceId = priceIds[plan]?.[billingInterval] || priceIds.pro.month;
