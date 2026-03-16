@@ -36,6 +36,7 @@ import AllChannelsOverlay from "@/components/builder/AllChannelsOverlay";
 import IntegrationsPanel from "@/components/builder/IntegrationsPanel";
 import SettingsDialog from "@/components/builder/SettingsDialog";
 import FeedbackPopover from "@/components/builder/FeedbackPopover";
+import LovablePromoDialog from "@/components/builder/LovablePromoDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -186,6 +187,7 @@ const Builder = () => {
    const [showAllChannels, setShowAllChannels] = useState(false);
     const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
    const [changelogDetailOpen, setChangelogDetailOpen] = useState(false);
+   const [notifPopoverOpen, setNotifPopoverOpen] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
   const [promoClaimed, setPromoClaimed] = useState(false);
@@ -668,7 +670,7 @@ const Builder = () => {
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
-            <Popover onOpenChange={(open) => { if (!open) setChangelogDetailOpen(false); }}>
+            <Popover open={notifPopoverOpen} onOpenChange={(open) => { setNotifPopoverOpen(open); if (!open) setChangelogDetailOpen(false); }}>
               <PopoverTrigger asChild>
                 <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                   <Bell className="h-4 w-4 text-foreground" />
@@ -1338,6 +1340,10 @@ const Builder = () => {
         })}
       </div>
       )}
+      <LovablePromoDialog onShowSteps={() => {
+        setNotifPopoverOpen(true);
+        setChangelogDetailOpen(true);
+      }} />
     </div>
   );
 };

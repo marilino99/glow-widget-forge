@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import promoBanner from "@/assets/lovable-promo-banner.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-const LovablePromoDialog = () => {
+interface LovablePromoDialogProps {
+  onShowSteps?: () => void;
+}
+
+const LovablePromoDialog = ({ onShowSteps }: LovablePromoDialogProps) => {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
 
@@ -28,18 +32,13 @@ const LovablePromoDialog = () => {
     checkPromo();
   }, [user]);
 
-  const handleDismiss = async () => {
+  const handleDismiss = () => {
     setOpen(false);
-    if (!user) return;
-    await supabase
-      .from("profiles")
-      .update({ lovable_promo_claimed: true })
-      .eq("user_id", user.id);
   };
 
-  const handleClaim = async () => {
-    window.open("https://lovable.dev/pricing?promo=widjet3mo", "_blank");
-    handleDismiss();
+  const handleShowSteps = () => {
+    setOpen(false);
+    onShowSteps?.();
   };
 
   return (
@@ -60,15 +59,10 @@ const LovablePromoDialog = () => {
           className="w-full rounded-xl"
         />
 
-        <div className="flex gap-3">
-          <Button variant="outline" className="flex-1" onClick={handleDismiss}>
-            Maybe later
-          </Button>
-          <Button className="flex-1 gap-2" onClick={handleClaim}>
-            Claim offer
-            <ExternalLink className="h-4 w-4" />
-          </Button>
-        </div>
+        <Button className="w-full gap-2" onClick={handleShowSteps}>
+          How to claim
+          <ArrowRight className="h-4 w-4" />
+        </Button>
       </DialogContent>
     </Dialog>
   );
