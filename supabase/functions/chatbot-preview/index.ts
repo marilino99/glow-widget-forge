@@ -158,7 +158,7 @@ Deno.serve(async (req) => {
 
     // Fallback: load training sources directly if RAG returned nothing.
     // For product intent without Shopify, avoid broad fallback context to prevent product hallucinations.
-    if (!usedRag && !(productIntent && !shopifyConn)) {
+    if (!usedRag) {
       const { data: trainingSources } = await supabase
         .from("training_sources")
         .select("title, content, source_type")
@@ -279,13 +279,6 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
 
     const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
     if (productMarkerMatch) {
-      if (!shopifyConn) {
-        const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
-        return new Response(
-          JSON.stringify({ reply: connectReply }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
 
       cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
       const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
