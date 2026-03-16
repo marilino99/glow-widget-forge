@@ -50,9 +50,9 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.title1": "Widgets that turn",
     "hero.title2": "visitors into customers",
     "hero.subtitle": "Create no-code website widgets for live chat, FAQs & sales. Customize everything, then add to any site with one line of code.",
-    "hero.cta": "Start for Free",
-    "hero.note1": "Free forever.",
-    "hero.note2": "No credit card.",
+    "hero.cta": "Get Started",
+    "hero.note1": "No setup needed.",
+    "hero.note2": "Ready in minutes.",
     "hero.demo": "Show me live demo",
 
     // Logos
