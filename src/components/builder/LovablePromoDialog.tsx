@@ -33,12 +33,22 @@ const LovablePromoDialog = ({ onShowSteps, isOnboarding }: LovablePromoDialogPro
     checkPromo();
   }, [user, isOnboarding]);
 
+  const markSeen = async () => {
+    if (!user) return;
+    await supabase
+      .from("profiles")
+      .update({ lovable_promo_claimed: true })
+      .eq("user_id", user.id);
+  };
+
   const handleDismiss = () => {
     setOpen(false);
+    markSeen();
   };
 
   const handleShowSteps = () => {
     setOpen(false);
+    markSeen();
     onShowSteps?.();
   };
 
