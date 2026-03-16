@@ -25,25 +25,6 @@ function isProductIntent(text: string): boolean {
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
-function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): string {
-  const text = (userText || "").toLowerCase();
-  const lang = (fallbackLanguage || "en").toLowerCase();
-
-  if (lang.startsWith("it") || /(prodott|catalogo|mostra|negozio|vedere)/.test(text)) {
-    return "Per vedere i prodotti, collega prima il tuo store Shopify a Widjet dalla sezione Integrations.";
-  }
-  if (lang.startsWith("es") || /(producto|tienda|mostrar|catalogo)/.test(text)) {
-    return "Para ver productos, conecta primero tu tienda Shopify a Widjet desde Integrations.";
-  }
-  if (lang.startsWith("fr") || /(produit|boutique|catalogue|montrer)/.test(text)) {
-    return "Pour voir les produits, connectez d'abord votre boutique Shopify à Widjet depuis Integrations.";
-  }
-  if (lang.startsWith("de") || /(produkt|shop|katalog|zeigen)/.test(text)) {
-    return "Um Produkte zu sehen, verbinde zuerst deinen Shopify-Store mit Widjet unter Integrations.";
-  }
-
-  return "To see products, first connect your Shopify store to Widjet from Integrations.";
-}
 
 async function getMonthlyAiCount(supabase: any, userId: string): Promise<number> {
   const now = new Date();
@@ -251,13 +232,6 @@ Deno.serve(async (req) => {
       .select("question, answer")
       .eq("user_id", config.user_id)
       .order("sort_order", { ascending: true });
-
-    // Check if user has an active Shopify connection
-    const { data: shopifyConn } = await supabase
-      .from("shopify_connections")
-      .select("id")
-      .eq("user_id", config.user_id)
-      .maybeSingle();
 
     // Fetch product cards for ALL users (manual + Shopify)
     const { data: productCardsData } = await supabase

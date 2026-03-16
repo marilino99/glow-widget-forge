@@ -42,33 +42,7 @@ function isProductIntent(text: string): boolean {
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
-function hasProductSignalInFaq(
-  faqItems: Array<{ question: string; answer: string }> | null | undefined,
-): boolean {
-  return (faqItems || []).some((faq) =>
-    isProductIntent(`${faq.question || ""} ${faq.answer || ""}`)
-  );
-}
 
-function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): string {
-  const text = (userText || "").toLowerCase();
-  const lang = (fallbackLanguage || "en").toLowerCase();
-
-  if (lang.startsWith("it") || /(prodott|catalogo|mostra|negozio|vedere)/.test(text)) {
-    return "Per vedere i prodotti in preview, collega prima il tuo store Shopify a Widjet dalla sezione Integrations.";
-  }
-  if (lang.startsWith("es") || /(producto|tienda|mostrar|catalogo)/.test(text)) {
-    return "Para ver productos en la vista previa, conecta primero tu tienda Shopify a Widjet desde Integrations.";
-  }
-  if (lang.startsWith("fr") || /(produit|boutique|catalogue|montrer)/.test(text)) {
-    return "Pour voir les produits dans l'aperçu, connectez d'abord votre boutique Shopify à Widjet depuis Integrations.";
-  }
-  if (lang.startsWith("de") || /(produkt|shop|katalog|zeigen)/.test(text)) {
-    return "Um Produkte in der Vorschau zu sehen, verbinde zuerst deinen Shopify-Store mit Widjet unter Integrations.";
-  }
-
-  return "To see products in preview, first connect your Shopify store to Widjet from Integrations.";
-}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -146,21 +120,12 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check if user has an active Shopify connection
-    const { data: shopifyConn } = await supabase
-      .from("shopify_connections")
-      .select("id")
+    // Fetch product cards for ALL users (manual + Shopify)
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
       .eq("user_id", config.user_id)
-      .maybeSingle();
-
-    // Fetch product cards only if Shopify is connected
-    const { data: productCardsData } = shopifyConn
-      ? await supabase
-          .from("product_cards")
-          .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
-          .eq("user_id", config.user_id)
-          .order("sort_order", { ascending: true })
-      : { data: null };
+      .order("sort_order", { ascending: true });
 
     // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
@@ -224,16 +189,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    // If Shopify is disconnected and product intent has no semantically relevant knowledge,
-    // force the deterministic connect message.
-    const faqHasProductSignal = productIntent && hasProductSignalInFaq(faqItems);
-    if (!shopifyConn && productIntent && !usedRag && !faqHasProductSignal) {
-      const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
-      return new Response(
-        JSON.stringify({ reply: connectReply }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
 
     // Add product catalog
     if (productCardsData && productCardsData.length > 0) {
@@ -266,7 +221,7 @@ STRICT RULES:
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
 - PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
-${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. For example: 'Per mostrare i prodotti, collega il tuo store Shopify a Widjet dalle Integrazioni!' or 'To show products, connect your Shopify store to Widjet from Integrations!'. Match the visitor's language." : ""}`;
+${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",
