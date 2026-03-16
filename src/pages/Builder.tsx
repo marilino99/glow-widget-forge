@@ -36,6 +36,7 @@ import AllChannelsOverlay from "@/components/builder/AllChannelsOverlay";
 import IntegrationsPanel from "@/components/builder/IntegrationsPanel";
 import SettingsDialog from "@/components/builder/SettingsDialog";
 import FeedbackPopover from "@/components/builder/FeedbackPopover";
+import LovablePromoDialog from "@/components/builder/LovablePromoDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 import { supabase } from "@/integrations/supabase/client";
