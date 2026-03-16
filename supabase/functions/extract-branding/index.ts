@@ -243,7 +243,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           url: formattedUrl,
-          formats: ['branding'],
+          formats: ['branding', 'links'],
         }),
       });
 
