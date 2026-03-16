@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
 import { useToast } from "@/hooks/use-toast";
+import posthog from "@/lib/posthog";
 
 const Login = () => {
   const [email, setEmail] = useState("");
