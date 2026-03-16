@@ -8,6 +8,7 @@ import { Boxes, Loader2, Globe, ArrowRight, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import posthog from "@/lib/posthog";
 
 const Onboarding = () => {
   const [websiteUrl, setWebsiteUrl] = useState("");
