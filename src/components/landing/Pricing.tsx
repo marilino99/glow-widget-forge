@@ -41,19 +41,6 @@ const Pricing = () => {
 
   const plans = [
     {
-      name: t("pricing.free.name"),
-      monthlyPrice: 0,
-      annualPrice: 0,
-      monthlyPriceEur: 0,
-      annualPriceEur: 0,
-      description: t("pricing.free.desc"),
-      cta: t("pricing.free.cta"),
-      highlighted: false,
-      featuresLabel: t("pricing.free.featuresLabel"),
-      features: [t("pricing.free.f1"), t("pricing.free.f2"), t("pricing.free.f3"), t("pricing.free.f4"), t("pricing.free.f5"), t("pricing.free.f6"), t("pricing.free.f7"), t("pricing.free.f8"), t("pricing.free.f9")],
-      planKey: "free",
-    },
-    {
       name: t("pricing.pro.name"),
       monthlyPrice: 19,
       annualPrice: 16,
