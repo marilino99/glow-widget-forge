@@ -197,7 +197,7 @@ const Pricing = () => {
                   <Button
                     className={cn("relative z-10 mt-5 w-full rounded-lg font-semibold transition-all duration-300", isHighlighted ? "bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-[1.02]" : "bg-background text-foreground border border-foreground hover:bg-muted")}
                     size="lg"
-                    onClick={plan.planKey === "free" ? () => navigate("/signup") : plan.planKey === "starter" || plan.planKey === "business" ? () => handlePaidCheckout(plan.planKey) : undefined}
+                    onClick={plan.planKey === "starter" || plan.planKey === "business" ? () => handlePaidCheckout(plan.planKey) : undefined}
                     disabled={(plan.planKey === "starter" || plan.planKey === "business") && loading}
                   >
                     {plan.cta}
