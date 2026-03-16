@@ -257,14 +257,12 @@ Deno.serve(async (req) => {
       .eq("user_id", config.user_id)
       .maybeSingle();
 
-    // Fetch product cards only if Shopify is connected
-    const { data: productCardsData } = shopifyConn
-      ? await supabase
-          .from("product_cards")
-          .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
-          .eq("user_id", config.user_id)
-          .order("sort_order", { ascending: true })
-      : { data: null };
+    // Fetch product cards for ALL users (manual + Shopify)
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
 
     // Get last 20 messages for context
     const { data: messages, error: msgError } = await supabase
@@ -362,24 +360,31 @@ Deno.serve(async (req) => {
       knowledgeBase += "\n## === END OF FAQ ===\n";
     }
 
-    // If no knowledge base content and product intent without Shopify, suggest connecting
-    if (!shopifyConn && isProductIntent(lastVisitorMessage) && !knowledgeBase.trim()) {
-      const connectReply = getConnectShopifyMessage(lastVisitorMessage, config.language || "en");
+    // If no knowledge base content and no products and product intent, suggest adding products
+    if (!productCardsData?.length && isProductIntent(lastVisitorMessage) && !knowledgeBase.trim()) {
+      const noProductMessages: Record<string, string> = {
+        it: "Al momento non ho informazioni specifiche sui prodotti. Ti consiglio di contattarci direttamente per maggiori dettagli!",
+        en: "I don't have specific product information at the moment. I suggest contacting us directly for more details!",
+        es: "No tengo información específica sobre productos en este momento. ¡Te sugiero contactarnos directamente para más detalles!",
+        fr: "Je n'ai pas d'informations spécifiques sur les produits pour le moment. Je vous suggère de nous contacter directement !",
+        de: "Ich habe derzeit keine spezifischen Produktinformationen. Bitte kontaktieren Sie uns direkt für weitere Details!",
+      };
+      const noProductReply = noProductMessages[config.language] || noProductMessages.en;
 
       await supabase.from("chat_messages").insert({
         conversation_id: conversationId,
         sender_type: "owner",
-        content: connectReply,
+        content: noProductReply,
         is_ai_response: true,
       });
 
       await supabase.from("conversations").update({
-        last_message: connectReply,
+        last_message: noProductReply,
         last_message_at: new Date().toISOString(),
       }).eq("id", conversationId);
 
       return new Response(
-        JSON.stringify({ success: true, shopify_required: true }),
+        JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -439,7 +444,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 7. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
 8. If the FAQ section contains a matching question, use that exact answer.
 9. PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND the Product Catalog section exists above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products"), include ALL products. If they ask about a specific category, include matching ones. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
-${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. Match the visitor's language." : ""}`;
+${!productCardsData || productCardsData.length === 0 ? "10. NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;
