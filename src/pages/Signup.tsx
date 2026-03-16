@@ -26,8 +26,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      // 1. Create the account (auto-confirmed, but we'll verify email ourselves)
-      const { error: signupError } = await supabase.auth.signUp({
+      const { data: signupData, error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -45,29 +44,28 @@ const Signup = () => {
         return;
       }
 
-      // 2. Send verification email via Resend
-      const { error: emailError } = await supabase.functions.invoke(
-        "send-verification-email",
-        { body: { email } }
-      );
+      // Auto-confirmed: sign in directly
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (emailError) {
-        console.error("Email send error:", emailError);
+      if (loginError) {
         toast({
           variant: "destructive",
-          title: "Failed to send verification email",
-          description: "Please try again.",
+          title: "Login failed",
+          description: loginError.message,
         });
         setLoading(false);
         return;
       }
 
-      posthog.capture("signup_started", { method: "email" });
-      setOtpStep(true);
+      posthog.capture("signup_completed", { method: "email" });
       toast({
-        title: "Check your email",
-        description: "We sent you a 6-digit verification code.",
+        title: "Welcome!",
+        description: "Your account has been created.",
       });
+      navigate("/builder?onboarding=true");
     } catch (err: any) {
       toast({
         variant: "destructive",
