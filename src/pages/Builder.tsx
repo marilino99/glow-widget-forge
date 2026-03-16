@@ -335,6 +335,16 @@ const Builder = () => {
             logo: data.logo || null,
             color: data.primaryColor || data.widgetColor || null,
           });
+          // Auto-save extracted email as forward_email if found and not already set
+          if (data.email && user) {
+            (supabase.from("widget_configurations") as any)
+              .update({ forward_email: data.email })
+              .eq("user_id", user.id)
+              .is("forward_email", null)
+              .then(({ error: emailErr }: { error: any }) => {
+                if (!emailErr) console.log('Auto-saved extracted email:', data.email);
+              });
+          }
         }
       });
     }
