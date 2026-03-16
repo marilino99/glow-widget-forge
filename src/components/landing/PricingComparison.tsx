@@ -38,7 +38,6 @@ const PricingComparison = ({
   const navigate = useNavigate();
 
   const planHeaders: PlanHeader[] = [
-    { name: t("pricing.free.name"), cta: t("pricing.free.cta"), planKey: "free", price: `${currencySymbol}0`, suffix: "forever" },
     { name: t("pricing.pro.name"), cta: t("pricing.pro.cta"), planKey: "starter", price: `${currencySymbol}${currencySymbol === "€" ? (isAnnual ? "15" : "18") : (isAnnual ? "16" : "19")}`, suffix: "per month" },
     { name: t("pricing.biz.name"), cta: t("pricing.biz.cta"), planKey: "business", price: `${currencySymbol}${currencySymbol === "€" ? (isAnnual ? "38" : "48") : (isAnnual ? "39" : "49")}`, suffix: "per month" },
     { name: t("pricing.business.name"), cta: t("pricing.business.cta"), planKey: "enterprise", price: "", suffix: "" },
