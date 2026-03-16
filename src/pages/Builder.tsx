@@ -1344,13 +1344,6 @@ const Builder = () => {
         })}
       </div>
       )}
-      <LovablePromoDialog
-        isOnboarding={showWebsiteStep || showTrainStep || showBrandStep || showTestStep || showSurveyDialog}
-        onShowSteps={() => {
-          setNotifPopoverOpen(true);
-          setChangelogDetailOpen(true);
-        }}
-      />
     </div>
   );
 };
