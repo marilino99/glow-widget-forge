@@ -856,7 +856,7 @@ const Builder = () => {
                           {!widgetIsLive ? 'Install widget first' : !g2ReviewApproved ? (phReviewSaved ? 'Waiting for approval' : 'Submit review first') : !phUpvoted ? 'Upvote on PH first' : 'Claim your free credits'}
                         </button>
                       )}
-                      <p className="text-[10px] text-muted-foreground mt-3 leading-tight">*Valid only for new Lovable accounts.</p>
+                      <p className="text-[10px] text-muted-foreground mt-3 leading-tight">*Valid only for new Lovable accounts. Only 10 accounts will be selected based on the best review left on G2.com. Valid until 31.03.2026.</p>
                     </div>
                   ) : null}
                 </div>
