@@ -8,14 +8,15 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface LovablePromoDialogProps {
   onShowSteps?: () => void;
+  isOnboarding?: boolean;
 }
 
-const LovablePromoDialog = ({ onShowSteps }: LovablePromoDialogProps) => {
+const LovablePromoDialog = ({ onShowSteps, isOnboarding }: LovablePromoDialogProps) => {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isOnboarding) return;
 
     const checkPromo = async () => {
       const { data } = await supabase
@@ -30,7 +31,7 @@ const LovablePromoDialog = ({ onShowSteps }: LovablePromoDialogProps) => {
     };
 
     checkPromo();
-  }, [user]);
+  }, [user, isOnboarding]);
 
   const handleDismiss = () => {
     setOpen(false);
