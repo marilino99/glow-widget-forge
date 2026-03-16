@@ -155,6 +155,8 @@ export const useWidgetConfiguration = () => {
             googleBusinessPlaceId: (data as any).google_business_place_id || null,
             ctaText: (data as any).cta_text || "Contact us",
             productCarouselEnabled: (data as any).product_carousel_enabled ?? true,
+            calendlyEnabled: (data as any).calendly_enabled ?? false,
+            calendlyEventUrl: (data as any).calendly_event_url || null,
           });
         }
       } catch (error) {
