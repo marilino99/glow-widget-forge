@@ -48,6 +48,14 @@ const App = () => (
               }
             />
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
+            <Route
+              path="/choose-plan"
+              element={
+                <ProtectedRoute>
+                  <ChoosePlan />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

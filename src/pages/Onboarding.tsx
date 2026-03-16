@@ -116,7 +116,7 @@ const Onboarding = () => {
         { onConflict: "user_id" }
       );
     }
-    navigate("/builder");
+    navigate("/choose-plan");
   };
 
   return (
