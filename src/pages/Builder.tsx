@@ -717,7 +717,7 @@ const Builder = () => {
                         Get 3 months of Lovable Pro for free
                       </h3>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                        Complete these 3 steps to unlock your exclusive <span className="font-semibold text-foreground">100 credits/month for 3 months</span>.
+                        Complete these 4 steps to unlock your exclusive <span className="font-semibold text-foreground">100 credits/month for 3 months</span>.
                       </p>
 
                       {/* Step 1: Widget Live */}
