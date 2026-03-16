@@ -339,8 +339,9 @@ Deno.serve(async (req) => {
         widgetColor,
         widgetTheme,
         primaryColor,
-        email: extractedEmail,
-        branding, // Include full branding for debugging
+        emails: extractedEmails,
+        email: extractedEmails[0] || null,
+        branding,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
