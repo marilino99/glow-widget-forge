@@ -14,6 +14,7 @@ import Builder from "./pages/Builder";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import ChoosePlan from "./pages/ChoosePlan";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,14 @@ const App = () => (
               }
             />
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
+            <Route
+              path="/choose-plan"
+              element={
+                <ProtectedRoute>
+                  <ChoosePlan />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
