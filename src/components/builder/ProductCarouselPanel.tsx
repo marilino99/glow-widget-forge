@@ -1,4 +1,4 @@
-import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2, ShoppingBag } from "lucide-react";
+import { ChevronLeft, Pencil, Trash2, Sparkles, Loader2, ShoppingBag, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
@@ -368,7 +368,22 @@ const ProductCarouselPanel = ({
     );
   }
 
-  // Shopify gate removed — product cards now work for all users (manual cards + Shopify)
+  const handleAddManualCard = () => {
+    const newCardId = crypto.randomUUID();
+    onAddCard({
+      id: newCardId,
+      title: "New product",
+      isLoading: false,
+    });
+    // Open edit immediately
+    startEditing({
+      id: newCardId,
+      title: "New product",
+      isLoading: false,
+    });
+  };
+
+  const isShopifyMode = !!shopifyConnection;
 
   return (
     <div className="flex h-full flex-col" style={{ backgroundColor: '#fafafa' }}>
@@ -387,32 +402,51 @@ const ProductCarouselPanel = ({
       <div className="flex-1 overflow-y-auto p-6">
         {/* Description */}
         <p className="text-muted-foreground mb-6">
-          Generate more open rates on your products and close more sales by promoting your special offers and hot drops in a beautiful way!
+          {isShopifyMode 
+            ? "Generate more open rates on your products and close more sales by promoting your special offers and hot drops in a beautiful way!"
+            : "Add your products or services as cards. Visitors can click them to open your link (e.g. payment page, booking, signup)."
+          }
         </p>
 
-        {/* Create card from link */}
-        <div className="mb-6">
-          <h3 className="font-semibold text-foreground mb-3">Create card from link</h3>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Paste product URL"
-              value={productUrl}
-              onChange={(e) => setProductUrl(e.target.value)}
-              className="flex-1 rounded-full bg-muted border-0"
-            />
+        {/* Shopify mode: Create card from link */}
+        {isShopifyMode && (
+          <div className="mb-6">
+            <h3 className="font-semibold text-foreground mb-3">Create card from link</h3>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Paste product URL"
+                value={productUrl}
+                onChange={(e) => setProductUrl(e.target.value)}
+                className="flex-1 rounded-full bg-muted border-0"
+              />
+              <Button
+                onClick={handleCreate}
+                disabled={isCreating || !productUrl.trim()}
+                className="rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 min-w-[90px]"
+              >
+                {isCreating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Create"
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Manual mode: Add card button */}
+        {!isShopifyMode && (
+          <div className="mb-6">
             <Button
-              onClick={handleCreate}
-              disabled={isCreating || !productUrl.trim()}
-              className="rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 min-w-[90px]"
+              onClick={handleAddManualCard}
+              variant="outline"
+              className="w-full rounded-xl h-12 gap-2 border-dashed border-2"
             >
-              {isCreating ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Create"
-              )}
+              <Plus className="h-4 w-4" />
+              Add product card
             </Button>
           </div>
-        </div>
+        )}
 
         {/* Added cards section */}
         {addedCards.length > 0 && (
