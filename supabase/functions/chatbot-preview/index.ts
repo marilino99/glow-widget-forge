@@ -127,21 +127,12 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check if user has an active Shopify connection
-    const { data: shopifyConn } = await supabase
-      .from("shopify_connections")
-      .select("id")
+    // Fetch product cards for ALL users (manual + Shopify)
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
       .eq("user_id", config.user_id)
-      .maybeSingle();
-
-    // Fetch product cards only if Shopify is connected
-    const { data: productCardsData } = shopifyConn
-      ? await supabase
-          .from("product_cards")
-          .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
-          .eq("user_id", config.user_id)
-          .order("sort_order", { ascending: true })
-      : { data: null };
+      .order("sort_order", { ascending: true });
 
     // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
