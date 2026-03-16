@@ -360,24 +360,31 @@ Deno.serve(async (req) => {
       knowledgeBase += "\n## === END OF FAQ ===\n";
     }
 
-    // If no knowledge base content and product intent without Shopify, suggest connecting
-    if (!shopifyConn && isProductIntent(lastVisitorMessage) && !knowledgeBase.trim()) {
-      const connectReply = getConnectShopifyMessage(lastVisitorMessage, config.language || "en");
+    // If no knowledge base content and no products and product intent, suggest adding products
+    if (!productCardsData?.length && isProductIntent(lastVisitorMessage) && !knowledgeBase.trim()) {
+      const noProductMessages: Record<string, string> = {
+        it: "Al momento non ho informazioni specifiche sui prodotti. Ti consiglio di contattarci direttamente per maggiori dettagli!",
+        en: "I don't have specific product information at the moment. I suggest contacting us directly for more details!",
+        es: "No tengo información específica sobre productos en este momento. ¡Te sugiero contactarnos directamente para más detalles!",
+        fr: "Je n'ai pas d'informations spécifiques sur les produits pour le moment. Je vous suggère de nous contacter directement !",
+        de: "Ich habe derzeit keine spezifischen Produktinformationen. Bitte kontaktieren Sie uns direkt für weitere Details!",
+      };
+      const noProductReply = noProductMessages[config.language] || noProductMessages.en;
 
       await supabase.from("chat_messages").insert({
         conversation_id: conversationId,
         sender_type: "owner",
-        content: connectReply,
+        content: noProductReply,
         is_ai_response: true,
       });
 
       await supabase.from("conversations").update({
-        last_message: connectReply,
+        last_message: noProductReply,
         last_message_at: new Date().toISOString(),
       }).eq("id", conversationId);
 
       return new Response(
-        JSON.stringify({ success: true, shopify_required: true }),
+        JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
