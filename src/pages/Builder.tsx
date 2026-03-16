@@ -689,9 +689,9 @@ const Builder = () => {
                     <p className="text-xs text-muted-foreground mt-3">Just now</p>
                   </div>
 
-                  {!isRecentUser && !changelogDetailOpen ? (
+                  {!changelogDetailOpen ? (
                     <>
-                      {/* Lovable promo for existing users */}
+                      {/* Lovable promo for all users */}
                       <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group" onClick={() => setChangelogDetailOpen(true)}>
                         <h3 className="text-base font-bold text-foreground mb-1.5 flex items-center gap-1.5">Get 3 months of Lovable Pro for free <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
                         <p className="text-sm text-muted-foreground leading-relaxed mb-3">
@@ -701,7 +701,7 @@ const Builder = () => {
                         <p className="text-xs text-muted-foreground mt-2">Just now</p>
                       </div>
                     </>
-                  ) : !isRecentUser && changelogDetailOpen ? (
+                  ) : changelogDetailOpen ? (
                     <div className="p-5">
                       <button onClick={() => setChangelogDetailOpen(false)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
                         <ChevronLeft className="h-4 w-4" />
