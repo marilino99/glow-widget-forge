@@ -14,6 +14,7 @@ import Builder from "./pages/Builder";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import ChoosePlan from "./pages/ChoosePlan";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
