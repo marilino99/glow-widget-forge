@@ -126,6 +126,7 @@ const Signup = () => {
         return;
       }
 
+      posthog.capture("signup_completed", { method: "email" });
       toast({
         title: "Email verified!",
         description: "Welcome to WidJet!",
