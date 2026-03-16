@@ -197,6 +197,7 @@ const Builder = () => {
   const [phReviewSaved, setPhReviewSaved] = useState(false);
   const [g2ReviewApproved, setG2ReviewApproved] = useState(false);
   const [phUpvoted, setPhUpvoted] = useState(false);
+  const [phUpvotePending, setPhUpvotePending] = useState(false);
   const [isRecentUser, setIsRecentUser] = useState(false);
 
   // Load user profile for top bar
