@@ -112,10 +112,7 @@ const ChoosePlan = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12">
       <div className="mx-auto max-w-4xl w-full">
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Boxes className="h-6 w-6" />
-          </div>
-          <span className="text-xl font-semibold text-foreground">Widjet</span>
+          <img src={widjetLogo} alt="Widjet" className="h-8" />
         </div>
 
         <div className="text-center mb-8">
