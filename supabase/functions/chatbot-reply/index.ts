@@ -845,6 +845,18 @@ ${!shopifyConn ? "10. NO PRODUCT CATALOG: There is no Shopify store connected. I
       last_message_at: new Date().toISOString(),
     }).eq("id", conversationId);
 
+    // Track AI response event in PostHog
+    trackPosthogEvent(config.user_id, "ai_response_generated", {
+      widget_id: widgetId,
+      conversation_id: conversationId,
+      has_products: !!metadata?.products,
+      has_calendly: !!metadata?.calendly_url,
+      rag_used: ragUsed,
+      ai_provider: aiProvider,
+      monthly_count: monthlyCount + 1,
+      plan,
+    });
+
     // === CONTACT EXTRACTION (async, non-blocking) ===
     // Get conversation metadata for country
     const { data: convData } = await supabase
