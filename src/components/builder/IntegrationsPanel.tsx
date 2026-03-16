@@ -3,15 +3,19 @@ import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import shopifyLogo from "@/assets/logo-shopify.png";
+import calendlyLogo from "@/assets/logo-calendly.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
+import { useCalendlyConnection } from "@/hooks/useCalendlyConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
 
 const IntegrationsPanel = () => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
+  const calendly = useCalendlyConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [calendlyDisconnectOpen, setCalendlyDisconnectOpen] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -42,6 +46,7 @@ const IntegrationsPanel = () => {
   }, [isSyncing]);
 
   const isConnected = !!connection;
+  const isCalendlyConnected = !!calendly.connection;
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
@@ -150,6 +155,79 @@ const IntegrationsPanel = () => {
               </button>
             </div>
           </div>
+
+          {/* Calendly Card */}
+          <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
+            <div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#006BFF]/10">
+                <img src={calendlyLogo} alt="Calendly" className="h-7 w-7 object-contain" />
+              </div>
+
+              <h3 className="mt-3.5 text-sm font-semibold text-foreground">Calendly</h3>
+
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                Let visitors book appointments directly from your chatbot.
+              </p>
+
+              {isCalendlyConnected && calendly.connection && (
+                <div className="mt-2 flex flex-col gap-0.5">
+                  <span className="inline-flex items-center gap-1 text-xs text-green-600">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Connected
+                  </span>
+                  {calendly.connection.scheduling_url && (
+                    <span className="text-[11px] text-muted-foreground truncate max-w-[200px]">
+                      {calendly.connection.scheduling_url}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="mt-4 flex items-center gap-2">
+              {calendly.isLoading ? (
+                <button disabled className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60">
+                  Loading…
+                </button>
+              ) : isCalendlyConnected ? (
+                <>
+                  <button
+                    disabled
+                    className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-green-600 cursor-default inline-flex items-center justify-center gap-1.5"
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Connected
+                  </button>
+                  <button
+                    onClick={() => setCalendlyDisconnectOpen(true)}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                    title="Disconnect"
+                  >
+                    <Unplug className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => calendly.connectOAuth()}
+                  disabled={calendly.isConnecting}
+                  className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
+                >
+                  {calendly.isConnecting ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Connecting…
+                    </>
+                  ) : (
+                    "Connect"
+                  )}
+                </button>
+              )}
+              <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                <BookOpen className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -171,6 +249,26 @@ const IntegrationsPanel = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => disconnect()}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Disconnect
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={calendlyDisconnectOpen} onOpenChange={setCalendlyDisconnectOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disconnect Calendly?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disconnect your Calendly account? Visitors won't be able to book appointments from the chatbot anymore.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => calendly.disconnect()}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Disconnect

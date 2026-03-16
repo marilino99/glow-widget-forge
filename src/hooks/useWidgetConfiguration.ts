@@ -42,6 +42,8 @@ export interface WidgetConfiguration {
   googleBusinessPlaceId: string | null;
   ctaText: string;
   productCarouselEnabled: boolean;
+  calendlyEnabled: boolean;
+  calendlyEventUrl: string | null;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -83,6 +85,8 @@ const defaultConfig: WidgetConfiguration = {
   googleBusinessPlaceId: null,
   ctaText: "Contact us",
   productCarouselEnabled: true,
+  calendlyEnabled: false,
+  calendlyEventUrl: null,
 };
 
 export const useWidgetConfiguration = () => {
@@ -151,6 +155,8 @@ export const useWidgetConfiguration = () => {
             googleBusinessPlaceId: (data as any).google_business_place_id || null,
             ctaText: (data as any).cta_text || "Contact us",
             productCarouselEnabled: (data as any).product_carousel_enabled ?? true,
+            calendlyEnabled: (data as any).calendly_enabled ?? false,
+            calendlyEventUrl: (data as any).calendly_event_url || null,
           });
         }
       } catch (error) {
@@ -214,6 +220,8 @@ export const useWidgetConfiguration = () => {
           google_business_place_id: updatedConfig.googleBusinessPlaceId,
           cta_text: updatedConfig.ctaText,
           product_carousel_enabled: updatedConfig.productCarouselEnabled,
+          calendly_enabled: updatedConfig.calendlyEnabled,
+          calendly_event_url: updatedConfig.calendlyEventUrl,
         }, {
           onConflict: "user_id"
         })
