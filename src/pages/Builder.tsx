@@ -194,6 +194,7 @@ const Builder = () => {
   const [phReviewUrl, setPhReviewUrl] = useState("");
   const [phReviewSaved, setPhReviewSaved] = useState(false);
   const [g2ReviewApproved, setG2ReviewApproved] = useState(false);
+  const [phUpvoted, setPhUpvoted] = useState(false);
   const [isRecentUser, setIsRecentUser] = useState(false);
 
   // Load user profile for top bar
@@ -208,6 +209,9 @@ const Builder = () => {
         setG2ReviewApproved(true);
         setPhReviewSaved(true);
       }
+      // Check if PH upvote was already done
+      const { data: phLog } = await supabase.from("user_activity_logs").select("id").eq("user_id", user.id).eq("event_type", "ph_upvote_confirmed").limit(1);
+      if (phLog && phLog.length > 0) setPhUpvoted(true);
       // Users created from March 12, 2026 onwards see the Shopify announcement
       if (data?.created_at && new Date(data.created_at) >= new Date("2026-03-12T00:00:00Z")) {
         setIsRecentUser(true);
@@ -713,7 +717,7 @@ const Builder = () => {
                         Get 3 months of Lovable Pro for free
                       </h3>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                        Complete these 3 steps to unlock your exclusive <span className="font-semibold text-foreground">100 credits/month for 3 months</span>.
+                        Complete these 4 steps to unlock your exclusive <span className="font-semibold text-foreground">100 credits/month for 3 months</span>.
                       </p>
 
                       {/* Step 1: Widget Live */}
@@ -783,10 +787,50 @@ const Builder = () => {
                           </div>
                         </div>
 
-                        {/* Step 3: Claim */}
+                        {/* Step 3: Product Hunt Upvote */}
+                        <div className="flex items-start gap-3">
+                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${phUpvoted ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
+                            {phUpvoted ? <Check className="h-3.5 w-3.5" /> : '3'}
+                          </span>
+                          <div className="flex-1">
+                            <p className={`text-sm font-medium ${phUpvoted ? 'text-green-600 line-through' : 'text-foreground'}`}>Upvote WidJet on Product Hunt</p>
+                            {!phUpvoted ? (
+                              <div className="mt-1.5 flex flex-col gap-1.5">
+                                <a
+                                  href="https://www.producthunt.com/posts/widjet"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  Upvote on Product Hunt
+                                </a>
+                                <button
+                                  onClick={() => {
+                                    setPhUpvoted(true);
+                                    if (user) {
+                                      supabase.from("user_activity_logs").insert({
+                                        user_id: user.id,
+                                        event_type: "ph_upvote_confirmed",
+                                        metadata: {},
+                                      });
+                                    }
+                                  }}
+                                  className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity w-fit"
+                                >
+                                  I've upvoted ✓
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-green-500 mt-0.5">Upvote confirmed ✓</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Step 4: Claim */}
                         <div className="flex items-start gap-3">
                           <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${promoClaimed ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
-                            {promoClaimed ? <Check className="h-3.5 w-3.5" /> : '3'}
+                            {promoClaimed ? <Check className="h-3.5 w-3.5" /> : '4'}
                           </span>
                           <p className={`text-sm font-medium ${promoClaimed ? 'text-green-600 line-through' : 'text-foreground'}`}>Claim your free credits</p>
                         </div>
@@ -799,7 +843,7 @@ const Builder = () => {
                         </div>
                       ) : (
                         <button
-                          disabled={promoClaimLoading || !widgetIsLive || !g2ReviewApproved}
+                          disabled={promoClaimLoading || !widgetIsLive || !g2ReviewApproved || !phUpvoted}
                           onClick={async () => {
                             if (!user) return;
                             setPromoClaimLoading(true);
@@ -811,7 +855,7 @@ const Builder = () => {
                           className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           {promoClaimLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
-                          {!widgetIsLive ? 'Install widget first' : !g2ReviewApproved ? (phReviewSaved ? 'Waiting for approval' : 'Submit review first') : 'Claim your free credits'}
+                          {!widgetIsLive ? 'Install widget first' : !g2ReviewApproved ? (phReviewSaved ? 'Waiting for approval' : 'Submit review first') : !phUpvoted ? 'Upvote on PH first' : 'Claim your free credits'}
                         </button>
                       )}
                       <p className="text-[10px] text-muted-foreground mt-3 leading-tight">*Valid only for new Lovable accounts.</p>
