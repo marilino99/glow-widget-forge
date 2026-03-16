@@ -504,7 +504,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           </div>
         </div>
       </div>
-      <LovablePromoDialog />
+      
     </div>
   );
 };
