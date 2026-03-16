@@ -689,7 +689,7 @@ const Builder = () => {
                     <p className="text-xs text-muted-foreground mt-3">Just now</p>
                   </div>
 
-                  {!isRecentUser && !changelogDetailOpen ? (
+                  {!changelogDetailOpen ? (
                     <>
                       {/* Lovable promo for existing users */}
                       <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group" onClick={() => setChangelogDetailOpen(true)}>
