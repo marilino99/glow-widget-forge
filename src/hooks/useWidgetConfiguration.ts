@@ -42,6 +42,8 @@ export interface WidgetConfiguration {
   googleBusinessPlaceId: string | null;
   ctaText: string;
   productCarouselEnabled: boolean;
+  calendlyEnabled: boolean;
+  calendlyEventUrl: string | null;
 }
 
 const defaultConfig: WidgetConfiguration = {
