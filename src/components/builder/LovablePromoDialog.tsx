@@ -59,7 +59,7 @@ const LovablePromoDialog = ({ onShowSteps }: LovablePromoDialogProps) => {
           className="w-full rounded-xl"
         />
 
-        <p className="text-[10px] text-muted-foreground leading-tight">*Valid only for new Lovable accounts. Only 10 accounts will be selected based on the best review left on G2.com. Valid until 31.03.2025.</p>
+        <p className="text-[10px] text-muted-foreground leading-tight">*Valid only for new Lovable accounts. Only 10 accounts will be selected based on the best review left on G2.com. Valid until 31.03.2026.</p>
 
         <Button className="w-full gap-2" onClick={handleShowSteps}>
           How to claim
