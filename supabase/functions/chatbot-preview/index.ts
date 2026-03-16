@@ -42,13 +42,6 @@ function isProductIntent(text: string): boolean {
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
-function hasProductSignalInFaq(
-  faqItems: Array<{ question: string; answer: string }> | null | undefined,
-): boolean {
-  return (faqItems || []).some((faq) =>
-    isProductIntent(`${faq.question || ""} ${faq.answer || ""}`)
-  );
-}
 
 
 Deno.serve(async (req) => {
