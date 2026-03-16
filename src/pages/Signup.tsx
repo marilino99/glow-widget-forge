@@ -62,6 +62,7 @@ const Signup = () => {
         return;
       }
 
+      posthog.capture("signup_started", { method: "email" });
       setOtpStep(true);
       toast({
         title: "Check your email",
