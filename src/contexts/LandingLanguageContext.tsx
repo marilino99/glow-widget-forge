@@ -608,9 +608,9 @@ const translations: Record<LandingLang, Record<string, string>> = {
     "hero.title1": "Des widgets qui transforment",
     "hero.title2": "vos visiteurs en clients",
     "hero.subtitle": "Créez des widgets no-code pour le chat en direct, les FAQ et les ventes. Personnalisez tout, puis ajoutez-le à n'importe quel site avec une seule ligne de code.",
-    "hero.cta": "Commencer gratuitement",
-    "hero.note1": "Gratuit pour toujours.",
-    "hero.note2": "Pas de carte bancaire.",
+    "hero.cta": "Commencer maintenant",
+    "hero.note1": "Aucune configuration.",
+    "hero.note2": "Prêt en quelques minutes.",
     "hero.demo": "Voir la démo en direct",
 
     "logos.heading": "Utilisé par plus de 200 entreprises dans le monde",
