@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import successCoachImg from "@/assets/success-coach.png";
+import LovablePromoDialog from "@/components/builder/LovablePromoDialog";
 import WorldMap from "@/components/builder/WorldMap";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -503,6 +504,7 @@ const BuilderHome = ({ isPro, userName }: BuilderHomeProps) => {
           </div>
         </div>
       </div>
+      <LovablePromoDialog />
     </div>
   );
 };
