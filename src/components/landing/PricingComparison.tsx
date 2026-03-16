@@ -136,7 +136,7 @@ const PricingComparison = ({
               <>
                 <tr key={`cat-${cat.category}`}>
                   <td
-                    colSpan={5}
+                    colSpan={4}
                     className="sticky top-[7.5rem] z-[5] bg-background pt-8 pb-3 text-sm font-medium text-muted-foreground"
                   >
                     {cat.category}
