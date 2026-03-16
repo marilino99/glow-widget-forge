@@ -1,0 +1,1 @@
+UPDATE profiles SET lovable_promo_claimed = false
