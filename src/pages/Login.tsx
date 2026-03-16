@@ -35,7 +35,7 @@ const Login = () => {
         description: error.message,
       });
     } else {
-      // Builder will auto-detect if onboarding is needed
+      posthog.capture("login_completed", { method: "email" });
       navigate("/builder");
     }
 
