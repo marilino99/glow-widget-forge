@@ -59,6 +59,8 @@ const LovablePromoDialog = ({ onShowSteps }: LovablePromoDialogProps) => {
           className="w-full rounded-xl"
         />
 
+        <p className="text-[10px] text-muted-foreground leading-tight">*Valid only for new Lovable accounts.</p>
+
         <Button className="w-full gap-2" onClick={handleShowSteps}>
           How to claim
           <ArrowRight className="h-4 w-4" />
