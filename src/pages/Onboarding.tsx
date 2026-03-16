@@ -86,6 +86,7 @@ const Onboarding = () => {
 
       if (error) throw error;
 
+      posthog.capture("onboarding_completed", { website_url: formattedUrl, has_logo: !!extractedLogo, color: extractedColor, theme: extractedTheme });
       toast({
         title: "Setup complete!",
         description: "Your widget is ready with your brand identity.",
