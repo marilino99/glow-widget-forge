@@ -40,23 +40,24 @@ serve(async (req) => {
 
     const plan = body.plan || "pro";
     const billingInterval = body.billingInterval || "month";
+    const currency = body.currency || "EUR";
     
-    const priceIds: Record<string, Record<string, string>> = {
+    const priceIds: Record<string, Record<string, Record<string, string>>> = {
       starter: {
-        month: "price_1T504R9qkctgdXPW3MdCa3Mp",
-        year: "price_1T505i9qkctgdXPWv7rzxoGL",
+        USD: { month: "price_1T504R9qkctgdXPW3MdCa3Mp", year: "price_1T505i9qkctgdXPWv7rzxoGL" },
+        EUR: { month: "price_1TBctU9qkctgdXPWjLQIcBQt", year: "price_1TBctq9qkctgdXPWzB2mjSTM" },
       },
       pro: {
-        month: "price_1T1N439qkctgdXPWs0PudObs",
-        year: "price_1T1N439qkctgdXPWJUIiKmGi",
+        USD: { month: "price_1T1N439qkctgdXPWs0PudObs", year: "price_1T1N439qkctgdXPWJUIiKmGi" },
+        EUR: { month: "price_1T1N439qkctgdXPWs0PudObs", year: "price_1T1N439qkctgdXPWJUIiKmGi" },
       },
       business: {
-        month: "price_1TBcqR9qkctgdXPWpr4OBKAV",
-        year: "price_1TBcqk9qkctgdXPWWi8tCwHj",
+        USD: { month: "price_1TBcqR9qkctgdXPWpr4OBKAV", year: "price_1TBcqk9qkctgdXPWWi8tCwHj" },
+        EUR: { month: "price_1TBcuB9qkctgdXPWNFQ6BKLA", year: "price_1TBcuX9qkctgdXPWzVtIkpc8" },
       },
     };
 
-    const priceId = priceIds[plan]?.[billingInterval] || priceIds.pro.month;
+    const priceId = priceIds[plan]?.[currency]?.[billingInterval] || priceIds[plan]?.USD?.[billingInterval] || priceIds.pro.USD.month;
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
