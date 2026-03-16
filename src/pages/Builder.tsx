@@ -188,6 +188,7 @@ const Builder = () => {
     const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
    const [changelogDetailOpen, setChangelogDetailOpen] = useState(false);
    const [notifPopoverOpen, setNotifPopoverOpen] = useState(false);
+   const [notifUnread, setNotifUnread] = useState(true);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
   const [promoClaimed, setPromoClaimed] = useState(false);
