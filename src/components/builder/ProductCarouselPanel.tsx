@@ -379,6 +379,7 @@ const ProductCarouselPanel = ({
     startEditing({
       id: newCardId,
       title: "New product",
+      isLoading: false,
     });
   };
 
