@@ -305,7 +305,8 @@ Deno.serve(async (req) => {
           logo: null,
           widgetColor: 'blue',
           primaryColor: null,
-          email: extractedEmail,
+          emails: extractedEmails,
+          email: extractedEmails[0] || null,
           message: 'No branding data found, using defaults'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
