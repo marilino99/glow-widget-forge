@@ -158,7 +158,7 @@ Deno.serve(async (req) => {
 
     // Fallback: load training sources directly if RAG returned nothing.
     // For product intent without Shopify, avoid broad fallback context to prevent product hallucinations.
-    if (!usedRag && !(productIntent && !shopifyConn)) {
+    if (!usedRag) {
       const { data: trainingSources } = await supabase
         .from("training_sources")
         .select("title, content, source_type")
