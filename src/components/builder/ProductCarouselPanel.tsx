@@ -379,7 +379,6 @@ const ProductCarouselPanel = ({
     startEditing({
       id: newCardId,
       title: "New product",
-      sortOrder: addedCards.length,
     });
   };
 
