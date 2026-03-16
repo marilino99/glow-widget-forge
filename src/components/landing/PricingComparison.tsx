@@ -9,7 +9,7 @@ type CellValue = boolean | string;
 
 interface FeatureRow {
   label: string;
-  values: [CellValue, CellValue, CellValue, CellValue];
+  values: [CellValue, CellValue, CellValue];
 }
 
 interface FeatureCategory {
