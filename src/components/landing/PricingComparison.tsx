@@ -88,8 +88,7 @@ const PricingComparison = ({
   };
 
   const handleCta = (planKey: string) => {
-    if (planKey === "free") navigate("/signup");
-    else if (planKey === "starter" || planKey === "business") onCheckout(planKey);
+    if (planKey === "starter" || planKey === "business") onCheckout(planKey);
     // enterprise: no action (contact sales)
   };
 
