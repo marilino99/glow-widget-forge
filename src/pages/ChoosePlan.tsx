@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useToast } from "@/hooks/use-toast";
-import { Boxes } from "lucide-react";
+import widjetLogo from "@/assets/widjet-logo-navbar.png";
 
 const detectCurrency = (): "EUR" | "USD" => {
   try {
