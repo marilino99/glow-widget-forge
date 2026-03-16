@@ -92,7 +92,7 @@ const Onboarding = () => {
         description: "Your widget is ready with your brand identity.",
       });
 
-      navigate("/builder");
+      navigate("/choose-plan");
     } catch (error) {
       console.error("Error saving website URL:", error);
       toast({
