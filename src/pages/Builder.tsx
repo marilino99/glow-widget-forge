@@ -670,7 +670,7 @@ const Builder = () => {
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
-            <Popover onOpenChange={(open) => { if (!open) setChangelogDetailOpen(false); }}>
+            <Popover open={notifPopoverOpen} onOpenChange={(open) => { setNotifPopoverOpen(open); if (!open) setChangelogDetailOpen(false); }}>
               <PopoverTrigger asChild>
                 <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                   <Bell className="h-4 w-4 text-foreground" />
