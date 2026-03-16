@@ -18,6 +18,7 @@ import {
   GoogleTagManagerLogo,
   ShopifyLogo,
 } from "@/components/icons/PlatformLogos";
+import posthog from "@/lib/posthog";
 
 interface AddToWebsiteDialogProps {
   widgetId?: string;
