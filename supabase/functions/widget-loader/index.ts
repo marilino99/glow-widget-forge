@@ -913,8 +913,8 @@ Deno.serve(async (req) => {
 
       d.body.appendChild(root);
 
-      // Inject custom JS
-      if (customJs) { try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
+      // Inject custom JS via script tag (CSP-safe)
+      if (customJs) { try { var s = d.createElement('script'); s.textContent = customJs; d.body.appendChild(s); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
       return;
     }
 
@@ -1218,8 +1218,8 @@ Deno.serve(async (req) => {
 
       d.body.appendChild(root);
 
-      // Inject custom JS
-      if (customJs) { try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
+      // Inject custom JS via script tag (CSP-safe)
+      if (customJs) { try { var s = d.createElement('script'); s.textContent = customJs; d.body.appendChild(s); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
       return;
     }
 
@@ -2330,9 +2330,9 @@ Deno.serve(async (req) => {
     root.appendChild(btn);
     d.body.appendChild(root);
 
-    // Inject custom JS if provided
+    // Inject custom JS via script tag (CSP-safe)
     if (customJs) {
-      try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
+      try { var s = d.createElement('script'); s.textContent = customJs; d.body.appendChild(s); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
   }
 }
 
