@@ -1336,10 +1336,13 @@ const Builder = () => {
         })}
       </div>
       )}
-      <LovablePromoDialog onShowSteps={() => {
-        setNotifPopoverOpen(true);
-        setChangelogDetailOpen(true);
-      }} />
+      <LovablePromoDialog
+        isOnboarding={showWebsiteStep || showTrainStep || showBrandStep || showTestStep || showSurveyDialog}
+        onShowSteps={() => {
+          setNotifPopoverOpen(true);
+          setChangelogDetailOpen(true);
+        }}
+      />
     </div>
   );
 };
