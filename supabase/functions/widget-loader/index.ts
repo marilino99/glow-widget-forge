@@ -180,17 +180,15 @@ Deno.serve(async (req) => {
     var grRating = cfg.google_business_rating || 0;
     var grTotal = cfg.google_business_ratings_total || 0;
     var grUrl = cfg.google_business_url || '';
-    var calendlyEnabled = cfg.calendly_enabled || false;
-    var calendlyEventUrl = cfg.calendly_event_url || '';
 
     var t = {
-      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', yourFavorites: 'Your favorites', emptyWishlist: 'No favorites yet', remove: 'Remove', bookSession: 'Book a session' },
-      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp', yourFavorites: 'Tus favoritos', emptyWishlist: 'Aún no hay favoritos', remove: 'Eliminar', bookSession: 'Reservar una sesión' },
-      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp', yourFavorites: 'Deine Favoriten', emptyWishlist: 'Noch keine Favoriten', remove: 'Entfernen', bookSession: 'Termin buchen' },
-      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...', contactWhatsApp: 'Contactez-nous sur WhatsApp', yourFavorites: 'Vos favoris', emptyWishlist: 'Pas encore de favoris', remove: 'Supprimer', bookSession: 'Réserver une séance' },
-      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...', contactWhatsApp: 'Contattaci su WhatsApp', yourFavorites: 'I tuoi preferiti', emptyWishlist: 'Nessun preferito ancora', remove: 'Rimuovi', bookSession: 'Prenota una sessione' },
-      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...', contactWhatsApp: 'Contacte-nos no WhatsApp', yourFavorites: 'Os seus favoritos', emptyWishlist: 'Ainda sem favoritos', remove: 'Remover', bookSession: 'Reservar uma sessão' },
-      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...', contactWhatsApp: 'Skontaktuj się z nami przez WhatsApp', yourFavorites: 'Twoje ulubione', emptyWishlist: 'Brak ulubionych', remove: 'Usuń', bookSession: 'Zarezerwuj sesję' }
+      en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp' },
+      es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp' },
+      de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp' },
+      fr: { contactUs: 'Contactez-nous', show: 'Voir', quickAnswers: 'Réponses rapides', home: 'Accueil', contact: 'Contact', followIg: 'Suivez-nous sur Instagram', welcomeMessage: 'Bienvenue ! Comment puis-je vous aider ?', writeMessage: 'Écrivez un message...', contactWhatsApp: 'Contactez-nous sur WhatsApp' },
+      it: { contactUs: 'Contattaci', show: 'Mostra', quickAnswers: 'Risposte rapide', home: 'Home', contact: 'Contatto', followIg: 'Seguici su Instagram', welcomeMessage: 'Benvenuto/a! In che modo posso esserti utile?', writeMessage: 'Scrivi un messaggio...', contactWhatsApp: 'Contattaci su WhatsApp' },
+      pt: { contactUs: 'Contacte-nos', show: 'Ver', quickAnswers: 'Respostas rápidas', home: 'Início', contact: 'Contacto', followIg: 'Siga-nos no Instagram', welcomeMessage: 'Bem-vindo/a! Como posso ajudar?', writeMessage: 'Escreva uma mensagem...', contactWhatsApp: 'Contacte-nos no WhatsApp' },
+      pl: { contactUs: 'Kontakt', show: 'Pokaż', quickAnswers: 'Szybkie odpowiedzi', home: 'Strona główna', contact: 'Kontakt', followIg: 'Obserwuj nas na Instagramie', welcomeMessage: 'Witamy! Jak mogę pomóc?', writeMessage: 'Napisz wiadomość...', contactWhatsApp: 'Skontaktuj się z nami przez WhatsApp' }
     };
     var tr = t[lang] || t.en;
 
@@ -261,23 +259,6 @@ Deno.serve(async (req) => {
       .wj-prod-btn:hover{background:\${color.hover}}
       .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
       .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
-      .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
-      .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
-      .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
-      #wj-wishlist{padding:0 16px 16px;margin-top:8px}
-      #wj-wishlist-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-      #wj-wishlist-head svg{width:16px;height:16px;color:#ef4444}
-      #wj-wishlist-head span{font-size:14px;font-weight:500;color:\${textMain}}
-      #wj-wishlist-count{font-size:12px;color:\${textSub};font-weight:400}
-      #wj-wishlist-list{display:flex;flex-direction:column;gap:8px}
-      .wj-wish-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;color:inherit;transition:background 0.15s}
-      .wj-wish-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
-      .wj-wish-img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:\${dark ? '#cbd5e1' : '#e2e8f0'};flex-shrink:0}
-      .wj-wish-info{flex:1;min-width:0}
-      .wj-wish-title{font-size:13px;font-weight:600;color:\${textMain};white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      .wj-wish-price{font-size:12px;color:\${textSub};margin-top:2px}
-      .wj-wish-remove{width:28px;height:28px;border:none;border-radius:50%;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'};color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
-      .wj-wish-remove:hover{background:\${lt?'#fee2e2':'rgba(239,68,68,0.25)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -408,23 +389,6 @@ Deno.serve(async (req) => {
       .wj-prod-btn:hover{background:\${color.hover}}
       .wj-prod-cart-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s}
       .wj-prod-cart-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
-      .wj-prod-fav-btn{display:flex;align-items:center;justify-content:center;width:40px;border:none;border-radius:8px;background:\${lt?'#f1f5f9':'rgba(255,255,255,0.1)'};color:\${lt?'#475569':'rgba(255,255,255,0.7)'};cursor:pointer;transition:background 0.15s,color 0.15s}
-      .wj-prod-fav-btn:hover{background:\${lt?'#e2e8f0':'rgba(255,255,255,0.2)'}}
-      .wj-prod-fav-btn.active{color:#ef4444;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'}}
-      #wj-wishlist{padding:0 16px 16px;margin-top:8px}
-      #wj-wishlist-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-      #wj-wishlist-head svg{width:16px;height:16px;color:#ef4444}
-      #wj-wishlist-head span{font-size:14px;font-weight:500;color:\${textMain}}
-      #wj-wishlist-count{font-size:12px;color:\${textSub};font-weight:400}
-      #wj-wishlist-list{display:flex;flex-direction:column;gap:8px}
-      .wj-wish-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:\${dark ? '#1e293b' : '#fff'};text-decoration:none;color:inherit;transition:background 0.15s}
-      .wj-wish-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
-      .wj-wish-img{width:44px;height:44px;border-radius:8px;object-fit:cover;background:\${dark ? '#cbd5e1' : '#e2e8f0'};flex-shrink:0}
-      .wj-wish-info{flex:1;min-width:0}
-      .wj-wish-title{font-size:13px;font-weight:600;color:\${textMain};white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      .wj-wish-price{font-size:12px;color:\${textSub};margin-top:2px}
-      .wj-wish-remove{width:28px;height:28px;border:none;border-radius:50%;background:\${lt?'#fef2f2':'rgba(239,68,68,0.15)'};color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
-      .wj-wish-remove:hover{background:\${lt?'#fee2e2':'rgba(239,68,68,0.25)'}}
       #wj-ig{padding:0 16px 16px;margin-top:8px}
       #wj-ig-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
       #wj-ig-head svg{width:16px;height:16px;color:#ec4899}
@@ -913,8 +877,8 @@ Deno.serve(async (req) => {
 
       d.body.appendChild(root);
 
-      // Inject custom JS via script tag (CSP-safe)
-      if (customJs) { try { var s = d.createElement('script'); s.textContent = customJs; d.body.appendChild(s); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
+      // Inject custom JS
+      if (customJs) { try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
       return;
     }
 
@@ -1102,12 +1066,6 @@ Deno.serve(async (req) => {
           });
           html += '</div>';
         }
-        // Calendly booking button in search results
-        if (msg.metadata && msg.metadata.calendly_url) {
-          var calUrl2 = msg.metadata.calendly_url;
-          var bookLabel2 = (cfg.language || 'en').startsWith('it') ? '📅 Prenota appuntamento' : (cfg.language || 'en').startsWith('es') ? '📅 Reservar cita' : (cfg.language || 'en').startsWith('fr') ? '📅 Prendre rendez-vous' : (cfg.language || 'en').startsWith('de') ? '📅 Termin buchen' : '📅 Book appointment';
-          html += '<div style="margin-top:12px"><button onclick="(function(){if(window.Calendly){Calendly.initPopupWidget({url:\\'' + calUrl2.replace(/'/g, "\\\\'") + '\\'});return;}var s=document.createElement(\\'script\\');s.src=\\'https://assets.calendly.com/assets/external/widget.js\\';s.onload=function(){Calendly.initPopupWidget({url:\\'' + calUrl2.replace(/'/g, "\\\\'") + '\\'});};document.head.appendChild(s);var l=document.createElement(\\'link\\');l.rel=\\'stylesheet\\';l.href=\\'https://assets.calendly.com/assets/external/widget.css\\';document.head.appendChild(l);})()" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:12px;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#fff;background:' + color.bg + ';transition:opacity 0.15s" onmouseover="this.style.opacity=\\'0.85\\'" onmouseout="this.style.opacity=\\'1\\'">' + bookLabel2 + '</button></div>';
-        }
         sbResults.innerHTML = html;
       }
 
@@ -1218,8 +1176,8 @@ Deno.serve(async (req) => {
 
       d.body.appendChild(root);
 
-      // Inject custom JS via script tag (CSP-safe)
-      if (customJs) { try { var s = d.createElement('script'); s.textContent = customJs; d.body.appendChild(s); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
+      // Inject custom JS
+      if (customJs) { try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
       return;
     }
 
@@ -1296,6 +1254,9 @@ Deno.serve(async (req) => {
         showCartToast();
         // Force Shopify theme/cart UI to update immediately (with retries for async themes)
         try {
+          var syncAttempt = 0;
+          var maxSyncAttempts = 4;
+
           function applyCartCount(count) {
             var selectors = [
               '.cart-count-bubble span',
@@ -1356,16 +1317,44 @@ Deno.serve(async (req) => {
             } catch(e) {}
           }
 
-          setTimeout(function() {
+          function emitThemeEvents(cart) {
+            try {
+              d.dispatchEvent(new CustomEvent('cart:refresh'));
+              d.dispatchEvent(new CustomEvent('cart:update', { detail: { cart: cart } }));
+              d.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: cart } }));
+            } catch(e) {}
+
+            // Dawn / modern Shopify pubsub
+            try {
+              if (w.publish && w.PUB_SUB_EVENTS && w.PUB_SUB_EVENTS.cartUpdate) {
+                w.publish(w.PUB_SUB_EVENTS.cartUpdate, {
+                  source: 'widjet',
+                  cartData: cart,
+                  variantId: parseInt(variantId, 10)
+                });
+              }
+            } catch(e) {}
+          }
+
+          function syncCartUi() {
+            syncAttempt += 1;
             fetch('/cart.js?ts=' + Date.now(), { cache: 'no-store' })
               .then(function(r) { return r.json(); })
               .then(function(cart) {
                 if (!cart || cart.item_count == null) return;
                 applyCartCount(cart.item_count);
-                refreshThemeSections();
+                emitThemeEvents(cart);
+                if (syncAttempt === 1) refreshThemeSections();
               })
-              .catch(function() {});
-          }, 300);
+              .catch(function() {})
+              .then(function() {
+                if (syncAttempt < maxSyncAttempts) {
+                  setTimeout(syncCartUi, syncAttempt === 1 ? 180 : 450);
+                }
+              });
+          }
+
+          syncCartUi();
         } catch(e) {}
         setTimeout(resetBtn, 1200);
       }).catch(function() {
@@ -1387,163 +1376,6 @@ Deno.serve(async (req) => {
       d.body.appendChild(toast);
       setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
-
-    // Wishlist (Swym Wishlist Plus integration with localStorage fallback)
-    var WISHLIST_KEY = 'wj_wishlist_' + id;
-    var swymReady = false;
-    var swymWishlist = [];
-
-    function onSwymReady(swat) {
-      if (swymReady) return;
-      swymReady = true;
-      console.log('[Widjet] Swym ready! Methods:', Object.keys(swat).filter(function(k) { return typeof swat[k] === 'function'; }).join(', '));
-      try {
-        swat.fetch(function(items) {
-          swymWishlist = items || [];
-          console.log('[Widjet] Swym wishlist loaded:', swymWishlist.length, 'items');
-          syncHeartStates();
-          renderWishlistSection();
-        });
-      } catch(e) { console.error('[Widjet] Swym fetch error:', e); swymReady = false; }
-    }
-
-    // Strategy 1: Direct check
-    if (w._swat && typeof w._swat.fetch === 'function') {
-      console.log('[Widjet] Swym found immediately');
-      onSwymReady(w._swat);
-    }
-
-    // Strategy 2: SwymCallbacks (official mechanism)
-    if (!swymReady) {
-      w.SwymCallbacks = w.SwymCallbacks || [];
-      w.SwymCallbacks.push(function(swat) {
-        console.log('[Widjet] Swym ready via SwymCallbacks');
-        onSwymReady(swat);
-      });
-    }
-
-    // Strategy 3: Polling fallback (in case SwymCallbacks fires before our push, or doesn't fire at all)
-    if (!swymReady) {
-      var swymPollCount = 0;
-      var swymPollMax = 40; // 20 seconds
-      var swymPoller = setInterval(function() {
-        swymPollCount++;
-        if (w._swat && typeof w._swat.fetch === 'function') {
-          console.log('[Widjet] Swym found via polling after ' + (swymPollCount * 500) + 'ms');
-          clearInterval(swymPoller);
-          onSwymReady(w._swat);
-        } else if (swymPollCount >= swymPollMax) {
-          console.log('[Widjet] Swym not found after polling, using localStorage fallback');
-          clearInterval(swymPoller);
-        }
-      }, 500);
-    }
-
-    function syncHeartStates() {
-      var allFavBtns = d.querySelectorAll('.wj-prod-fav-btn');
-      allFavBtns.forEach(function(btn) {
-        var title = btn.getAttribute('data-product-title') || '';
-        var active = isInWishlist(title, btn.getAttribute('data-product-id') || '');
-        var svg = btn.querySelector('svg');
-        if (active) {
-          btn.classList.add('active');
-          if (svg) { svg.setAttribute('fill', '#ef4444'); svg.setAttribute('stroke', '#ef4444'); }
-        } else {
-          btn.classList.remove('active');
-          if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); }
-        }
-      });
-    }
-
-    function getWishlist() {
-      try { return JSON.parse(localStorage.getItem(WISHLIST_KEY) || '[]'); } catch(e) { return []; }
-    }
-    function saveWishlist(list) {
-      try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e) {}
-    }
-    function isInWishlist(productTitle, productId) {
-      if (swymReady && swymWishlist.length > 0 && productId) {
-        return swymWishlist.some(function(item) { return String(item.empi) === String(productId); });
-      }
-      return getWishlist().some(function(item) { return item.title === productTitle; });
-    }
-    function toggleWishlist(product, btnEl) {
-      if (swymReady && w._swat && product.shopify_product_id) {
-        var prodTitle = product.title || '';
-        var prodImg = product.image_url || product.imageUrl || '';
-        var prodUrl = product.product_url || product.productUrl || '';
-        var swymProduct = {
-          epi: parseInt(product.shopify_variant_id || '0'),
-          empi: parseInt(product.shopify_product_id),
-          du: prodUrl,
-          dt: prodTitle,
-          iu: prodImg
-        };
-        console.log('[Widjet] Swym toggle:', JSON.stringify(swymProduct));
-        var isCurrentlyIn = swymWishlist.some(function(i) { return String(i.empi) === String(swymProduct.empi); });
-        if (isCurrentlyIn) {
-          w._swat.removeFromWishList(swymProduct, function() {
-            console.log('[Widjet] Swym removed successfully');
-            swymWishlist = swymWishlist.filter(function(i) { return String(i.empi) !== String(swymProduct.empi); });
-            if (btnEl) {
-              btnEl.classList.remove('active');
-              var svg = btnEl.querySelector('svg');
-              if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); }
-            }
-            showWishlistToast(false);
-            renderWishlistSection();
-          }, function(err) { console.error('[Widjet] Swym remove error:', err); });
-        } else {
-          w._swat.addToWishList(swymProduct, function(result) {
-            console.log('[Widjet] Swym added successfully:', result);
-            swymWishlist.push(swymProduct);
-            if (btnEl) {
-              btnEl.classList.add('active');
-              var svg = btnEl.querySelector('svg');
-              if (svg) { svg.setAttribute('fill', '#ef4444'); svg.setAttribute('stroke', '#ef4444'); }
-            }
-            showWishlistToast(true);
-            renderWishlistSection();
-          }, function(err) { console.error('[Widjet] Swym add error:', err); });
-        }
-        return;
-      }
-      // Fallback: localStorage
-      var list = getWishlist();
-      var idx = list.findIndex(function(item) { return item.title === product.title; });
-      var added = false;
-      if (idx >= 0) {
-        list.splice(idx, 1);
-      } else {
-        list.push({ title: product.title, price: product.price || '', image_url: product.image_url || product.imageUrl || '', product_url: product.product_url || product.productUrl || '', shopify_variant_id: product.shopify_variant_id || '', shopify_product_id: product.shopify_product_id || '' });
-        added = true;
-      }
-      saveWishlist(list);
-      // Update button visual
-      if (btnEl) {
-        var svg = btnEl.querySelector('svg');
-        if (added) {
-          btnEl.classList.add('active');
-          if (svg) { svg.setAttribute('fill', '#ef4444'); svg.setAttribute('stroke', '#ef4444'); }
-        } else {
-          btnEl.classList.remove('active');
-          if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); }
-        }
-      }
-      showWishlistToast(added);
-      renderWishlistSection();
-    }
-    function showWishlistToast(added) {
-      var existing = d.getElementById('wj-wish-toast');
-      if (existing) existing.remove();
-      var toast = d.createElement('div');
-      toast.id = 'wj-wish-toast';
-      toast.style.cssText = 'position:fixed;bottom:90px;right:24px;background:' + (added ? '#ef4444' : '#64748b') + ';color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:2147483647;transition:opacity 0.3s;font-family:-apple-system,BlinkMacSystemFont,sans-serif';
-      toast.textContent = added ? '❤ Added to wishlist!' : '♡ Removed from wishlist';
-      d.body.appendChild(toast);
-      setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
-    }
-    var heartSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 
     // Product cards
     if (products.length > 0) {
@@ -1582,99 +1414,6 @@ Deno.serve(async (req) => {
       });
       scroll.appendChild(prodCont);
     }
-
-    // Wishlist section in home view
-    function renderWishlistSection() {
-      var existing = d.getElementById('wj-wishlist');
-      if (existing) existing.remove();
-
-      // Get items from Swym or localStorage
-      var list;
-      if (swymReady && swymWishlist.length > 0) {
-        list = swymWishlist.map(function(item) {
-          // Try to match with local products for image/price
-          var matched = products.find(function(p) { return String(p.shopify_product_id) === String(item.empi); });
-          return {
-            title: (matched ? matched.title : '') || item.dt || ('Product ' + item.empi),
-            price: matched ? (matched.price || '') : '',
-            image_url: (matched ? matched.image_url : '') || item.iu || '',
-            product_url: item.du || (matched ? matched.product_url : '') || '',
-            shopify_product_id: String(item.empi),
-            shopify_variant_id: String(item.epi)
-          };
-        });
-      } else {
-        list = getWishlist();
-      }
-
-      if (list.length === 0) return;
-      var wishCont = d.createElement('div');
-      wishCont.id = 'wj-wishlist';
-      wishCont.innerHTML = '<div id="wj-wishlist-head"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>' + esc(tr.yourFavorites) + ' <span id="wj-wishlist-count">(' + list.length + ')</span></span></div>';
-      var wishList = d.createElement('div');
-      wishList.id = 'wj-wishlist-list';
-      list.forEach(function(item) {
-        var el = d.createElement('div');
-        el.className = 'wj-wish-item';
-        var imgHtml = item.image_url ? '<img class="wj-wish-img" src="' + esc(item.image_url) + '" alt=""/>' : '<div class="wj-wish-img"></div>';
-        var priceHtml = item.price ? '<div class="wj-wish-price">' + esc(item.price) + '</div>' : '';
-        var linkStart = item.product_url ? '<a href="' + esc(item.product_url) + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-decoration:none;color:inherit">' : '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">';
-        var linkEnd = item.product_url ? '</a>' : '</div>';
-        el.innerHTML = linkStart + imgHtml + '<div class="wj-wish-info"><div class="wj-wish-title">' + esc(item.title) + '</div>' + priceHtml + '</div>' + linkEnd + '<button class="wj-wish-remove" data-title="' + esc(item.title) + '" data-product-id="' + esc(item.shopify_product_id || '') + '" data-variant-id="' + esc(item.shopify_variant_id || '') + '" data-url="' + esc(item.product_url || '') + '" title="' + esc(tr.remove) + '"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
-        // Bind remove
-        var removeBtn = el.querySelector('.wj-wish-remove');
-        (function(itemData) {
-          removeBtn.addEventListener('click', function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            var title = this.getAttribute('data-title') || '';
-            var pId = this.getAttribute('data-product-id') || '';
-            var vId = this.getAttribute('data-variant-id') || '';
-            var pUrl = this.getAttribute('data-url') || '';
-
-            if (swymReady && w._swat && pId) {
-              w._swat.removeFromWishList({ empi: parseInt(pId), epi: parseInt(vId || '0'), du: pUrl }, function() {
-                swymWishlist = swymWishlist.filter(function(i) { return String(i.empi) !== pId; });
-                syncHeartStates();
-                showWishlistToast(false);
-                renderWishlistSection();
-              }, function() {});
-            } else {
-              var wl = getWishlist();
-              var filtered = wl.filter(function(i) { return i.title !== title; });
-              saveWishlist(filtered);
-              // Update any matching fav buttons in product cards
-              var allFavBtns = d.querySelectorAll('.wj-prod-fav-btn[data-product-title="' + title.replace(/"/g, '\\\\"') + '"]');
-              allFavBtns.forEach(function(fb) {
-                fb.classList.remove('active');
-                var s = fb.querySelector('svg');
-                if (s) { s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); }
-              });
-              showWishlistToast(false);
-              renderWishlistSection();
-            }
-          });
-        })(item);
-        wishList.appendChild(el);
-      });
-      wishCont.appendChild(wishList);
-      // Insert after products or after contact card
-      var prodEl = d.getElementById('wj-products');
-      if (prodEl && prodEl.nextSibling) {
-        prodEl.parentNode.insertBefore(wishCont, prodEl.nextSibling);
-      } else if (prodEl) {
-        prodEl.parentNode.appendChild(wishCont);
-      } else {
-        // Insert at beginning of scroll content, after contact
-        var contactEl = d.getElementById('wj-contact');
-        if (contactEl && contactEl.nextSibling) {
-          contactEl.parentNode.insertBefore(wishCont, contactEl.nextSibling);
-        } else {
-          scroll.appendChild(wishCont);
-        }
-      }
-    }
-    renderWishlistSection();
 
     // Instagram posts
     if (igEnabled && igPosts.length > 0) {
@@ -1728,38 +1467,6 @@ Deno.serve(async (req) => {
         faqItems.appendChild(item);
       });
       scroll.appendChild(faqCont);
-    }
-
-    // Calendly booking button
-    if (calendlyEnabled && calendlyEventUrl) {
-      var bookCont = d.createElement('div');
-      bookCont.id = 'wj-booking';
-      bookCont.style.cssText = 'padding:0 16px 8px;margin-top:8px';
-      var bookBtn = d.createElement('button');
-      bookBtn.id = 'wj-book-btn';
-      bookBtn.style.cssText = 'width:100%;padding:12px 16px;border:1px solid ' + (dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0') + ';border-radius:12px;background:' + (dark ? 'rgba(255,255,255,0.05)' : '#fff') + ';color:' + textMain + ';font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .2s';
-      bookBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + color.bg + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>' + esc(tr.bookSession) + '</span>';
-      bookBtn.onmouseover = function() { this.style.background = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'; };
-      bookBtn.onmouseout = function() { this.style.background = dark ? 'rgba(255,255,255,0.05)' : '#fff'; };
-      bookBtn.onclick = function() {
-        // Load Calendly embed script if not already loaded
-        if (!w.Calendly) {
-          var link = d.createElement('link');
-          link.href = 'https://assets.calendly.com/assets/external/widget.css';
-          link.rel = 'stylesheet';
-          d.head.appendChild(link);
-          var script = d.createElement('script');
-          script.src = 'https://assets.calendly.com/assets/external/widget.js';
-          script.onload = function() {
-            w.Calendly.initPopupWidget({ url: calendlyEventUrl });
-          };
-          d.head.appendChild(script);
-        } else {
-          w.Calendly.initPopupWidget({ url: calendlyEventUrl });
-        }
-      };
-      bookCont.appendChild(bookBtn);
-      scroll.appendChild(bookCont);
     }
 
     // Custom Links
@@ -2023,11 +1730,9 @@ Deno.serve(async (req) => {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
             var varId = prod.shopifyVariantId || '';
-            var prodId = prod.shopifyProductId || '';
             if (!varId && products.length > 0) {
               var matchedProd = products.find(function(p) { return p.title === prod.title; });
               if (matchedProd && matchedProd.shopify_variant_id) varId = matchedProd.shopify_variant_id;
-              if (matchedProd && matchedProd.shopify_product_id && !prodId) prodId = matchedProd.shopify_product_id;
             }
             var cardBg = dark ? '#374151' : '#e2e8f0';
             var btnBg = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9';
@@ -2050,16 +1755,10 @@ Deno.serve(async (req) => {
             } else {
               msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;text-decoration:none;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></a>';
             }
+            msgHtml += '<button class="wj-chat-fav-btn" style="flex:1;display:flex;align-items:center;justify-content:center;border-radius:6px;padding:4px 0;border:none;cursor:pointer;background:' + btnBg + ';color:' + btnColor + ';transition:background 0.15s"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
             msgHtml += '</div></div>';
           });
           msgHtml += '</div>';
-        }
-
-        // Render Calendly booking button if metadata contains calendly_url
-        if (msg.metadata && msg.metadata.calendly_url) {
-          var calUrl = msg.metadata.calendly_url;
-          var bookLabel = (cfg.language || 'en').startsWith('it') ? '📅 Prenota appuntamento' : (cfg.language || 'en').startsWith('es') ? '📅 Reservar cita' : (cfg.language || 'en').startsWith('fr') ? '📅 Prendre rendez-vous' : (cfg.language || 'en').startsWith('de') ? '📅 Termin buchen' : '📅 Book appointment';
-          msgHtml += '<div style="margin-top:8px"><button onclick="(function(){if(window.Calendly){Calendly.initPopupWidget({url:\\'' + calUrl.replace(/'/g, "\\\\'") + '\\'});return;}var s=document.createElement(\\'script\\');s.src=\\'https://assets.calendly.com/assets/external/widget.js\\';s.onload=function(){Calendly.initPopupWidget({url:\\'' + calUrl.replace(/'/g, "\\\\'") + '\\'});};document.head.appendChild(s);var l=document.createElement(\\'link\\');l.rel=\\'stylesheet\\';l.href=\\'https://assets.calendly.com/assets/external/widget.css\\';document.head.appendChild(l);})()" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:12px;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#fff;background:' + color.bg + ';transition:opacity 0.15s" onmouseover="this.style.opacity=\\'0.85\\'" onmouseout="this.style.opacity=\\'1\\'">' + bookLabel + '</button></div>';
         }
         
         msgHtml += '</div>';
@@ -2076,14 +1775,18 @@ Deno.serve(async (req) => {
           addToShopifyCart(this.getAttribute('data-variant'), this);
         });
       });
-      // Bind favorite buttons (persistent wishlist)
+      // Bind favorite buttons (toggle heart fill)
       var chatFavBtns = bubble.querySelectorAll('.wj-chat-fav-btn');
       chatFavBtns.forEach(function(btn) {
         btn.addEventListener('click', function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
-          var prodData = { title: this.getAttribute('data-product-title') || '', price: this.getAttribute('data-product-price') || '', imageUrl: this.getAttribute('data-product-image') || '', productUrl: this.getAttribute('data-product-url') || '', shopify_product_id: this.getAttribute('data-product-id') || '', shopify_variant_id: this.getAttribute('data-variant-id') || '' };
-          toggleWishlist(prodData, this);
+          var svg = this.querySelector('svg');
+          if (svg) {
+            var isFilled = svg.getAttribute('fill') !== 'none';
+            svg.setAttribute('fill', isFilled ? 'none' : '#ef4444');
+            svg.setAttribute('stroke', isFilled ? 'currentColor' : '#ef4444');
+          }
         });
       });
       lastMessageId = msg.id;
@@ -2330,9 +2033,9 @@ Deno.serve(async (req) => {
     root.appendChild(btn);
     d.body.appendChild(root);
 
-    // Inject custom JS via script tag (CSP-safe)
+    // Inject custom JS if provided
     if (customJs) {
-      try { var s = d.createElement('script'); s.textContent = customJs; d.body.appendChild(s); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
+      try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
   }
 }
 

@@ -10,7 +10,6 @@ import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useToast } from "@/hooks/use-toast";
-import posthog from "@/lib/posthog";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -26,7 +25,8 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+      // 1. Create the account (auto-confirmed, but we'll verify email ourselves)
+      const { error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -44,28 +44,28 @@ const Signup = () => {
         return;
       }
 
-      // Auto-confirmed: sign in directly
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // 2. Send verification email via Resend
+      const { error: emailError } = await supabase.functions.invoke(
+        "send-verification-email",
+        { body: { email } }
+      );
 
-      if (loginError) {
+      if (emailError) {
+        console.error("Email send error:", emailError);
         toast({
           variant: "destructive",
-          title: "Login failed",
-          description: loginError.message,
+          title: "Failed to send verification email",
+          description: "Please try again.",
         });
         setLoading(false);
         return;
       }
 
-      posthog.capture("signup_completed", { method: "email" });
+      setOtpStep(true);
       toast({
-        title: "Welcome!",
-        description: "Your account has been created.",
+        title: "Check your email",
+        description: "We sent you a 6-digit verification code.",
       });
-      navigate("/builder?onboarding=true");
     } catch (err: any) {
       toast({
         variant: "destructive",
@@ -124,7 +124,6 @@ const Signup = () => {
         return;
       }
 
-      posthog.capture("signup_completed", { method: "email" });
       toast({
         title: "Email verified!",
         description: "Welcome to WidJet!",
@@ -281,7 +280,6 @@ const Signup = () => {
             variant="outline"
             className="w-full"
             onClick={async () => {
-              posthog.capture("signup_started", { method: "google" });
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin,
               });

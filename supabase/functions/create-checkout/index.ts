@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "npm:stripe@18.5.0";
+import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
@@ -40,24 +40,19 @@ serve(async (req) => {
 
     const plan = body.plan || "pro";
     const billingInterval = body.billingInterval || "month";
-    const currency = body.currency || "EUR";
     
-    const priceIds: Record<string, Record<string, Record<string, string>>> = {
+    const priceIds: Record<string, Record<string, string>> = {
       starter: {
-        USD: { month: "price_1T504R9qkctgdXPW3MdCa3Mp", year: "price_1T505i9qkctgdXPWv7rzxoGL" },
-        EUR: { month: "price_1TBctU9qkctgdXPWjLQIcBQt", year: "price_1TBctq9qkctgdXPWzB2mjSTM" },
+        month: "price_1T504R9qkctgdXPW3MdCa3Mp",
+        year: "price_1T505i9qkctgdXPWv7rzxoGL",
       },
       pro: {
-        USD: { month: "price_1T1N439qkctgdXPWs0PudObs", year: "price_1T1N439qkctgdXPWJUIiKmGi" },
-        EUR: { month: "price_1T1N439qkctgdXPWs0PudObs", year: "price_1T1N439qkctgdXPWJUIiKmGi" },
-      },
-      business: {
-        USD: { month: "price_1TBcqR9qkctgdXPWpr4OBKAV", year: "price_1TBcqk9qkctgdXPWWi8tCwHj" },
-        EUR: { month: "price_1TBcuB9qkctgdXPWNFQ6BKLA", year: "price_1TBcuX9qkctgdXPWzVtIkpc8" },
+        month: "price_1T1N439qkctgdXPWs0PudObs",
+        year: "price_1T1N439qkctgdXPWJUIiKmGi",
       },
     };
 
-    const priceId = priceIds[plan]?.[currency]?.[billingInterval] || priceIds[plan]?.USD?.[billingInterval] || priceIds.pro.USD.month;
+    const priceId = priceIds[plan]?.[billingInterval] || priceIds.pro.month;
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,

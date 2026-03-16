@@ -287,7 +287,7 @@ const WidgetPreviewPanel = ({
   const [faqAiLoading, setFaqAiLoading] = useState<string | null>(null);
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
-  const [chatMessages, setChatMessages] = useState<{text: string; sender: "user" | "bot"; metadata?: { products?: { title: string; imageUrl?: string; productUrl?: string; price?: string }[]; calendly_url?: string }}[]>([]);
+  const [chatMessages, setChatMessages] = useState<{text: string; sender: "user" | "bot"; metadata?: { products?: { title: string; imageUrl?: string; productUrl?: string; price?: string }[] }}[]>([]);
   const [chatInputValue, setChatInputValue] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -474,19 +474,11 @@ const WidgetPreviewPanel = ({
     return () => { document.getElementById(id)?.remove(); };
   }, [customCss]);
 
-  // Execute custom JS via script tag (CSP-safe)
+  // Execute custom JS when it changes
   useEffect(() => {
     if (customJs) {
-      try {
-        const scriptId = 'wj-custom-js-preview';
-        document.getElementById(scriptId)?.remove();
-        const s = document.createElement('script');
-        s.id = scriptId;
-        s.textContent = customJs;
-        document.body.appendChild(s);
-      } catch(e) { console.error('[Widget Preview] Custom JS error:', e); }
+      try { new Function(customJs)(); } catch(e) { console.error('[Widget Preview] Custom JS error:', e); }
     }
-    return () => { document.getElementById('wj-custom-js-preview')?.remove(); };
   }, [customJs]);
 
   // Auto-scroll chat to bottom when messages change
@@ -1066,31 +1058,6 @@ const WidgetPreviewPanel = ({
                                   ))}
                                 </div>
                               )}
-                              {msg.metadata?.calendly_url && (
-                                <div className="mt-2">
-                                  <button
-                                    onClick={() => {
-                                      const url = msg.metadata!.calendly_url!;
-                                      if ((window as any).Calendly) {
-                                        (window as any).Calendly.initPopupWidget({ url });
-                                      } else {
-                                        const link = document.createElement('link');
-                                        link.rel = 'stylesheet';
-                                        link.href = 'https://assets.calendly.com/assets/external/widget.css';
-                                        document.head.appendChild(link);
-                                        const script = document.createElement('script');
-                                        script.src = 'https://assets.calendly.com/assets/external/widget.js';
-                                        script.onload = () => (window as any).Calendly.initPopupWidget({ url });
-                                        document.head.appendChild(script);
-                                      }
-                                    }}
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-xs font-semibold transition-opacity hover:opacity-85"
-                                    style={{ backgroundColor: actualHexColor }}
-                                  >
-                                    📅 {language === 'it' ? 'Prenota appuntamento' : language === 'es' ? 'Reservar cita' : language === 'fr' ? 'Prendre rendez-vous' : language === 'de' ? 'Termin buchen' : 'Book appointment'}
-                                  </button>
-                                </div>
-                              )}
                             </div>
                           </div>
                         )
@@ -1574,31 +1541,6 @@ const WidgetPreviewPanel = ({
                                   </div>
                                 </div>
                               ))}
-                            </div>
-                          )}
-                          {msg.metadata?.calendly_url && (
-                            <div className="mt-2">
-                              <button
-                                onClick={() => {
-                                  const url = msg.metadata!.calendly_url!;
-                                  if ((window as any).Calendly) {
-                                    (window as any).Calendly.initPopupWidget({ url });
-                                  } else {
-                                    const link = document.createElement('link');
-                                    link.rel = 'stylesheet';
-                                    link.href = 'https://assets.calendly.com/assets/external/widget.css';
-                                    document.head.appendChild(link);
-                                    const script = document.createElement('script');
-                                    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-                                    script.onload = () => (window as any).Calendly.initPopupWidget({ url });
-                                    document.head.appendChild(script);
-                                  }
-                                }}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-white text-xs font-semibold transition-opacity hover:opacity-85"
-                                style={{ backgroundColor: actualHexColor }}
-                              >
-                                📅 {language === 'it' ? 'Prenota appuntamento' : language === 'es' ? 'Reservar cita' : language === 'fr' ? 'Prendre rendez-vous' : language === 'de' ? 'Termin buchen' : 'Book appointment'}
-                              </button>
                             </div>
                           )}
                         </div>

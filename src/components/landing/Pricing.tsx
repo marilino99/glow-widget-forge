@@ -41,6 +41,19 @@ const Pricing = () => {
 
   const plans = [
     {
+      name: t("pricing.free.name"),
+      monthlyPrice: 0,
+      annualPrice: 0,
+      monthlyPriceEur: 0,
+      annualPriceEur: 0,
+      description: t("pricing.free.desc"),
+      cta: t("pricing.free.cta"),
+      highlighted: false,
+      featuresLabel: t("pricing.free.featuresLabel"),
+      features: [t("pricing.free.f1"), t("pricing.free.f2"), t("pricing.free.f3"), t("pricing.free.f4"), t("pricing.free.f5"), t("pricing.free.f6"), t("pricing.free.f7"), t("pricing.free.f8"), t("pricing.free.f9")],
+      planKey: "free",
+    },
+    {
       name: t("pricing.pro.name"),
       monthlyPrice: 19,
       annualPrice: 16,
@@ -153,7 +166,7 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-3 items-stretch">
+        <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 items-stretch">
           {plans.map((plan, i) => {
             const price = currency === "EUR"
               ? (isAnnual ? plan.annualPriceEur : plan.monthlyPriceEur)
@@ -197,7 +210,7 @@ const Pricing = () => {
                   <Button
                     className={cn("relative z-10 mt-5 w-full rounded-lg font-semibold transition-all duration-300", isHighlighted ? "bg-white text-black hover:bg-white/90 border-0 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:scale-[1.02]" : "bg-background text-foreground border border-foreground hover:bg-muted")}
                     size="lg"
-                    onClick={plan.planKey === "starter" || plan.planKey === "business" ? () => handlePaidCheckout(plan.planKey) : undefined}
+                    onClick={plan.planKey === "free" ? () => navigate("/signup") : plan.planKey === "starter" || plan.planKey === "business" ? () => handlePaidCheckout(plan.planKey) : undefined}
                     disabled={(plan.planKey === "starter" || plan.planKey === "business") && loading}
                   >
                     {plan.cta}

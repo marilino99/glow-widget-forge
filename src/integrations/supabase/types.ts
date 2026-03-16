@@ -14,45 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      calendly_connections: {
-        Row: {
-          access_token: string
-          calendly_user_uri: string | null
-          created_at: string
-          expires_at: string | null
-          id: string
-          refresh_token: string | null
-          scheduling_url: string | null
-          token_type: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          access_token: string
-          calendly_user_uri?: string | null
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          refresh_token?: string | null
-          scheduling_url?: string | null
-          token_type?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          access_token?: string
-          calendly_user_uri?: string | null
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          refresh_token?: string | null
-          scheduling_url?: string | null
-          token_type?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       chat_messages: {
         Row: {
           content: string
@@ -303,7 +264,6 @@ export type Database = {
           price: string | null
           product_url: string | null
           promo_badge: string | null
-          shopify_product_id: string | null
           shopify_variant_id: string | null
           sort_order: number
           subtitle: string | null
@@ -319,7 +279,6 @@ export type Database = {
           price?: string | null
           product_url?: string | null
           promo_badge?: string | null
-          shopify_product_id?: string | null
           shopify_variant_id?: string | null
           sort_order?: number
           subtitle?: string | null
@@ -335,7 +294,6 @@ export type Database = {
           price?: string | null
           product_url?: string | null
           promo_badge?: string | null
-          shopify_product_id?: string | null
           shopify_variant_id?: string | null
           sort_order?: number
           subtitle?: string | null
@@ -551,8 +509,6 @@ export type Database = {
           background_image: string | null
           background_type: string
           button_logo: string | null
-          calendly_enabled: boolean
-          calendly_event_url: string | null
           chatbot_enabled: boolean
           chatbot_instructions: string | null
           contact_name: string
@@ -596,8 +552,6 @@ export type Database = {
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
-          calendly_enabled?: boolean
-          calendly_event_url?: string | null
           chatbot_enabled?: boolean
           chatbot_instructions?: string | null
           contact_name?: string
@@ -641,8 +595,6 @@ export type Database = {
           background_image?: string | null
           background_type?: string
           button_logo?: string | null
-          calendly_enabled?: boolean
-          calendly_event_url?: string | null
           chatbot_enabled?: boolean
           chatbot_instructions?: string | null
           contact_name?: string

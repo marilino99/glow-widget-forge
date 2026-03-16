@@ -37,23 +37,9 @@ const PRODUCT_KEYWORDS = [
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "cerco", "vorrei", "want"
 ];
 
-const BOOKING_KEYWORDS = [
-  "appuntamento", "prenotare", "prenotazione", "prenota", "visita",
-  "appointment", "book", "booking", "schedule", "reservation",
-  "disponibilit", "availability", "available", "slot", "orari", "orario",
-  "when can", "quando posso", "libero", "free time", "sessione", "session",
-  "consulenza", "consultation", "rendez-vous", "réserver", "termin", "buchen",
-  "cita", "reservar", "agendar"
-];
-
 function isProductIntent(text: string): boolean {
   const normalized = (text || "").toLowerCase();
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
-}
-
-function isBookingIntent(text: string): boolean {
-  const normalized = (text || "").toLowerCase();
-  return BOOKING_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
 function hasProductSignalInFaq(
@@ -82,163 +68,6 @@ function getConnectShopifyMessage(userText: string, fallbackLanguage = "en"): st
   }
 
   return "To see products in preview, first connect your Shopify store to Widjet from Integrations.";
-}
-
-async function refreshCalendlyToken(
-  supabase: any,
-  connection: any,
-): Promise<string | null> {
-  if (!connection.refresh_token) return null;
-
-  const clientId = Deno.env.get("CALENDLY_CLIENT_ID");
-  const clientSecret = Deno.env.get("CALENDLY_CLIENT_SECRET");
-  if (!clientId || !clientSecret) return null;
-
-  try {
-    const res = await fetch("https://auth.calendly.com/oauth/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        grant_type: "refresh_token",
-        client_id: clientId,
-        client_secret: clientSecret,
-        refresh_token: connection.refresh_token,
-      }),
-    });
-
-    if (!res.ok) {
-      console.error("Calendly preview token refresh failed:", await res.text());
-      return null;
-    }
-
-    const data = await res.json();
-    const newToken = data.access_token;
-    const expiresIn = data.expires_in;
-
-    await supabase
-      .from("calendly_connections")
-      .update({
-        access_token: newToken,
-        refresh_token: data.refresh_token || connection.refresh_token,
-        expires_at: expiresIn
-          ? new Date(Date.now() + expiresIn * 1000).toISOString()
-          : null,
-      })
-      .eq("id", connection.id);
-
-    return newToken;
-  } catch (e) {
-    console.error("Calendly preview token refresh error:", e);
-    return null;
-  }
-}
-
-async function getCalendlyAvailabilityPreview(
-  supabase: any,
-  userId: string,
-): Promise<string> {
-  try {
-    const { data: conn } = await supabase
-      .from("calendly_connections")
-      .select("id, access_token, refresh_token, expires_at, scheduling_url, calendly_user_uri")
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (!conn?.access_token || !conn.calendly_user_uri) return "";
-
-    let token = conn.access_token;
-    if (conn.expires_at && new Date(conn.expires_at) < new Date()) {
-      const refreshed = await refreshCalendlyToken(supabase, conn);
-      if (!refreshed) return "";
-      token = refreshed;
-    }
-
-    const eventTypesRes = await fetch(
-      `https://api.calendly.com/event_types?user=${encodeURIComponent(conn.calendly_user_uri)}&active=true`,
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
-
-    if (!eventTypesRes.ok) {
-      console.error("Calendly preview event types error:", await eventTypesRes.text());
-      return "";
-    }
-
-    const eventTypesData = await eventTypesRes.json();
-    const eventTypes = eventTypesData.collection || [];
-    if (eventTypes.length === 0) return "";
-
-    const now = new Date();
-    const ninetyDaysLater = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
-    const CHUNK_DAYS = 7;
-
-    let availabilityInfo = "\n## CALENDLY BOOKING AVAILABILITY\n";
-    availabilityInfo += `Booking link: ${conn.scheduling_url || "Not available"}\n`;
-    availabilityInfo += "Window covered: next 90 days\n\n";
-
-    for (const et of eventTypes.slice(0, 2)) {
-      const allSlots: Array<{ start_time: string }> = [];
-      let windowStart = new Date(now);
-
-      while (windowStart < ninetyDaysLater) {
-        const windowEnd = new Date(
-          Math.min(
-            windowStart.getTime() + CHUNK_DAYS * 24 * 60 * 60 * 1000,
-            ninetyDaysLater.getTime(),
-          ),
-        );
-
-        const availRes = await fetch(
-          `https://api.calendly.com/event_type_available_times?event_type=${encodeURIComponent(et.uri)}&start_time=${windowStart.toISOString()}&end_time=${windowEnd.toISOString()}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
-        if (!availRes.ok) {
-          console.error("Calendly preview availability error:", await availRes.text());
-          windowStart = new Date(windowEnd.getTime() + 1000);
-          continue;
-        }
-
-        const availData = await availRes.json();
-        const slots = availData.collection || [];
-        allSlots.push(...slots);
-        windowStart = new Date(windowEnd.getTime() + 1000);
-      }
-
-      availabilityInfo += `### ${et.name} (${et.duration} min)\n`;
-      if (allSlots.length === 0) {
-        availabilityInfo += "No available slots in the next 90 days.\n\n";
-        continue;
-      }
-
-      const byDay: Record<string, string[]> = {};
-      for (const slot of allSlots) {
-        const date = new Date(slot.start_time);
-        const dayKey = date.toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-        });
-        const timeStr = date.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        });
-        if (!byDay[dayKey]) byDay[dayKey] = [];
-        if (!byDay[dayKey].includes(timeStr)) byDay[dayKey].push(timeStr);
-      }
-
-      for (const [day, times] of Object.entries(byDay)) {
-        availabilityInfo += `- **${day}**: ${times.slice(0, 8).join(", ")}\n`;
-      }
-      availabilityInfo += "\n";
-    }
-
-    availabilityInfo += "## END CALENDLY BOOKING AVAILABILITY\n";
-    return availabilityInfo;
-  } catch (e) {
-    console.error("Calendly preview availability exception:", e);
-    return "";
-  }
 }
 
 Deno.serve(async (req) => {
@@ -292,7 +121,7 @@ Deno.serve(async (req) => {
     // Get widget config
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, contact_name, language, user_id, calendly_enabled, calendly_event_url")
+      .select("chatbot_enabled, chatbot_instructions, contact_name, language, user_id")
       .eq("id", widgetId)
       .single();
 
@@ -333,10 +162,10 @@ Deno.serve(async (req) => {
           .order("sort_order", { ascending: true })
       : { data: null };
 
+    // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
     const queryText = lastUserMessage?.text || "";
     const productIntent = isProductIntent(queryText);
-    const bookingIntent = isBookingIntent(queryText);
 
     // RAG: Try similarity search first
     let knowledgeBase = "";
@@ -419,16 +248,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    let calendlyInfo = "";
-    if (bookingIntent) {
-      calendlyInfo = await getCalendlyAvailabilityPreview(supabase, config.user_id);
-      if (calendlyInfo) {
-        knowledgeBase += calendlyInfo;
-      }
-    } else if (config.calendly_enabled && config.calendly_event_url) {
-      knowledgeBase += `\n## BOOKING INFO\nBooking link: ${config.calendly_event_url}\n## END BOOKING INFO\n`;
-    }
-
     const additionalInstructions = config.chatbot_instructions
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
@@ -440,15 +259,14 @@ ${knowledgeBase}
 ${additionalInstructions}
 
 STRICT RULES:
-- Use the knowledge base above to answer questions about the business, its products, services, FAQ, and booking availability.
+- Use the knowledge base above to answer questions about the business, its products, services, and FAQ.
 - If the knowledge base contains relevant information, use it to give accurate, helpful answers.
 - If someone asks something not covered by the knowledge base, politely say you don't have that information and suggest they contact the business directly via chat.
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
 - PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
-${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. For example: 'Per mostrare i prodotti, collega il tuo store Shopify a Widjet dalle Integrazioni!' or 'To show products, connect your Shopify store to Widjet from Integrations!'. Match the visitor's language." : ""}
-- APPOINTMENT BOOKING: If CALENDLY BOOKING AVAILABILITY is present, suggest concrete available slots grouped by day and include the booking link to complete booking. If only BOOKING INFO is present, direct the user to that link. NEVER invent time slots.`;
+${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If the visitor asks about products, DO NOT make up any products. Instead, politely explain that the store needs to connect their Shopify account to Widjet first in order to show products. For example: 'Per mostrare i prodotti, collega il tuo store Shopify a Widjet dalle Integrazioni!' or 'To show products, connect your Shopify store to Widjet from Integrations!'. Match the visitor's language." : ""}`;
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",
@@ -504,59 +322,51 @@ ${!shopifyConn ? "- NO PRODUCT CATALOG: There is no Shopify store connected. If 
     console.log(`AI raw reply (last 100 chars): ...${cleanReply.slice(-100)}`);
     console.log(`Product cards available: ${productCardsData?.length || 0}`);
 
-    // If booking intent, add calendly_url to metadata and skip product cards
-    if (bookingIntent) {
-      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
-      const calendlyUrl = config.calendly_event_url || null;
-      if (calendlyUrl) {
-        metadata = { calendly_url: calendlyUrl };
-        console.log("Booking intent: attached calendly_url to metadata");
+    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+    if (productMarkerMatch) {
+      if (!shopifyConn) {
+        const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
+        return new Response(
+          JSON.stringify({ reply: connectReply }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
-    } else {
-      const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
-      if (productMarkerMatch) {
-        if (!shopifyConn) {
-          const connectReply = getConnectShopifyMessage(queryText, config.language || "en");
-          return new Response(
-            JSON.stringify({ reply: connectReply }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
 
-        cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
-        const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-        if (productCardsData && productCardsData.length > 0) {
-          const matchedProducts = productCardsData.filter((p: any) =>
-            requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-          );
-          const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
-          const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
-            ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
-            : productsToShow;
-          metadata = {
-            products: finalProducts.map((p: any) => ({
-              title: p.title,
-              imageUrl: p.image_url || null,
-              productUrl: p.product_url || null,
-              price: p.price || null,
-              shopifyVariantId: p.shopify_variant_id || null,
-            })),
-          };
-        }
-      } else if (productCardsData && productCardsData.length > 0) {
-        const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
-        const mentionsProducts = isProductIntent(lastUserMsg);
-        if (mentionsProducts) {
-          metadata = {
-            products: productCardsData.slice(0, 3).map((p: any) => ({
-              title: p.title,
-              imageUrl: p.image_url || null,
-              productUrl: p.product_url || null,
-              price: p.price || null,
-              shopifyVariantId: p.shopify_variant_id || null,
-            })),
-          };
-        }
+      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+      if (productCardsData && productCardsData.length > 0) {
+        const matchedProducts = productCardsData.filter((p: any) =>
+          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+        );
+        const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
+        // Ensure at least 2-3 products
+        const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
+          ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
+          : productsToShow;
+        metadata = {
+          products: finalProducts.map((p: any) => ({
+            title: p.title,
+            imageUrl: p.image_url || null,
+            productUrl: p.product_url || null,
+            price: p.price || null,
+            shopifyVariantId: p.shopify_variant_id || null,
+          })),
+        };
+      }
+    } else if (productCardsData && productCardsData.length > 0) {
+      // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
+      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
+      const mentionsProducts = isProductIntent(lastUserMsg);
+      if (mentionsProducts) {
+        metadata = {
+          products: productCardsData.slice(0, 3).map((p: any) => ({
+            title: p.title,
+            imageUrl: p.image_url || null,
+            productUrl: p.product_url || null,
+            price: p.price || null,
+            shopifyVariantId: p.shopify_variant_id || null,
+          })),
+        };
       }
     }
 

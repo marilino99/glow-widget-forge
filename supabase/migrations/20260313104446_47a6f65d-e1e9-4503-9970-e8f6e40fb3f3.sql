@@ -1,1 +1,0 @@
-ALTER TABLE public.product_cards ADD COLUMN IF NOT EXISTS shopify_product_id text DEFAULT NULL;

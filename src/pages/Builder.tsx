@@ -81,14 +81,7 @@ const Builder = () => {
     checkIfAlreadyCompleted();
   }, [isLoading, user, config?.id]);
   const { hasUnread } = useUnreadMessages();
-  const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit, isLoading: isSubLoading } = useSubscription();
-
-  // Gate: redirect free users to choose-plan
-  useEffect(() => {
-    if (!isSubLoading && plan === "free") {
-      navigate("/choose-plan", { replace: true });
-    }
-  }, [isSubLoading, plan, navigate]);
+  const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
   const { 
     productCards: rawProductCards, 
     isLoading: isLoadingCards, 
@@ -1095,9 +1088,7 @@ const Builder = () => {
             </div>
           </div>
         ) : builderView === "integrations" ? (
-          <IntegrationsPanel
-            onSaveConfig={(cfg) => saveConfig(cfg)}
-          />
+          <IntegrationsPanel />
         ) : (
           <>
             {/* Right header with actions */}

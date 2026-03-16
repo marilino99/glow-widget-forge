@@ -32,19 +32,12 @@ const validateCss = (css: string): string | null => {
 
 const validateJs = (js: string): string | null => {
   if (!js.trim()) return null;
-  // Basic syntax checks without using eval/new Function (CSP-safe)
-  const stripped = js.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
-  if (!stripped) return null;
-  const opens = (stripped.match(/{/g) || []).length;
-  const closes = (stripped.match(/}/g) || []).length;
-  if (opens !== closes) return `Mismatched braces: ${opens} opening, ${closes} closing`;
-  const parensOpen = (stripped.match(/\(/g) || []).length;
-  const parensClose = (stripped.match(/\)/g) || []).length;
-  if (parensOpen !== parensClose) return `Mismatched parentheses: ${parensOpen} opening, ${parensClose} closing`;
-  const bracketsOpen = (stripped.match(/\[/g) || []).length;
-  const bracketsClose = (stripped.match(/\]/g) || []).length;
-  if (bracketsOpen !== bracketsClose) return `Mismatched brackets: ${bracketsOpen} opening, ${bracketsClose} closing`;
-  return null;
+  try {
+    new Function(js);
+    return null;
+  } catch (e: any) {
+    return e.message || "Invalid JavaScript syntax";
+  }
 };
 
 // Common class/element selectors → correct widget IDs

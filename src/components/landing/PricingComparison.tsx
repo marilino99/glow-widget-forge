@@ -9,7 +9,7 @@ type CellValue = boolean | string;
 
 interface FeatureRow {
   label: string;
-  values: [CellValue, CellValue, CellValue];
+  values: [CellValue, CellValue, CellValue, CellValue];
 }
 
 interface FeatureCategory {
@@ -38,6 +38,7 @@ const PricingComparison = ({
   const navigate = useNavigate();
 
   const planHeaders: PlanHeader[] = [
+    { name: t("pricing.free.name"), cta: t("pricing.free.cta"), planKey: "free", price: `${currencySymbol}0`, suffix: "forever" },
     { name: t("pricing.pro.name"), cta: t("pricing.pro.cta"), planKey: "starter", price: `${currencySymbol}${currencySymbol === "€" ? (isAnnual ? "15" : "18") : (isAnnual ? "16" : "19")}`, suffix: "per month" },
     { name: t("pricing.biz.name"), cta: t("pricing.biz.cta"), planKey: "business", price: `${currencySymbol}${currencySymbol === "€" ? (isAnnual ? "38" : "48") : (isAnnual ? "39" : "49")}`, suffix: "per month" },
     { name: t("pricing.business.name"), cta: t("pricing.business.cta"), planKey: "enterprise", price: "", suffix: "" },
@@ -47,36 +48,36 @@ const PricingComparison = ({
     {
       category: t("compare.catCore"),
       rows: [
-        { label: t("compare.aiWidgets"), values: ["3", "10", t("compare.unlimited")] },
-        { label: t("compare.aiResponses"), values: ["2,000", "10,000", t("compare.unlimited")] },
-        { label: t("compare.contactCard"), values: [true, true, true] },
-        { label: t("compare.whatsapp"), values: [true, true, true] },
-        { label: t("compare.faq"), values: [true, true, true] },
-        { label: t("compare.productCarousel"), values: [true, true, true] },
-        { label: t("compare.escalate"), values: [true, true, true] },
+        { label: t("compare.aiWidgets"), values: ["1", "3", "10", t("compare.unlimited")] },
+        { label: t("compare.aiResponses"), values: ["100", "2,000", "10,000", t("compare.unlimited")] },
+        { label: t("compare.contactCard"), values: [true, true, true, true] },
+        { label: t("compare.whatsapp"), values: [true, true, true, true] },
+        { label: t("compare.faq"), values: [true, true, true, true] },
+        { label: t("compare.productCarousel"), values: [true, true, true, true] },
+        { label: t("compare.escalate"), values: [true, true, true, true] },
       ],
     },
     {
       category: t("compare.catAdvanced"),
       rows: [
-        { label: t("compare.aiSummaries"), values: [true, true, true] },
-        { label: t("compare.analytics"), values: [t("compare.basic"), t("compare.advanced"), t("compare.advanced")] },
-        { label: t("compare.customBranding"), values: [true, true, true] },
-        { label: t("compare.sizePosition"), values: [true, true, true] },
-        { label: t("compare.instagram"), values: [true, true, true] },
-        { label: t("compare.googleReviews"), values: [true, true, true] },
-        { label: t("compare.prioritySupport"), values: [true, true, true] },
+        { label: t("compare.aiSummaries"), values: [false, true, true, true] },
+        { label: t("compare.analytics"), values: [false, t("compare.basic"), t("compare.advanced"), t("compare.advanced")] },
+        { label: t("compare.customBranding"), values: [false, true, true, true] },
+        { label: t("compare.sizePosition"), values: [false, true, true, true] },
+        { label: t("compare.instagram"), values: [false, true, true, true] },
+        { label: t("compare.googleReviews"), values: [false, true, true, true] },
+        { label: t("compare.prioritySupport"), values: [false, true, true, true] },
       ],
     },
     {
       category: t("compare.catEnterprise"),
       rows: [
-        { label: t("compare.teamCollab"), values: [false, true, true] },
-        { label: t("compare.apiAccess"), values: [false, false, true] },
-        { label: t("compare.accountManager"), values: [false, false, true] },
-        { label: t("compare.sla"), values: [false, false, true] },
-        { label: t("compare.sso"), values: [false, false, true] },
-        { label: t("compare.whiteLabel"), values: [false, false, true] },
+        { label: t("compare.teamCollab"), values: [false, false, true, true] },
+        { label: t("compare.apiAccess"), values: [false, false, false, true] },
+        { label: t("compare.accountManager"), values: [false, false, false, true] },
+        { label: t("compare.sla"), values: [false, false, false, true] },
+        { label: t("compare.sso"), values: [false, false, false, true] },
+        { label: t("compare.whiteLabel"), values: [false, false, false, true] },
       ],
     },
   ];
@@ -88,7 +89,8 @@ const PricingComparison = ({
   };
 
   const handleCta = (planKey: string) => {
-    if (planKey === "starter" || planKey === "business") onCheckout(planKey);
+    if (planKey === "free") navigate("/signup");
+    else if (planKey === "starter" || planKey === "business") onCheckout(planKey);
     // enterprise: no action (contact sales)
   };
 
@@ -104,7 +106,7 @@ const PricingComparison = ({
             <tr className="bg-background">
               <th className="w-[30%] pb-4 text-left" />
               {planHeaders.map((plan) => (
-                <th key={plan.planKey} className="w-[23%] py-4 pr-4 text-left align-top bg-background">
+                <th key={plan.planKey} className="w-[17.5%] py-4 pr-4 text-left align-top bg-background">
                   <div className="flex flex-col gap-1">
                     <span className="text-base font-bold text-foreground">{plan.name}</span>
                     {plan.planKey === "enterprise" ? (
@@ -136,7 +138,7 @@ const PricingComparison = ({
               <>
                 <tr key={`cat-${cat.category}`}>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="sticky top-[7.5rem] z-[5] bg-background pt-8 pb-3 text-sm font-medium text-muted-foreground"
                   >
                     {cat.category}

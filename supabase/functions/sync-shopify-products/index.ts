@@ -127,13 +127,6 @@ Deno.serve(async (req) => {
           variantId = match ? match[1] : variant.id;
         }
 
-        // Extract numeric product ID from GID (gid://shopify/Product/12345 -> 12345)
-        let productId: string | null = null;
-        if (node.id) {
-          const pMatch = node.id.match(/(\d+)$/);
-          productId = pMatch ? pMatch[1] : node.id;
-        }
-
         // Strip HTML tags from description
         const plainDesc = node.descriptionHtml
           ? node.descriptionHtml.replace(/<[^>]*>/g, "").substring(0, 120)
@@ -148,7 +141,6 @@ Deno.serve(async (req) => {
           old_price: hasDiscount ? `${compareAt!.toFixed(2)}` : null,
           promo_badge: hasDiscount ? "sale" : null,
           shopify_variant_id: variantId,
-          shopify_product_id: productId,
         });
       }
 
@@ -173,7 +165,6 @@ Deno.serve(async (req) => {
         old_price: p.old_price,
         promo_badge: p.promo_badge,
         shopify_variant_id: p.shopify_variant_id,
-        shopify_product_id: p.shopify_product_id,
         sort_order: i,
       }));
 
