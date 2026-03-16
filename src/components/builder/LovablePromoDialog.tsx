@@ -31,7 +31,7 @@ const LovablePromoDialog = ({ onShowSteps, isOnboarding }: LovablePromoDialogPro
     };
 
     checkPromo();
-  }, [user]);
+  }, [user, isOnboarding]);
 
   const handleDismiss = () => {
     setOpen(false);
