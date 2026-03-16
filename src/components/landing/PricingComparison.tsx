@@ -104,7 +104,7 @@ const PricingComparison = ({
             <tr className="bg-background">
               <th className="w-[30%] pb-4 text-left" />
               {planHeaders.map((plan) => (
-                <th key={plan.planKey} className="w-[17.5%] py-4 pr-4 text-left align-top bg-background">
+                <th key={plan.planKey} className="w-[23%] py-4 pr-4 text-left align-top bg-background">
                   <div className="flex flex-col gap-1">
                     <span className="text-base font-bold text-foreground">{plan.name}</span>
                     {plan.planKey === "enterprise" ? (
