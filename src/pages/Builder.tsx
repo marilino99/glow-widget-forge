@@ -1340,6 +1340,10 @@ const Builder = () => {
         })}
       </div>
       )}
+      <LovablePromoDialog onShowSteps={() => {
+        setNotifPopoverOpen(true);
+        setChangelogDetailOpen(true);
+      }} />
     </div>
   );
 };
