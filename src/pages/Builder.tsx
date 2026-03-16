@@ -842,6 +842,10 @@ const Builder = () => {
                           <Check className="h-4 w-4" />
                           Already claimed
                         </div>
+                      ) : widgetIsLive && phReviewSaved && phUpvoted && !g2ReviewApproved ? (
+                        <div className="flex items-center justify-center gap-2 w-full rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 font-medium py-3 text-sm cursor-default border border-amber-200 dark:border-amber-800">
+                          ⏳ Our team is reviewing your submission
+                        </div>
                       ) : (
                         <button
                           disabled={promoClaimLoading || !widgetIsLive || !g2ReviewApproved || !phUpvoted}
