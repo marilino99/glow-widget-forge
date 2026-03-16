@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import Stripe from "https://esm.sh/stripe@18.5.0";
+import Stripe from "npm:stripe@18.5.0";
 
 const POSTHOG_API_KEY = "phc_2MpEseLU5gXmDehBfI06stdVCsIbd7RWtQqi7qmvhue";
 const POSTHOG_HOST = "https://eu.i.posthog.com";
