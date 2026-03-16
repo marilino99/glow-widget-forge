@@ -10,6 +10,7 @@ import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useToast } from "@/hooks/use-toast";
+import posthog from "@/lib/posthog";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -61,6 +62,7 @@ const Signup = () => {
         return;
       }
 
+      posthog.capture("signup_started", { method: "email" });
       setOtpStep(true);
       toast({
         title: "Check your email",
@@ -124,6 +126,7 @@ const Signup = () => {
         return;
       }
 
+      posthog.capture("signup_completed", { method: "email" });
       toast({
         title: "Email verified!",
         description: "Welcome to WidJet!",
@@ -280,6 +283,7 @@ const Signup = () => {
             variant="outline"
             className="w-full"
             onClick={async () => {
+              posthog.capture("signup_started", { method: "google" });
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin,
               });

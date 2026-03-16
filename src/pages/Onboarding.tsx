@@ -8,6 +8,7 @@ import { Boxes, Loader2, Globe, ArrowRight, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import posthog from "@/lib/posthog";
 
 const Onboarding = () => {
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -85,6 +86,7 @@ const Onboarding = () => {
 
       if (error) throw error;
 
+      posthog.capture("onboarding_completed", { website_url: formattedUrl, has_logo: !!extractedLogo, color: extractedColor, theme: extractedTheme });
       toast({
         title: "Setup complete!",
         description: "Your widget is ready with your brand identity.",
@@ -105,6 +107,7 @@ const Onboarding = () => {
   };
 
   const handleSkip = async () => {
+    posthog.capture("onboarding_skipped");
     if (user) {
       // Create a minimal config so the user isn't sent back to onboarding
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

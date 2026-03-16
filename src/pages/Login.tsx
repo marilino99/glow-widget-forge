@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
 import { useToast } from "@/hooks/use-toast";
+import posthog from "@/lib/posthog";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -34,7 +35,7 @@ const Login = () => {
         description: error.message,
       });
     } else {
-      // Builder will auto-detect if onboarding is needed
+      posthog.capture("login_completed", { method: "email" });
       navigate("/builder");
     }
 
@@ -92,6 +93,7 @@ const Login = () => {
             variant="outline"
             className="w-full"
             onClick={async () => {
+              posthog.capture("login_started", { method: "google" });
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin,
               });

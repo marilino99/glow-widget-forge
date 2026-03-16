@@ -18,6 +18,7 @@ import {
   GoogleTagManagerLogo,
   ShopifyLogo,
 } from "@/components/icons/PlatformLogos";
+import posthog from "@/lib/posthog";
 
 interface AddToWebsiteDialogProps {
   widgetId?: string;
@@ -131,6 +132,7 @@ useEffect(() => {
   const handleCopy = async (code: string) => {
     await navigator.clipboard.writeText(code);
     setCopied(true);
+    posthog.capture("widget_published", { platform: selectedPlatform, widget_id: widgetId });
     toast({ title: "Copied!", description: "The code has been copied to your clipboard." });
     setTimeout(() => setCopied(false), 2000);
     if (user) {
@@ -160,6 +162,7 @@ useEffect(() => {
         toast({ title: "Already installed!", description: "The widget is already active on your Shopify store." });
       } else if (result.success) {
         setShopifyInstalled(true);
+        posthog.capture("widget_shopify_installed", { widget_id: widgetId });
         toast({ title: "Installed!", description: "Widget is now live on your Shopify store." });
         if (user) {
           supabase.from("user_activity_logs").insert({
