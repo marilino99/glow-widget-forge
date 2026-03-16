@@ -257,14 +257,12 @@ Deno.serve(async (req) => {
       .eq("user_id", config.user_id)
       .maybeSingle();
 
-    // Fetch product cards only if Shopify is connected
-    const { data: productCardsData } = shopifyConn
-      ? await supabase
-          .from("product_cards")
-          .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
-          .eq("user_id", config.user_id)
-          .order("sort_order", { ascending: true })
-      : { data: null };
+    // Fetch product cards for ALL users (manual + Shopify)
+    const { data: productCardsData } = await supabase
+      .from("product_cards")
+      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
 
     // Get last 20 messages for context
     const { data: messages, error: msgError } = await supabase
