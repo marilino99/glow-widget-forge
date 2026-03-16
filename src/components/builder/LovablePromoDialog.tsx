@@ -54,6 +54,11 @@ const LovablePromoDialog = () => {
           </p>
         </div>
 
+        <img
+          src={promoBanner}
+          alt="Lovable x WidJet promo"
+          className="w-full rounded-xl"
+        />
 
         <div className="flex gap-3">
           <Button variant="outline" className="flex-1" onClick={handleDismiss}>
