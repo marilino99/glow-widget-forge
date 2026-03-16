@@ -788,12 +788,13 @@ const Builder = () => {
                                   href="https://www.producthunt.com/posts/widjet"
                                   target="_blank"
                                   rel="noopener noreferrer"
+                                  onClick={() => setPhLinkClicked(true)}
                                   className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
                                 >
                                   <ExternalLink className="h-3 w-3" />
                                   Upvote on Product Hunt
                                 </a>
-                                {!phUpvotePending ? (
+                                {phLinkClicked && !phUpvotePending ? (
                                   <button
                                     onClick={() => {
                                       setPhUpvotePending(true);
