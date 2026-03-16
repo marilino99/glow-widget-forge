@@ -187,6 +187,7 @@ const Builder = () => {
    const [showAllChannels, setShowAllChannels] = useState(false);
     const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
    const [changelogDetailOpen, setChangelogDetailOpen] = useState(false);
+   const [notifPopoverOpen, setNotifPopoverOpen] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
   const [promoClaimed, setPromoClaimed] = useState(false);
