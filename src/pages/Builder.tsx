@@ -673,10 +673,13 @@ const Builder = () => {
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
-            <Popover open={notifPopoverOpen} onOpenChange={(open) => { setNotifPopoverOpen(open); if (!open) setChangelogDetailOpen(false); }}>
+            <Popover open={notifPopoverOpen} onOpenChange={(open) => { setNotifPopoverOpen(open); if (open) setNotifUnread(false); if (!open) setChangelogDetailOpen(false); }}>
               <PopoverTrigger asChild>
-                <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
+                <button className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                   <Bell className="h-4 w-4 text-foreground" />
+                  {notifUnread && (
+                    <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive" />
+                  )}
                 </button>
               </PopoverTrigger>
               <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
