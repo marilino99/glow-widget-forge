@@ -1,6 +1,30 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 
+const POSTHOG_API_KEY = "phc_2MpEseLU5gXmDehBfI06stdVCsIbd7RWtQqi7qmvhue";
+const POSTHOG_HOST = "https://eu.i.posthog.com";
+
+async function trackPosthogEvent(
+  distinctId: string,
+  event: string,
+  properties: Record<string, unknown> = {}
+) {
+  try {
+    await fetch(`${POSTHOG_HOST}/capture/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: POSTHOG_API_KEY,
+        event,
+        distinct_id: distinctId,
+        properties: { ...properties, $lib: "server" },
+      }),
+    });
+  } catch (e) {
+    console.error("PostHog tracking error:", e);
+  }
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
