@@ -89,7 +89,7 @@ const ChoosePlan = () => {
     setLoading(planKey);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { returnUrl: window.location.origin, billingInterval: isAnnual ? "year" : "month", plan: planKey },
+        body: { returnUrl: window.location.origin, billingInterval: isAnnual ? "year" : "month", plan: planKey, currency },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
