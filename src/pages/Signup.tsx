@@ -22,6 +22,16 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (isDisposableEmail(email)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid email",
+        description: "Please use a valid, non-temporary email address.",
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error: signupError } = await supabase.auth.signUp({
         email,
