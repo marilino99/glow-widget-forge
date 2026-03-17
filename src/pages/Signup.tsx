@@ -9,6 +9,7 @@ import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useToast } from "@/hooks/use-toast";
+import { isDisposableEmail } from "@/lib/disposableEmails";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +21,16 @@ const Signup = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (isDisposableEmail(email)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid email",
+        description: "Please use a valid, non-temporary email address.",
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data, error: signupError } = await supabase.auth.signUp({
