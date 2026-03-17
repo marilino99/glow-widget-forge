@@ -1791,31 +1791,6 @@ Deno.serve(async (req) => {
       });
       lastMessageId = msg.id;
 
-      // Show feedback thumbs after AI responses (from 2nd AI message onward, max once)
-      if (msg.sender_type === 'owner' && aiMessageCount >= 2 && !feedbackShown[msg.id] && Object.keys(feedbackShown).length === 0) {
-        feedbackShown[msg.id] = true;
-        var fb = d.createElement('div');
-        fb.className = 'wj-feedback';
-        var thumbUp = d.createElement('button');
-        thumbUp.className = 'wj-feedback-btn';
-        thumbUp.innerHTML = '👍';
-        var thumbDown = d.createElement('button');
-        thumbDown.className = 'wj-feedback-btn';
-        thumbDown.innerHTML = '👎';
-        thumbUp.onclick = function() {
-          thumbUp.classList.add('selected');
-          thumbDown.style.display = 'none';
-          sendMessageText('👍');
-        };
-        thumbDown.onclick = function() {
-          thumbDown.classList.add('selected');
-          thumbUp.style.display = 'none';
-          sendMessageText('👎');
-        };
-        fb.appendChild(thumbUp);
-        fb.appendChild(thumbDown);
-        chatMsgs.appendChild(fb);
-      }
 
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
