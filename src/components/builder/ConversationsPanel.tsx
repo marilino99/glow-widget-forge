@@ -541,7 +541,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         {isOnline(selectedConversation.last_message_at) ? "Active" : "Closed by user"}
                       </span>
                     </div>
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Sentiment</span>
                       <button
                         onClick={() => onUpgrade?.()}
