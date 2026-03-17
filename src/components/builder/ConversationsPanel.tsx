@@ -52,12 +52,21 @@ interface Conversation {
   system: string | null;
 }
 
+interface ProductMeta {
+  title: string;
+  imageUrl?: string | null;
+  productUrl?: string | null;
+  price?: string | null;
+  shopifyVariantId?: string | null;
+}
+
 interface ChatMessage {
   id: string;
   conversation_id: string;
   sender_type: "visitor" | "owner";
   content: string;
   created_at: string;
+  metadata?: { products?: ProductMeta[] } | null;
 }
 
 type FilterType = "all" | "assign_to_me" | "unassigned" | "resolved" | "deleted";
