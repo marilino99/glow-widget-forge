@@ -503,7 +503,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 4: Details panel - always visible */}
-      <div className="hidden md:flex w-72 shrink-0 flex-col border-l border-border bg-background">
+      <div className="hidden md:flex w-72 shrink-0 flex-col border-l border-border bg-background overflow-hidden">
         {/* Tabs */}
         <div className="flex border-b border-border">
           <button
@@ -535,13 +535,13 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 <div className="space-y-4">
                   {/* Key details table */}
                   <div className="space-y-3.5">
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Status</span>
                       <span className="text-sm font-medium text-foreground">
                         {isOnline(selectedConversation.last_message_at) ? "Active" : "Closed by user"}
                       </span>
                     </div>
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Sentiment</span>
                       <button
                         onClick={() => onUpgrade?.()}
@@ -551,11 +551,11 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         <span className="rounded bg-foreground px-1.5 py-0.5 text-[10px] font-semibold leading-none text-background">PLUS</span>
                       </button>
                     </div>
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Assignee</span>
                       <span className="text-sm font-medium text-foreground">WidjetAI</span>
                     </div>
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">ID</span>
                       <span
                         className="text-sm font-mono text-foreground truncate min-w-0 cursor-pointer hover:text-foreground/70 transition-colors"
@@ -565,7 +565,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         {selectedConversation.id}
                       </span>
                     </div>
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Channel</span>
                       <div className="flex items-center gap-1.5">
                         <Globe className="h-3.5 w-3.5 text-foreground" />
