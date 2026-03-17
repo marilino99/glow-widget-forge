@@ -551,7 +551,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         <span className="rounded bg-foreground px-1.5 py-0.5 text-[10px] font-semibold leading-none text-background">PLUS</span>
                       </button>
                     </div>
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Assignee</span>
                       <span className="text-sm font-medium text-foreground">WidjetAI</span>
                     </div>
