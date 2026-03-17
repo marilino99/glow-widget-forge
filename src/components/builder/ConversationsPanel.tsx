@@ -503,7 +503,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 4: Details panel - always visible */}
-      <div className="hidden md:flex w-72 shrink-0 flex-col border-l border-border bg-background overflow-hidden">
+      <div className="hidden md:flex w-72 shrink-0 flex-col border-l border-border bg-background">
         {/* Tabs */}
         <div className="flex border-b border-border">
           <button
