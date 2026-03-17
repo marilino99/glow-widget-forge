@@ -565,7 +565,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         {selectedConversation.id}
                       </span>
                     </div>
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Channel</span>
                       <div className="flex items-center gap-1.5">
                         <Globe className="h-3.5 w-3.5 text-foreground" />
