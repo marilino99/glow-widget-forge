@@ -535,7 +535,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 <div className="space-y-4">
                   {/* Key details table */}
                   <div className="space-y-3.5">
-                    <div className="flex items-start">
+                    <div className="flex items-start min-w-0">
                       <span className="w-24 shrink-0 text-sm text-muted-foreground">Status</span>
                       <span className="text-sm font-medium text-foreground">
                         {isOnline(selectedConversation.last_message_at) ? "Active" : "Closed by user"}
