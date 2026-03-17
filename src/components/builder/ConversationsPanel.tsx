@@ -503,7 +503,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 4: Details panel - always visible */}
-      <div className="hidden md:flex w-72 shrink-0 flex-col border-l border-border bg-background overflow-hidden">
+      <div className="hidden md:flex w-72 shrink-0 flex-col border-l border-border bg-background">
         {/* Tabs */}
         <div className="flex border-b border-border">
           <button
@@ -660,10 +660,10 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                   </button>
                   {customerInfoOpen && (
                     <div className="space-y-3 pb-2">
-                      <div className="flex items-start">
-                        <span className="w-28 shrink-0 text-sm text-muted-foreground">External ID</span>
+                      <div className="flex items-start min-w-0">
+                        <span className="w-24 shrink-0 text-sm text-muted-foreground">External ID</span>
                         <span
-                          className="text-sm font-mono text-foreground truncate cursor-pointer hover:text-foreground/70 transition-colors"
+                          className="text-sm font-mono text-foreground truncate min-w-0 cursor-pointer hover:text-foreground/70 transition-colors"
                           title="Double-click to copy"
                           onDoubleClick={() => navigator.clipboard.writeText(selectedConversation.visitor_id)}
                         >
@@ -671,32 +671,32 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                         </span>
                       </div>
                       {selectedConversation.region && (
-                        <div className="flex items-start">
-                          <span className="w-28 shrink-0 text-sm text-muted-foreground">Region</span>
+                        <div className="flex items-start min-w-0">
+                          <span className="w-24 shrink-0 text-sm text-muted-foreground">Region</span>
                           <span className="text-sm text-foreground">{selectedConversation.region}</span>
                         </div>
                       )}
                       {selectedConversation.country && (
-                        <div className="flex items-start">
-                          <span className="w-28 shrink-0 text-sm text-muted-foreground">Country</span>
+                        <div className="flex items-start min-w-0">
+                          <span className="w-24 shrink-0 text-sm text-muted-foreground">Country</span>
                           <span className="text-sm text-foreground">{selectedConversation.country}</span>
                         </div>
                       )}
                       {selectedConversation.city && (
-                        <div className="flex items-start">
-                          <span className="w-28 shrink-0 text-sm text-muted-foreground">City</span>
+                        <div className="flex items-start min-w-0">
+                          <span className="w-24 shrink-0 text-sm text-muted-foreground">City</span>
                           <span className="text-sm text-foreground">{selectedConversation.city}</span>
                         </div>
                       )}
                       {selectedConversation.browser && (
-                        <div className="flex items-start">
-                          <span className="w-28 shrink-0 text-sm text-muted-foreground">Browser</span>
+                        <div className="flex items-start min-w-0">
+                          <span className="w-24 shrink-0 text-sm text-muted-foreground">Browser</span>
                           <span className="text-sm text-foreground">{selectedConversation.browser}</span>
                         </div>
                       )}
                       {selectedConversation.system && (
-                        <div className="flex items-start">
-                          <span className="w-28 shrink-0 text-sm text-muted-foreground">System</span>
+                        <div className="flex items-start min-w-0">
+                          <span className="w-24 shrink-0 text-sm text-muted-foreground">System</span>
                           <span className="text-sm text-foreground">{selectedConversation.system}</span>
                         </div>
                       )}
