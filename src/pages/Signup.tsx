@@ -9,6 +9,7 @@ import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useToast } from "@/hooks/use-toast";
+import { isDisposableEmail } from "@/lib/disposableEmails";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
