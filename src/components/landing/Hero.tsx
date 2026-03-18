@@ -66,15 +66,8 @@ const Hero = () => {
             </div>
 
             {/* Social proof */}
-            <div className="flex items-center gap-1.5">
-              <div className="relative h-8 w-14">
-                <img src="https://i.pravatar.cc/80?img=5" alt="" className="absolute left-0 top-0 z-10 h-8 w-8 rounded-xl border-[1.5px] border-background bg-background object-cover shadow-sm" />
-                <img src="https://i.pravatar.cc/80?img=49" alt="" className="absolute left-3 top-0 z-20 h-8 w-8 rounded-xl border-[1.5px] border-background bg-background object-cover shadow-sm" />
-                <img src="https://i.pravatar.cc/80?img=44" alt="" className="absolute left-6 top-0 z-30 h-8 w-8 rounded-xl border-[1.5px] border-background bg-background object-cover shadow-md" />
-              </div>
-              <p className="text-sm leading-relaxed" style={{ color: '#999999' }}>
-                <span className="font-semibold text-foreground">187+ widgets</span> already published
-              </p>
+            <div className="flex items-center">
+              <img src={g2Badge} alt="G2 4.8 score, +120 reviews" className="h-8" />
             </div>
           </motion.div>
         </div>
