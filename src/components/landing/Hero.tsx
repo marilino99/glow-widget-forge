@@ -67,7 +67,7 @@ const Hero = () => {
 
             {/* Social proof */}
             <div className="flex items-center">
-              <img src={g2Badge} alt="G2 4.4 score, +60 reviews" className="w-[150px]" />
+              <img src={g2Badge} alt="G2 4.4 score, +120 reviews" className="w-[150px]" />
             </div>
           </motion.div>
         </div>
