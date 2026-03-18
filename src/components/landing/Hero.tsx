@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import widgetPreview from "@/assets/widget-preview-hero.png";
-import g2Badge from "@/assets/g2-badge.png";
+import g2Badge from "@/assets/g2-badge.svg";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 
 const fadeUp = {
