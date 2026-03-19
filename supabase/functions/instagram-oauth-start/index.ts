@@ -44,17 +44,17 @@ Deno.serve(async (req) => {
     const callbackUrl = `${supabaseUrl}/functions/v1/instagram-oauth-callback`;
     const state = btoa(JSON.stringify({ user_id: user.id }));
 
-    // Request permissions for Instagram messaging
+    // Use Instagram Login flow (not Facebook Login)
     const scopes = [
       "instagram_basic",
       "instagram_manage_messages",
-      "pages_manage_metadata",
-      "pages_show_list",
     ].join(",");
 
     const authUrl =
-      `https://www.facebook.com/v21.0/dialog/oauth?` +
-      `client_id=${appId}` +
+      `https://www.instagram.com/oauth/authorize?` +
+      `enable_fb_login=0` +
+      `&force_authentication=1` +
+      `&client_id=${appId}` +
       `&redirect_uri=${encodeURIComponent(callbackUrl)}` +
       `&state=${encodeURIComponent(state)}` +
       `&scope=${encodeURIComponent(scopes)}` +
