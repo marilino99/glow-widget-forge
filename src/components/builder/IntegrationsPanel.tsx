@@ -4,8 +4,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Progress } from "@/components/ui/progress";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import calendlyLogo from "@/assets/logo-calendly.png";
+import instagramLogo from "@/assets/logo-instagram.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import { useCalendlyConnection } from "@/hooks/useCalendlyConnection";
+import { useInstagramDMConnection } from "@/hooks/useInstagramDMConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
@@ -13,9 +15,11 @@ import { useEffect, useRef } from "react";
 const IntegrationsPanel = () => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const calendly = useCalendlyConnection();
+  const instagram = useInstagramDMConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [calendlyDisconnectOpen, setCalendlyDisconnectOpen] = useState(false);
+  const [instagramDisconnectOpen, setInstagramDisconnectOpen] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -228,6 +232,79 @@ const IntegrationsPanel = () => {
               </button>
             </div>
           </div>
+
+          {/* Instagram DM Card */}
+          <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
+            <div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E1306C]/10">
+                <img src={instagramLogo} alt="Instagram" className="h-7 w-7 object-contain" />
+              </div>
+
+              <h3 className="mt-3.5 text-sm font-semibold text-foreground">Instagram DM</h3>
+
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                Auto-reply to Instagram DMs with AI — always-on support, even after hours.
+              </p>
+
+              {instagram.connection && (
+                <div className="mt-2 flex flex-col gap-0.5">
+                  <span className="inline-flex items-center gap-1 text-xs text-green-600">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Connected
+                  </span>
+                  {instagram.connection.instagram_username && (
+                    <span className="text-[11px] text-muted-foreground">
+                      @{instagram.connection.instagram_username}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="mt-4 flex items-center gap-2">
+              {instagram.isLoading ? (
+                <button disabled className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-muted-foreground cursor-not-allowed opacity-60">
+                  Loading…
+                </button>
+              ) : instagram.connection ? (
+                <>
+                  <button
+                    disabled
+                    className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-green-600 cursor-default inline-flex items-center justify-center gap-1.5"
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Connected
+                  </button>
+                  <button
+                    onClick={() => setInstagramDisconnectOpen(true)}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                    title="Disconnect"
+                  >
+                    <Unplug className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => instagram.connectOAuth()}
+                  disabled={instagram.isConnecting}
+                  className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
+                >
+                  {instagram.isConnecting ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Connecting…
+                    </>
+                  ) : (
+                    "Connect"
+                  )}
+                </button>
+              )}
+              <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                <BookOpen className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -269,6 +346,26 @@ const IntegrationsPanel = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => calendly.disconnect()}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Disconnect
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={instagramDisconnectOpen} onOpenChange={setInstagramDisconnectOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disconnect Instagram DM?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disconnect your Instagram account? AI auto-replies to DMs will stop working.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => instagram.disconnect()}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Disconnect
