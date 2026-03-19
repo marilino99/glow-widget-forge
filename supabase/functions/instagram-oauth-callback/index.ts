@@ -24,14 +24,18 @@ Deno.serve(async (req) => {
     const appUrl = Deno.env.get("APP_URL") || "https://widjett.lovable.app";
     const callbackUrl = `${supabaseUrl}/functions/v1/instagram-oauth-callback`;
 
-    // 1. Exchange code for short-lived user token
-    const tokenRes = await fetch(
-      `https://graph.facebook.com/v21.0/oauth/access_token?` +
-      `client_id=${appId}` +
-      `&redirect_uri=${encodeURIComponent(callbackUrl)}` +
-      `&client_secret=${appSecret}` +
-      `&code=${code}`
-    );
+    // 1. Exchange code for short-lived token via Instagram API
+    const tokenRes = await fetch("https://api.instagram.com/oauth/access_token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: appId,
+        client_secret: appSecret,
+        grant_type: "authorization_code",
+        redirect_uri: callbackUrl,
+        code,
+      }),
+    });
 
     if (!tokenRes.ok) {
       console.error("Token exchange failed:", await tokenRes.text());
@@ -43,94 +47,33 @@ Deno.serve(async (req) => {
 
     const tokenData = await tokenRes.json();
     const shortLivedToken = tokenData.access_token;
+    const igUserId = String(tokenData.user_id);
 
     // 2. Exchange for long-lived token
     const longLivedRes = await fetch(
-      `https://graph.facebook.com/v21.0/oauth/access_token?` +
-      `grant_type=fb_exchange_token` +
-      `&client_id=${appId}` +
+      `https://graph.instagram.com/access_token?` +
+      `grant_type=ig_exchange_token` +
       `&client_secret=${appSecret}` +
-      `&fb_exchange_token=${shortLivedToken}`
+      `&access_token=${shortLivedToken}`
     );
 
-    let userToken = shortLivedToken;
+    let longLivedToken = shortLivedToken;
     if (longLivedRes.ok) {
       const llData = await longLivedRes.json();
-      userToken = llData.access_token || shortLivedToken;
+      longLivedToken = llData.access_token || shortLivedToken;
     }
 
-    // 3. Get user's Facebook pages
-    const pagesRes = await fetch(
-      `https://graph.facebook.com/v21.0/me/accounts?access_token=${userToken}`
-    );
-
-    if (!pagesRes.ok) {
-      console.error("Pages fetch failed:", await pagesRes.text());
-      return new Response(null, {
-        status: 302,
-        headers: { Location: `${appUrl}/builder?instagram_error=pages_fetch` },
-      });
-    }
-
-    const pagesData = await pagesRes.json();
-    const pages = pagesData.data || [];
-
-    if (pages.length === 0) {
-      return new Response(null, {
-        status: 302,
-        headers: { Location: `${appUrl}/builder?instagram_error=no_pages` },
-      });
-    }
-
-    // 4. Find page connected to Instagram
-    let igUserId = "";
+    // 3. Get Instagram username
     let igUsername = "";
-    let selectedPage: any = null;
-
-    for (const page of pages) {
-      const igRes = await fetch(
-        `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`
-      );
-      if (igRes.ok) {
-        const igData = await igRes.json();
-        if (igData.instagram_business_account?.id) {
-          igUserId = igData.instagram_business_account.id;
-          selectedPage = page;
-
-          // Get Instagram username
-          const profileRes = await fetch(
-            `https://graph.facebook.com/v21.0/${igUserId}?fields=username&access_token=${page.access_token}`
-          );
-          if (profileRes.ok) {
-            const profileData = await profileRes.json();
-            igUsername = profileData.username || "";
-          }
-          break;
-        }
-      }
-    }
-
-    if (!selectedPage || !igUserId) {
-      return new Response(null, {
-        status: 302,
-        headers: { Location: `${appUrl}/builder?instagram_error=no_instagram` },
-      });
-    }
-
-    // 5. Subscribe to webhook for the page
-    await fetch(
-      `https://graph.facebook.com/v21.0/${selectedPage.id}/subscribed_apps`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subscribed_fields: ["messages"],
-          access_token: selectedPage.access_token,
-        }),
-      }
+    const profileRes = await fetch(
+      `https://graph.instagram.com/v21.0/me?fields=user_id,username&access_token=${longLivedToken}`
     );
+    if (profileRes.ok) {
+      const profileData = await profileRes.json();
+      igUsername = profileData.username || "";
+    }
 
-    // 6. Save connection to database
+    // 4. Save connection to database
     const adminClient = createClient(supabaseUrl, serviceKey);
 
     const { error: upsertError } = await adminClient
@@ -140,8 +83,8 @@ Deno.serve(async (req) => {
           user_id: stateData.user_id,
           instagram_user_id: igUserId,
           instagram_username: igUsername,
-          page_id: selectedPage.id,
-          page_access_token: selectedPage.access_token,
+          page_id: igUserId,
+          page_access_token: longLivedToken,
         },
         { onConflict: "user_id" }
       );
