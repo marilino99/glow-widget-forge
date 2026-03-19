@@ -44,16 +44,17 @@ Deno.serve(async (req) => {
     const callbackUrl = `${supabaseUrl}/functions/v1/instagram-oauth-callback`;
     const state = btoa(JSON.stringify({ user_id: user.id }));
 
-    // Use Instagram Login flow (not Facebook Login)
+    // Use Instagram Business Login flow with the current official parameters/scopes
     const scopes = [
-      "instagram_basic",
-      "instagram_manage_messages",
+      "instagram_business_basic",
+      "instagram_business_manage_messages",
+      "instagram_business_manage_comments",
     ].join(",");
 
     const authUrl =
       `https://www.instagram.com/oauth/authorize?` +
-      `enable_fb_login=0` +
-      `&force_authentication=1` +
+      `enable_fb_login=false` +
+      `&force_reauth=true` +
       `&client_id=${appId}` +
       `&redirect_uri=${encodeURIComponent(callbackUrl)}` +
       `&state=${encodeURIComponent(state)}` +
