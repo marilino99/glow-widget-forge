@@ -100,6 +100,23 @@ export const useInstagramDMConnection = () => {
       const { url } = res.data as { url: string };
 
       if (url) {
+        const isEmbeddedPreview = window.top !== window;
+
+        if (isEmbeddedPreview) {
+          const popup = window.open(url, "_blank", "noopener,noreferrer");
+
+          if (!popup) {
+            throw new Error("Consenti i popup e riprova il collegamento Instagram.");
+          }
+
+          toast({
+            title: "Continua in una nuova scheda",
+            description: "Instagram si apre fuori dal preview. Dopo l'autorizzazione torna qui e aggiorna la pagina.",
+          });
+          setIsConnecting(false);
+          return;
+        }
+
         window.location.href = url;
         return;
       }
