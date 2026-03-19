@@ -258,6 +258,39 @@ export type Database = {
         }
         Relationships: []
       }
+      instagram_connections: {
+        Row: {
+          connected_at: string
+          id: string
+          instagram_user_id: string
+          instagram_username: string | null
+          page_access_token: string
+          page_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          connected_at?: string
+          id?: string
+          instagram_user_id: string
+          instagram_username?: string | null
+          page_access_token: string
+          page_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          connected_at?: string
+          id?: string
+          instagram_user_id?: string
+          instagram_username?: string | null
+          page_access_token?: string
+          page_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       instagram_posts: {
         Row: {
           author_name: string | null
@@ -569,6 +602,7 @@ export type Database = {
           google_business_url: string | null
           google_reviews_enabled: boolean
           id: string
+          instagram_dm_enabled: boolean
           instagram_enabled: boolean
           language: string
           logo: string | null
@@ -614,6 +648,7 @@ export type Database = {
           google_business_url?: string | null
           google_reviews_enabled?: boolean
           id?: string
+          instagram_dm_enabled?: boolean
           instagram_enabled?: boolean
           language?: string
           logo?: string | null
@@ -659,6 +694,7 @@ export type Database = {
           google_business_url?: string | null
           google_reviews_enabled?: boolean
           id?: string
+          instagram_dm_enabled?: boolean
           instagram_enabled?: boolean
           language?: string
           logo?: string | null
