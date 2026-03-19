@@ -4,8 +4,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Progress } from "@/components/ui/progress";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import calendlyLogo from "@/assets/logo-calendly.png";
+import instagramLogo from "@/assets/logo-instagram.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import { useCalendlyConnection } from "@/hooks/useCalendlyConnection";
+import { useInstagramDMConnection } from "@/hooks/useInstagramDMConnection";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
