@@ -240,7 +240,7 @@ const IntegrationsPanel = () => {
                 <img src={instagramLogo} alt="Instagram" className="h-9 w-9 object-contain" />
               </div>
 
-              <h3 className="mt-3.5 text-sm font-semibold text-foreground">Instagram DM</h3>
+              <h3 className="mt-3.5 text-sm font-semibold text-foreground">Instagram</h3>
 
               <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
                 Auto-reply to Instagram DMs with AI — always-on support, even after hours.
