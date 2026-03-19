@@ -237,7 +237,7 @@ const IntegrationsPanel = () => {
           <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
             <div>
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E1306C]/10">
-                <img src={instagramLogo} alt="Instagram" className="h-7 w-7 object-contain" />
+                <img src={instagramLogo} alt="Instagram" className="h-9 w-9 object-contain" />
               </div>
 
               <h3 className="mt-3.5 text-sm font-semibold text-foreground">Instagram DM</h3>
