@@ -5,6 +5,25 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const code = url.searchParams.get("code");
     const state = url.searchParams.get("state");
+    const errorParam = url.searchParams.get("error");
+    const errorReason = url.searchParams.get("error_reason") || "";
+    const errorDescription = url.searchParams.get("error_description") || "";
+
+    const appUrl = Deno.env.get("APP_URL") || "https://widjett.lovable.app";
+
+    // Handle Meta OAuth errors (e.g. insufficient role, user denied)
+    if (errorParam) {
+      console.error("Instagram OAuth error:", errorParam, errorReason, errorDescription);
+      const desc = errorDescription.toLowerCase();
+      let errorCode = "oauth_denied";
+      if (desc.includes("insufficient developer role") || desc.includes("insufficient role")) {
+        errorCode = "insufficient_role";
+      }
+      return new Response(null, {
+        status: 302,
+        headers: { Location: `${appUrl}/builder?instagram_error=${errorCode}` },
+      });
+    }
 
     if (!code || !state) {
       return new Response("Missing required parameters", { status: 400 });

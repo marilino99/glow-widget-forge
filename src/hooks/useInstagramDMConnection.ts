@@ -41,6 +41,8 @@ export const useInstagramDMConnection = () => {
         no_instagram: "Nessun account Instagram Business trovato collegato alle tue pagine Facebook.",
         db_save: "Errore nel salvataggio della connessione. Riprova.",
         internal: "Errore interno. Riprova.",
+        insufficient_role: "L'account non ha un ruolo autorizzato nella app Meta. Aggiungi l'account come Tester nella dashboard Meta e accetta l'invito, oppure porta l'app in modalità Live.",
+        oauth_denied: "L'autorizzazione è stata negata o annullata dall'utente.",
       };
       toast({
         title: "Errore connessione Instagram",
