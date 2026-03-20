@@ -240,7 +240,8 @@ const AdminDashboard = () => {
                 {statCards.map((card) => (
                   <div
                     key={card.label}
-                    className="rounded-xl border border-border bg-card p-4 transition-shadow hover:shadow-md"
+                    className={`rounded-xl border border-border bg-card p-4 transition-shadow hover:shadow-md ${card.onClick ? "cursor-pointer" : ""}`}
+                    onClick={card.onClick}
                   >
                     <div className="flex items-center gap-2">
                       <card.icon className={`h-4 w-4 ${card.color}`} />
