@@ -32,6 +32,13 @@ interface TopUser {
   lastActive: string | null;
 }
 
+interface ActiveWidgetUser {
+  email: string;
+  contactName: string;
+  websiteUrl: string | null;
+  widgetId: string;
+}
+
 interface AdminStats {
   totalUsers: number;
   totalAuthUsers: number;
@@ -47,6 +54,7 @@ interface AdminStats {
   avgMessagesPerUser: number;
   activeUsersInPeriod: number;
   usersWithConversationsInPeriod: number;
+  activeWidgetUsers: ActiveWidgetUser[];
 }
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
