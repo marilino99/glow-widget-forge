@@ -71,6 +71,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("aiResponses");
   const [sortAsc, setSortAsc] = useState(false);
+  const [showActiveWidgets, setShowActiveWidgets] = useState(false);
 
   useEffect(() => {
     if (!authLoading && (!user || user.id !== ADMIN_USER_ID)) {
