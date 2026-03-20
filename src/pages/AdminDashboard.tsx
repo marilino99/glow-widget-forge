@@ -395,6 +395,48 @@ const AdminDashboard = () => {
           )}
         </div>
       </ScrollArea>
+
+      {/* Active Widgets Dialog */}
+      {showActiveWidgets && stats && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowActiveWidgets(false)}>
+          <div className="mx-4 w-full max-w-2xl rounded-xl border border-border bg-card shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
+              <h2 className="text-sm font-semibold text-foreground">
+                Active Widgets ({stats.activeWidgetUsers?.length || 0})
+              </h2>
+              <Button variant="ghost" size="sm" onClick={() => setShowActiveWidgets(false)}>✕</Button>
+            </div>
+            <ScrollArea className="max-h-[60vh]">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                    <th className="px-4 py-3">#</th>
+                    <th className="px-4 py-3">Email</th>
+                    <th className="px-4 py-3">Widget</th>
+                    <th className="px-4 py-3">Website</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(stats.activeWidgetUsers || []).map((u, i) => (
+                    <tr key={u.widgetId} className="border-b border-border last:border-0 hover:bg-muted/50">
+                      <td className="px-4 py-2.5 text-muted-foreground">{i + 1}</td>
+                      <td className="px-4 py-2.5 text-xs font-medium text-foreground">{u.email}</td>
+                      <td className="px-4 py-2.5 text-xs text-muted-foreground">{u.contactName}</td>
+                      <td className="px-4 py-2.5 text-xs">
+                        {u.websiteUrl ? (
+                          <a href={u.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {u.websiteUrl.replace(/^https?:\/\//, "").slice(0, 30)}
+                          </a>
+                        ) : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollArea>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
