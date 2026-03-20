@@ -73,11 +73,19 @@ Deno.serve(async (req) => {
         : supabase.from("chat_messages").select("conversation_id, is_ai_response, sender_type, created_at").limit(10000),
       supabase.from("contacts").select("id, user_id, created_at").limit(5000),
       supabase.from("widget_events").select("widget_id").limit(2000),
-      supabase.auth.admin.listUsers({ perPage: 1000 }),
       supabase.from("profiles").select("user_id, created_at").order("created_at", { ascending: false }),
     ]);
 
-    const authUsers = authUsersRes.data?.users || [];
+    // Paginate auth users to get ALL users (not capped at 1000)
+    let authUsers: any[] = [];
+    let page = 1;
+    while (true) {
+      const { data: batch } = await supabase.auth.admin.listUsers({ page, perPage: 1000 });
+      const users = batch?.users || [];
+      authUsers = authUsers.concat(users);
+      if (users.length < 1000) break;
+      page++;
+    }
     const widgets = allWidgets.data || [];
     const conversations = allConversations.data || [];
     const messages = allMessages.data || [];
