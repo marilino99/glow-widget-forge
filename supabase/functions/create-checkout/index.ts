@@ -43,12 +43,12 @@ serve(async (req) => {
     
     const priceIds: Record<string, Record<string, string>> = {
       starter: {
-        month: "price_1T504R9qkctgdXPW3MdCa3Mp",
-        year: "price_1T505i9qkctgdXPWv7rzxoGL",
+        month: "price_1TD0bM2XQ3MRuWZvFcgsdZoN",
+        year: "price_1TD0c82XQ3MRuWZv2eWAvA8m",
       },
-      pro: {
-        month: "price_1T1N439qkctgdXPWs0PudObs",
-        year: "price_1T1N439qkctgdXPWJUIiKmGi",
+      business: {
+        month: "price_1TD0d42XQ3MRuWZvDQweyoS2",
+        year: "price_1TD0dS2XQ3MRuWZvZOl4lehz",
       },
     };
 
