@@ -1,42 +1,58 @@
 
-Obiettivo: sbloccare il collegamento Instagram per account diversi dal tester.
 
-Cosa ho verificato nel progetto:
-- Il flusso OAuth parte da `supabase/functions/instagram-oauth-start/index.ts` e reindirizza a Instagram Business Login.
-- Il callback `supabase/functions/instagram-oauth-callback/index.ts` salva la connessione solo dopo che Meta restituisce il `code`.
-- Nel frontend `src/hooks/useInstagramDMConnection.ts` oggi vengono mostrati solo errori generici (`token_exchange`, `db_save`, `internal`).
-- Non c’è nessun filtro nel nostro codice che limiti gli account: il blocco avviene prima, direttamente lato Meta.
+# Piano: Dashboard Admin Avanzata
 
-Perché succede:
-- L’errore `Insufficient Developer Role` indica quasi sempre che la tua app Meta è ancora in Development mode.
-- In Development mode, Meta consente il login solo ad account associati all’app con un ruolo valido (Administrator, Developer, Tester, ecc.).
-- Quindi un account Instagram “normale”, non invitato come tester/ruolo, viene bloccato da Meta prima ancora di tornare al callback della tua app.
+## Panoramica
 
-Cosa fare subito:
-1. Se vuoi solo testare internamente:
-   - aggiungi quell’account come Tester/Developer nella app Meta
-   - fai accettare l’invito dall’account invitato
-   - poi riprova il login
-2. Se vuoi far collegare account non-tester:
-   - porta la app in Live mode
-   - completa l’App Review per i permessi Instagram Messaging/business richiesti
-3. Verifica anche che l’account Instagram sia professionale/business e configurato correttamente secondo i requisiti Meta.
+Trasformare la dashboard admin attuale in uno strumento decisionale completo con filtri temporali, metriche di business avanzate e una tabella utenti arricchita.
 
-Piano di implementazione consigliato:
-1. Migliorare l’UX del collegamento Instagram nel builder:
-   - mostrare un avviso chiaro prima del click su “Connect” se l’app è in test/dev
-   - spiegare che in dev possono collegarsi solo tester/developer
-2. Migliorare la gestione errori del callback:
-   - intercettare meglio i fallimenti OAuth
-   - mostrare messaggi specifici invece di “Errore interno”
-3. Aggiungere una checklist guidata nella card Instagram:
-   - account invitato come tester
-   - invito accettato
-   - app in Live mode per utenti reali
-   - account Instagram professionale
-4. Opzionale: aggiungere un link/documentazione rapida nella UI per evitare questo blocco in futuro.
+## Cosa cambia
 
-Nota tecnica:
-- Questo non è principalmente un bug del codice attuale.
-- Il vero collo di bottiglia è la configurazione Meta e la modalità Development della app.
-- Il codice andrebbe però migliorato per rendere il problema subito comprensibile all’utente invece di lasciarlo “misterioso”.
+### 1. Filtro temporale globale (header)
+- Dropdown con preset: Oggi, 7 giorni, 30 giorni, 90 giorni, Tutto
+- Tutte le metriche e la tabella si aggiornano in base al periodo selezionato
+
+### 2. Metriche KPI migliorate (stat cards)
+Le 6 card attuali diventano 8, aggiungendo:
+- **Nuovi utenti nel periodo** (non solo totale, ma delta nel range selezionato)
+- **Tasso di attivazione** (% utenti che hanno almeno 1 conversazione)
+- **Media messaggi/utente** nel periodo
+- **Contatti raccolti** (dalla tabella `contacts`)
+
+### 3. Grafico signups dinamico
+- Si adatta al filtro temporale (7/30/90 giorni) invece di essere fisso a 7 giorni
+- Aggiunta linea di trend
+
+### 4. Tabella utenti completa con ricerca
+La tabella attuale mostra già email e website. Miglioramenti:
+- **Colonna "Signup date"** per sapere quando si è registrato
+- **Colonna "Last active"** (ultima conversazione)
+- **Colonna "Chatbot ON/OFF"** (se ha il chatbot abilitato)
+- **Colonna "Contatti raccolti"** per utente
+- **Barra di ricerca** per filtrare per email o website
+- **Ordinamento cliccabile** sulle colonne numeriche
+- Mostra **tutti gli utenti** (non solo chi ha messaggi), così vedi anche chi si è registrato ma non usa il prodotto
+
+### 5. Sezione "Users without activity"
+- Lista utenti registrati che non hanno mai avuto una conversazione (churn risk)
+
+## Modifiche tecniche
+
+### Edge Function `admin-stats`
+- Accetta parametro `?days=7|30|90|all` per filtrare nel periodo
+- Aggiunge query per contatti (`contacts` table, count per user)
+- Restituisce `signupDate` e `lastActive` per ogni utente
+- Restituisce lista completa utenti (anche quelli senza messaggi)
+- Filtra conversazioni/messaggi per `created_at` nel range
+
+### Frontend `AdminDashboard.tsx`
+- Stato `timeRange` con Select dropdown
+- Passa `days` param alla function invoke
+- Componente tabella con input di ricerca e sort state
+- Nuove stat card per contatti e activation rate
+- Grafico signups adattivo al periodo
+
+## File coinvolti
+1. `supabase/functions/admin-stats/index.ts` — filtro temporale, dati aggiuntivi
+2. `src/pages/AdminDashboard.tsx` — UI completa con filtri, ricerca, sort
+
