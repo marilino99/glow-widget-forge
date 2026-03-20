@@ -93,9 +93,9 @@ serve(async (req) => {
       const subscription = subscriptions.data[0];
       // Determine plan from product ID
       const productId = subscription.items.data[0]?.price?.product;
-      if (productId === "prod_U36GQsirConMMK" || productId === "prod_U36Iuwp618AUVM") {
+      if (productId === "prod_UBNMPep8u0nEKq") {
         plan = "starter";
-      } else {
+      } else if (productId === "prod_UBNNtKquOfDNIh") {
         plan = "pro";
       }
       try {
