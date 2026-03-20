@@ -52,7 +52,7 @@ serve(async (req) => {
       },
     };
 
-    const priceId = priceIds[plan]?.[billingInterval] || priceIds.pro.month;
+    const priceId = priceIds[plan]?.[billingInterval] || priceIds.business.month;
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
