@@ -186,20 +186,10 @@ const Builder = () => {
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
    const [showAllChannels, setShowAllChannels] = useState(false);
     const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
-   const [changelogDetailOpen, setChangelogDetailOpen] = useState(false);
    const [notifPopoverOpen, setNotifPopoverOpen] = useState(false);
-   const [notifUnread, setNotifUnread] = useState(true);
+   const [notifUnread, setNotifUnread] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
-  const [promoClaimed, setPromoClaimed] = useState(false);
-  const [promoClaimLoading, setPromoClaimLoading] = useState(false);
-  const [widgetIsLive, setWidgetIsLive] = useState(false);
-  const [phReviewUrl, setPhReviewUrl] = useState("");
-  const [phReviewSaved, setPhReviewSaved] = useState(false);
-  const [g2ReviewApproved, setG2ReviewApproved] = useState(false);
-  const [phUpvoted, setPhUpvoted] = useState(false);
-  const [phUpvotePending, setPhUpvotePending] = useState(false);
-  const [phLinkClicked, setPhLinkClicked] = useState(false);
   const [isRecentUser, setIsRecentUser] = useState(false);
 
   // Load user profile for top bar
