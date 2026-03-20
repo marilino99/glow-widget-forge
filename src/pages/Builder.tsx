@@ -196,17 +196,9 @@ const Builder = () => {
   useEffect(() => {
     const loadProfile = async () => {
       if (!user) return;
-      const { data } = await supabase.from("profiles").select("avatar_url, first_name, lovable_promo_claimed, g2_review_approved, created_at").eq("user_id", user.id).single();
+      const { data } = await supabase.from("profiles").select("avatar_url, first_name, created_at").eq("user_id", user.id).single();
       if (data?.avatar_url) setUserAvatarUrl(data.avatar_url);
       if (data?.first_name) setUserDisplayName(data.first_name);
-      if ((data as any)?.lovable_promo_claimed) setPromoClaimed(true);
-      if ((data as any)?.g2_review_approved) {
-        setG2ReviewApproved(true);
-        setPhReviewSaved(true);
-      }
-      // Check if PH upvote was already done
-      const { data: phLog } = await supabase.from("user_activity_logs").select("id").eq("user_id", user.id).eq("event_type", "ph_upvote_confirmed").limit(1);
-      if (phLog && phLog.length > 0) setPhUpvoted(true);
       // Users created from March 12, 2026 onwards see the Shopify announcement
       if (data?.created_at && new Date(data.created_at) >= new Date("2026-03-12T00:00:00Z")) {
         setIsRecentUser(true);
