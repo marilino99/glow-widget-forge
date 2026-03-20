@@ -226,6 +226,8 @@ Deno.serve(async (req) => {
       activationRate,
       totalContacts: totalContactsInPeriod,
       avgMessagesPerUser,
+      activeUsersInPeriod,
+      usersWithConversationsInPeriod,
     };
 
     return new Response(JSON.stringify(stats), {

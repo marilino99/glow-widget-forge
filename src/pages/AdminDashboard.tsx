@@ -152,13 +152,15 @@ const AdminDashboard = () => {
     ? [
         { label: "Total Users", value: stats.totalAuthUsers, icon: Users, color: "text-blue-500" },
         { label: "New in Period", value: stats.newUsersInPeriod, icon: TrendingUp, color: "text-green-500" },
-        { label: "Activation Rate", value: `${stats.activationRate}%`, icon: UserCheck, color: "text-amber-500" },
-        { label: "Widgets", value: stats.totalWidgets, icon: BarChart3, color: "text-emerald-500" },
-        { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-violet-500" },
-        { label: "Conversations", value: stats.totalConversations, icon: MessageCircle, color: "text-orange-500" },
+        { label: "Active Users", value: stats.activeUsersInPeriod, icon: UserCheck, color: "text-amber-500" },
+        { label: "Users w/ Convs", value: stats.usersWithConversationsInPeriod, icon: MessageCircle, color: "text-orange-500" },
+        { label: "Activation Rate", value: `${stats.activationRate}%`, icon: BarChart3, color: "text-emerald-500" },
+        { label: "Conversations", value: stats.totalConversations, icon: MessageCircle, color: "text-violet-500" },
         { label: "Messages", value: stats.totalMessages, icon: MessageCircle, color: "text-pink-500" },
         { label: "Contacts", value: stats.totalContacts, icon: Contact, color: "text-teal-500" },
         { label: "Avg Msgs/User", value: stats.avgMessagesPerUser, icon: Bot, color: "text-indigo-500" },
+        { label: "Widgets", value: stats.totalWidgets, icon: Globe, color: "text-sky-500" },
+        { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-lime-500" },
       ]
     : [];
 
