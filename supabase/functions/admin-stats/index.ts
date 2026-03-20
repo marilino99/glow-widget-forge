@@ -55,8 +55,8 @@ Deno.serve(async (req) => {
       allMessages,
       allContacts,
       activeWidgetsRes,
-      // authUsers fetched separately with pagination
       profilesRes,
+      activityLogsRes,
     ] = await Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }),
       supabase.from("widget_configurations").select("id", { count: "exact", head: true }),
@@ -74,6 +74,9 @@ Deno.serve(async (req) => {
       supabase.from("contacts").select("id, user_id, created_at").limit(5000),
       supabase.from("widget_events").select("widget_id").limit(2000),
       supabase.from("profiles").select("user_id, created_at").order("created_at", { ascending: false }),
+      sinceDate
+        ? supabase.from("user_activity_logs").select("user_id, created_at").gte("created_at", sinceDate).limit(10000)
+        : supabase.from("user_activity_logs").select("user_id, created_at").limit(10000),
     ]);
 
     // Paginate auth users to get ALL users (not capped at 1000)

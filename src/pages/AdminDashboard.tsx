@@ -45,6 +45,8 @@ interface AdminStats {
   activationRate: number;
   totalContacts: number;
   avgMessagesPerUser: number;
+  activeUsersInPeriod: number;
+  usersWithConversationsInPeriod: number;
 }
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
