@@ -49,9 +49,9 @@ const plans = [
   {
     name: "Business",
     monthlyPrice: 49,
-    annualPrice: 39,
-    monthlyPriceEur: 48,
-    annualPriceEur: 38,
+    annualPrice: 41,
+    monthlyPriceEur: 49,
+    annualPriceEur: 41,
     description: "For large teams looking for powerful and customizable AI support.",
     cta: "Get Started",
     highlighted: true,
