@@ -94,6 +94,16 @@ Deno.serve(async (req) => {
     const messages = allMessages.data || [];
     const contacts = allContacts.data || [];
     const profiles = profilesRes.data || [];
+    const activityLogs = activityLogsRes.data || [];
+
+    // Active users from activity logs in period
+    const activeUsersInPeriod = new Set(activityLogs.map((l: any) => l.user_id)).size;
+
+    // Users with conversations in period
+    const filteredConvsForCount = sinceDate
+      ? conversations.filter((c: any) => c.created_at && c.created_at >= sinceDate)
+      : conversations;
+    const usersWithConversationsInPeriod = new Set(filteredConvsForCount.map((c: any) => c.widget_owner_id)).size;
 
     // Build conversation owner map
     const convOwnerMap: Record<string, string> = {};
