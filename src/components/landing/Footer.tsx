@@ -125,6 +125,11 @@ const Footer = () => {
           ))}
         </div>
       </footer>
+
+      {/* Legal identity strip */}
+      <div className="bg-[hsl(0,0%,7%)] px-6 py-3 text-center text-xs text-white/40">
+        Mattia Pacchioni — C.F. PCCMTT02R01B819E
+      </div>
     </>
   );
 };
