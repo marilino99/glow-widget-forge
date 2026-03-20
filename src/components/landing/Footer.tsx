@@ -95,7 +95,7 @@ const Footer = () => {
             </div>
             <div className="flex flex-col gap-1">
               <p className="text-sm font-semibold text-foreground">{t("footer.madeInEu")}</p>
-              <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Widjet</p>
+              <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Widjet — All rights reserved</p>
             </div>
             {/* Language switcher */}
             <div className="flex items-center gap-1">
