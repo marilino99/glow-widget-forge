@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
       allMessages,
       allContacts,
       activeWidgetsRes,
-      authUsersRes,
+      // authUsers fetched separately with pagination
       profilesRes,
     ] = await Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }),
