@@ -9,12 +9,12 @@ import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import { useSubscription } from "@/hooks/useSubscription";
-import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ArrowRight, ExternalLink, Gift, Home, Palette, Puzzle } from "lucide-react";
+import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ExternalLink, Home, Palette, Puzzle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import widjetIcon from "@/assets/widjet-icon.png";
-import changelogFeatured from "@/assets/changelog-featured.png";
+
 import shopifyLogo from "@/assets/logo-shopify.png";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
@@ -186,37 +186,19 @@ const Builder = () => {
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
    const [showAllChannels, setShowAllChannels] = useState(false);
     const [widgetPopoverOpen, setWidgetPopoverOpen] = useState(false);
-   const [changelogDetailOpen, setChangelogDetailOpen] = useState(false);
    const [notifPopoverOpen, setNotifPopoverOpen] = useState(false);
-   const [notifUnread, setNotifUnread] = useState(true);
+   const [notifUnread, setNotifUnread] = useState(false);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null);
   const [userDisplayName, setUserDisplayName] = useState<string | null>(null);
-  const [promoClaimed, setPromoClaimed] = useState(false);
-  const [promoClaimLoading, setPromoClaimLoading] = useState(false);
-  const [widgetIsLive, setWidgetIsLive] = useState(false);
-  const [phReviewUrl, setPhReviewUrl] = useState("");
-  const [phReviewSaved, setPhReviewSaved] = useState(false);
-  const [g2ReviewApproved, setG2ReviewApproved] = useState(false);
-  const [phUpvoted, setPhUpvoted] = useState(false);
-  const [phUpvotePending, setPhUpvotePending] = useState(false);
-  const [phLinkClicked, setPhLinkClicked] = useState(false);
   const [isRecentUser, setIsRecentUser] = useState(false);
 
   // Load user profile for top bar
   useEffect(() => {
     const loadProfile = async () => {
       if (!user) return;
-      const { data } = await supabase.from("profiles").select("avatar_url, first_name, lovable_promo_claimed, g2_review_approved, created_at").eq("user_id", user.id).single();
+      const { data } = await supabase.from("profiles").select("avatar_url, first_name, created_at").eq("user_id", user.id).single();
       if (data?.avatar_url) setUserAvatarUrl(data.avatar_url);
       if (data?.first_name) setUserDisplayName(data.first_name);
-      if ((data as any)?.lovable_promo_claimed) setPromoClaimed(true);
-      if ((data as any)?.g2_review_approved) {
-        setG2ReviewApproved(true);
-        setPhReviewSaved(true);
-      }
-      // Check if PH upvote was already done
-      const { data: phLog } = await supabase.from("user_activity_logs").select("id").eq("user_id", user.id).eq("event_type", "ph_upvote_confirmed").limit(1);
-      if (phLog && phLog.length > 0) setPhUpvoted(true);
       // Users created from March 12, 2026 onwards see the Shopify announcement
       if (data?.created_at && new Date(data.created_at) >= new Date("2026-03-12T00:00:00Z")) {
         setIsRecentUser(true);
@@ -225,20 +207,6 @@ const Builder = () => {
     loadProfile();
   }, [user]);
 
-  // Check if widget is live (has impressions)
-  useEffect(() => {
-    const checkWidgetLive = async () => {
-      if (!config.id) return;
-      const { data } = await supabase
-        .from("widget_events")
-        .select("id")
-        .eq("widget_id", config.id)
-        .eq("event_type", "impression")
-        .limit(1);
-      if (data && data.length > 0) setWidgetIsLive(true);
-    };
-    checkWidgetLive();
-  }, [config.id]);
   
   // Track initial typography values for cancel functionality
   const [initialTypography, setInitialTypography] = useState({
@@ -683,7 +651,7 @@ const Builder = () => {
           </div>
           <div className="flex items-center gap-2">
             <FeedbackPopover userEmail={user?.email} />
-            <Popover open={notifPopoverOpen} onOpenChange={(open) => { setNotifPopoverOpen(open); if (open) setNotifUnread(false); if (!open) setChangelogDetailOpen(false); }}>
+            <Popover open={notifPopoverOpen} onOpenChange={(open) => { setNotifPopoverOpen(open); if (open) setNotifUnread(false); }}>
               <PopoverTrigger asChild>
                 <button className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                   <Bell className="h-4 w-4 text-foreground" />
@@ -694,193 +662,11 @@ const Builder = () => {
               </PopoverTrigger>
               <PopoverContent align="end" sideOffset={12} className="w-[380px] p-0 rounded-2xl shadow-xl border border-border overflow-hidden">
                 <div className="max-h-[480px] overflow-y-auto">
-
-                  {!changelogDetailOpen ? (
-                    <>
-                      {/* Lovable promo for all users */}
-                      <div className="p-5 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer group" onClick={() => setChangelogDetailOpen(true)}>
-                        <h3 className="text-base font-bold text-foreground mb-1.5 flex items-center gap-1.5">Get 3 months of Lovable Pro for free <ArrowRight className="h-4 w-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" /></h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                          Get 100 monthly credits for 3 months completely free. Start building faster today.
-                        </p>
-                        <img src={changelogFeatured} alt="Lovable x WidJet partnership" className="rounded-xl w-full object-cover" />
-                        <p className="text-xs text-muted-foreground mt-2">Just now</p>
-                      </div>
-                    </>
-                  ) : changelogDetailOpen ? (
-                    <div className="p-5">
-                      <button onClick={() => setChangelogDetailOpen(false)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
-                        <ChevronLeft className="h-4 w-4" />
-                        Back
-                      </button>
-                      <img src={changelogFeatured} alt="Lovable x WidJet partnership" className="rounded-xl w-full object-cover mb-4" />
-                      <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
-                        <Gift className="h-5 w-5 text-primary" />
-                        Get 3 months of Lovable Pro for free
-                      </h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                        Complete these 4 steps to unlock your exclusive <span className="font-semibold text-foreground">100 credits/month for 3 months</span>.
-                      </p>
-
-                      {/* Step 1: Widget Live */}
-                      <div className="space-y-3 mb-5">
-                        <div className="flex items-start gap-3">
-                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${widgetIsLive ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
-                            {widgetIsLive ? <Check className="h-3.5 w-3.5" /> : '1'}
-                          </span>
-                          <div className="flex-1">
-                            <p className={`text-sm font-medium ${widgetIsLive ? 'text-green-600 line-through' : 'text-foreground'}`}>Install the widget on your website</p>
-                            <p className="text-xs text-muted-foreground">We'll detect it automatically once it receives its first visit.</p>
-                          </div>
-                        </div>
-
-                        {/* Step 2: G2 Review */}
-                        <div className="flex items-start gap-3">
-                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${phReviewSaved ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
-                            {phReviewSaved ? <Check className="h-3.5 w-3.5" /> : '2'}
-                          </span>
-                          <div className="flex-1">
-                            <p className={`text-sm font-medium ${phReviewSaved ? 'text-green-600 line-through' : 'text-foreground'}`}>Leave a review on G2</p>
-                            {!phReviewSaved ? (
-                              <div className="mt-1.5 flex flex-col gap-1.5">
-                                <a
-                                  href="https://www.g2.com/products/widjet/take_survey"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
-                                >
-                                  <ExternalLink className="h-3 w-3" />
-                                  Write your review on G2
-                                </a>
-                                <div className="flex gap-1.5">
-                                  <input
-                                    type="url"
-                                    value={phReviewUrl}
-                                    onChange={(e) => setPhReviewUrl(e.target.value)}
-                                    placeholder="Paste your G2 review link"
-                                    className="flex-1 rounded-lg border border-border bg-muted px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                                  />
-                                  <button
-                                    disabled={!phReviewUrl.includes("g2.com")}
-                                    onClick={() => {
-                                      setPhReviewSaved(true);
-                                      if (user) {
-                                        supabase.from("user_activity_logs").insert({
-                                          user_id: user.id,
-                                          event_type: "g2_review_submitted",
-                                          metadata: { url: phReviewUrl },
-                                        });
-                                        supabase.functions.invoke("notify-review", {
-                                          body: { reviewUrl: phReviewUrl, userEmail: user.email },
-                                        });
-                                      }
-                                    }}
-                                    className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-40"
-                                    >
-                                      Confirm
-                                    </button>
-                                  </div>
-                                </div>
-                            ) : g2ReviewApproved ? (
-                              <p className="text-xs text-green-500 mt-0.5">Review approved ✓</p>
-                            ) : (
-                              <p className="text-xs text-amber-500 mt-0.5">Under review — we'll approve it shortly ⏳</p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Step 3: Product Hunt Upvote */}
-                        <div className="flex items-start gap-3">
-                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${phUpvoted ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
-                            {phUpvoted ? <Check className="h-3.5 w-3.5" /> : '3'}
-                          </span>
-                          <div className="flex-1">
-                            <p className={`text-sm font-medium ${phUpvoted ? 'text-green-600 line-through' : 'text-foreground'}`}>Upvote WidJet on Product Hunt</p>
-                            {!phUpvoted ? (
-                              <div className="mt-1.5 flex flex-col gap-1.5">
-                                <a
-                                  href="https://www.producthunt.com/posts/widjet"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={() => setPhLinkClicked(true)}
-                                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
-                                >
-                                  <ExternalLink className="h-3 w-3" />
-                                  Upvote on Product Hunt
-                                </a>
-                                {phLinkClicked && !phUpvotePending && (
-                                  <button
-                                    onClick={() => {
-                                      setPhUpvotePending(true);
-                                      if (user) {
-                                        supabase.from("user_activity_logs").insert({
-                                          user_id: user.id,
-                                          event_type: "ph_upvote_confirmed",
-                                          metadata: {},
-                                        });
-                                      }
-                                      setTimeout(() => {
-                                        setPhUpvotePending(false);
-                                        setPhUpvoted(true);
-                                      }, 3000);
-                                    }}
-                                    className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity w-fit"
-                                  >
-                                    I've upvoted ✓
-                                  </button>
-                                )}
-                                {phUpvotePending && (
-                                  <div className="flex items-center gap-2 text-xs text-amber-500 font-medium">
-                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                    Verifying upvote…
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-green-500 mt-0.5">Upvote confirmed ✓</p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Step 4: Claim */}
-                        <div className="flex items-start gap-3">
-                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${promoClaimed ? 'bg-green-100 text-green-600' : 'bg-primary/10 text-primary'}`}>
-                            {promoClaimed ? <Check className="h-3.5 w-3.5" /> : '4'}
-                          </span>
-                          <p className={`text-sm font-medium ${promoClaimed ? 'text-green-600 line-through' : 'text-foreground'}`}>Claim your free credits</p>
-                        </div>
-                      </div>
-
-                      {promoClaimed ? (
-                        <div className="flex items-center justify-center gap-2 w-full rounded-xl bg-muted text-muted-foreground font-medium py-2.5 text-sm cursor-default">
-                          <Check className="h-4 w-4" />
-                          Already claimed
-                        </div>
-                      ) : widgetIsLive && phReviewSaved && phUpvoted && !g2ReviewApproved ? (
-                        <div className="flex flex-col items-center gap-1 w-full rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 font-medium py-3 text-sm cursor-default border border-amber-200 dark:border-amber-800">
-                          <span>⏳ Our team is reviewing your submission</span>
-                          <span className="text-xs font-normal text-muted-foreground">We'll get back to you if you're selected!</span>
-                        </div>
-                      ) : (
-                        <button
-                          disabled={promoClaimLoading || !widgetIsLive || !g2ReviewApproved || !phUpvoted}
-                          onClick={async () => {
-                            if (!user) return;
-                            setPromoClaimLoading(true);
-                            await (supabase.from("profiles") as any).update({ lovable_promo_claimed: true }).eq("user_id", user.id);
-                            setPromoClaimed(true);
-                            setPromoClaimLoading(false);
-                            window.open("https://lovable.dev/lp/learnn-2512?reward_code=03aa3b40-4c2b-4f78-8cc5-7d7cb0588f97", "_blank", "noopener,noreferrer");
-                          }}
-                          className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-medium py-2.5 text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-                        >
-                          {promoClaimLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
-                          {!widgetIsLive ? 'Install widget first' : !g2ReviewApproved ? (phReviewSaved ? 'Waiting for approval' : 'Submit review first') : !phUpvoted ? 'Upvote on PH first' : 'Claim your free credits'}
-                        </button>
-                      )}
-                      <p className="text-[10px] text-muted-foreground mt-3 leading-tight">*Valid only for new Lovable accounts. Only 10 accounts will be selected based on the best review left on G2.com. Valid until 31.03.2026.</p>
-                    </div>
-                  ) : null}
+                  <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
+                    <Bell className="h-8 w-8 text-muted-foreground/40 mb-3" />
+                    <p className="text-sm font-medium text-foreground mb-1">No notifications</p>
+                    <p className="text-xs text-muted-foreground">You're all caught up! We'll notify you when something important happens.</p>
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
