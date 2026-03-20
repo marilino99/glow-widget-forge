@@ -169,13 +169,13 @@ const AdminDashboard = () => {
         { label: "Contacts", value: stats.totalContacts, icon: Contact, color: "text-teal-500" },
         { label: "Avg Msgs/User", value: stats.avgMessagesPerUser, icon: Bot, color: "text-indigo-500" },
         { label: "Widgets", value: stats.totalWidgets, icon: Globe, color: "text-sky-500" },
-        { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-lime-500" },
-      ]
-    : [];
+         { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-lime-500", onClick: () => setShowActiveWidgets(true) },
+       ]
+     : [];
 
-  const signupDays = stats
-    ? Object.entries(stats.recentSignups).sort(([a], [b]) => a.localeCompare(b))
-    : [];
+   const signupDays = stats
+     ? Object.entries(stats.recentSignups).sort(([a], [b]) => a.localeCompare(b))
+     : [];
 
   const SortHeader = ({ label, field }: { label: string; field: SortKey }) => (
     <th
