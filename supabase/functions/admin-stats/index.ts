@@ -178,6 +178,19 @@ Deno.serve(async (req) => {
     // Active widgets
     const activeWidgetIds = new Set(activeWidgetsRes.data?.map((e) => e.widget_id) || []);
 
+    // Build active widget users list
+    const activeWidgetUsers = widgets
+      .filter((w) => activeWidgetIds.has(w.id))
+      .map((w) => {
+        const au = authUsers.find((u) => u.id === w.user_id);
+        return {
+          email: au?.email || "unknown",
+          contactName: w.contact_name || "—",
+          websiteUrl: w.website_url || null,
+          widgetId: w.id,
+        };
+      });
+
     // Signups by day (dynamic based on days filter)
     const signupsByDay: Record<string, number> = {};
     const signupCutoff = sinceDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
