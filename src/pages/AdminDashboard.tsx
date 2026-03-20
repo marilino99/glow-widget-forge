@@ -45,6 +45,8 @@ interface AdminStats {
   activationRate: number;
   totalContacts: number;
   avgMessagesPerUser: number;
+  activeUsersInPeriod: number;
+  usersWithConversationsInPeriod: number;
 }
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
@@ -150,13 +152,15 @@ const AdminDashboard = () => {
     ? [
         { label: "Total Users", value: stats.totalAuthUsers, icon: Users, color: "text-blue-500" },
         { label: "New in Period", value: stats.newUsersInPeriod, icon: TrendingUp, color: "text-green-500" },
-        { label: "Activation Rate", value: `${stats.activationRate}%`, icon: UserCheck, color: "text-amber-500" },
-        { label: "Widgets", value: stats.totalWidgets, icon: BarChart3, color: "text-emerald-500" },
-        { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-violet-500" },
-        { label: "Conversations", value: stats.totalConversations, icon: MessageCircle, color: "text-orange-500" },
+        { label: "Active Users", value: stats.activeUsersInPeriod, icon: UserCheck, color: "text-amber-500" },
+        { label: "Users w/ Convs", value: stats.usersWithConversationsInPeriod, icon: MessageCircle, color: "text-orange-500" },
+        { label: "Activation Rate", value: `${stats.activationRate}%`, icon: BarChart3, color: "text-emerald-500" },
+        { label: "Conversations", value: stats.totalConversations, icon: MessageCircle, color: "text-violet-500" },
         { label: "Messages", value: stats.totalMessages, icon: MessageCircle, color: "text-pink-500" },
         { label: "Contacts", value: stats.totalContacts, icon: Contact, color: "text-teal-500" },
         { label: "Avg Msgs/User", value: stats.avgMessagesPerUser, icon: Bot, color: "text-indigo-500" },
+        { label: "Widgets", value: stats.totalWidgets, icon: Globe, color: "text-sky-500" },
+        { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-lime-500" },
       ]
     : [];
 
@@ -223,7 +227,7 @@ const AdminDashboard = () => {
           ) : (
             <>
               {/* KPI Cards */}
-              <div className="grid grid-cols-3 gap-4 md:grid-cols-3 lg:grid-cols-9">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                 {statCards.map((card) => (
                   <div
                     key={card.label}

@@ -55,8 +55,8 @@ Deno.serve(async (req) => {
       allMessages,
       allContacts,
       activeWidgetsRes,
-      // authUsers fetched separately with pagination
       profilesRes,
+      activityLogsRes,
     ] = await Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }),
       supabase.from("widget_configurations").select("id", { count: "exact", head: true }),
@@ -74,6 +74,9 @@ Deno.serve(async (req) => {
       supabase.from("contacts").select("id, user_id, created_at").limit(5000),
       supabase.from("widget_events").select("widget_id").limit(2000),
       supabase.from("profiles").select("user_id, created_at").order("created_at", { ascending: false }),
+      sinceDate
+        ? supabase.from("user_activity_logs").select("user_id, created_at").gte("created_at", sinceDate).limit(10000)
+        : supabase.from("user_activity_logs").select("user_id, created_at").limit(10000),
     ]);
 
     // Paginate auth users to get ALL users (not capped at 1000)
@@ -91,6 +94,16 @@ Deno.serve(async (req) => {
     const messages = allMessages.data || [];
     const contacts = allContacts.data || [];
     const profiles = profilesRes.data || [];
+    const activityLogs = activityLogsRes.data || [];
+
+    // Active users from activity logs in period
+    const activeUsersInPeriod = new Set(activityLogs.map((l: any) => l.user_id)).size;
+
+    // Users with conversations in period
+    const filteredConvsForCount = sinceDate
+      ? conversations.filter((c: any) => c.created_at && c.created_at >= sinceDate)
+      : conversations;
+    const usersWithConversationsInPeriod = new Set(filteredConvsForCount.map((c: any) => c.widget_owner_id)).size;
 
     // Build conversation owner map
     const convOwnerMap: Record<string, string> = {};
@@ -213,6 +226,8 @@ Deno.serve(async (req) => {
       activationRate,
       totalContacts: totalContactsInPeriod,
       avgMessagesPerUser,
+      activeUsersInPeriod,
+      usersWithConversationsInPeriod,
     };
 
     return new Response(JSON.stringify(stats), {
