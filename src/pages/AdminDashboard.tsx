@@ -32,6 +32,13 @@ interface TopUser {
   lastActive: string | null;
 }
 
+interface ActiveWidgetUser {
+  email: string;
+  contactName: string;
+  websiteUrl: string | null;
+  widgetId: string;
+}
+
 interface AdminStats {
   totalUsers: number;
   totalAuthUsers: number;
@@ -47,6 +54,7 @@ interface AdminStats {
   avgMessagesPerUser: number;
   activeUsersInPeriod: number;
   usersWithConversationsInPeriod: number;
+  activeWidgetUsers: ActiveWidgetUser[];
 }
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
@@ -63,6 +71,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("aiResponses");
   const [sortAsc, setSortAsc] = useState(false);
+  const [showActiveWidgets, setShowActiveWidgets] = useState(false);
 
   useEffect(() => {
     if (!authLoading && (!user || user.id !== ADMIN_USER_ID)) {
@@ -160,13 +169,13 @@ const AdminDashboard = () => {
         { label: "Contacts", value: stats.totalContacts, icon: Contact, color: "text-teal-500" },
         { label: "Avg Msgs/User", value: stats.avgMessagesPerUser, icon: Bot, color: "text-indigo-500" },
         { label: "Widgets", value: stats.totalWidgets, icon: Globe, color: "text-sky-500" },
-        { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-lime-500" },
-      ]
-    : [];
+         { label: "Active Widgets", value: stats.activeWidgets, icon: Globe, color: "text-lime-500", onClick: () => setShowActiveWidgets(true) },
+       ]
+     : [];
 
-  const signupDays = stats
-    ? Object.entries(stats.recentSignups).sort(([a], [b]) => a.localeCompare(b))
-    : [];
+   const signupDays = stats
+     ? Object.entries(stats.recentSignups).sort(([a], [b]) => a.localeCompare(b))
+     : [];
 
   const SortHeader = ({ label, field }: { label: string; field: SortKey }) => (
     <th
@@ -231,7 +240,8 @@ const AdminDashboard = () => {
                 {statCards.map((card) => (
                   <div
                     key={card.label}
-                    className="rounded-xl border border-border bg-card p-4 transition-shadow hover:shadow-md"
+                    className={`rounded-xl border border-border bg-card p-4 transition-shadow hover:shadow-md ${card.onClick ? "cursor-pointer" : ""}`}
+                    onClick={card.onClick}
                   >
                     <div className="flex items-center gap-2">
                       <card.icon className={`h-4 w-4 ${card.color}`} />
@@ -385,6 +395,48 @@ const AdminDashboard = () => {
           )}
         </div>
       </ScrollArea>
+
+      {/* Active Widgets Dialog */}
+      {showActiveWidgets && stats && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowActiveWidgets(false)}>
+          <div className="mx-4 w-full max-w-2xl rounded-xl border border-border bg-card shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
+              <h2 className="text-sm font-semibold text-foreground">
+                Active Widgets ({stats.activeWidgetUsers?.length || 0})
+              </h2>
+              <Button variant="ghost" size="sm" onClick={() => setShowActiveWidgets(false)}>✕</Button>
+            </div>
+            <ScrollArea className="max-h-[60vh]">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                    <th className="px-4 py-3">#</th>
+                    <th className="px-4 py-3">Email</th>
+                    <th className="px-4 py-3">Widget</th>
+                    <th className="px-4 py-3">Website</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(stats.activeWidgetUsers || []).map((u, i) => (
+                    <tr key={u.widgetId} className="border-b border-border last:border-0 hover:bg-muted/50">
+                      <td className="px-4 py-2.5 text-muted-foreground">{i + 1}</td>
+                      <td className="px-4 py-2.5 text-xs font-medium text-foreground">{u.email}</td>
+                      <td className="px-4 py-2.5 text-xs text-muted-foreground">{u.contactName}</td>
+                      <td className="px-4 py-2.5 text-xs">
+                        {u.websiteUrl ? (
+                          <a href={u.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {u.websiteUrl.replace(/^https?:\/\//, "").slice(0, 30)}
+                          </a>
+                        ) : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollArea>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
