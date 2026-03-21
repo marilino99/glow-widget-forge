@@ -11,6 +11,9 @@ export interface WidgetTranslations {
   deliveryTime: string;
   shipInternationally: string;
   contactWhatsApp: string;
+  chipFind: string;
+  chipTrack: string;
+  chipInfo: string;
 }
 
 const translations: Record<SupportedLanguage, WidgetTranslations> = {
@@ -25,6 +28,9 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     deliveryTime: "What is the delivery time?",
     shipInternationally: "Do you ship internationally?",
     contactWhatsApp: "Contact us on WhatsApp",
+    chipFind: "Find the right product for me",
+    chipTrack: "Track my order",
+    chipInfo: "I need more information",
   },
   it: {
     contactUs: "Contattaci",
@@ -37,6 +43,9 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     deliveryTime: "Quali sono i tempi di consegna?",
     shipInternationally: "Spedite all'estero?",
     contactWhatsApp: "Contattaci su WhatsApp",
+    chipFind: "Cercare il prodotto adatto a me",
+    chipTrack: "Tracciare il mio ordine",
+    chipInfo: "Ho bisogno di più informazioni",
   },
   es: {
     contactUs: "Contáctanos",
@@ -49,6 +58,9 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     deliveryTime: "¿Cuál es el tiempo de entrega?",
     shipInternationally: "¿Hacen envíos internacionales?",
     contactWhatsApp: "Contáctanos por WhatsApp",
+    chipFind: "Encontrar el producto adecuado",
+    chipTrack: "Rastrear mi pedido",
+    chipInfo: "Necesito más información",
   },
   fr: {
     contactUs: "Contactez-nous",
@@ -61,6 +73,9 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     deliveryTime: "Quel est le délai de livraison ?",
     shipInternationally: "Livrez-vous à l'international ?",
     contactWhatsApp: "Contactez-nous sur WhatsApp",
+    chipFind: "Trouver le bon produit",
+    chipTrack: "Suivre ma commande",
+    chipInfo: "J'ai besoin de plus d'informations",
   },
   de: {
     contactUs: "Kontaktieren Sie uns",
@@ -73,6 +88,9 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     deliveryTime: "Wie lange dauert die Lieferung?",
     shipInternationally: "Liefern Sie international?",
     contactWhatsApp: "Kontaktieren Sie uns auf WhatsApp",
+    chipFind: "Das richtige Produkt finden",
+    chipTrack: "Meine Bestellung verfolgen",
+    chipInfo: "Ich brauche mehr Informationen",
   },
   pt: {
     contactUs: "Entre em contato",
@@ -85,6 +103,9 @@ const translations: Record<SupportedLanguage, WidgetTranslations> = {
     deliveryTime: "Qual é o prazo de entrega?",
     shipInternationally: "Vocês fazem envio internacional?",
     contactWhatsApp: "Fale conosco no WhatsApp",
+    chipFind: "Encontrar o produto certo",
+    chipTrack: "Rastrear meu pedido",
+    chipInfo: "Preciso de mais informações",
   },
 };
 
