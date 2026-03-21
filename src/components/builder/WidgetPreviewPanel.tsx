@@ -1499,6 +1499,24 @@ const WidgetPreviewPanel = ({
                       <p className="text-sm">{t.welcomeMessage}</p>
                     </div>
                   </div>
+                  {/* Quick action chips */}
+                  {chatMessages.length === 0 && (
+                    <div className="flex flex-col items-end gap-2 mt-3">
+                      {[t.chipFind, t.chipTrack, t.chipInfo].map((chip, i) => (
+                        <button
+                          key={i}
+                          className="px-4 py-2.5 rounded-[20px] text-sm transition-colors max-w-[85%] text-right"
+                          style={{
+                            border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
+                            background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
+                            color: isLight ? '#334155' : '#fff',
+                          }}
+                        >
+                          {chip}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   {/* User messages */}
                   {chatMessages.map((msg, index) => (
                     msg.sender === "user" ? (
