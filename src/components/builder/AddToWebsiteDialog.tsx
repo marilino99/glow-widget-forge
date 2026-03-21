@@ -39,6 +39,8 @@ interface ShopifyDiagnostics {
   lastSeenUrl?: string;
   lastSeenAt?: string;
   recentImpressions: number;
+  launcherVisible: boolean | null;
+  launcherChecked: boolean;
 }
 
 const LovableLogo = ({ className }: { className?: string }) => (
