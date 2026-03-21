@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart, Heart } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -1046,12 +1046,12 @@ const WidgetPreviewPanel = ({
                                         <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
                                       )}
                                       <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
-                                      <div className="flex gap-1 px-1.5 pb-1.5">
-                                        <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                      <div className="flex gap-1 px-1.5 pb-1.5" style={{ alignItems: 'stretch' }}>
+                                        <a href={prod.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center rounded-md py-1 text-[9px] font-semibold no-underline transition-colors" style={{ background: actualHexColor, color: '#fff' }}>
+                                          {t.show}
+                                        </a>
+                                        <button className="flex items-center justify-center rounded-md py-1 transition-colors" style={{ width: 28, background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
                                           <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
-                                        </button>
-                                        <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
-                                          <Heart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
                                         </button>
                                       </div>
                                     </div>
@@ -1418,7 +1418,7 @@ const WidgetPreviewPanel = ({
               </div>) : showChat ? (/* Chat View */
           <div className={`flex h-[540px] max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000', color: isLight ? '#0f172a' : '#ffffff' }}>
                 {/* Chat header */}
-                <div className={`flex items-center justify-between px-4 py-3 border-b ${isLight ? "border-slate-200" : "border-white/10"}`}>
+                <div className="flex items-center justify-between px-4 py-3">
                   <button onClick={() => setShowChat(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <ArrowLeft className="h-4 w-4" />
                   </button>
@@ -1531,12 +1531,12 @@ const WidgetPreviewPanel = ({
                                     <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
                                   )}
                                   <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
-                                  <div className="flex gap-1 px-1.5 pb-1.5">
-                                    <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                  <div className="flex gap-1 px-1.5 pb-1.5" style={{ alignItems: 'stretch' }}>
+                                    <a href={prod.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center rounded-md py-1 text-[9px] font-semibold no-underline transition-colors" style={{ background: actualHexColor, color: '#fff' }}>
+                                      {t.show}
+                                    </a>
+                                    <button className="flex items-center justify-center rounded-md py-1 transition-colors" style={{ width: 28, background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
                                       <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
-                                    </button>
-                                    <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
-                                      <Heart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
                                     </button>
                                   </div>
                                 </div>
@@ -2366,10 +2366,10 @@ const WidgetPreviewPanel = ({
                                     {t.show}
                                   </Button>
                                 )}
-                                {/* Add to Cart & Favorites buttons */}
+                                {/* Cart button */}
                                 <div className="flex gap-2 mt-2">
                                   <button
-                                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors ${
+                                    className={`w-10 flex items-center justify-center rounded-lg py-2 transition-colors ${
                                       isSolidMode || !isLight
                                         ? "bg-white/10 hover:bg-white/20 text-white"
                                         : "bg-slate-100 hover:bg-slate-200 text-slate-700"
@@ -2378,16 +2378,6 @@ const WidgetPreviewPanel = ({
                                     title="Add to Shopify cart"
                                   >
                                     <ShoppingCart className="h-3.5 w-3.5" />
-                                  </button>
-                                  <button
-                                    className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors ${
-                                      isSolidMode || !isLight
-                                        ? "bg-white/10 hover:bg-white/20 text-white"
-                                        : "bg-slate-100 hover:bg-slate-200 text-slate-700"
-                                    }`}
-                                    onClick={(e) => e.preventDefault()}
-                                  >
-                                    <Heart className="h-3.5 w-3.5" />
                                   </button>
                                 </div>
                               </div>
