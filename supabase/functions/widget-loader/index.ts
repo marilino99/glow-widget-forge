@@ -387,10 +387,10 @@ Deno.serve(async (req) => {
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
-      #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer}
-      #wj-cbtn:hover{background:\${color.hover}}
-      #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${solid ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-      #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
+      #wj-cbtn{width:100% !important;margin-top:12px !important;padding:10px !important;border:none !important;border-radius:8px !important;background:\${color.bg} !important;color:#fff !important;font-size:14px !important;font-weight:500 !important;cursor:pointer !important;font-family:inherit !important;line-height:1.5 !important;letter-spacing:normal !important;text-transform:none !important;text-align:center !important}
+      #wj-cbtn:hover{background:\${color.hover} !important}
+      #wj-whatsapp{width:100% !important;margin-top:8px !important;padding:10px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'} !important;border-radius:8px !important;background:transparent !important;color:\${solid ? '#fff' : textMain} !important;font-size:14px !important;font-weight:500 !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:8px !important;font-family:inherit !important;line-height:1.5 !important;letter-spacing:normal !important;text-transform:none !important}
+      #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'} !important}
       #wj-whatsapp svg{width:20px;height:20px}
       #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin-top:8px}
       #wj-products::-webkit-scrollbar{display:none}
