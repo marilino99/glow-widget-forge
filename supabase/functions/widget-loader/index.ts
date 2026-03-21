@@ -497,6 +497,8 @@ Deno.serve(async (req) => {
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-powered{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
       #wj-chat-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
+      #wj-pop button,#wj-pop a,#wj-pop input,#wj-pop .wj-nav-item,#wj-pop .wj-chat-chip,#wj-pop .wj-prod-btn,#wj-pop .wj-prod-cart-btn{pointer-events:auto !important;cursor:pointer !important}
+      #wj-pop *{pointer-events:auto !important}
     \`;
     d.head.appendChild(style);
 
@@ -1214,6 +1216,13 @@ Deno.serve(async (req) => {
 
     var pop = d.createElement('div');
     pop.id = 'wj-pop';
+
+    // Prevent Shopify theme from intercepting clicks inside the widget
+    pop.addEventListener('click', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('mousedown', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('mouseup', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('touchstart', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('touchend', function(e) { e.stopPropagation(); }, false);
 
     // HOME VIEW
     var homeView = d.createElement('div');
