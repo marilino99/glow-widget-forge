@@ -1,58 +1,27 @@
 
 
-# Piano: Dashboard Admin Avanzata
+## Problem
 
-## Panoramica
+When the user clicks "Find the right product for me", the AI correctly follows rule 11 (ask for categories with `[CHIPS:]`), but the **product fallback** at lines 558-574 detects product intent keywords in the user message and forces product cards anyway — overriding the AI's intended category discovery flow.
 
-Trasformare la dashboard admin attuale in uno strumento decisionale completo con filtri temporali, metriche di business avanzate e una tabella utenti arricchita.
+## Solution
 
-## Cosa cambia
+Reorder the parsing logic so `[CHIPS:]` is extracted **before** the product fallback, and skip the fallback when chips are present.
 
-### 1. Filtro temporale globale (header)
-- Dropdown con preset: Oggi, 7 giorni, 30 giorni, 90 giorni, Tutto
-- Tutte le metriche e la tabella si aggiornano in base al periodo selezionato
+## Changes
 
-### 2. Metriche KPI migliorate (stat cards)
-Le 6 card attuali diventano 8, aggiungendo:
-- **Nuovi utenti nel periodo** (non solo totale, ma delta nel range selezionato)
-- **Tasso di attivazione** (% utenti che hanno almeno 1 conversazione)
-- **Media messaggi/utente** nel periodo
-- **Contatti raccolti** (dalla tabella `contacts`)
+### File: `supabase/functions/chatbot-reply/index.ts`
 
-### 3. Grafico signups dinamico
-- Si adatta al filtro temporale (7/30/90 giorni) invece di essere fisso a 7 giorni
-- Aggiunta linea di trend
+1. **Move `[CHIPS:]` parsing** (currently at lines 576-586) to **before** the product fallback block (before line 558).
 
-### 4. Tabella utenti completa con ricerca
-La tabella attuale mostra già email e website. Miglioramenti:
-- **Colonna "Signup date"** per sapere quando si è registrato
-- **Colonna "Last active"** (ultima conversazione)
-- **Colonna "Chatbot ON/OFF"** (se ha il chatbot abilitato)
-- **Colonna "Contatti raccolti"** per utente
-- **Barra di ricerca** per filtrare per email o website
-- **Ordinamento cliccabile** sulle colonne numeriche
-- Mostra **tutti gli utenti** (non solo chi ha messaggi), così vedi anche chi si è registrato ma non usa il prodotto
+2. **Add a chips guard** to the product fallback condition at line 558:
+   ```
+   // Only fallback to products if NO chips were found
+   } else if (productCardsData && productCardsData.length > 0 && !metadata?.chips) {
+   ```
 
-### 5. Sezione "Users without activity"
-- Lista utenti registrati che non hanno mai avuto una conversazione (churn risk)
+This way, when the AI responds with categories (`[CHIPS: Uomo, Donna, Accessori]`), the fallback won't override it with product cards.
 
-## Modifiche tecniche
-
-### Edge Function `admin-stats`
-- Accetta parametro `?days=7|30|90|all` per filtrare nel periodo
-- Aggiunge query per contatti (`contacts` table, count per user)
-- Restituisce `signupDate` e `lastActive` per ogni utente
-- Restituisce lista completa utenti (anche quelli senza messaggi)
-- Filtra conversazioni/messaggi per `created_at` nel range
-
-### Frontend `AdminDashboard.tsx`
-- Stato `timeRange` con Select dropdown
-- Passa `days` param alla function invoke
-- Componente tabella con input di ricerca e sort state
-- Nuove stat card per contatti e activation rate
-- Grafico signups adattivo al periodo
-
-## File coinvolti
-1. `supabase/functions/admin-stats/index.ts` — filtro temporale, dati aggiuntivi
-2. `src/pages/AdminDashboard.tsx` — UI completa con filtri, ricerca, sort
+### Deployment
+- Redeploy `chatbot-reply` edge function.
 
