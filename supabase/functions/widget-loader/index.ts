@@ -1752,7 +1752,7 @@ Deno.serve(async (req) => {
       chip.addEventListener('click', function() {
         var text = this.textContent;
         var chipsContainer = d.getElementById('wj-chat-chips');
-        if (chipsContainer) chipsContainer.style.display = 'none';
+        if (chipsContainer) chipsContainer.remove();
         sendMessageText(text);
       });
     });
