@@ -1691,7 +1691,17 @@ Deno.serve(async (req) => {
     var chatMicBtn = chatView.querySelector('#wj-chat-mic');
     var emojiPicker = chatView.querySelector('#wj-emoji-picker');
 
-    // Generate or retrieve visitor ID
+    // Bind quick action chips
+    var chatChips = chatView.querySelectorAll('.wj-chat-chip');
+    chatChips.forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        var text = this.textContent;
+        var chipsContainer = d.getElementById('wj-chat-chips');
+        if (chipsContainer) chipsContainer.style.display = 'none';
+        sendMessageText(text);
+      });
+    });
+
     var visitorId = localStorage.getItem('wj_visitor_id');
     if (!visitorId) {
       visitorId = 'v_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
