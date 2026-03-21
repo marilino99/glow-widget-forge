@@ -154,12 +154,14 @@ Deno.serve(async (req) => {
       b = Math.max(0, Math.floor(b * 0.85));
       var hover = '#' + r.toString(16).padStart(2,'0') + g.toString(16).padStart(2,'0') + b.toString(16).padStart(2,'0');
       color = { bg: wc, hover: hover };
-    } else if (wc.startsWith('#')) {
-      // already handled above
-      color = colors.blue;
     } else {
       color = colors[wc] || colors.blue;
     }
+    // Detect if widget color is light → use dark text on buttons
+    var cbgHex = color.bg.replace('#','');
+    var cR = parseInt(cbgHex.substr(0,2),16), cG = parseInt(cbgHex.substr(2,2),16), cB = parseInt(cbgHex.substr(4,2),16);
+    var luminance = (0.299*cR + 0.587*cG + 0.114*cB) / 255;
+    var btnText = luminance > 0.6 ? '#1e293b' : '#fff';
     var dark = cfg.widget_theme === 'dark';
     var lt = !dark;
     var widgetType = cfg.widget_type || 'popup';
