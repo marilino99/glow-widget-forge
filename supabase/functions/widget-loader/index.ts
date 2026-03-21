@@ -1851,6 +1851,7 @@ Deno.serve(async (req) => {
         try {
           var res = JSON.parse(xhr.responseText);
           if (res.messages && res.messages.length > 0) {
+            hideTypingIndicator();
             res.messages.forEach(function(msg) {
               renderMessage(msg);
             });
