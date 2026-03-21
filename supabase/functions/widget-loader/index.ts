@@ -491,9 +491,9 @@ Deno.serve(async (req) => {
       #wj-typing{display:flex !important;align-items:flex-start !important;gap:12px !important;margin-top:12px !important}
       #wj-typing-avatar{width:24px !important;height:24px !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important}
       #wj-typing-dots{padding:12px 20px !important;border-radius:16px !important;display:flex !important;gap:4px !important;align-items:center !important}
-      .wj-dot{width:6px !important;height:6px !important;border-radius:50% !important;background:rgba(255,255,255,0.7) !important;animation:wj-dot-bounce 1.2s ease-in-out infinite}
-      .wj-dot:nth-child(2){animation-delay:0.15s}
-      .wj-dot:nth-child(3){animation-delay:0.3s}
+      .wj-dot{width:6px !important;height:6px !important;border-radius:50% !important;background:rgba(255,255,255,0.7) !important;animation:wj-dot-bounce 1.2s ease-in-out infinite !important}
+      .wj-dot:nth-child(2){animation-delay:0.15s !important}
+      .wj-dot:nth-child(3){animation-delay:0.3s !important}
       #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-send:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'}}
       #wj-chat-send.active{background:\${color.bg};color:#fff !important}
