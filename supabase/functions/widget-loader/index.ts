@@ -1570,6 +1570,9 @@ Deno.serve(async (req) => {
     // Button
     var btn = d.createElement('button');
     btn.id = 'wj-btn';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Open Widjet');
+    btn.style.cssText = 'width:56px !important;height:56px !important;border-radius:9999px !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;color:#ffffff !important;box-shadow:0 6px 18px rgba(0,0,0,.22) !important;transition:transform .2s,box-shadow .2s,opacity .2s !important;background:' + color.bg + ' !important;overflow:hidden !important;position:relative !important;pointer-events:auto !important;visibility:visible !important;opacity:1 !important;-webkit-appearance:none !important;appearance:none !important;padding:0 !important;margin:0 !important;';
     btn.innerHTML = buttonLogo 
       ? '<img src="' + esc(buttonLogo) + '" alt=""/>' 
       : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>';
