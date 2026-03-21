@@ -1506,7 +1506,8 @@ const WidgetPreviewPanel = ({
                       {[t.chipFind, t.chipTrack, t.chipInfo].map((chip, i) => (
                         <button
                           key={i}
-                          className="px-4 py-2.5 rounded-[20px] text-sm transition-colors max-w-[85%] text-right"
+                          onClick={() => handleSendChatMessage(chip)}
+                          className="px-4 py-2.5 rounded-[20px] text-sm transition-colors max-w-[85%] text-right cursor-pointer hover:opacity-80"
                           style={{
                             border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
                             background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
