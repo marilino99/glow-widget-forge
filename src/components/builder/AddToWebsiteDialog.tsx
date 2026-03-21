@@ -408,6 +408,47 @@ useEffect(() => {
                     Connected to <span className="font-semibold">{shopifyConnection.store_domain}</span>
                   </p>
                 </div>
+
+                {/* Live diagnostics */}
+                {diagnostics && shopifyInstalled && (
+                  <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <Activity className="h-3 w-3" />
+                      Widget diagnostics (last 24h)
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <span className="text-muted-foreground">Tag status:</span>{" "}
+                        <span className={diagnostics.tagInstalled ? "text-green-600" : "text-destructive"}>
+                          {diagnostics.tagInstalled ? `✓ Installed (${diagnostics.method})` : "✗ Not found"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Impressions:</span>{" "}
+                        <span className={diagnostics.recentImpressions > 0 ? "text-green-600 font-medium" : "text-amber-600"}>
+                          {diagnostics.recentImpressions}
+                        </span>
+                      </div>
+                    </div>
+                    {diagnostics.lastSeenUrl && (
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Last seen on:</span>{" "}
+                        <span className="text-foreground font-mono break-all">{diagnostics.lastSeenUrl}</span>
+                        {diagnostics.lastSeenAt && (
+                          <span className="text-muted-foreground ml-1">
+                            ({new Date(diagnostics.lastSeenAt).toLocaleString()})
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
+                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                        <AlertTriangle className="h-3 w-3" />
+                        Tag installed but no recent activity — try reinstalling
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 {shopifyInstalled ? (
                   <div className="space-y-3">
@@ -415,7 +456,11 @@ useEffect(() => {
                       <CheckCircle className="h-5 w-5 text-primary shrink-0" />
                       <div>
                         <p className="text-sm font-semibold text-foreground">Widget installed!</p>
-                        <p className="text-xs text-muted-foreground">The widget is now live on your Shopify store.</p>
+                        <p className="text-xs text-muted-foreground">
+                          {diagnostics && diagnostics.recentImpressions > 0
+                            ? "Widget confirmed live — receiving impressions."
+                            : "The script tag is installed on your store."}
+                        </p>
                       </div>
                     </div>
                     <Button 
