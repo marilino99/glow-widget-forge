@@ -332,6 +332,13 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+      @keyframes wj-dot-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-4px)}}
+      #wj-typing{display:flex;align-items:flex-start;gap:12px;margin-top:12px}
+      #wj-typing-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      #wj-typing-dots{padding:12px 20px;border-radius:16px;display:flex;gap:4px;align-items:center}
+      .wj-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.7);animation:wj-dot-bounce 1.2s ease-in-out infinite}
+      .wj-dot:nth-child(2){animation-delay:0.15s}
+      .wj-dot:nth-child(3){animation-delay:0.3s}
       #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-send:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'}}
       #wj-chat-send.active{background:\${color.bg};color:#fff}
