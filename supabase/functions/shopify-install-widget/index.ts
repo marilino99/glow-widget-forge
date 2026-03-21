@@ -78,9 +78,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader?widgetId=${widget.id}`;
+    const cacheBust = Date.now();
+    const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader?widgetId=${widget.id}&v=${cacheBust}`;
 
-    console.log(`[install-widget] Store: ${conn.store_domain}, Widget: ${widget.id}, checkOnly: ${checkOnly}, forceReinstall: ${forceReinstall}`);
+    console.log(`[install-widget] Store: ${conn.store_domain}, Widget: ${widget.id}, checkOnly: ${checkOnly}, forceReinstall: ${forceReinstall}, cacheBust: ${cacheBust}`);
 
     // --- Primary method: theme.liquid injection (most reliable for custom distribution apps) ---
     console.log("[install-widget] Using theme.liquid as primary installation method");
