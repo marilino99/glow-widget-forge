@@ -1418,7 +1418,7 @@ const WidgetPreviewPanel = ({
               </div>) : showChat ? (/* Chat View */
           <div className={`flex h-[540px] max-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000', color: isLight ? '#0f172a' : '#ffffff' }}>
                 {/* Chat header */}
-                <div className={`flex items-center justify-between px-4 py-3 border-b ${isLight ? "border-slate-200" : "border-white/10"}`}>
+                <div className="flex items-center justify-between px-4 py-3">
                   <button onClick={() => setShowChat(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
                     <ArrowLeft className="h-4 w-4" />
                   </button>
