@@ -37,9 +37,58 @@ const PRODUCT_KEYWORDS = [
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "cerco", "vorrei", "want"
 ];
 
+const CATEGORY_DISCOVERY_PATTERNS = [
+  "find the right product", "help me choose", "help me find", "aiutami a scegliere",
+  "cercare il prodotto adatto", "trova il prodotto", "cerco qualcosa", "looking for something",
+  "i need help", "ho bisogno di aiuto", "consigliami", "recommend", "suggest",
+  "quale prodotto", "which product", "what should i", "cosa mi consigli",
+];
+
+const FALLBACK_DISCOVERY_REPLY: Record<string, string> = {
+  it: "Certo — che tipo di prodotto stai cercando?",
+  en: "Sure — what kind of product are you looking for?",
+  es: "Claro — ¿qué tipo de producto estás buscando?",
+  fr: "Bien sûr — quel type de produit recherchez-vous ?",
+  de: "Klar — nach welcher Art von Produkt suchst du?",
+};
+
+const FALLBACK_DISCOVERY_CHIPS: Record<string, string[]> = {
+  it: ["Più popolari", "Novità", "Consigliati"],
+  en: ["Best sellers", "New arrivals", "Recommended"],
+  es: ["Más populares", "Novedades", "Recomendados"],
+  fr: ["Best-sellers", "Nouveautés", "Recommandés"],
+  de: ["Bestseller", "Neuheiten", "Empfohlen"],
+};
+
 function isProductIntent(text: string): boolean {
   const normalized = (text || "").toLowerCase();
+   if (isCategoryDiscoveryIntent(normalized)) return false;
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function isCategoryDiscoveryIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return CATEGORY_DISCOVERY_PATTERNS.some((pattern) => normalized.includes(pattern));
+}
+
+function deriveDiscoveryChips(
+  productCardsData: Array<{ subtitle?: string | null }> | null | undefined,
+  language: string,
+): string[] {
+  const seen = new Set<string>();
+  const subtitleChips = (productCardsData || [])
+    .map((product) => (product.subtitle || "").trim())
+    .filter((subtitle) => {
+      if (!subtitle || subtitle.length > 32) return false;
+      const key = subtitle.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 3);
+
+  const fallback = FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
+  return [...subtitleChips, ...fallback.filter((chip) => !seen.has(chip.toLowerCase()))].slice(0, 3);
 }
 
 
@@ -131,6 +180,7 @@ Deno.serve(async (req) => {
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
     const queryText = lastUserMessage?.text || "";
     const productIntent = isProductIntent(queryText);
+    const categoryDiscoveryIntent = isCategoryDiscoveryIntent(queryText);
 
     // RAG: Try similarity search first
     let knowledgeBase = "";
@@ -207,7 +257,7 @@ Deno.serve(async (req) => {
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
 
-    const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
+      const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
 Language: Your default language is ${config.language || "en"}, but you MUST detect the language the visitor is writing in and ALWAYS reply in that same language. If the visitor writes in Spanish, reply in Spanish. If they write in French, reply in French. Always match the visitor's language.
 
 ${knowledgeBase}
@@ -220,6 +270,7 @@ STRICT RULES:
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
+- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want and append ONLY this marker at the end: [CHIPS: category1, category2, category3]. The chips must be 3 top-level categories written in the visitor's language.
 - PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
 ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 
@@ -277,44 +328,68 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
     console.log(`AI raw reply (last 100 chars): ...${cleanReply.slice(-100)}`);
     console.log(`Product cards available: ${productCardsData?.length || 0}`);
 
-    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
-    if (productMarkerMatch) {
-
-      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
-      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-      if (productCardsData && productCardsData.length > 0) {
-        const matchedProducts = productCardsData.filter((p: any) =>
-          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-        );
-        const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
-        // Ensure at least 2-3 products
-        const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
-          ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
-          : productsToShow;
-        metadata = {
-          products: finalProducts.map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-            shopifyVariantId: p.shopify_variant_id || null,
-          })),
-        };
+    const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
+    if (chipsMarkerMatch) {
+      cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
+      const chips = chipsMarkerMatch[1].split(",").map((chip: string) => chip.trim()).filter(Boolean).slice(0, 3);
+      if (chips.length > 0) {
+        metadata = { ...(metadata || {}), chips };
       }
-    } else if (productCardsData && productCardsData.length > 0) {
-      // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
-      const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
-      const mentionsProducts = isProductIntent(lastUserMsg);
-      if (mentionsProducts) {
+    }
+
+    if (categoryDiscoveryIntent) {
+      cleanReply = cleanReply
+        .replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "")
+        .replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "")
+        .trim();
+
+      if (!metadata?.chips) {
         metadata = {
-          products: productCardsData.slice(0, 3).map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-            shopifyVariantId: p.shopify_variant_id || null,
-          })),
+          ...(metadata || {}),
+          chips: deriveDiscoveryChips(productCardsData, config.language || "en"),
         };
+        cleanReply = FALLBACK_DISCOVERY_REPLY[config.language || "en"] || FALLBACK_DISCOVERY_REPLY.en;
+      }
+    } else {
+      const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+      if (productMarkerMatch) {
+        cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+        const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+        if (productCardsData && productCardsData.length > 0) {
+          const matchedProducts = productCardsData.filter((p: any) =>
+            requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+          );
+          const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
+          const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
+            ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
+            : productsToShow;
+          metadata = {
+            ...(metadata || {}),
+            products: finalProducts.map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+        }
+      } else if (productCardsData && productCardsData.length > 0) {
+      // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
+        const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
+        const mentionsProducts = isProductIntent(lastUserMsg);
+        if (mentionsProducts) {
+          metadata = {
+            ...(metadata || {}),
+            products: productCardsData.slice(0, 3).map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+        }
       }
     }
 

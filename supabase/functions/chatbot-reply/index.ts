@@ -26,6 +26,22 @@ const CATEGORY_DISCOVERY_PATTERNS = [
   "quale prodotto", "which product", "what should i", "cosa mi consigli",
 ];
 
+const FALLBACK_DISCOVERY_REPLY: Record<string, string> = {
+  it: "Certo — che tipo di prodotto stai cercando?",
+  en: "Sure — what kind of product are you looking for?",
+  es: "Claro — ¿qué tipo de producto estás buscando?",
+  fr: "Bien sûr — quel type de produit recherchez-vous ?",
+  de: "Klar — nach welcher Art von Produkt suchst du?",
+};
+
+const FALLBACK_DISCOVERY_CHIPS: Record<string, string[]> = {
+  it: ["Più popolari", "Novità", "Consigliati"],
+  en: ["Best sellers", "New arrivals", "Recommended"],
+  es: ["Más populares", "Novedades", "Recomendados"],
+  fr: ["Best-sellers", "Nouveautés", "Recommandés"],
+  de: ["Bestseller", "Neuheiten", "Empfohlen"],
+};
+
 function isCategoryDiscoveryIntent(text: string): boolean {
   const normalized = (text || "").toLowerCase();
   return CATEGORY_DISCOVERY_PATTERNS.some((p) => normalized.includes(p));
@@ -36,6 +52,26 @@ function isProductIntent(text: string): boolean {
   // If it's a category discovery request, don't treat as product intent
   if (isCategoryDiscoveryIntent(normalized)) return false;
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function deriveDiscoveryChips(
+  productCardsData: Array<{ subtitle?: string | null }> | null | undefined,
+  language: string,
+): string[] {
+  const seen = new Set<string>();
+  const subtitleChips = (productCardsData || [])
+    .map((product) => (product.subtitle || "").trim())
+    .filter((subtitle) => {
+      if (!subtitle || subtitle.length > 32) return false;
+      const key = subtitle.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 3);
+
+  const fallback = FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
+  return [...subtitleChips, ...fallback.filter((chip) => !seen.has(chip.toLowerCase()))].slice(0, 3);
 }
 
 
@@ -525,75 +561,64 @@ ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: 
       );
     }
 
+    const categoryDiscoveryIntent = isCategoryDiscoveryIntent(lastVisitorMessage);
+
     // Parse product marker from AI reply
     let cleanReply = aiReply.trim();
     let metadata: Record<string, unknown> | null = null;
 
-    // Match complete or truncated product markers: [PRODUCTS: ...] or [PRODUCTS: ... (no closing bracket)
-    const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/s);
-    
-    // Also catch cases where the response was truncated mid-marker, e.g. ending with "options: [" or "[PROD"
-    const truncatedMarkerMatch = !productMarkerMatch && cleanReply.match(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s);
-
-    if (productMarkerMatch) {
-      // Always strip marker from visible text
-      cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "").trim();
-      
-      const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
-      if (productCardsData && productCardsData.length > 0) {
-        const matchedProducts = productCardsData.filter((p: any) =>
-          requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
-        );
-        // Use matched products, or fallback to first 3 from catalog
-        const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
-        // Ensure at least 2-3 products
-        const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
-          ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
-          : productsToShow;
-        metadata = {
-          products: finalProducts.map((p: any) => ({
-            title: p.title,
-            imageUrl: p.image_url || null,
-            productUrl: p.product_url || null,
-            price: p.price || null,
-            shopifyVariantId: p.shopify_variant_id || null,
-          })),
-        };
-        console.log(`Product cards: ${matchedProducts.length} matched, showing ${finalProducts.length}`);
-      }
-    } else if (truncatedMarkerMatch && productCardsData && productCardsData.length > 0) {
-      // The AI started the marker but got truncated — strip the partial marker and show products
-      cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
-      metadata = {
-        products: productCardsData.slice(0, 3).map((p: any) => ({
-          title: p.title,
-          imageUrl: p.image_url || null,
-          productUrl: p.product_url || null,
-          price: p.price || null,
-          shopifyVariantId: p.shopify_variant_id || null,
-        })),
-      };
-      console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
-    }
-
-    // Parse [CHIPS: ...] marker BEFORE product fallback
     const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
     if (chipsMarkerMatch) {
       cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
       const chips = chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 3);
       if (chips.length > 0) {
-        if (!metadata) metadata = {};
-        metadata.chips = chips;
+        metadata = { ...(metadata || {}), chips };
         console.log(`Chips: ${chips.length} options parsed`);
       }
     }
 
-    // Fallback: show products only if NO chips were found
-    if (!metadata?.chips && productCardsData && productCardsData.length > 0) {
-      const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
-      const mentionsProducts = isProductIntent(lastUserMsg);
-      if (mentionsProducts) {
+    if (categoryDiscoveryIntent) {
+      cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
+      if (!metadata?.chips) {
         metadata = {
+          ...(metadata || {}),
+          chips: deriveDiscoveryChips(productCardsData, config.language || "en"),
+        };
+        cleanReply = FALLBACK_DISCOVERY_REPLY[config.language || "en"] || FALLBACK_DISCOVERY_REPLY.en;
+      }
+    } else {
+      // Match complete or truncated product markers: [PRODUCTS: ...] or [PRODUCTS: ... (no closing bracket)
+      const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/s);
+      const truncatedMarkerMatch = !productMarkerMatch && cleanReply.match(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s);
+
+      if (productMarkerMatch) {
+        cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "").trim();
+
+        const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
+        if (productCardsData && productCardsData.length > 0) {
+          const matchedProducts = productCardsData.filter((p: any) =>
+            requestedTitles.some((rt: string) => p.title.toLowerCase().includes(rt) || rt.includes(p.title.toLowerCase()))
+          );
+          const productsToShow = matchedProducts.length > 0 ? matchedProducts : productCardsData.slice(0, 3);
+          const finalProducts = productsToShow.length < 2 && productCardsData.length >= 2
+            ? [...productsToShow, ...productCardsData.filter((p: any) => !productsToShow.includes(p)).slice(0, 3 - productsToShow.length)]
+            : productsToShow;
+          metadata = {
+            ...(metadata || {}),
+            products: finalProducts.map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+          console.log(`Product cards: ${matchedProducts.length} matched, showing ${finalProducts.length}`);
+        }
+      } else if (truncatedMarkerMatch && productCardsData && productCardsData.length > 0) {
+        cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
+        metadata = {
+          ...(metadata || {}),
           products: productCardsData.slice(0, 3).map((p: any) => ({
             title: p.title,
             imageUrl: p.image_url || null,
@@ -602,7 +627,25 @@ ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: 
             shopifyVariantId: p.shopify_variant_id || null,
           })),
         };
-        console.log(`Product cards fallback: showing ${Math.min(3, productCardsData.length)} products`);
+        console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
+      }
+
+      if (!metadata?.chips && productCardsData && productCardsData.length > 0) {
+        const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
+        const mentionsProducts = isProductIntent(lastUserMsg);
+        if (mentionsProducts) {
+          metadata = {
+            ...(metadata || {}),
+            products: productCardsData.slice(0, 3).map((p: any) => ({
+              title: p.title,
+              imageUrl: p.image_url || null,
+              productUrl: p.product_url || null,
+              price: p.price || null,
+              shopifyVariantId: p.shopify_variant_id || null,
+            })),
+          };
+          console.log(`Product cards fallback: showing ${Math.min(3, productCardsData.length)} products`);
+        }
       }
     }
 
