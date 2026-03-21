@@ -449,7 +449,7 @@ Deno.serve(async (req) => {
       .wj-nav-item.inactive{color:\${textSub}}
       .wj-nav-item svg{width:20px !important;height:20px !important}
       #wj-powered{display:flex !important;align-items:center !important;justify-content:center !important;gap:4px !important;padding:8px !important;font-size:10px !important;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};background:\${bgMain}}
-      #wj-powered img{height:16px !important;width:auto !important;margin-left:-6px !important;\${dark ? 'opacity:0.3 !important;filter:invert(1)' : 'opacity:0.4' !important}}
+      #wj-powered img{height:16px !important;width:auto !important;margin-left:-6px !important;\${dark ? 'opacity:0.3 !important;filter:invert(1) !important' : 'opacity:0.4 !important'}}
       #wj-home-view{display:flex !important;flex-direction:column !important;flex:1 !important;min-height:0 !important}
       #wj-chat-view{display:none !important;flex-direction:column !important;flex:1 !important;min-height:0 !important;background:\${dark ? '#000' : '#fff'}}
       #wj-chat-view.open{display:flex !important}
