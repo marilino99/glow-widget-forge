@@ -1215,6 +1215,13 @@ Deno.serve(async (req) => {
     var pop = d.createElement('div');
     pop.id = 'wj-pop';
 
+    // Prevent Shopify theme from intercepting clicks inside the widget
+    pop.addEventListener('click', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('mousedown', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('mouseup', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('touchstart', function(e) { e.stopPropagation(); }, false);
+    pop.addEventListener('touchend', function(e) { e.stopPropagation(); }, false);
+
     // HOME VIEW
     var homeView = d.createElement('div');
     homeView.id = 'wj-home-view';
