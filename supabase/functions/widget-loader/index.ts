@@ -1773,20 +1773,6 @@ Deno.serve(async (req) => {
           addToShopifyCart(this.getAttribute('data-variant'), this);
         });
       });
-      // Bind favorite buttons (toggle heart fill)
-      var chatFavBtns = bubble.querySelectorAll('.wj-chat-fav-btn');
-      chatFavBtns.forEach(function(btn) {
-        btn.addEventListener('click', function(ev) {
-          ev.preventDefault();
-          ev.stopPropagation();
-          var svg = this.querySelector('svg');
-          if (svg) {
-            var isFilled = svg.getAttribute('fill') !== 'none';
-            svg.setAttribute('fill', isFilled ? 'none' : '#ef4444');
-            svg.setAttribute('stroke', isFilled ? 'currentColor' : '#ef4444');
-          }
-        });
-      });
       lastMessageId = msg.id;
 
 
