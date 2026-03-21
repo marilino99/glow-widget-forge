@@ -122,6 +122,8 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
           tagInstalled: true,
           method: res.data?.method || "unknown",
           recentImpressions: prev?.recentImpressions ?? 0,
+          launcherVisible: prev?.launcherVisible ?? null,
+          launcherChecked: prev?.launcherChecked ?? false,
         }));
       } else {
         setDiagnostics(prev => ({
