@@ -25,6 +25,10 @@ const IntegrationsPanel = () => {
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [calendlyDisconnectOpen, setCalendlyDisconnectOpen] = useState(false);
   const [instagramDisconnectOpen, setInstagramDisconnectOpen] = useState(false);
+  const [instagramRequestOpen, setInstagramRequestOpen] = useState(false);
+  const [igEmail, setIgEmail] = useState("");
+  const [igHandle, setIgHandle] = useState("");
+  const [igSending, setIgSending] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
