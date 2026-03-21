@@ -239,7 +239,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
   };
 
   return (
-    <div className="relative flex flex-1 overflow-hidden bg-background">
+    <div className="relative flex min-w-0 flex-1 overflow-hidden bg-background">
       {/* AI Limit Banner */}
       {isAtLimit && !isPro && (
         <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between bg-red-50 border-b border-red-200 px-5 py-2.5">
