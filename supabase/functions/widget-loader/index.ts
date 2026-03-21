@@ -713,6 +713,7 @@ Deno.serve(async (req) => {
 
       // Track impression
       trackEvent('impression');
+      trackEvent('widget_rendered');
 
       // Start closed: show only the launcher icon
       showLauncher();
