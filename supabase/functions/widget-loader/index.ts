@@ -154,6 +154,9 @@ Deno.serve(async (req) => {
       b = Math.max(0, Math.floor(b * 0.85));
       var hover = '#' + r.toString(16).padStart(2,'0') + g.toString(16).padStart(2,'0') + b.toString(16).padStart(2,'0');
       color = { bg: wc, hover: hover };
+    } else if (wc.startsWith('#')) {
+      // already handled above
+      color = colors.blue;
     } else {
       color = colors[wc] || colors.blue;
     }
