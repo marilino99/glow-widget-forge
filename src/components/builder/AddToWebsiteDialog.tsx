@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Copy, Check, Globe, Heart, Loader2, CheckCircle } from "lucide-react";
+import { Copy, Check, Globe, Heart, Loader2, CheckCircle, AlertTriangle, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   WixLogo,
@@ -31,6 +31,14 @@ interface PlatformOption {
   name: string;
   icon: React.ReactNode;
   disabled?: boolean;
+}
+
+interface ShopifyDiagnostics {
+  tagInstalled: boolean;
+  method?: string;
+  lastSeenUrl?: string;
+  lastSeenAt?: string;
+  recentImpressions: number;
 }
 
 const LovableLogo = ({ className }: { className?: string }) => (
@@ -56,9 +64,39 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
   const [isInstallingShopify, setIsInstallingShopify] = useState(false);
   const [shopifyInstalled, setShopifyInstalled] = useState(false);
   const [isCheckingShopify, setIsCheckingShopify] = useState(false);
+  const [diagnostics, setDiagnostics] = useState<ShopifyDiagnostics | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const { connection: shopifyConnection } = useShopifyConnection();
+
+  // Fetch live diagnostics: last impression URL + recent count
+  const fetchDiagnostics = useCallback(async () => {
+    if (!widgetId) return;
+    try {
+      // Get recent events (last 24h) with page_url
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { data: recentEvents } = await supabase
+        .from("widget_events")
+        .select("created_at, page_url, event_type")
+        .eq("widget_id", widgetId)
+        .gte("created_at", oneDayAgo)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      const impressions = recentEvents?.filter(e => e.event_type === "impression") || [];
+      const lastWithUrl = recentEvents?.find(e => e.page_url);
+
+      setDiagnostics(prev => ({
+        tagInstalled: prev?.tagInstalled ?? false,
+        method: prev?.method,
+        lastSeenUrl: lastWithUrl?.page_url || undefined,
+        lastSeenAt: lastWithUrl?.created_at || undefined,
+        recentImpressions: impressions.length,
+      }));
+    } catch (e) {
+      // Silent
+    }
+  }, [widgetId]);
 
   // Auto-check if widget is already installed on Shopify
   const checkShopifyInstallation = useCallback(async () => {
@@ -72,6 +110,18 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
       });
       if (!res.error && res.data?.alreadyInstalled) {
         setShopifyInstalled(true);
+        setDiagnostics(prev => ({
+          ...prev,
+          tagInstalled: true,
+          method: res.data?.method || "unknown",
+          recentImpressions: prev?.recentImpressions ?? 0,
+        }));
+      } else {
+        setDiagnostics(prev => ({
+          ...prev,
+          tagInstalled: false,
+          recentImpressions: prev?.recentImpressions ?? 0,
+        }));
       }
     } catch (e) {
       // Silent fail on check
