@@ -3,6 +3,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
   "Content-Type": "application/javascript",
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
 };
 
 Deno.serve(async (req) => {
@@ -1868,7 +1869,7 @@ Deno.serve(async (req) => {
       if (el) el.remove();
     }
 
-
+    function pollMessages() {
       var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
       if (lastMessageId) {
         pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
@@ -1913,6 +1914,7 @@ Deno.serve(async (req) => {
       renderMessage(tempMsg);
       showTypingIndicator();
 
+      var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onreadystatechange = function() {
@@ -1957,6 +1959,7 @@ Deno.serve(async (req) => {
       if (emojiPicker) emojiPicker.classList.remove('open');
       showTypingIndicator();
 
+      var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onreadystatechange = function() {
