@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Copy, Check, Globe, Heart, Loader2, CheckCircle } from "lucide-react";
+import { Copy, Check, Globe, Heart, Loader2, CheckCircle, AlertTriangle, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   WixLogo,
@@ -31,6 +31,14 @@ interface PlatformOption {
   name: string;
   icon: React.ReactNode;
   disabled?: boolean;
+}
+
+interface ShopifyDiagnostics {
+  tagInstalled: boolean;
+  method?: string;
+  lastSeenUrl?: string;
+  lastSeenAt?: string;
+  recentImpressions: number;
 }
 
 const LovableLogo = ({ className }: { className?: string }) => (
@@ -56,9 +64,39 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
   const [isInstallingShopify, setIsInstallingShopify] = useState(false);
   const [shopifyInstalled, setShopifyInstalled] = useState(false);
   const [isCheckingShopify, setIsCheckingShopify] = useState(false);
+  const [diagnostics, setDiagnostics] = useState<ShopifyDiagnostics | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const { connection: shopifyConnection } = useShopifyConnection();
+
+  // Fetch live diagnostics: last impression URL + recent count
+  const fetchDiagnostics = useCallback(async () => {
+    if (!widgetId) return;
+    try {
+      // Get recent events (last 24h) with page_url
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { data: recentEvents } = await supabase
+        .from("widget_events")
+        .select("created_at, page_url, event_type")
+        .eq("widget_id", widgetId)
+        .gte("created_at", oneDayAgo)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      const impressions = recentEvents?.filter(e => e.event_type === "impression") || [];
+      const lastWithUrl = recentEvents?.find(e => e.page_url);
+
+      setDiagnostics(prev => ({
+        tagInstalled: prev?.tagInstalled ?? false,
+        method: prev?.method,
+        lastSeenUrl: lastWithUrl?.page_url || undefined,
+        lastSeenAt: lastWithUrl?.created_at || undefined,
+        recentImpressions: impressions.length,
+      }));
+    } catch (e) {
+      // Silent
+    }
+  }, [widgetId]);
 
   // Auto-check if widget is already installed on Shopify
   const checkShopifyInstallation = useCallback(async () => {
@@ -72,6 +110,18 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
       });
       if (!res.error && res.data?.alreadyInstalled) {
         setShopifyInstalled(true);
+        setDiagnostics(prev => ({
+          ...prev,
+          tagInstalled: true,
+          method: res.data?.method || "unknown",
+          recentImpressions: prev?.recentImpressions ?? 0,
+        }));
+      } else {
+        setDiagnostics(prev => ({
+          ...prev,
+          tagInstalled: false,
+          recentImpressions: prev?.recentImpressions ?? 0,
+        }));
       }
     } catch (e) {
       // Silent fail on check
@@ -82,13 +132,15 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
 
   useEffect(() => {
     setShopifyInstalled(false);
+    setDiagnostics(null);
   }, [shopifyConnection?.store_domain, widgetId]);
 
   useEffect(() => {
     if (selectedPlatform === "shopify" && shopifyConnection) {
       checkShopifyInstallation();
+      fetchDiagnostics();
     }
-  }, [selectedPlatform, shopifyConnection, checkShopifyInstallation]);
+  }, [selectedPlatform, shopifyConnection, checkShopifyInstallation, fetchDiagnostics]);
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
@@ -356,6 +408,47 @@ useEffect(() => {
                     Connected to <span className="font-semibold">{shopifyConnection.store_domain}</span>
                   </p>
                 </div>
+
+                {/* Live diagnostics */}
+                {diagnostics && shopifyInstalled && (
+                  <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <Activity className="h-3 w-3" />
+                      Widget diagnostics (last 24h)
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <span className="text-muted-foreground">Tag status:</span>{" "}
+                        <span className={diagnostics.tagInstalled ? "text-green-600" : "text-destructive"}>
+                          {diagnostics.tagInstalled ? `✓ Installed (${diagnostics.method})` : "✗ Not found"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Impressions:</span>{" "}
+                        <span className={diagnostics.recentImpressions > 0 ? "text-green-600 font-medium" : "text-amber-600"}>
+                          {diagnostics.recentImpressions}
+                        </span>
+                      </div>
+                    </div>
+                    {diagnostics.lastSeenUrl && (
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Last seen on:</span>{" "}
+                        <span className="text-foreground font-mono break-all">{diagnostics.lastSeenUrl}</span>
+                        {diagnostics.lastSeenAt && (
+                          <span className="text-muted-foreground ml-1">
+                            ({new Date(diagnostics.lastSeenAt).toLocaleString()})
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
+                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                        <AlertTriangle className="h-3 w-3" />
+                        Tag installed but no recent activity — try reinstalling
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 {shopifyInstalled ? (
                   <div className="space-y-3">
@@ -363,7 +456,11 @@ useEffect(() => {
                       <CheckCircle className="h-5 w-5 text-primary shrink-0" />
                       <div>
                         <p className="text-sm font-semibold text-foreground">Widget installed!</p>
-                        <p className="text-xs text-muted-foreground">The widget is now live on your Shopify store.</p>
+                        <p className="text-xs text-muted-foreground">
+                          {diagnostics && diagnostics.recentImpressions > 0
+                            ? "Widget confirmed live — receiving impressions."
+                            : "The script tag is installed on your store."}
+                        </p>
                       </div>
                     </div>
                     <Button 

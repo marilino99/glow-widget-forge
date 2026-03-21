@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const allowedEvents = ["impression", "click", "product_click"];
+    const allowedEvents = ["impression", "click", "product_click", "widget_rendered"];
     if (!allowedEvents.includes(event_type)) {
       return new Response(
         JSON.stringify({ error: "Invalid event_type" }),
