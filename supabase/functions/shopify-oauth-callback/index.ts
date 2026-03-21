@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
 
     // Now get a Storefront Access Token using the Admin API
     const storefrontRes = await fetch(
-      `https://${callbackShop}/admin/api/2024-01/storefront_access_tokens.json`,
+      `https://${authorizedShop}/admin/api/2024-01/storefront_access_tokens.json`,
       {
         method: "POST",
         headers: {
