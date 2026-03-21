@@ -269,24 +269,6 @@ const IntegrationsPanel = () => {
                 </div>
               )}
 
-              {!instagram.connection && !instagram.isLoading && (
-                <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2.5 dark:border-amber-900/50 dark:bg-amber-950/30">
-                  <div className="flex items-start gap-1.5">
-                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-                    <div>
-                      <p className="text-[11px] font-medium text-amber-800 dark:text-amber-300">
-                        App Meta in modalità Development
-                      </p>
-                      <ul className="mt-1 space-y-0.5 text-[11px] text-amber-700 dark:text-amber-400/80">
-                        <li>• Aggiungi l'account come <strong>Instagram Tester</strong> nella dashboard Meta</li>
-                        <li>• L'account deve <strong>accettare l'invito</strong> da Instagram</li>
-                        <li>• L'account deve essere <strong>professionale</strong> (Business/Creator)</li>
-                        <li>• Per utenti esterni: porta l'app in <strong>modalità Live</strong></li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Actions */}
