@@ -1880,7 +1880,7 @@ Deno.serve(async (req) => {
       var typing = d.createElement('div');
       typing.id = 'wj-typing';
       var avatarHtml = avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div id="wj-typing-avatar" style="background:#000;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>';
-      typing.innerHTML = avatarHtml + '<div id="wj-typing-dots" style="background:' + color.bg + '"><span class="wj-dot"></span><span class="wj-dot"></span><span class="wj-dot"></span></div>';
+      typing.innerHTML = avatarHtml + '<div id="wj-typing-dots" style="background:' + color.bg + ';padding:12px 20px;border-radius:16px;display:flex;gap:4px;align-items:center"><span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.7);display:inline-block;animation:wj-dot-bounce 1.2s ease-in-out infinite"></span><span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.7);display:inline-block;animation:wj-dot-bounce 1.2s ease-in-out infinite;animation-delay:0.15s"></span><span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.7);display:inline-block;animation:wj-dot-bounce 1.2s ease-in-out infinite;animation-delay:0.3s"></span></div>';
       chatMsgs.appendChild(typing);
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
