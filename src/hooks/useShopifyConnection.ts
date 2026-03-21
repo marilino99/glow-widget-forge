@@ -43,9 +43,12 @@ export const useShopifyConnection = () => {
     }
 
     if (errorCode === "shop_mismatch") {
+      const requestedShop = params.get("requested_shop");
       toast({
         title: "Errore connessione Shopify",
-        description: "Il dominio ritornato da Shopify non corrisponde a quello richiesto. Riprova con il dominio corretto.",
+        description: requestedShop
+          ? `Shopify ha autorizzato uno store diverso da ${requestedShop}. Riconnetti inserendo il dominio corretto e scegliendo quello giusto in Shopify.`
+          : "Il dominio ritornato da Shopify non corrisponde a quello richiesto. Riprova con il dominio corretto.",
         variant: "destructive",
       });
     }
@@ -56,6 +59,7 @@ export const useShopifyConnection = () => {
       url.searchParams.delete("shopify_error");
       url.searchParams.delete("shopify_warning");
       url.searchParams.delete("shop");
+      url.searchParams.delete("requested_shop");
       window.history.replaceState({}, "", url.toString());
     }
   }, [toast]);
@@ -160,7 +164,10 @@ export const useShopifyConnection = () => {
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
 
-      if (res.error) throw res.error;
+      if (res.error) {
+        const functionError = typeof res.data?.error === "string" ? res.data.error : null;
+        throw new Error(functionError || res.error.message || "Could not sync products.");
+      }
       const result = res.data as { success: boolean; productCount: number };
 
       setConnection((prev) =>
