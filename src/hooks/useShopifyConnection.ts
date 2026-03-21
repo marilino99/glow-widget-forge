@@ -59,6 +59,7 @@ export const useShopifyConnection = () => {
       url.searchParams.delete("shopify_error");
       url.searchParams.delete("shopify_warning");
       url.searchParams.delete("shop");
+      url.searchParams.delete("requested_shop");
       window.history.replaceState({}, "", url.toString());
     }
   }, [toast]);
