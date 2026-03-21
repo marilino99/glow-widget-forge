@@ -28,27 +28,16 @@ Deno.serve(async (req) => {
 
     const requestedShop = normalizeShop(stateData.shop);
     const callbackShop = normalizeShop(shop);
-    const hasShopMismatch = requestedShop !== callbackShop;
 
-    if (hasShopMismatch) {
-      console.warn("Shop domain mismatch during Shopify OAuth", {
-        stateShop: requestedShop,
-        callbackShop,
-      });
-
-      const redirectParams = new URLSearchParams({
-        shopify_error: "shop_mismatch",
-        requested_shop: requestedShop,
-        shop: callbackShop,
-      });
-
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: `${appUrl}/builder?${redirectParams.toString()}`,
-        },
+    if (requestedShop !== callbackShop) {
+      console.info("Shopify redirected to a different domain — using callback shop", {
+        requested: requestedShop,
+        actual: callbackShop,
       });
     }
+
+    // Always use the shop domain Shopify returned (it's authoritative)
+    const authorizedShop = callbackShop;
 
     const clientId = Deno.env.get("SHOPIFY_CLIENT_ID")!;
     const clientSecret = Deno.env.get("SHOPIFY_CLIENT_SECRET")!;
