@@ -19,9 +19,22 @@ const PRODUCT_KEYWORDS = [
   "membership", "abbonament", "pian", "subscription", "costo", "quanto costa", "tariff", "pricing",
   "how much", "offert", "deal", "pacchett", "iscrizi", "signup", "sign up", "join"
 ];
+const CATEGORY_DISCOVERY_PATTERNS = [
+  "find the right product", "help me choose", "help me find", "aiutami a scegliere",
+  "cercare il prodotto adatto", "trova il prodotto", "cerco qualcosa", "looking for something",
+  "i need help", "ho bisogno di aiuto", "consigliami", "recommend", "suggest",
+  "quale prodotto", "which product", "what should i", "cosa mi consigli",
+];
+
+function isCategoryDiscoveryIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return CATEGORY_DISCOVERY_PATTERNS.some((p) => normalized.includes(p));
+}
 
 function isProductIntent(text: string): boolean {
   const normalized = (text || "").toLowerCase();
+  // If it's a category discovery request, don't treat as product intent
+  if (isCategoryDiscoveryIntent(normalized)) return false;
   return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
