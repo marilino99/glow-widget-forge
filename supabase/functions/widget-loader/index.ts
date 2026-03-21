@@ -1600,10 +1600,6 @@ Deno.serve(async (req) => {
 
     function showLauncher(withPop) {
       btn.classList.remove('hidden');
-      btn.style.opacity = '1';
-      btn.style.visibility = 'visible';
-      btn.style.pointerEvents = 'auto';
-      btn.style.transform = 'scale(1)';
       if (withPop) {
         btn.classList.add('pop');
         setTimeout(function() { btn.classList.remove('pop'); }, 400);
@@ -1612,9 +1608,6 @@ Deno.serve(async (req) => {
 
     function hideLauncher() {
       btn.classList.add('hidden');
-      btn.style.opacity = '0';
-      btn.style.pointerEvents = 'none';
-      btn.style.transform = 'scale(0.5)';
     }
 
     // Animated close: play collapse, then hide and show button with pop
