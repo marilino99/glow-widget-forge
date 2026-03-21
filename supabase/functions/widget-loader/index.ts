@@ -1774,12 +1774,35 @@ Deno.serve(async (req) => {
           });
           msgHtml += '</div>';
         }
+
+        // Render chips from metadata
+        if (msg.metadata && msg.metadata.chips && msg.metadata.chips.length > 0) {
+          msgHtml += '<div class="wj-chat-chips" style="margin-top:8px;align-items:flex-start">';
+          msg.metadata.chips.forEach(function(chipText) {
+            msgHtml += '<button class="wj-chat-chip wj-dynamic-chip">' + esc(chipText) + '</button>';
+          });
+          msgHtml += '</div>';
+        }
         
         msgHtml += '</div>';
         bubble.innerHTML = msgHtml;
         aiMessageCount++;
       }
       chatMsgs.appendChild(bubble);
+      // Bind dynamic chips
+      var dynamicChips = bubble.querySelectorAll('.wj-dynamic-chip');
+      dynamicChips.forEach(function(chip) {
+        chip.addEventListener('click', function() {
+          var text = this.textContent;
+          // Hide the chips container
+          var parent = this.parentElement;
+          if (parent) parent.style.display = 'none';
+          // Also hide initial chips if still visible
+          var initChips = d.getElementById('wj-chat-chips');
+          if (initChips) initChips.style.display = 'none';
+          sendMessageText(text);
+        });
+      });
       // Bind cart buttons in chat product cards
       var chatCartBtns = bubble.querySelectorAll('.wj-chat-cart-btn');
       chatCartBtns.forEach(function(btn) {
