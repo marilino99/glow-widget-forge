@@ -481,14 +481,16 @@ useEffect(() => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 p-4">
                       <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">Widget installed!</p>
-                        <p className="text-xs text-muted-foreground">
-                          {diagnostics && diagnostics.recentImpressions > 0
-                            ? "Widget confirmed live — receiving impressions."
-                            : "The script tag is installed on your store."}
-                        </p>
-                      </div>
+                       <div>
+                         <p className="text-sm font-semibold text-foreground">Widget installed!</p>
+                         <p className="text-xs text-muted-foreground">
+                           {diagnostics && diagnostics.launcherChecked && diagnostics.launcherVisible
+                             ? "Widget confirmed live and visible on your store."
+                             : diagnostics && diagnostics.recentImpressions > 0
+                             ? "Script running — waiting for visibility confirmation."
+                             : "The script tag is installed on your store."}
+                         </p>
+                       </div>
                     </div>
                     <Button 
                       onClick={handleShopifyReinstall} 
