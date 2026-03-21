@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-Shopify-Access-Token": storefront_token,
+            "X-Shopify-Access-Token": admin_access_token,
           },
           body: JSON.stringify({
             query: SHOPIFY_ADMIN_PRODUCTS_QUERY,
