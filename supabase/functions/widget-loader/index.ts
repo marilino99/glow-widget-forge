@@ -503,7 +503,7 @@ Deno.serve(async (req) => {
       .wj-emoji{border:none !important;background:transparent !important;font-size:16px !important;cursor:pointer !important;padding:4px !important;border-radius:4px !important;transition:background .15s}
       .wj-emoji:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-powered{display:flex !important;align-items:center !important;justify-content:center !important;gap:4px !important;padding:8px !important;font-size:10px !important;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
-      #wj-chat-powered img{height:16px !important;width:auto !important;margin-left:-6px !important;\${dark ? 'opacity:0.3 !important;filter:invert(1)' : 'opacity:0.4' !important}}
+      #wj-chat-powered img{height:16px !important;width:auto !important;margin-left:-6px !important;\${dark ? 'opacity:0.3 !important;filter:invert(1) !important' : 'opacity:0.4 !important'}}
       #wj-pop button,#wj-pop a,#wj-pop input,#wj-pop .wj-nav-item,#wj-pop .wj-chat-chip,#wj-pop .wj-prod-btn,#wj-pop .wj-prod-cart-btn{pointer-events:auto !important;cursor:pointer !important}
       #wj-pop *{pointer-events:auto !important}
     \`;
