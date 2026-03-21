@@ -441,6 +441,16 @@ useEffect(() => {
                         </span>
                       </div>
                     </div>
+                    {diagnostics.launcherChecked && (
+                      <div className="grid grid-cols-1 gap-1 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Launcher visibility:</span>{" "}
+                          <span className={diagnostics.launcherVisible ? "text-green-600 font-medium" : "text-destructive font-medium"}>
+                            {diagnostics.launcherVisible ? "✓ Confirmed visible" : "✗ Hidden or covered"}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                     {diagnostics.lastSeenUrl && (
                       <div className="text-xs">
                         <span className="text-muted-foreground">Last seen on:</span>{" "}
@@ -456,6 +466,12 @@ useEffect(() => {
                       <div className="flex items-center gap-1 text-xs text-amber-600">
                         <AlertTriangle className="h-3 w-3" />
                         Tag installed but no recent activity — try reinstalling
+                      </div>
+                    )}
+                    {diagnostics.tagInstalled && diagnostics.recentImpressions > 0 && diagnostics.launcherChecked && !diagnostics.launcherVisible && (
+                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                        <AlertTriangle className="h-3 w-3" />
+                        Script loads but launcher is hidden — may be covered by theme CSS. Try reinstalling.
                       </div>
                     )}
                   </div>
