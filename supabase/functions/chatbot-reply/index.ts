@@ -555,8 +555,22 @@ ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: 
         })),
       };
       console.log(`Product cards (truncated marker recovery): showing ${Math.min(3, productCardsData.length)} products`);
-    } else if (productCardsData && productCardsData.length > 0) {
-      // Fallback: if the AI talked about products but forgot the marker
+    }
+
+    // Parse [CHIPS: ...] marker BEFORE product fallback
+    const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
+    if (chipsMarkerMatch) {
+      cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
+      const chips = chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 3);
+      if (chips.length > 0) {
+        if (!metadata) metadata = {};
+        metadata.chips = chips;
+        console.log(`Chips: ${chips.length} options parsed`);
+      }
+    }
+
+    // Fallback: show products only if NO chips were found
+    if (!metadata?.chips && productCardsData && productCardsData.length > 0) {
       const lastUserMsg = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
       const mentionsProducts = isProductIntent(lastUserMsg);
       if (mentionsProducts) {
@@ -570,18 +584,6 @@ ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: 
           })),
         };
         console.log(`Product cards fallback: showing ${Math.min(3, productCardsData.length)} products`);
-      }
-    }
-
-    // Parse [CHIPS: ...] marker for follow-up action chips
-    const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
-    if (chipsMarkerMatch) {
-      cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
-      const chips = chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 3);
-      if (chips.length > 0) {
-        if (!metadata) metadata = {};
-        metadata.chips = chips;
-        console.log(`Chips: ${chips.length} options parsed`);
       }
     }
 
