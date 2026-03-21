@@ -2091,10 +2091,15 @@ Deno.serve(async (req) => {
     root.appendChild(btn);
     d.body.appendChild(root);
 
+    // Track after real DOM mount
+    trackEvent('impression');
+    trackEvent('widget_rendered');
+    setTimeout(function() { checkLauncherVisibility(btn); }, 500);
+
     // Inject custom JS if provided
     if (customJs) {
       try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
-  }
+    }
 })(window,document,'${supabaseUrl}');
 `;
 
