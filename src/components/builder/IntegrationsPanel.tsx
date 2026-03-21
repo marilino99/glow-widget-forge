@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, AlertTriangle } from "lucide-react";
+import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, AlertTriangle, Send } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import shopifyLogo from "@/assets/logo-shopify.png";
 import calendlyLogo from "@/assets/logo-calendly.png";
 import instagramLogo from "@/assets/logo-instagram.png";
@@ -20,6 +25,10 @@ const IntegrationsPanel = () => {
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [calendlyDisconnectOpen, setCalendlyDisconnectOpen] = useState(false);
   const [instagramDisconnectOpen, setInstagramDisconnectOpen] = useState(false);
+  const [instagramRequestOpen, setInstagramRequestOpen] = useState(false);
+  const [igEmail, setIgEmail] = useState("");
+  const [igHandle, setIgHandle] = useState("");
+  const [igSending, setIgSending] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -260,24 +269,6 @@ const IntegrationsPanel = () => {
                 </div>
               )}
 
-              {!instagram.connection && !instagram.isLoading && (
-                <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2.5 dark:border-amber-900/50 dark:bg-amber-950/30">
-                  <div className="flex items-start gap-1.5">
-                    <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-                    <div>
-                      <p className="text-[11px] font-medium text-amber-800 dark:text-amber-300">
-                        App Meta in modalità Development
-                      </p>
-                      <ul className="mt-1 space-y-0.5 text-[11px] text-amber-700 dark:text-amber-400/80">
-                        <li>• Aggiungi l'account come <strong>Instagram Tester</strong> nella dashboard Meta</li>
-                        <li>• L'account deve <strong>accettare l'invito</strong> da Instagram</li>
-                        <li>• L'account deve essere <strong>professionale</strong> (Business/Creator)</li>
-                        <li>• Per utenti esterni: porta l'app in <strong>modalità Live</strong></li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Actions */}
@@ -305,18 +296,10 @@ const IntegrationsPanel = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => instagram.connectOAuth()}
-                  disabled={instagram.isConnecting}
+                  onClick={() => setInstagramRequestOpen(true)}
                   className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
                 >
-                  {instagram.isConnecting ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Connecting…
-                    </>
-                  ) : (
-                    "Connect"
-                  )}
+                  Connect
                 </button>
               )}
               <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
@@ -392,6 +375,81 @@ const IntegrationsPanel = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Instagram Request Dialog */}
+      <Dialog open={instagramRequestOpen} onOpenChange={setInstagramRequestOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Connect Instagram</DialogTitle>
+            <DialogDescription>
+              Enter your details and we'll set up the Instagram integration for you.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!igEmail.trim() || !igHandle.trim()) return;
+              setIgSending(true);
+              try {
+                const { data, error } = await supabase.functions.invoke("instagram-request", {
+                  body: { email: igEmail.trim(), instagramHandle: igHandle.trim().replace(/^@/, "") },
+                });
+                if (error) throw error;
+                toast.success("Request sent! We'll get back to you soon.");
+                setInstagramRequestOpen(false);
+                setIgEmail("");
+                setIgHandle("");
+              } catch (err) {
+                console.error(err);
+                toast.error("Failed to send request. Please try again.");
+              } finally {
+                setIgSending(false);
+              }
+            }}
+            className="flex flex-col gap-4 mt-2"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="ig-email">Your email</Label>
+              <Input
+                id="ig-email"
+                type="email"
+                placeholder="you@example.com"
+                value={igEmail}
+                onChange={(e) => setIgEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ig-handle">Instagram account</Label>
+              <Input
+                id="ig-handle"
+                type="text"
+                placeholder="@youraccount"
+                value={igHandle}
+                onChange={(e) => setIgHandle(e.target.value)}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={igSending || !igEmail.trim() || !igHandle.trim()}
+              className="w-full rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 inline-flex items-center justify-center gap-2"
+            >
+              {igSending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending…
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Send Request
+                </>
+              )}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
