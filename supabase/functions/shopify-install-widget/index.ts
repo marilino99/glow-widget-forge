@@ -12,7 +12,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Authenticate user
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -38,7 +37,6 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    // Get Shopify connection with admin token
     const { data: conn, error: connError } = await adminClient
       .from("shopify_connections")
       .select("store_domain, admin_access_token")
@@ -59,14 +57,14 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Parse body for checkOnly flag
     let checkOnly = false;
+    let forceReinstall = false;
     try {
       const body = await req.json();
       checkOnly = body?.checkOnly === true;
+      forceReinstall = body?.forceReinstall === true;
     } catch (_) {}
 
-    // Get widget ID for this user
     const { data: widget } = await adminClient
       .from("widget_configurations")
       .select("id")
@@ -82,7 +80,9 @@ Deno.serve(async (req) => {
 
     const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader?widgetId=${widget.id}`;
 
-    // --- Try ScriptTag API first ---
+    console.log(`[install-widget] Store: ${conn.store_domain}, Widget: ${widget.id}, checkOnly: ${checkOnly}, forceReinstall: ${forceReinstall}`);
+
+    // --- Try ScriptTag API ---
     let scriptTagSuccess = false;
     let scriptTagError = false;
 
@@ -95,29 +95,37 @@ Deno.serve(async (req) => {
       if (listRes.ok) {
         const listData = await listRes.json();
         const existingTags = listData.script_tags || [];
-        const widjetTag = existingTags.find((t: any) =>
-          t.src && t.src.includes("widget-loader") && t.src.includes(`widgetId=${widget.id}`)
+
+        // Find any Widjet tags
+        const allWidjetTags = existingTags.filter((t: any) =>
+          t.src && t.src.includes("widget-loader")
         );
+        // Find the exact correct tag
+        const correctTag = allWidjetTags.find((t: any) =>
+          t.src.includes(`widgetId=${widget.id}`)
+        );
+
+        console.log(`[install-widget] Found ${allWidjetTags.length} Widjet tags, correct: ${!!correctTag}`);
+        allWidjetTags.forEach((t: any) => console.log(`[install-widget] Tag ${t.id}: ${t.src}`));
 
         if (checkOnly) {
           return new Response(
-            JSON.stringify({ success: true, alreadyInstalled: !!widjetTag }),
+            JSON.stringify({ success: true, alreadyInstalled: !!correctTag, method: "script_tag", tagCount: allWidjetTags.length }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
 
-        if (widjetTag) {
+        // If correct tag exists and no force reinstall, we're done
+        if (correctTag && !forceReinstall) {
           return new Response(
-            JSON.stringify({ success: true, alreadyInstalled: true }),
+            JSON.stringify({ success: true, alreadyInstalled: true, method: "script_tag" }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
 
-        // Remove old Widjet script tags
-        const oldTags = existingTags.filter((t: any) =>
-          t.src && t.src.includes("widget-loader") && !t.src.includes(`widgetId=${widget.id}`)
-        );
-        for (const old of oldTags) {
+        // Remove ALL old Widjet script tags (cleanup)
+        for (const old of allWidjetTags) {
+          console.log(`[install-widget] Removing old tag ${old.id}`);
           await fetch(
             `https://${conn.store_domain}/admin/api/2024-01/script_tags/${old.id}.json`,
             {
@@ -127,7 +135,7 @@ Deno.serve(async (req) => {
           );
         }
 
-        // Create new ScriptTag
+        // Create fresh ScriptTag
         const createRes = await fetch(
           `https://${conn.store_domain}/admin/api/2024-01/script_tags.json`,
           {
@@ -143,21 +151,30 @@ Deno.serve(async (req) => {
         );
 
         if (createRes.ok) {
+          const createData = await createRes.json();
+          console.log(`[install-widget] Created new ScriptTag ${createData.script_tag?.id} with src: ${widgetLoaderUrl}`);
           scriptTagSuccess = true;
         } else {
-          console.warn("ScriptTag create failed:", createRes.status, await createRes.text());
+          const errText = await createRes.text();
+          console.warn(`[install-widget] ScriptTag create failed: ${createRes.status} ${errText}`);
           scriptTagError = true;
         }
       } else {
-        console.warn("ScriptTag list failed (falling back to theme injection):", listRes.status);
+        console.warn(`[install-widget] ScriptTag list failed: ${listRes.status}`);
         scriptTagError = true;
       }
     } catch (e) {
-      console.warn("ScriptTag API error (falling back to theme injection):", e);
+      console.warn("[install-widget] ScriptTag API error:", e);
       scriptTagError = true;
     }
 
     if (scriptTagSuccess) {
+      // Also clean up any legacy theme.liquid snippet
+      try {
+        await cleanThemeLiquid(conn.store_domain, conn.admin_access_token);
+      } catch (e) {
+        console.warn("[install-widget] Legacy cleanup failed (non-critical):", e);
+      }
       return new Response(
         JSON.stringify({ success: true, method: "script_tag" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -166,106 +183,12 @@ Deno.serve(async (req) => {
 
     // --- Fallback: inject into theme.liquid ---
     if (scriptTagError) {
-      console.log("Using theme.liquid fallback for widget installation");
-
-      const widjetSnippet =
-        `<!-- Start of Widjet (widjet.com) code -->\n` +
-        `<script src="${widgetLoaderUrl}" defer></script>\n` +
-        `<!-- End of Widjet code -->`;
-
-      const themesRes = await fetch(
-        `https://${conn.store_domain}/admin/api/2024-01/themes.json`,
-        { headers: { "X-Shopify-Access-Token": conn.admin_access_token } }
-      );
-
-      if (!themesRes.ok) {
-        const errText = await themesRes.text();
-        console.error("Failed to list themes:", themesRes.status, errText);
-        return new Response(
-          JSON.stringify({ error: "Failed to access Shopify themes. Please reconnect your store." }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      const themesData = await themesRes.json();
-      const mainTheme = themesData.themes?.find((t: any) => t.role === "main");
-
-      if (!mainTheme) {
-        return new Response(
-          JSON.stringify({ error: "No active theme found on Shopify store." }),
-          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      // Read current theme.liquid
-      const assetRes = await fetch(
-        `https://${conn.store_domain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json?asset[key]=layout/theme.liquid`,
-        { headers: { "X-Shopify-Access-Token": conn.admin_access_token } }
-      );
-
-      if (!assetRes.ok) {
-        return new Response(
-          JSON.stringify({ error: "Failed to read theme layout." }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      const assetData = await assetRes.json();
-      let themeContent = assetData.asset?.value || "";
-
-      // Check if already installed
-      if (themeContent.includes("Start of Widjet")) {
-        if (checkOnly) {
-          return new Response(
-            JSON.stringify({ success: true, alreadyInstalled: true }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        // Remove old snippet and re-add with correct widget ID
-        themeContent = themeContent.replace(
-          /<!-- Start of Widjet \(widjet\.com\) code -->[\s\S]*?<!-- End of Widjet code -->/,
-          ""
-        );
-      } else if (checkOnly) {
-        return new Response(
-          JSON.stringify({ success: true, alreadyInstalled: false }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      // Inject before </body>
-      const updatedContent = themeContent.replace(
-        "</body>",
-        `${widjetSnippet}\n</body>`
-      );
-
-      const updateRes = await fetch(
-        `https://${conn.store_domain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Shopify-Access-Token": conn.admin_access_token,
-          },
-          body: JSON.stringify({
-            asset: { key: "layout/theme.liquid", value: updatedContent },
-          }),
-        }
-      );
-
-      if (!updateRes.ok) {
-        const errText = await updateRes.text();
-        console.error("Failed to update theme.liquid:", updateRes.status, errText);
-        return new Response(
-          JSON.stringify({ error: "Failed to install widget in theme. Please try again." }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, method: "theme_liquid" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      console.log("[install-widget] Using theme.liquid fallback");
+      const result = await installViaThemeLiquid(conn.store_domain, conn.admin_access_token, widgetLoaderUrl, widget.id, checkOnly);
+      return new Response(JSON.stringify(result), {
+        status: result.error ? 500 : 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     return new Response(
@@ -273,10 +196,106 @@ Deno.serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("shopify-install-widget error:", error);
+    console.error("[install-widget] error:", error);
     return new Response(
       JSON.stringify({ error: error.message || "Internal error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
+
+async function getMainTheme(storeDomain: string, token: string) {
+  const themesRes = await fetch(
+    `https://${storeDomain}/admin/api/2024-01/themes.json`,
+    { headers: { "X-Shopify-Access-Token": token } }
+  );
+  if (!themesRes.ok) return null;
+  const themesData = await themesRes.json();
+  return themesData.themes?.find((t: any) => t.role === "main") || null;
+}
+
+async function cleanThemeLiquid(storeDomain: string, token: string) {
+  const mainTheme = await getMainTheme(storeDomain, token);
+  if (!mainTheme) return;
+
+  const assetRes = await fetch(
+    `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json?asset[key]=layout/theme.liquid`,
+    { headers: { "X-Shopify-Access-Token": token } }
+  );
+  if (!assetRes.ok) return;
+
+  const assetData = await assetRes.json();
+  const content = assetData.asset?.value || "";
+  const regex = /<!-- Start of Widjet \(widjet\.com\) code -->[\s\S]*?<!-- End of Widjet code -->/;
+
+  if (regex.test(content)) {
+    const cleaned = content.replace(regex, "");
+    await fetch(
+      `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": token },
+        body: JSON.stringify({ asset: { key: "layout/theme.liquid", value: cleaned } }),
+      }
+    );
+    console.log("[install-widget] Removed legacy theme.liquid snippet");
+  }
+}
+
+async function installViaThemeLiquid(storeDomain: string, token: string, loaderUrl: string, widgetId: string, checkOnly: boolean) {
+  const snippet =
+    `<!-- Start of Widjet (widjet.com) code -->\n` +
+    `<script src="${loaderUrl}" defer></script>\n` +
+    `<!-- End of Widjet code -->`;
+
+  const mainTheme = await getMainTheme(storeDomain, token);
+  if (!mainTheme) {
+    return { error: "No active theme found on Shopify store." };
+  }
+
+  const assetRes = await fetch(
+    `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json?asset[key]=layout/theme.liquid`,
+    { headers: { "X-Shopify-Access-Token": token } }
+  );
+  if (!assetRes.ok) {
+    return { error: "Failed to read theme layout." };
+  }
+
+  const assetData = await assetRes.json();
+  let themeContent = assetData.asset?.value || "";
+  const regex = /<!-- Start of Widjet \(widjet\.com\) code -->[\s\S]*?<!-- End of Widjet code -->/;
+  const hasSnippet = regex.test(themeContent);
+
+  // Check if existing snippet has correct widgetId
+  const hasCorrectSnippet = hasSnippet && themeContent.includes(`widgetId=${widgetId}`);
+
+  if (checkOnly) {
+    return { success: true, alreadyInstalled: hasCorrectSnippet, method: "theme_liquid" };
+  }
+
+  // Remove old snippet if present
+  if (hasSnippet) {
+    themeContent = themeContent.replace(regex, "");
+  }
+
+  // Inject before </body>
+  const updatedContent = themeContent.replace("</body>", `${snippet}\n</body>`);
+
+  const updateRes = await fetch(
+    `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": token },
+      body: JSON.stringify({ asset: { key: "layout/theme.liquid", value: updatedContent } }),
+    }
+  );
+
+  if (!updateRes.ok) {
+    const errText = await updateRes.text();
+    console.error(`[install-widget] theme.liquid update failed: ${updateRes.status} ${errText}`);
+    return { error: "Failed to install widget in theme. Please try again." };
+  }
+
+  console.log(`[install-widget] Installed via theme.liquid for ${storeDomain}`);
+  return { success: true, method: "theme_liquid" };
+}
