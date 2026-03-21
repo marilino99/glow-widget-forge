@@ -83,10 +83,13 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         .eq("widget_id", widgetId)
         .gte("created_at", oneDayAgo)
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(100);
 
       const impressions = recentEvents?.filter(e => e.event_type === "impression") || [];
       const lastWithUrl = recentEvents?.find(e => e.page_url);
+      const hasLauncherVisible = recentEvents?.some(e => e.event_type === "launcher_visible") || false;
+      const hasLauncherHidden = recentEvents?.some(e => e.event_type === "launcher_hidden") || false;
+      const launcherChecked = hasLauncherVisible || hasLauncherHidden;
 
       setDiagnostics(prev => ({
         tagInstalled: prev?.tagInstalled ?? false,
@@ -94,6 +97,8 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         lastSeenUrl: lastWithUrl?.page_url || undefined,
         lastSeenAt: lastWithUrl?.created_at || undefined,
         recentImpressions: impressions.length,
+        launcherVisible: launcherChecked ? hasLauncherVisible : null,
+        launcherChecked,
       }));
     } catch (e) {
       // Silent
