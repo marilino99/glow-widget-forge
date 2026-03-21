@@ -2093,6 +2093,7 @@ Deno.serve(async (req) => {
     if (customJs) {
       try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
     }
+  }
 })(window,document,'${supabaseUrl}');
 `;
 
