@@ -393,6 +393,81 @@ const IntegrationsPanel = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Instagram Request Dialog */}
+      <Dialog open={instagramRequestOpen} onOpenChange={setInstagramRequestOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Connect Instagram</DialogTitle>
+            <DialogDescription>
+              Enter your details and we'll set up the Instagram integration for you.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!igEmail.trim() || !igHandle.trim()) return;
+              setIgSending(true);
+              try {
+                const { data, error } = await supabase.functions.invoke("instagram-request", {
+                  body: { email: igEmail.trim(), instagramHandle: igHandle.trim().replace(/^@/, "") },
+                });
+                if (error) throw error;
+                toast.success("Request sent! We'll get back to you soon.");
+                setInstagramRequestOpen(false);
+                setIgEmail("");
+                setIgHandle("");
+              } catch (err) {
+                console.error(err);
+                toast.error("Failed to send request. Please try again.");
+              } finally {
+                setIgSending(false);
+              }
+            }}
+            className="flex flex-col gap-4 mt-2"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="ig-email">Your email</Label>
+              <Input
+                id="ig-email"
+                type="email"
+                placeholder="you@example.com"
+                value={igEmail}
+                onChange={(e) => setIgEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ig-handle">Instagram account</Label>
+              <Input
+                id="ig-handle"
+                type="text"
+                placeholder="@youraccount"
+                value={igHandle}
+                onChange={(e) => setIgHandle(e.target.value)}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={igSending || !igEmail.trim() || !igHandle.trim()}
+              className="w-full rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 inline-flex items-center justify-center gap-2"
+            >
+              {igSending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending…
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Send Request
+                </>
+              )}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
