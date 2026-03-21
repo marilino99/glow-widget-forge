@@ -41,6 +41,13 @@ Deno.serve(async (req) => {
     return;
   }
 
+  function esc(s) {
+    if (!s) return '';
+    var el = d.createElement('div');
+    el.textContent = s;
+    return el.innerHTML;
+  }
+
   if (w.__wj_loaded) return;
   w.__wj_loaded = true;
 
@@ -2062,13 +2069,6 @@ Deno.serve(async (req) => {
       try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }
   }
 }
-
-  function esc(s) {
-    if (!s) return '';
-    var el = d.createElement('div');
-    el.textContent = s;
-    return el.innerHTML;
-  }
 })(window,document,'${supabaseUrl}');
 `;
 
