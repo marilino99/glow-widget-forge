@@ -1332,8 +1332,8 @@ const WidgetPreviewPanel = ({
           <div 
             className={`absolute z-20 transition-all duration-300 ${
               devicePreview === "mobile" 
-                ? `w-[420px] scale-[0.65] ${widgetPosition === 'left' ? 'origin-bottom-left' : 'origin-bottom-right'}` 
-                : `w-[420px] bottom-5 ${widgetPosition === 'left' ? 'left-5' : 'right-5'}`
+                ? `w-[380px] scale-[0.65] ${widgetPosition === 'left' ? 'origin-bottom-left' : 'origin-bottom-right'}` 
+                : `w-[380px] bottom-5 ${widgetPosition === 'left' ? 'left-5' : 'right-5'}`
             }`}
             style={devicePreview === "mobile" ? {
               bottom: 'calc(50% - 250px)',
@@ -1435,7 +1435,7 @@ const WidgetPreviewPanel = ({
                   </button>
                 )}
               </div>) : showChat ? (/* Chat View */
-          <div className={`flex h-[780px] max-h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000', color: isLight ? '#0f172a' : '#ffffff' }}>
+          <div className={`flex h-[760px] max-h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-2xl shadow-2xl ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000', color: isLight ? '#0f172a' : '#ffffff' }}>
                 {/* Chat header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   <button onClick={() => setShowChat(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
@@ -1693,7 +1693,7 @@ const WidgetPreviewPanel = ({
                 </div>
                 )}
               </div>) : showContactPage ? (/* Contact Page View */
-          <div className={`flex flex-col h-[780px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000' }}>
+          <div className={`flex flex-col h-[760px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText}`} style={{ backgroundColor: isLight ? '#ffffff' : '#000000' }}>
                 {/* Contact page header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   <button onClick={() => setShowContactPage(false)} className={`flex h-8 w-8 items-center justify-center rounded-full ${widgetButtonBg}`}>
@@ -1776,7 +1776,7 @@ const WidgetPreviewPanel = ({
                 </div>
                 )}
               </div>) : showShareFeedback ? (/* Share Feedback Form View */
-          <div className={`flex flex-col h-[780px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
+          <div className={`flex flex-col h-[760px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   {feedbackStep !== 3 ? (
@@ -2013,7 +2013,7 @@ const WidgetPreviewPanel = ({
                 </div>
                 )}
               </div>) : showReportBug ? (/* Report Bug Form View */
-          <div className={`flex flex-col h-[780px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
+          <div className={`flex flex-col h-[760px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={{ backgroundColor: isLight ? '#f8f8f8' : '#000' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3">
                   {reportBugStep !== 3 ? (
@@ -2261,7 +2261,7 @@ const WidgetPreviewPanel = ({
                 </div>
                 )}
               </div>) : (/* Home View */
-          <div id="wj-pop" className={`flex flex-col h-[780px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
+          <div id="wj-pop" className={`flex flex-col h-[760px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto relative pb-8 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                 {/* Background image for image mode */}
