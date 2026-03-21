@@ -157,6 +157,11 @@ Deno.serve(async (req) => {
     } else {
       color = colors[wc] || colors.blue;
     }
+    // Detect if widget color is light → use dark text on buttons
+    var cbgHex = color.bg.replace('#','');
+    var cR = parseInt(cbgHex.substr(0,2),16), cG = parseInt(cbgHex.substr(2,2),16), cB = parseInt(cbgHex.substr(4,2),16);
+    var luminance = (0.299*cR + 0.587*cG + 0.114*cB) / 255;
+    var btnText = luminance > 0.6 ? '#1e293b' : '#fff';
     var dark = cfg.widget_theme === 'dark';
     var lt = !dark;
     var widgetType = cfg.widget_type || 'popup';
@@ -247,7 +252,7 @@ Deno.serve(async (req) => {
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
-      #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:#fff;font-size:14px;font-weight:500;cursor:pointer}
+      #wj-cbtn{width:100%;margin-top:12px;padding:10px;border:none;border-radius:8px;background:\${color.bg};color:\${btnText};font-size:14px;font-weight:500;cursor:pointer}
       #wj-cbtn:hover{background:\${color.hover}}
       #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${solid ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
       #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
@@ -387,7 +392,7 @@ Deno.serve(async (req) => {
       #wj-avatar{width:40px !important;height:40px !important;border-radius:50% !important;object-fit:cover !important;background:#0f172a !important;display:flex !important;align-items:center !important;justify-content:center !important;color:#fff !important;font-weight:700 !important;font-size:14px !important;flex-shrink:0 !important}
       #wj-cname{font-size:12px !important;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px !important;color:\${solid ? '#fff' : textMain}}
-      #wj-pop #wj-cbtn{width:100% !important;margin-top:12px !important;padding:10px !important;border:none !important;border-radius:8px !important;background:\${color.bg} !important;color:#fff !important;font-size:14px !important;font-weight:500 !important;cursor:pointer !important;font-family:inherit !important;line-height:1.5 !important;letter-spacing:normal !important;text-transform:none !important;text-align:center !important;-webkit-appearance:none !important;appearance:none !important;outline:none !important;box-shadow:none !important}
+      #wj-pop #wj-cbtn{width:100% !important;margin-top:12px !important;padding:10px !important;border:none !important;border-radius:8px !important;background:\${color.bg} !important;color:\${btnText} !important;font-size:14px !important;font-weight:500 !important;cursor:pointer !important;font-family:inherit !important;line-height:1.5 !important;letter-spacing:normal !important;text-transform:none !important;text-align:center !important;-webkit-appearance:none !important;appearance:none !important;outline:none !important;box-shadow:none !important}
       #wj-pop #wj-cbtn:hover{background:\${color.hover} !important}
       #wj-whatsapp{width:100% !important;margin-top:8px !important;padding:10px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'} !important;border-radius:8px !important;background:transparent !important;color:\${solid ? '#fff' : textMain} !important;font-size:14px !important;font-weight:500 !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:8px !important;font-family:inherit !important;line-height:1.5 !important;letter-spacing:normal !important;text-transform:none !important}
       #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'} !important}
