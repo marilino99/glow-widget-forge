@@ -132,13 +132,15 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
 
   useEffect(() => {
     setShopifyInstalled(false);
+    setDiagnostics(null);
   }, [shopifyConnection?.store_domain, widgetId]);
 
   useEffect(() => {
     if (selectedPlatform === "shopify" && shopifyConnection) {
       checkShopifyInstallation();
+      fetchDiagnostics();
     }
-  }, [selectedPlatform, shopifyConnection, checkShopifyInstallation]);
+  }, [selectedPlatform, shopifyConnection, checkShopifyInstallation, fetchDiagnostics]);
 
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const widgetLoaderUrl = `${supabaseUrl}/functions/v1/widget-loader`;
