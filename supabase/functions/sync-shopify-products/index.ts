@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
 
     const { data: connection, error: connError } = await adminClient
       .from("shopify_connections")
-      .select("store_domain, storefront_token")
+      .select("store_domain, admin_access_token")
       .eq("user_id", user.id)
       .single();
 
@@ -80,7 +80,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { store_domain, storefront_token } = connection;
+    if (!connection.admin_access_token) {
+      return new Response(
+        JSON.stringify({ error: "Missing admin access token. Please reconnect your Shopify store." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { store_domain, admin_access_token } = connection;
 
     // Use Admin API GraphQL endpoint with the access token
     const allProducts: any[] = [];
@@ -94,7 +101,7 @@ Deno.serve(async (req) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-Shopify-Access-Token": storefront_token,
+            "X-Shopify-Access-Token": admin_access_token,
           },
           body: JSON.stringify({
             query: SHOPIFY_ADMIN_PRODUCTS_QUERY,
