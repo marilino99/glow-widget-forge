@@ -1851,10 +1851,10 @@ Deno.serve(async (req) => {
           var text = this.textContent;
           // Hide the chips container
           var parent = this.parentElement;
-          if (parent) parent.style.display = 'none';
+          if (parent) parent.remove();
           // Also hide initial chips if still visible
           var initChips = d.getElementById('wj-chat-chips');
-          if (initChips) initChips.style.display = 'none';
+          if (initChips) initChips.remove();
           sendMessageText(text);
         });
       });
