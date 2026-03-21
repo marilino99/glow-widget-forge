@@ -1824,8 +1824,22 @@ Deno.serve(async (req) => {
 
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
+    function showTypingIndicator() {
+      hideTypingIndicator();
+      var typing = d.createElement('div');
+      typing.id = 'wj-typing';
+      var avatarHtml = avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div id="wj-typing-avatar" style="background:#000;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>';
+      typing.innerHTML = avatarHtml + '<div id="wj-typing-dots" style="background:' + color.bg + '"><span class="wj-dot"></span><span class="wj-dot"></span><span class="wj-dot"></span></div>';
+      chatMsgs.appendChild(typing);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
 
-    function pollMessages() {
+    function hideTypingIndicator() {
+      var el = d.getElementById('wj-typing');
+      if (el) el.remove();
+    }
+
+
       var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
       if (lastMessageId) {
         pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
