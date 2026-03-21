@@ -1596,22 +1596,41 @@ Deno.serve(async (req) => {
     // Track widget rendered (confirms DOM mount, not just script load)
     trackEvent('widget_rendered');
 
+    function showLauncher(withPop) {
+      btn.classList.remove('hidden');
+      btn.style.opacity = '1';
+      btn.style.visibility = 'visible';
+      btn.style.pointerEvents = 'auto';
+      btn.style.transform = 'scale(1)';
+      if (withPop) {
+        btn.classList.add('pop');
+        setTimeout(function() { btn.classList.remove('pop'); }, 400);
+      }
+    }
+
+    function hideLauncher() {
+      btn.classList.add('hidden');
+      btn.style.opacity = '0';
+      btn.style.pointerEvents = 'none';
+      btn.style.transform = 'scale(0.5)';
+    }
+
     // Animated close: play collapse, then hide and show button with pop
     function closeWidget() {
       pop.classList.remove('open');
       pop.classList.add('closing');
       setTimeout(function() {
         pop.classList.remove('closing');
-        btn.classList.remove('hidden');
-        btn.classList.add('pop');
-        setTimeout(function() { btn.classList.remove('pop'); }, 400);
+        pop.style.display = 'none';
+        showLauncher(true);
       }, 300);
     }
 
     btn.onclick = function() {
       if (pop.classList.contains('open') || pop.classList.contains('closing')) return;
+      pop.style.display = 'flex';
       pop.classList.add('open');
-      btn.classList.add('hidden');
+      hideLauncher();
       trackEvent('click');
     };
 
