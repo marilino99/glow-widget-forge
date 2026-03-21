@@ -823,7 +823,7 @@ Deno.serve(async (req) => {
         var bubble = d.createElement('div');
         if (msg.sender_type === 'visitor') {
           bubble.style.cssText = 'display:flex;justify-content:flex-end;margin-top:12px';
-          bubble.innerHTML = '<div style="padding:10px 16px;border-radius:16px;border-top-right-radius:4px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
+          bubble.innerHTML = '<div style="padding:10px 16px;border-radius:16px;border-top-right-radius:4px;background:#f3f4f6;color:#1e293b;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
         } else {
           bubble.style.cssText = 'display:flex;align-items:flex-start;gap:8px;margin-top:12px';
           bubble.innerHTML = welcomeBubbleAvatar + '<div style="padding:10px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px;max-width:70%">' + esc(msg.content) + '</div>';
