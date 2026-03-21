@@ -43,9 +43,12 @@ export const useShopifyConnection = () => {
     }
 
     if (errorCode === "shop_mismatch") {
+      const requestedShop = params.get("requested_shop");
       toast({
         title: "Errore connessione Shopify",
-        description: "Il dominio ritornato da Shopify non corrisponde a quello richiesto. Riprova con il dominio corretto.",
+        description: requestedShop
+          ? `Shopify ha autorizzato uno store diverso da ${requestedShop}. Riconnetti inserendo il dominio corretto e scegliendo quello giusto in Shopify.`
+          : "Il dominio ritornato da Shopify non corrisponde a quello richiesto. Riprova con il dominio corretto.",
         variant: "destructive",
       });
     }

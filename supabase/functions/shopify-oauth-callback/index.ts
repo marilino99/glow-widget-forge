@@ -31,9 +31,22 @@ Deno.serve(async (req) => {
     const hasShopMismatch = requestedShop !== callbackShop;
 
     if (hasShopMismatch) {
-      console.warn("Shop domain differs from state — using Shopify callback shop", {
+      console.warn("Shop domain mismatch during Shopify OAuth", {
         stateShop: requestedShop,
         callbackShop,
+      });
+
+      const redirectParams = new URLSearchParams({
+        shopify_error: "shop_mismatch",
+        requested_shop: requestedShop,
+        shop: callbackShop,
+      });
+
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: `${appUrl}/builder?${redirectParams.toString()}`,
+        },
       });
     }
 
