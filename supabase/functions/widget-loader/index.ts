@@ -1881,8 +1881,8 @@ Deno.serve(async (req) => {
       var tempId = 'temp_' + Date.now();
       var tempMsg = { id: tempId, sender_type: 'visitor', content: msg };
       renderMessage(tempMsg);
+      showTypingIndicator();
 
-      var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onreadystatechange = function() {
