@@ -82,118 +82,63 @@ Deno.serve(async (req) => {
 
     console.log(`[install-widget] Store: ${conn.store_domain}, Widget: ${widget.id}, checkOnly: ${checkOnly}, forceReinstall: ${forceReinstall}`);
 
-    // --- Try ScriptTag API ---
-    let scriptTagSuccess = false;
-    let scriptTagError = false;
+    // --- Primary method: theme.liquid injection (most reliable for custom distribution apps) ---
+    console.log("[install-widget] Using theme.liquid as primary installation method");
+    const themeLiquidResult = await installViaThemeLiquid(conn.store_domain, conn.admin_access_token, widgetLoaderUrl, widget.id, checkOnly);
 
-    try {
-      const listRes = await fetch(
-        `https://${conn.store_domain}/admin/api/2024-01/script_tags.json`,
-        { headers: { "X-Shopify-Access-Token": conn.admin_access_token } }
-      );
-
-      if (listRes.ok) {
-        const listData = await listRes.json();
-        const existingTags = listData.script_tags || [];
-
-        // Find any Widjet tags
-        const allWidjetTags = existingTags.filter((t: any) =>
-          t.src && t.src.includes("widget-loader")
-        );
-        // Find the exact correct tag
-        const correctTag = allWidjetTags.find((t: any) =>
-          t.src.includes(`widgetId=${widget.id}`)
-        );
-
-        console.log(`[install-widget] Found ${allWidjetTags.length} Widjet tags, correct: ${!!correctTag}`);
-        allWidjetTags.forEach((t: any) => console.log(`[install-widget] Tag ${t.id}: ${t.src}`));
-
-        if (checkOnly) {
-          return new Response(
-            JSON.stringify({ success: true, alreadyInstalled: !!correctTag, method: "script_tag", tagCount: allWidjetTags.length }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        // If correct tag exists and no force reinstall, we're done
-        if (correctTag && !forceReinstall) {
-          return new Response(
-            JSON.stringify({ success: true, alreadyInstalled: true, method: "script_tag" }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        // Remove ALL old Widjet script tags (cleanup)
-        for (const old of allWidjetTags) {
-          console.log(`[install-widget] Removing old tag ${old.id}`);
-          await fetch(
-            `https://${conn.store_domain}/admin/api/2024-01/script_tags/${old.id}.json`,
-            {
-              method: "DELETE",
-              headers: { "X-Shopify-Access-Token": conn.admin_access_token },
-            }
-          );
-        }
-
-        // Create fresh ScriptTag
-        const createRes = await fetch(
-          `https://${conn.store_domain}/admin/api/2024-01/script_tags.json`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Shopify-Access-Token": conn.admin_access_token,
-            },
-            body: JSON.stringify({
-              script_tag: { event: "onload", src: widgetLoaderUrl },
-            }),
-          }
-        );
-
-        if (createRes.ok) {
-          const createData = await createRes.json();
-          console.log(`[install-widget] Created new ScriptTag ${createData.script_tag?.id} with src: ${widgetLoaderUrl}`);
-          scriptTagSuccess = true;
-        } else {
-          const errText = await createRes.text();
-          console.warn(`[install-widget] ScriptTag create failed: ${createRes.status} ${errText}`);
-          scriptTagError = true;
-        }
-      } else {
-        console.warn(`[install-widget] ScriptTag list failed: ${listRes.status}`);
-        scriptTagError = true;
-      }
-    } catch (e) {
-      console.warn("[install-widget] ScriptTag API error:", e);
-      scriptTagError = true;
+    if (themeLiquidResult.error) {
+      console.error("[install-widget] theme.liquid installation failed:", themeLiquidResult.error);
+    } else {
+      console.log(`[install-widget] theme.liquid result: alreadyInstalled=${themeLiquidResult.alreadyInstalled}, method=${themeLiquidResult.method}`);
     }
 
-    if (scriptTagSuccess) {
-      // Also clean up any legacy theme.liquid snippet
+    // --- Also ensure ScriptTag exists as backup ---
+    if (!checkOnly) {
       try {
-        await cleanThemeLiquid(conn.store_domain, conn.admin_access_token);
-      } catch (e) {
-        console.warn("[install-widget] Legacy cleanup failed (non-critical):", e);
-      }
-      return new Response(
-        JSON.stringify({ success: true, method: "script_tag" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+        const listRes = await fetch(
+          `https://${conn.store_domain}/admin/api/2024-01/script_tags.json`,
+          { headers: { "X-Shopify-Access-Token": conn.admin_access_token } }
+        );
 
-    // --- Fallback: inject into theme.liquid ---
-    if (scriptTagError) {
-      console.log("[install-widget] Using theme.liquid fallback");
-      const result = await installViaThemeLiquid(conn.store_domain, conn.admin_access_token, widgetLoaderUrl, widget.id, checkOnly);
-      return new Response(JSON.stringify(result), {
-        status: result.error ? 500 : 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+        if (listRes.ok) {
+          const listData = await listRes.json();
+          const existingTags = listData.script_tags || [];
+          const allWidjetTags = existingTags.filter((t: any) => t.src && t.src.includes("widget-loader"));
+          const correctTag = allWidjetTags.find((t: any) => t.src.includes(`widgetId=${widget.id}`));
+
+          if (!correctTag || forceReinstall) {
+            // Remove old tags
+            for (const old of allWidjetTags) {
+              console.log(`[install-widget] Removing old ScriptTag ${old.id}`);
+              await fetch(
+                `https://${conn.store_domain}/admin/api/2024-01/script_tags/${old.id}.json`,
+                { method: "DELETE", headers: { "X-Shopify-Access-Token": conn.admin_access_token } }
+              );
+            }
+            // Create new ScriptTag as backup
+            const createRes = await fetch(
+              `https://${conn.store_domain}/admin/api/2024-01/script_tags.json`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": conn.admin_access_token },
+                body: JSON.stringify({ script_tag: { event: "onload", src: widgetLoaderUrl } }),
+              }
+            );
+            if (createRes.ok) {
+              console.log("[install-widget] ScriptTag backup also created");
+            } else {
+              console.warn("[install-widget] ScriptTag backup failed (non-critical):", await createRes.text());
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("[install-widget] ScriptTag backup error (non-critical):", e);
+      }
     }
 
     return new Response(
-      JSON.stringify({ error: "Could not install widget." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify(themeLiquidResult),
+      { status: themeLiquidResult.error ? 500 : 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("[install-widget] error:", error);
