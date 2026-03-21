@@ -332,6 +332,13 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+      @keyframes wj-dot-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-4px)}}
+      #wj-typing{display:flex;align-items:flex-start;gap:12px;margin-top:12px}
+      #wj-typing-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      #wj-typing-dots{padding:12px 20px;border-radius:16px;display:flex;gap:4px;align-items:center}
+      .wj-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.7);animation:wj-dot-bounce 1.2s ease-in-out infinite}
+      .wj-dot:nth-child(2){animation-delay:0.15s}
+      .wj-dot:nth-child(3){animation-delay:0.3s}
       #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
       #wj-chat-send:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'}}
       #wj-chat-send.active{background:\${color.bg};color:#fff}
@@ -1817,8 +1824,22 @@ Deno.serve(async (req) => {
 
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
+    function showTypingIndicator() {
+      hideTypingIndicator();
+      var typing = d.createElement('div');
+      typing.id = 'wj-typing';
+      var avatarHtml = avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div id="wj-typing-avatar" style="background:#000;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>';
+      typing.innerHTML = avatarHtml + '<div id="wj-typing-dots" style="background:' + color.bg + '"><span class="wj-dot"></span><span class="wj-dot"></span><span class="wj-dot"></span></div>';
+      chatMsgs.appendChild(typing);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
 
-    function pollMessages() {
+    function hideTypingIndicator() {
+      var el = d.getElementById('wj-typing');
+      if (el) el.remove();
+    }
+
+
       var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
       if (lastMessageId) {
         pollUrl += '&lastMessageId=' + encodeURIComponent(lastMessageId);
@@ -1830,6 +1851,7 @@ Deno.serve(async (req) => {
         try {
           var res = JSON.parse(xhr.responseText);
           if (res.messages && res.messages.length > 0) {
+            hideTypingIndicator();
             res.messages.forEach(function(msg) {
               renderMessage(msg);
             });
@@ -1860,8 +1882,8 @@ Deno.serve(async (req) => {
       var tempId = 'temp_' + Date.now();
       var tempMsg = { id: tempId, sender_type: 'visitor', content: msg };
       renderMessage(tempMsg);
+      showTypingIndicator();
 
-      var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onreadystatechange = function() {
@@ -1904,8 +1926,8 @@ Deno.serve(async (req) => {
       chatInput.value = '';
       updateSendButton();
       if (emojiPicker) emojiPicker.classList.remove('open');
+      showTypingIndicator();
 
-      var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onreadystatechange = function() {
