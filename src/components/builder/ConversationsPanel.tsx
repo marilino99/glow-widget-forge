@@ -239,7 +239,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
   };
 
   return (
-    <div className="relative flex flex-1 overflow-hidden bg-background">
+    <div className="relative flex min-w-0 flex-1 overflow-hidden bg-background">
       {/* AI Limit Banner */}
       {isAtLimit && !isPro && (
         <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between bg-red-50 border-b border-red-200 px-5 py-2.5">
@@ -371,7 +371,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
       </div>
 
       {/* Column 3: Chat area */}
-      <div className={`${mobileView === "chat" ? "flex" : "hidden"} lg:flex flex-1 flex-col bg-background`}>
+      <div className={`${mobileView === "chat" ? "flex" : "hidden"} lg:flex min-w-0 flex-1 flex-col overflow-hidden bg-background`}>
         {selectedConversation ? (
           <>
             <div className="flex items-center justify-between border-b border-border px-5 py-3">
@@ -387,7 +387,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 <MoreVertical className="h-4 w-4" />
               </button>
             </div>
-            <ScrollArea className="flex-1 px-5 py-4">
+            <ScrollArea className="min-w-0 flex-1 px-5 py-4">
               <div className="space-y-4">
                 {messages.map((message, idx) => {
                   const showDate = idx === 0 || format(new Date(message.created_at), "yyyy-MM-dd") !== format(new Date(messages[idx - 1].created_at), "yyyy-MM-dd");
