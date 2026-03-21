@@ -39,6 +39,8 @@ interface ShopifyDiagnostics {
   lastSeenUrl?: string;
   lastSeenAt?: string;
   recentImpressions: number;
+  launcherVisible: boolean | null;
+  launcherChecked: boolean;
 }
 
 const LovableLogo = ({ className }: { className?: string }) => (
@@ -81,10 +83,13 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         .eq("widget_id", widgetId)
         .gte("created_at", oneDayAgo)
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(100);
 
       const impressions = recentEvents?.filter(e => e.event_type === "impression") || [];
       const lastWithUrl = recentEvents?.find(e => e.page_url);
+      const hasLauncherVisible = recentEvents?.some(e => e.event_type === "launcher_visible") || false;
+      const hasLauncherHidden = recentEvents?.some(e => e.event_type === "launcher_hidden") || false;
+      const launcherChecked = hasLauncherVisible || hasLauncherHidden;
 
       setDiagnostics(prev => ({
         tagInstalled: prev?.tagInstalled ?? false,
@@ -92,6 +97,8 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         lastSeenUrl: lastWithUrl?.page_url || undefined,
         lastSeenAt: lastWithUrl?.created_at || undefined,
         recentImpressions: impressions.length,
+        launcherVisible: launcherChecked ? hasLauncherVisible : null,
+        launcherChecked,
       }));
     } catch (e) {
       // Silent
@@ -115,12 +122,16 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
           tagInstalled: true,
           method: res.data?.method || "unknown",
           recentImpressions: prev?.recentImpressions ?? 0,
+          launcherVisible: prev?.launcherVisible ?? null,
+          launcherChecked: prev?.launcherChecked ?? false,
         }));
       } else {
         setDiagnostics(prev => ({
           ...prev,
           tagInstalled: false,
           recentImpressions: prev?.recentImpressions ?? 0,
+          launcherVisible: prev?.launcherVisible ?? null,
+          launcherChecked: prev?.launcherChecked ?? false,
         }));
       }
     } catch (e) {
@@ -430,6 +441,16 @@ useEffect(() => {
                         </span>
                       </div>
                     </div>
+                    {diagnostics.launcherChecked && (
+                      <div className="grid grid-cols-1 gap-1 text-xs">
+                        <div>
+                          <span className="text-muted-foreground">Launcher visibility:</span>{" "}
+                          <span className={diagnostics.launcherVisible ? "text-green-600 font-medium" : "text-destructive font-medium"}>
+                            {diagnostics.launcherVisible ? "✓ Confirmed visible" : "✗ Hidden or covered"}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                     {diagnostics.lastSeenUrl && (
                       <div className="text-xs">
                         <span className="text-muted-foreground">Last seen on:</span>{" "}
@@ -447,6 +468,12 @@ useEffect(() => {
                         Tag installed but no recent activity — try reinstalling
                       </div>
                     )}
+                    {diagnostics.tagInstalled && diagnostics.recentImpressions > 0 && diagnostics.launcherChecked && !diagnostics.launcherVisible && (
+                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                        <AlertTriangle className="h-3 w-3" />
+                        Script loads but launcher is hidden — may be covered by theme CSS. Try reinstalling.
+                      </div>
+                    )}
                   </div>
                 )}
                 
@@ -454,14 +481,16 @@ useEffect(() => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 p-4">
                       <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">Widget installed!</p>
-                        <p className="text-xs text-muted-foreground">
-                          {diagnostics && diagnostics.recentImpressions > 0
-                            ? "Widget confirmed live — receiving impressions."
-                            : "The script tag is installed on your store."}
-                        </p>
-                      </div>
+                       <div>
+                         <p className="text-sm font-semibold text-foreground">Widget installed!</p>
+                         <p className="text-xs text-muted-foreground">
+                           {diagnostics && diagnostics.launcherChecked && diagnostics.launcherVisible
+                             ? "Widget confirmed live and visible on your store."
+                             : diagnostics && diagnostics.recentImpressions > 0
+                             ? "Script running — waiting for visibility confirmation."
+                             : "The script tag is installed on your store."}
+                         </p>
+                       </div>
                     </div>
                     <Button 
                       onClick={handleShopifyReinstall} 
