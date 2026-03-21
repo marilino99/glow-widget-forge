@@ -953,9 +953,7 @@ Deno.serve(async (req) => {
       root.appendChild(sbOverlay);
       root.appendChild(sbContainer);
 
-      // Track impression
-      trackEvent('impression');
-      trackEvent('widget_rendered');
+      // Tracking moved after DOM append
 
       // Hijack existing search inputs on the page
       function hijackSearchInputs() {
