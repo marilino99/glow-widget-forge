@@ -1022,7 +1022,7 @@ const WidgetPreviewPanel = ({
                       {chatMessages.map((msg, index) => (
                         msg.sender === "user" ? (
                           <div key={index} className="flex justify-end mt-3">
-                            <div className="rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%] text-white text-sm" style={{ backgroundColor: actualHexColor }}>
+                            <div className="rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%] text-sm" style={{ backgroundColor: '#f3f4f6', color: '#1e293b' }}>
                               {msg.text}
                             </div>
                           </div>
