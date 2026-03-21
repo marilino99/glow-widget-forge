@@ -1578,6 +1578,8 @@ Deno.serve(async (req) => {
 
     // Track impression on load
     trackEvent('impression');
+    // Track widget rendered (confirms DOM mount, not just script load)
+    trackEvent('widget_rendered');
 
     // Animated close: play collapse, then hide and show button with pop
     function closeWidget() {
