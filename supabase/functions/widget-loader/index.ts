@@ -899,6 +899,11 @@ Deno.serve(async (req) => {
 
       d.body.appendChild(root);
 
+      // Track after real DOM mount
+      trackEvent('impression');
+      trackEvent('widget_rendered');
+      setTimeout(function() { checkLauncherVisibility(bbLauncher); }, 500);
+
       // Inject custom JS
       if (customJs) { try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); } }
       return;
