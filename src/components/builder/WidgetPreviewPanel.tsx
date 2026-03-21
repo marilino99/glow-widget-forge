@@ -1046,12 +1046,12 @@ const WidgetPreviewPanel = ({
                                         <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
                                       )}
                                       <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
-                                      <div className="flex gap-1 px-1.5 pb-1.5">
-                                        <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                      <div className="flex gap-1 px-1.5 pb-1.5" style={{ alignItems: 'stretch' }}>
+                                        <a href={prod.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center rounded-md py-1 text-[9px] font-semibold no-underline transition-colors" style={{ background: actualHexColor, color: '#fff' }}>
+                                          {t.show}
+                                        </a>
+                                        <button className="flex items-center justify-center rounded-md py-1 transition-colors" style={{ width: 28, background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
                                           <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
-                                        </button>
-                                        <button className="flex-1 flex items-center justify-center rounded-md py-1 transition-colors" style={{ background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
-                                          <Heart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
                                         </button>
                                       </div>
                                     </div>
