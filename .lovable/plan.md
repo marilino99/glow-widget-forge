@@ -1,63 +1,93 @@
 
-Obiettivo: chiarire perché il builder mostra `wkrgbz-jm.myshopify.com` mentre tu navighi su `https://dalilly.myshopify.com/`, e correggere il controllo “installed” che oggi è fuorviante.
+Obiettivo: correggere la diagnostica e il loader perché oggi le impressioni vengono conteggiate, ma questo non prova che il widget sia davvero visibile.
 
-Diagnosi semplice
-- Sì, il doppio URL è un punto importante da capire.
-- Però dai controlli fatti non sembra essere il vero motivo per cui non lo vedi.
+Cosa ho verificato
+- Il widget live collegato allo store è `c13254e4-5650-4868-bb2b-535c6187a5a2`.
+- La configurazione reale è:
+  - `widget_type: popup`
+  - `widget_position: right`
+  - nessun `custom_css`
+  - nessun `custom_js`
+- Quindi il widget non è invisibile per colpa di codice personalizzato inserito nel builder.
+- Ho trovato il problema più importante nel file `supabase/functions/widget-loader/index.ts`:
+  - oggi `impression` e `widget_rendered` vengono inviati prima di `d.body.appendChild(root)`.
+  - quindi i contatori attuali dimostrano solo che lo script è partito e ha caricato la config, non che il launcher sia comparso davvero sul sito.
+- Inoltre una fetch pubblica dello store restituisce ancora il template “Opening soon / password page”, quindi va distinta anche la visibilità pubblica reale da quella vista dentro una sessione admin.
 
-Cosa sta succedendo davvero
-1. Shopify ha autorizzato lo store come `wkrgbz-jm.myshopify.com`
-- Nel callback OAuth il codice salva sempre il dominio che restituisce Shopify come dominio “ufficiale”.
-- Nei log risulta proprio:
-  - richiesto: `dalilly.myshopify.com`
-  - autorizzato da Shopify: `wkrgbz-jm.myshopify.com`
+Diagnosi probabile
+Ci sono due problemi sovrapposti:
+1. Diagnostica falsa positiva
+- il builder ti mostra segnali “buoni” anche quando il widget potrebbe non essere ancora nel DOM o non essere visibile.
 
-2. Questo non vuol dire automaticamente “store sbagliato”
-- Quando ho caricato `https://wkrgbz-jm.myshopify.com/`, il contenuto punta comunque a `dalilly.myshopify.com`.
-- Quindi i due URL sembrano essere due facce dello stesso store, non due store diversi.
+2. Problema reale di visibilità sul storefront
+- il launcher popup viene probabilmente montato ma resta:
+  - fuori viewport
+  - coperto da un altro layer del tema
+  - nascosto da stile effettivo del tema host
+  - oppure la pagina pubblica che vede un visitatore non è la stessa che genera gli eventi.
 
-3. Il widget sta arrivando su `dalilly.myshopify.com`
-- Nel database ci sono impression recenti del widget proprio su:
-  - `https://dalilly.myshopify.com/`
-  - `https://dalilly.myshopify.com/?pb=0`
-- Questo significa che il loader del widget è stato eseguito sul sito live.
+Piano di implementazione
+1. Sistemare il tracciamento nel loader
+- In `supabase/functions/widget-loader/index.ts`:
+  - spostare `widget_rendered` dopo il vero `appendChild` nel DOM
+  - mantenere `impression` come “script caricato”, ma separarlo da “widget visibile”
+  - aggiungere nuovi eventi diagnostici nell’attuale tabella eventi, senza cambiare database:
+    - `launcher_visible`
+    - `launcher_hidden`
+    - `storefront_blocked` (se rileviamo pagina non realmente pubblica o stato bloccato)
 
-Conclusione pratica
-- Il mismatch tra `wkrgbz-jm` e `dalilly` è reale, ma da solo non spiega il problema.
-- Il problema principale oggi è che il builder dice “Widget installed” basandosi sullo ScriptTag/admin store, non sulla visibilità reale del widget sul sito.
+2. Aggiungere una verifica reale di visibilità
+- Sempre nel loader, dopo il mount:
+  - leggere `getComputedStyle`
+  - leggere `getBoundingClientRect`
+  - controllare se il bottone ha dimensioni > 0
+  - controllare se è dentro il viewport
+  - usare `elementFromPoint` al centro del launcher per capire se è coperto da un overlay del tema
+- Se il launcher risulta nascosto o coperto:
+  - forzare un secondo pass di stile inline più aggressivo
+  - registrare l’evento diagnostico corretto invece di segnare falsamente “rendered”
 
-Piano di fix
-1. Rendere il builder più chiaro
-- Mostrare:
-  - dominio admin collegato (`wkrgbz-jm.myshopify.com`)
-  - URL storefront dove il widget sta ricevendo traffico (`dalilly.myshopify.com`)
-- Così non sembra più che sia installato “sul sito sbagliato”.
+3. Rendere la diagnostica Shopify davvero affidabile
+- In `src/components/builder/AddToWebsiteDialog.tsx`:
+  - separare chiaramente questi stati:
+    - Tag installato
+    - Script eseguito
+    - Launcher visibile
+    - Storefront pubblico bloccato/non raggiungibile
+  - mostrare warning chiaro quando ci sono impression ma nessun `launcher_visible`
+  - non usare più `widget_rendered` come prova di visibilità finché non è tracciato nel punto giusto
 
-2. Correggere il controllo “installed”
-- Non considerare “live” il widget solo perché esiste uno ScriptTag.
-- Aggiungere uno stato più affidabile tipo:
-  - Tag installato
-  - Loader visto sul sito
-  - Widget confermato live
+4. Aggiungere un probe storefront pubblico
+- Nel builder aggiungere un controllo che provi la pagina pubblica reale dello store e segnali se sta ancora servendo la pagina password / opening soon / contenuto diverso.
+- Questo serve a distinguere:
+  - “tu lo vedi da admin”
+  - “un visitatore pubblico lo vede davvero”
 
-3. Sistemare la diagnostica live
-- Il loader invia anche `widget_rendered`, ma oggi il tracciamento eventi accetta solo `impression`, `click`, `product_click`.
-- Quindi manca proprio il segnale migliore per sapere se il widget è stato davvero montato nel DOM.
-- Va corretto.
+5. Rieseguire la validazione finale del flusso
+- Dopo il fix:
+  - verificare installazione Shopify
+  - verificare che il launcher popup risulti `launcher_visible`
+  - verificare che il builder non mostri più falsi positivi
+  - usare la nuova diagnostica per capire subito se il problema residuo è:
+    - CSS del tema
+    - overlay del tema
+    - storefront pubblico non realmente aperto
 
-4. Aggiungere una verifica storefront reale
-- Nel builder mostrare gli ultimi page URL reali dove il widget ha mandato eventi.
-- In questo caso si vedrebbe subito che il traffico arriva da `dalilly.myshopify.com`, anche se lo store collegato lato admin è `wkrgbz-jm.myshopify.com`.
+File da toccare
+- `supabase/functions/widget-loader/index.ts`
+- `supabase/functions/track-widget-event/index.ts`
+- `src/components/builder/AddToWebsiteDialog.tsx`
 
-Perché questa è la strada giusta
-- Evita di farti perdere tempo a scollegare/ricollegare Shopify quando il collegamento è già corretto.
-- Spiega chiaramente la differenza tra dominio admin Shopify e dominio storefront.
-- Risolve il falso positivo “installed” che oggi ti sta confondendo.
+Dettaglio tecnico importante
+Il punto chiave è questo: oggi il sistema sta contando eventi troppo presto. Quindi il messaggio “il widget c’è ma è invisibile” è coerente con il codice attuale, perché i log non stanno ancora misurando la visibilità reale, ma solo l’avvio dello script.
 
-Nessuna modifica database necessaria
-- Serve solo correggere logica e diagnostica nelle funzioni/backend e nel dialog del builder.
+Modifiche database
+- Nessuna migrazione necessaria.
+- Uso solo nuovi `event_type` nella tabella `widget_events` già esistente.
 
 Risultato atteso
-- Vedrai chiaramente che `wkrgbz-jm` è il dominio admin restituito da Shopify, mentre `dalilly` è il dominio storefront che stai visitando.
-- Il builder smetterà di dire “installed” in modo ambiguo.
-- Avremo un check reale per capire se il widget è solo installato oppure davvero visibile live.
+Dopo questo fix sapremo con precisione se:
+- il widget è davvero visibile,
+- è montato ma coperto dal tema,
+- oppure la pagina pubblica dello store non è quella che stiamo assumendo.
+In pratica smetteremo di affidarci a impressioni “fuorvianti” e avremo finalmente un check reale di visibilità live.
