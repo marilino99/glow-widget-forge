@@ -288,6 +288,7 @@ const WidgetPreviewPanel = ({
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
   const [useScreenshotFallback, setUseScreenshotFallback] = useState(false);
   const [chatMessages, setChatMessages] = useState<{text: string; sender: "user" | "bot"; metadata?: { chips?: string[]; products?: { title: string; imageUrl?: string; productUrl?: string; price?: string }[] }}[]>([]);
+  const [hiddenChipGroups, setHiddenChipGroups] = useState<Set<number>>(new Set());
   const [chatInputValue, setChatInputValue] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
