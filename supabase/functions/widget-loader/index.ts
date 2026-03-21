@@ -1600,10 +1600,6 @@ Deno.serve(async (req) => {
 
     function showLauncher(withPop) {
       btn.classList.remove('hidden');
-      btn.style.opacity = '1';
-      btn.style.visibility = 'visible';
-      btn.style.pointerEvents = 'auto';
-      btn.style.transform = 'scale(1)';
       if (withPop) {
         btn.classList.add('pop');
         setTimeout(function() { btn.classList.remove('pop'); }, 400);
@@ -1612,9 +1608,6 @@ Deno.serve(async (req) => {
 
     function hideLauncher() {
       btn.classList.add('hidden');
-      btn.style.opacity = '0';
-      btn.style.pointerEvents = 'none';
-      btn.style.transform = 'scale(0.5)';
     }
 
     // Animated close: play collapse, then hide and show button with pop
@@ -1858,54 +1851,6 @@ Deno.serve(async (req) => {
         });
       });
       lastMessageId = msg.id;
-
-    // Visibility check: verify launcher is actually visible in the DOM
-    function checkLauncherVisibility(el) {
-      try {
-        if (!el || !el.offsetParent && el.style.position !== 'fixed') {
-          trackEvent('launcher_hidden');
-          return;
-        }
-        var cs = w.getComputedStyle(el);
-        if (cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') {
-          trackEvent('launcher_hidden');
-          // Self-repair: force visibility
-          el.style.setProperty('display', 'flex', 'important');
-          el.style.setProperty('visibility', 'visible', 'important');
-          el.style.setProperty('opacity', '1', 'important');
-          return;
-        }
-        var rect = el.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) {
-          trackEvent('launcher_hidden');
-          return;
-        }
-        // Check if covered by another element
-        var cx = rect.left + rect.width / 2;
-        var cy = rect.top + rect.height / 2;
-        var topEl = d.elementFromPoint(cx, cy);
-        if (topEl && !el.contains(topEl) && topEl !== el) {
-          // Covered — boost z-index
-          var parentRoot = d.getElementById('wj-root');
-          if (parentRoot) parentRoot.style.setProperty('z-index', '2147483647', 'important');
-          el.style.setProperty('z-index', '2147483647', 'important');
-          // Re-check after boost
-          setTimeout(function() {
-            var topEl2 = d.elementFromPoint(cx, cy);
-            if (topEl2 && !el.contains(topEl2) && topEl2 !== el) {
-              trackEvent('launcher_hidden');
-            } else {
-              trackEvent('launcher_visible');
-            }
-          }, 100);
-          return;
-        }
-        trackEvent('launcher_visible');
-      } catch(e) {
-        // If check fails, still report an attempt
-      }
-    }
-
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
     function showTypingIndicator() {
@@ -2137,10 +2082,9 @@ Deno.serve(async (req) => {
     root.appendChild(btn);
     d.body.appendChild(root);
 
-    // Track after real DOM mount
+    // Track events
     trackEvent('impression');
     trackEvent('widget_rendered');
-    setTimeout(function() { checkLauncherVisibility(btn); }, 500);
 
     // Inject custom JS if provided
     if (customJs) {
