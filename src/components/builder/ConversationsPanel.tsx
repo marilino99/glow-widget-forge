@@ -387,7 +387,7 @@ const ConversationsPanel = ({ isAtLimit = false, isPro = false, onUpgrade }: Con
                 <MoreVertical className="h-4 w-4" />
               </button>
             </div>
-            <ScrollArea className="flex-1 px-5 py-4">
+            <ScrollArea className="min-w-0 flex-1 px-5 py-4">
               <div className="space-y-4">
                 {messages.map((message, idx) => {
                   const showDate = idx === 0 || format(new Date(message.created_at), "yyyy-MM-dd") !== format(new Date(messages[idx - 1].created_at), "yyyy-MM-dd");
