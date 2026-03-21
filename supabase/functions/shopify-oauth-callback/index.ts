@@ -28,33 +28,22 @@ Deno.serve(async (req) => {
 
     const requestedShop = normalizeShop(stateData.shop);
     const callbackShop = normalizeShop(shop);
-    const hasShopMismatch = requestedShop !== callbackShop;
 
-    if (hasShopMismatch) {
-      console.warn("Shop domain mismatch during Shopify OAuth", {
-        stateShop: requestedShop,
-        callbackShop,
-      });
-
-      const redirectParams = new URLSearchParams({
-        shopify_error: "shop_mismatch",
-        requested_shop: requestedShop,
-        shop: callbackShop,
-      });
-
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: `${appUrl}/builder?${redirectParams.toString()}`,
-        },
+    if (requestedShop !== callbackShop) {
+      console.info("Shopify redirected to a different domain — using callback shop", {
+        requested: requestedShop,
+        actual: callbackShop,
       });
     }
+
+    // Always use the shop domain Shopify returned (it's authoritative)
+    const authorizedShop = callbackShop;
 
     const clientId = Deno.env.get("SHOPIFY_CLIENT_ID")!;
     const clientSecret = Deno.env.get("SHOPIFY_CLIENT_SECRET")!;
 
     // Exchange code for access token
-    const tokenRes = await fetch(`https://${callbackShop}/admin/oauth/access_token`, {
+    const tokenRes = await fetch(`https://${authorizedShop}/admin/oauth/access_token`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -79,7 +68,7 @@ Deno.serve(async (req) => {
 
     // Now get a Storefront Access Token using the Admin API
     const storefrontRes = await fetch(
-      `https://${callbackShop}/admin/api/2024-01/storefront_access_tokens.json`,
+      `https://${authorizedShop}/admin/api/2024-01/storefront_access_tokens.json`,
       {
         method: "POST",
         headers: {
@@ -101,7 +90,7 @@ Deno.serve(async (req) => {
     } else {
       // If creating fails, try to list existing ones
       const listRes = await fetch(
-        `https://${callbackShop}/admin/api/2024-01/storefront_access_tokens.json`,
+        `https://${authorizedShop}/admin/api/2024-01/storefront_access_tokens.json`,
         {
           headers: { "X-Shopify-Access-Token": accessToken },
         }
@@ -129,7 +118,7 @@ Deno.serve(async (req) => {
       .upsert(
         {
           user_id: stateData.user_id,
-          store_domain: callbackShop,
+          store_domain: authorizedShop,
           storefront_token: storefrontToken,
           admin_access_token: accessToken,
         },
