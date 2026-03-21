@@ -166,8 +166,17 @@ export const useShopifyConnection = () => {
       });
 
       if (res.error) {
-        const functionError = typeof res.data?.error === "string" ? res.data.error : null;
-        throw new Error(functionError || res.error.message || "Could not sync products.");
+        if (res.error instanceof FunctionsHttpError) {
+          try {
+            const errorBody = await res.error.context.json();
+            const functionError = typeof errorBody?.error === "string" ? errorBody.error : null;
+            throw new Error(functionError || res.error.message || "Could not sync products.");
+          } catch {
+            throw new Error(res.error.message || "Could not sync products.");
+          }
+        }
+
+        throw new Error(res.error.message || "Could not sync products.");
       }
       const result = res.data as { success: boolean; productCount: number };
 
