@@ -1565,12 +1565,15 @@ const WidgetPreviewPanel = ({
                           <div className={`rounded-2xl px-4 py-3 text-white ${useInlineStyles ? "" : colors.button}`} style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}>
                             <p className="text-sm">{msg.text}</p>
                           </div>
-                          {msg.metadata?.chips && msg.metadata.chips.length > 0 && (
+                          {msg.metadata?.chips && msg.metadata.chips.length > 0 && !hiddenChipGroups.has(index) && (
                             <div className="mt-2 flex flex-col items-start gap-2">
                               {msg.metadata.chips.map((chip, chipIndex) => (
                                 <button
                                   key={`${index}-chip-full-${chipIndex}`}
-                                  onClick={() => handleSendChatMessage(chip)}
+                                  onClick={() => {
+                                    setHiddenChipGroups(prev => new Set(prev).add(index));
+                                    handleSendChatMessage(chip);
+                                  }}
                                   className="max-w-[85%] cursor-pointer rounded-[20px] px-4 py-2.5 text-left text-sm transition-colors hover:opacity-80"
                                   style={{
                                     border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
