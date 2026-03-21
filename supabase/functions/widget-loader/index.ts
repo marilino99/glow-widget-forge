@@ -612,6 +612,9 @@ Deno.serve(async (req) => {
 
     var root = d.createElement('div');
     root.id = 'wj-root';
+    root.style.cssText = inIframe
+      ? 'position:fixed !important;top:0 !important;left:0 !important;right:0 !important;bottom:0 !important;z-index:2147483647 !important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif !important;display:flex !important;align-items:center !important;justify-content:center !important;pointer-events:none !important;visibility:visible !important;opacity:1 !important;'
+      : 'position:fixed !important;bottom:20px !important;' + (cfg.widget_position === 'left' ? 'left:20px !important;' : 'right:20px !important;') + 'z-index:2147483647 !important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif !important;visibility:visible !important;opacity:1 !important;pointer-events:none !important;';
 
     if (widgetType === 'bottom-bar') {
       // ============ BOTTOM BAR LAYOUT ============
