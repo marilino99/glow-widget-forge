@@ -306,7 +306,7 @@ Deno.serve(async (req) => {
       #wj-chat-view{display:none;flex-direction:column;flex:1;min-height:0;background:\${dark ? '#000' : '#fff'}}
       #wj-chat-view.open{display:flex}
       #wj-home-view.hidden{display:none}
-      #wj-chat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;}
       #wj-chat-back,#wj-chat-more,#wj-chat-close{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${dark ? '#1a1a1a' : '#e2e8f0'};color:\${dark ? '#fff' : '#0f172a'}}
       #wj-chat-back:hover,#wj-chat-more:hover,#wj-chat-close:hover{background:\${dark ? '#333' : '#cbd5e1'}}
       #wj-chat-back svg,#wj-chat-more svg,#wj-chat-close svg{width:16px;height:16px}
@@ -436,7 +436,7 @@ Deno.serve(async (req) => {
       #wj-chat-view{display:none;flex-direction:column;flex:1;min-height:0;background:\${dark ? '#000' : '#fff'}}
       #wj-chat-view.open{display:flex}
       #wj-home-view.hidden{display:none}
-      #wj-chat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid \${dark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}}
+      #wj-chat-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;}
       #wj-chat-back,#wj-chat-more,#wj-chat-close{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${dark ? '#1a1a1a' : '#e2e8f0'};color:\${dark ? '#fff' : '#0f172a'}}
       #wj-chat-back:hover,#wj-chat-more:hover,#wj-chat-close:hover{background:\${dark ? '#333' : '#cbd5e1'}}
       #wj-chat-back svg,#wj-chat-more svg,#wj-chat-close svg{width:16px;height:16px}
