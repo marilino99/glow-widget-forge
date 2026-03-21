@@ -1542,8 +1542,8 @@ const WidgetPreviewPanel = ({
                     msg.sender === "user" ? (
                       <div key={index} className="flex justify-end mt-3">
                         <div 
-                          className={`rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%] ${useInlineStyles ? "" : colors.button} text-white`}
-                          style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
+                          className="rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%]"
+                          style={{ backgroundColor: '#f3f4f6', color: '#1e293b' }}
                         >
                           <p className="text-sm">{msg.text}</p>
                         </div>
