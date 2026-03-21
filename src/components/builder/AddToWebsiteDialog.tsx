@@ -130,6 +130,8 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
           ...prev,
           tagInstalled: false,
           recentImpressions: prev?.recentImpressions ?? 0,
+          launcherVisible: prev?.launcherVisible ?? null,
+          launcherChecked: prev?.launcherChecked ?? false,
         }));
       }
     } catch (e) {
