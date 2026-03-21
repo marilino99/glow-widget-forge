@@ -143,10 +143,6 @@ Deno.serve(async (req) => {
 
     // Redirect back to the app with success
     const redirectParams = new URLSearchParams({ shopify_connected: "true" });
-    if (hasShopMismatch) {
-      redirectParams.set("shopify_warning", "shop_mismatch");
-      redirectParams.set("shop", callbackShop);
-    }
 
     return new Response(null, {
       status: 302,

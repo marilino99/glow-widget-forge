@@ -89,6 +89,30 @@ Deno.serve(async (req) => {
 
     const { store_domain, admin_access_token } = connection;
 
+    const scopesRes = await fetch(`https://${store_domain}/admin/oauth/access_scopes.json`, {
+      headers: {
+        "X-Shopify-Access-Token": admin_access_token,
+      },
+    });
+
+    if (!scopesRes.ok) {
+      const text = await scopesRes.text();
+      throw new Error(`Unable to verify Shopify access scopes [${scopesRes.status}]: ${text}`);
+    }
+
+    const scopesJson = await scopesRes.json();
+    const grantedScopes = (scopesJson.access_scopes ?? []).map((scope: { handle: string }) => scope.handle);
+
+    if (!grantedScopes.includes("read_products")) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "Your Shopify app installation does not have the read_products permission. Enable the Products read scope in the app configuration, then disconnect and reconnect the store.",
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Use Admin API GraphQL endpoint with the access token
     const allProducts: any[] = [];
     let hasNextPage = true;

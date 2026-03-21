@@ -164,7 +164,10 @@ export const useShopifyConnection = () => {
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
 
-      if (res.error) throw res.error;
+      if (res.error) {
+        const functionError = typeof res.data?.error === "string" ? res.data.error : null;
+        throw new Error(functionError || res.error.message || "Could not sync products.");
+      }
       const result = res.data as { success: boolean; productCount: number };
 
       setConnection((prev) =>
