@@ -573,6 +573,18 @@ ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: 
       }
     }
 
+    // Parse [CHIPS: ...] marker for follow-up action chips
+    const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
+    if (chipsMarkerMatch) {
+      cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
+      const chips = chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 3);
+      if (chips.length > 0) {
+        if (!metadata) metadata = {};
+        metadata.chips = chips;
+        console.log(`Chips: ${chips.length} options parsed`);
+      }
+    }
+
     // Save the AI reply
     const insertData: Record<string, unknown> = {
       conversation_id: conversationId,
