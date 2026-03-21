@@ -1596,10 +1596,7 @@ Deno.serve(async (req) => {
       } catch(e) {}
     }
 
-    // Track impression on load
-    trackEvent('impression');
-    // Track widget rendered (confirms DOM mount, not just script load)
-    trackEvent('widget_rendered');
+    // Tracking deferred to after DOM append
 
     function showLauncher(withPop) {
       btn.classList.remove('hidden');
