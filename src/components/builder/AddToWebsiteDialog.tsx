@@ -177,6 +177,37 @@ useEffect(() => {
     }
   };
 
+  const handleShopifyReinstall = async () => {
+    setIsInstallingShopify(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      // First uninstall
+      await supabase.functions.invoke("shopify-uninstall-widget", {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      // Then reinstall with force flag
+      const res = await supabase.functions.invoke("shopify-install-widget", {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+        body: { forceReinstall: true },
+      });
+
+      if (res.error) throw res.error;
+      const result = res.data as { success?: boolean; error?: string };
+
+      if (result.error) {
+        toast({ title: "Error", description: result.error, variant: "destructive" });
+      } else if (result.success) {
+        setShopifyInstalled(true);
+        toast({ title: "Reinstalled!", description: "Widget has been freshly installed on your Shopify store." });
+      }
+    } catch (e: any) {
+      console.error("Shopify reinstall error:", e);
+      toast({ title: "Reinstall failed", description: e.message || "Could not reinstall widget.", variant: "destructive" });
+    } finally {
+      setIsInstallingShopify(false);
+    }
+  };
+
   const getCodeForPlatform = () => {
     if (selectedPlatform === "lovable") return lovableReactCode;
     return embedCode;
