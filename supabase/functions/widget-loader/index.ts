@@ -942,6 +942,7 @@ Deno.serve(async (req) => {
 
       // Track impression
       trackEvent('impression');
+      trackEvent('widget_rendered');
 
       // Hijack existing search inputs on the page
       function hijackSearchInputs() {
