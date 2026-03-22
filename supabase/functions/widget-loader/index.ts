@@ -1470,7 +1470,7 @@ Deno.serve(async (req) => {
           ? '<div class="wj-prod-sub">' + esc(p.subtitle) + '</div>' 
           : '<div style="margin-bottom:12px"></div>';
         var btnHtml = p.product_url 
-          ? '<a href="' + esc(p.product_url) + '" target="_blank" rel="noopener" class="wj-prod-btn">' + esc(tr.show) + '</a>' 
+          ? '<a href="' + esc(p.product_url) + '" rel="noopener" class="wj-prod-btn">' + esc(tr.show) + '</a>' 
           : '<button class="wj-prod-btn">' + esc(tr.show) + '</button>';
         var cartBtnHtml = '';
         if (shopifyDomain && p.shopify_variant_id) {
