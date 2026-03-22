@@ -174,6 +174,7 @@ Deno.serve(async (req) => {
     var avatar = cfg.selected_avatar;
     var buttonLogo = cfg.button_logo;
     var products = cfg.product_cards || [];
+    var productCarouselEnabled = cfg.product_carousel_enabled !== false;
     var shopifyDomain = cfg.shopify_store_domain || '';
     var faqs = cfg.faq_items || [];
     var igPosts = cfg.instagram_posts || [];
