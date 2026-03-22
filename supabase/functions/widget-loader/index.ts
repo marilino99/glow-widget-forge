@@ -1938,6 +1938,7 @@ Deno.serve(async (req) => {
       var tempMsg = { id: tempId, sender_type: 'visitor', content: msg };
       renderMessage(tempMsg);
       showTypingIndicator();
+      startPolling();
 
       var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
@@ -1983,6 +1984,7 @@ Deno.serve(async (req) => {
       updateSendButton();
       if (emojiPicker) emojiPicker.classList.remove('open');
       showTypingIndicator();
+      startPolling();
 
       var xhr = new XMLHttpRequest();
       xhr.open('POST', u + '/functions/v1/send-chat-message', true);
