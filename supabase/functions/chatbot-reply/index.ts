@@ -55,21 +55,6 @@ const CATEGORY_EMOJI_MAP: [RegExp, string][] = [
   [/best.?seller|popolar|popular|più vendut/i, "🔥"],
   [/new|nov|nuov|arrival/i, "✨"],
   [/recommend|consigliat|star|⭐/i, "⭐"],
-  [/hydrat|idrataz|moistur/i, "💧"],
-  [/anti.?ag|anti.?età|anti.?wrinkle|anti.?rug/i, "✨"],
-  [/acne|blemish|impur|brufol/i, "🧹"],
-  [/radianc|luminosit|glow|splendor/i, "🌟"],
-  [/sensitiv|sensibil|delicate|delicat/i, "🌿"],
-  [/repair|riparaz|volume|volum/i, "🧴"],
-  [/shine|lucentezz|smooth|liscio/i, "✨"],
-  [/scalp|cuoio capellut/i, "🌿"],
-  [/casual|informale/i, "👔"],
-  [/formal|elegante/i, "🎩"],
-  [/summer|estate|estiv/i, "🌴"],
-  [/floral|fiorit/i, "🌸"],
-  [/woody|legno|boisé/i, "🪵"],
-  [/fresh|fresc|citrus|agrum/i, "🍊"],
-  [/evening|sera|notte|night/i, "🌙"],
 ];
 
 function hasLeadingEmoji(text: string): boolean {
@@ -83,7 +68,7 @@ function ensureChipEmoji(chip: string): string {
   for (const [pattern, emoji] of CATEGORY_EMOJI_MAP) {
     if (pattern.test(trimmed)) return `${emoji} ${trimmed}`;
   }
-  return `🏷️ ${trimmed}`;
+  return trimmed;
 }
 
 function normalizeChips(chips: string[]): string[] {
@@ -499,13 +484,13 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
    - IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 👗 Clothing, 👜 Accessories]
    - Write chips in the visitor's language
    - This rule takes ABSOLUTE PRIORITY over rule 10.
-11b. GOAL DISCOVERY FLOW (SECOND STEP — AFTER CATEGORY SELECTION): When the visitor selects a category (e.g. clicks "Skincare", "Haircare", "Clothing"), DO NOT show products yet. Instead, ask what their goal or need is within that category. Append a [CHIPS:] marker with 3-5 relevant goals/needs. Examples by category:
-   * Skincare → [CHIPS: 💧 Hydration, ✨ Anti-aging, 🧹 Acne & Blemishes, 🌟 Radiance, 🌿 Sensitive skin]
-   * Haircare → [CHIPS: 💧 Hydration & Repair, 🧴 Volume, ✨ Shine & Smoothness, 🌿 Scalp care]
-   * Clothing → [CHIPS: 👔 Casual, 🎩 Formal, 🏃 Sportswear, 🌴 Summer]
-   * Accessories → [CHIPS: 👜 Bags, 💍 Jewelry, 🧣 Scarves, 🕶️ Eyewear]
-   * Fragrance → [CHIPS: 🌸 Floral, 🪵 Woody, 🍊 Fresh & Citrus, 🌙 Evening]
-   Adapt goals to the actual products in the catalog. Write in visitor's language. ALWAYS prepend a relevant emoji.
+11b. GOAL DISCOVERY FLOW (SECOND STEP — AFTER CATEGORY SELECTION): When the visitor selects a category (e.g. clicks "Skincare", "Haircare", "Clothing"), DO NOT show products yet. Instead, ask what their goal or need is within that category. Append a [CHIPS:] marker with 3-5 relevant goals/needs. Do NOT prepend any emoji to goal chips. Examples by category:
+   * Skincare → [CHIPS: Hydration, Anti-aging, Acne & Blemishes, Radiance, Sensitive skin]
+   * Haircare → [CHIPS: Hydration & Repair, Volume, Shine & Smoothness, Scalp care]
+   * Clothing → [CHIPS: Casual, Formal, Sportswear, Summer]
+   * Accessories → [CHIPS: Bags, Jewelry, Scarves, Eyewear]
+   * Fragrance → [CHIPS: Floral, Woody, Fresh & Citrus, Evening]
+   Adapt goals to the actual products in the catalog. Write in visitor's language. Do NOT add emojis to goal chips.
    Only AFTER the visitor selects a goal, show the matching products using [PRODUCTS:].
 ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 
