@@ -2597,10 +2597,8 @@ const WidgetPreviewPanel = ({
                         <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>
                           {link.name || ""}
                         </span>
-                        <div className={`flex h-7 w-7 items-center justify-center rounded-full ${
-                          isLight ? "bg-slate-500" : "bg-slate-600"
-                        }`}>
-                          <ArrowRight className="h-4 w-4 text-white" />
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full" style={{ backgroundColor: actualHexColor }}>
+                          <ArrowRight className={`h-4 w-4 ${isLightColor(actualHexColor) ? "text-slate-900" : "text-white"}`} />
                         </div>
                       </a>
                     ))}
