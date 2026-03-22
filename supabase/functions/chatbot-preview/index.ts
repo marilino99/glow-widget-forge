@@ -93,11 +93,51 @@ function normalizeChips(chips: string[]): string[] {
   return chips.map(ensureChipEmoji);
 }
 
-function deriveDiscoveryChips(
-  _productCardsData: Array<{ subtitle?: string | null }> | null | undefined,
+const PRODUCT_CATEGORY_RULES: { label: Record<string, string>; emoji: string; keywords: RegExp }[] = [
+  { label: { en: "Skincare", it: "Skincare", es: "Cuidado de la piel", fr: "Soins de la peau", de: "Hautpflege" }, emoji: "🧴", keywords: /skin|cream|cleanser|serum|moistur|sunscreen|spf|mask|face|viso|crema|detergent|idrat|pelle|scrub|eye\s*cream|mist/i },
+  { label: { en: "Haircare", it: "Haircare", es: "Cuidado del cabello", fr: "Soins capillaires", de: "Haarpflege" }, emoji: "💇‍♀️", keywords: /hair|shampoo|conditioner|capelli|balsamo/i },
+  { label: { en: "Clothing", it: "Abbigliamento", es: "Ropa", fr: "Vêtements", de: "Kleidung" }, emoji: "👗", keywords: /cloth|dress|shirt|pants|skirt|jacket|coat|vest|abbigli|moda|t-shirt|tshirt|jeans|hoodie|sweater/i },
+  { label: { en: "Shoes", it: "Scarpe", es: "Zapatos", fr: "Chaussures", de: "Schuhe" }, emoji: "👟", keywords: /shoe|sneaker|trainer|sandal|boot|scarpe|birkenstock|nike|loafer|slipper/i },
+  { label: { en: "Accessories", it: "Accessori", es: "Accesorios", fr: "Accessoires", de: "Accessoires" }, emoji: "👜", keywords: /accessor|bag|borsa|jewel|gioiell|watch|orologio|hat|cappello|scarf|belt|cintura|sunglasses|occhial/i },
+  { label: { en: "Fragrance", it: "Profumi", es: "Fragancias", fr: "Parfums", de: "Düfte" }, emoji: "🌸", keywords: /fragranc|perfume|profum|scent|cologne|eau de/i },
+  { label: { en: "Food & Drink", it: "Cibo e Bevande", es: "Comida y Bebida", fr: "Nourriture", de: "Essen & Trinken" }, emoji: "🍽️", keywords: /food|cibo|drink|bevand|aliment|pizza|pasta|wine|vino|coffee|caffè|tea|tè|chocolate|cioccolat/i },
+  { label: { en: "Home", it: "Casa", es: "Hogar", fr: "Maison", de: "Zuhause" }, emoji: "🏠", keywords: /home|casa|arredo|furniture|décor|decor|candle|candela|pillow|cuscino|lamp/i },
+  { label: { en: "Tech", it: "Tecnologia", es: "Tecnología", fr: "Tech", de: "Technik" }, emoji: "📱", keywords: /tech|elettron|device|gadget|phone|laptop|tablet|computer|smart|speaker|headphone|cuffi/i },
+  { label: { en: "Sport & Fitness", it: "Sport e Fitness", es: "Deporte", fr: "Sport", de: "Sport" }, emoji: "💪", keywords: /sport|fitness|gym|palestra|yoga|running|training|workout/i },
+];
+
+function deriveProductCategories(
+  products: Array<{ title: string; subtitle?: string | null }> | null | undefined,
   language: string,
 ): string[] {
-  return FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
+  if (!products || products.length === 0) {
+    return FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
+  }
+
+  const matchedCategories: string[] = [];
+  for (const rule of PRODUCT_CATEGORY_RULES) {
+    const hasMatch = products.some((p) => {
+      const text = `${p.title} ${p.subtitle || ""}`;
+      return rule.keywords.test(text);
+    });
+    if (hasMatch) {
+      const label = rule.label[language] || rule.label.en;
+      matchedCategories.push(`${rule.emoji} ${label}`);
+    }
+  }
+
+  if (matchedCategories.length === 0) {
+    return FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
+  }
+
+  return matchedCategories.slice(0, 4);
+}
+
+function deriveDiscoveryChips(
+  productCardsData: Array<{ title: string; subtitle?: string | null }> | null | undefined,
+  language: string,
+): string[] {
+  return deriveProductCategories(productCardsData, language);
 }
 
 function isProductIntent(text: string): boolean {
@@ -288,7 +328,7 @@ STRICT RULES:
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
-- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want and append ONLY this marker at the end: [CHIPS: category1, category2, category3]. The chips must be 3 top-level categories written in the visitor's language. IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 👗 Clothing, 👜 Accessories].
+- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want. The category chips will be added automatically by the system — you do NOT need to append a [CHIPS:] marker for categories. Just write a short question like "What type of product are you looking for?".
 - GOAL DISCOVERY FLOW (SECOND STEP): When the visitor selects a category (e.g. clicks "Skincare", "Haircare", "Clothing"), DO NOT show products yet. Instead, ask what their goal or need is within that category. Append a [CHIPS:] marker with 3-5 relevant goals/needs for that category. Do NOT prepend any emoji to goal chips. Examples by category:
   * Skincare → [CHIPS: Hydration, Anti-aging, Acne & Blemishes, Radiance, Sensitive skin]
   * Haircare → [CHIPS: Hydration & Repair, Volume, Shine & Smoothness, Scalp care]
@@ -373,11 +413,10 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
         .replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "")
         .trim();
 
-      if (!metadata?.chips) {
-        metadata = {
-          ...(metadata || {}),
-          chips: deriveDiscoveryChips(productCardsData, config.language || "en"),
-        };
+      // Always force deterministic categories from the catalog
+      const derivedChips = deriveDiscoveryChips(productCardsData, config.language || "en");
+      metadata = { ...(metadata || {}), chips: derivedChips };
+      if (!cleanReply) {
         cleanReply = FALLBACK_DISCOVERY_REPLY[config.language || "en"] || FALLBACK_DISCOVERY_REPLY.en;
       }
     } else {
