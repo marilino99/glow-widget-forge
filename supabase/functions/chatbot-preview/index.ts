@@ -372,7 +372,7 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
     const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
     if (chipsMarkerMatch) {
       cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
-      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((chip: string) => chip.trim()).filter(Boolean).slice(0, 3));
+      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((chip: string) => chip.trim()).filter(Boolean).slice(0, 5));
       if (chips.length > 0) {
         metadata = { ...(metadata || {}), chips };
       }
