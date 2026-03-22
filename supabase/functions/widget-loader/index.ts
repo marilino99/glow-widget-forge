@@ -449,8 +449,8 @@ Deno.serve(async (req) => {
       .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
       .wj-link-item:last-child{margin-bottom:0 !important}
       .wj-link-name{font-size:14px !important;font-weight:500 !important;color:\${textMain}}
-      .wj-link-arrow{width:28px !important;height:28px !important;border-radius:50% !important;background:\${dark ? '#374151' : '#e2e8f0'};display:flex !important;align-items:center !important;justify-content:center !important}
-      .wj-link-arrow svg{width:14px !important;height:14px !important;color:\${textSub}}
+      .wj-link-arrow{width:28px !important;height:28px !important;border-radius:50% !important;background:\${color.bg};display:flex !important;align-items:center !important;justify-content:center !important}
+      .wj-link-arrow svg{width:14px !important;height:14px !important;color:\${btnText}}
       #wj-footer{padding:12px 16px 4px !important;background:\${bgMain}}
       #wj-nav{display:flex !important;border-radius:16px !important;background:\${dark ? 'rgba(51,65,85,0.7)' : 'rgba(255,255,255,0.7)'};backdrop-filter:blur(8px) !important}
       .wj-nav-item{flex:1 !important;display:flex !important;flex-direction:column !important;align-items:center !important;gap:4px !important;padding:12px !important;border:none !important;background:transparent !important;cursor:pointer !important;color:\${textMain};font-size:12px !important}
