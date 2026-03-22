@@ -1036,12 +1036,12 @@ const WidgetPreviewPanel = ({
                                 {contactName?.charAt(0)?.toUpperCase() || "?"}
                               </div>
                             )}
-                            <div className="max-w-[70%]">
+                            <div className="flex w-fit max-w-[70%] flex-col items-stretch">
                               <div className="rounded-2xl px-4 py-2.5 text-white text-sm" style={{ backgroundColor: actualHexColor }}>
                                 {msg.text}
                               </div>
                               {msg.metadata?.chips && msg.metadata.chips.length > 0 && !hiddenChipGroups.has(index) && (
-                                <div className="mt-2 flex flex-row flex-wrap items-start gap-[5px]">
+                                <div className="mt-2 flex w-full flex-row flex-wrap justify-end items-start gap-[5px]">
                                   {msg.metadata.chips.map((chip, chipIndex) => (
                                     <button
                                       key={`${index}-chip-${chipIndex}`}
