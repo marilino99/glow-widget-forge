@@ -1901,6 +1901,18 @@ Deno.serve(async (req) => {
           addToShopifyCart(this.getAttribute('data-variant'), this);
         });
       });
+      // Bind product carousel arrow buttons
+      var arrowBtns = bubble.querySelectorAll('.wj-prod-arrow');
+      arrowBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          var targetId = this.getAttribute('data-scroll-target');
+          var dir = parseInt(this.getAttribute('data-scroll-dir'), 10);
+          var container = this.parentElement.querySelector('#' + targetId);
+          if (container) container.scrollBy({left: dir * 150, behavior: 'smooth'});
+        });
+      });
       lastMessageId = msg.id;
       chatMsgs.scrollTop = chatMsgs.scrollHeight;
     }
