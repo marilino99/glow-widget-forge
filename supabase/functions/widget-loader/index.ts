@@ -1833,7 +1833,9 @@ Deno.serve(async (req) => {
         
         // Render product cards OUTSIDE the 70% wrapper, full width
         if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
-          msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;width:100%;padding-left:36px;box-sizing:border-box">';
+          var prodId = 'wj-prod-' + msg.id;
+          msgHtml += '<div class="wj-prod-wrap" style="width:100%">';
+          msgHtml += '<div id="' + prodId + '" style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;width:100%;padding-left:36px;box-sizing:border-box">';
           msg.metadata.products.forEach(function(prod) {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
@@ -1864,6 +1866,11 @@ Deno.serve(async (req) => {
             }
             msgHtml += '</div></div>';
           });
+          msgHtml += '</div>';
+          // Arrow buttons
+          var chevronSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-left" onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:-150,behavior:\'smooth\'})">' + chevronSvg + '<polyline points="15 18 9 12 15 6"/></svg></button>';
+          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-right" onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:150,behavior:\'smooth\'})">' + chevronSvg + '<polyline points="9 18 15 12 9 6"/></svg></button>';
           msgHtml += '</div>';
         }
 
