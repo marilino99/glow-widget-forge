@@ -1495,7 +1495,7 @@ const WidgetPreviewPanel = ({
                     )}
                     <div className="flex flex-col">
                       <span className="text-sm font-semibold leading-tight">{contactName}</span>
-                      <span className={`text-xs leading-tight ${isLight ? "text-slate-500" : "text-white/50"}`}>{ctaText || t.contactUs || "Contact us"}</span>
+                      <span className={`text-xs leading-tight ${isLight ? "text-slate-500" : "text-white/50"}`}>{offerHelp || t.contactUs || "Contact us"}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
