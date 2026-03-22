@@ -1807,11 +1807,13 @@ Deno.serve(async (req) => {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:#f3f4f6;color:#1e293b;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
         var msgHtml = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>');
-        msgHtml += '<div style="display:flex;flex-direction:column;align-items:stretch;max-width:70%;width:fit-content;min-width:0"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
+        var hasProducts = msg.metadata && msg.metadata.products && msg.metadata.products.length > 0;
+        var maxW = hasProducts ? '100%' : '70%';
+        msgHtml += '<div style="display:flex;flex-direction:column;align-items:stretch;max-width:' + maxW + ';width:fit-content;min-width:0"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
         
         // Render product cards if metadata contains products
         if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
-          msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none">';
+          msgHtml += '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;width:100%">';
           msg.metadata.products.forEach(function(prod) {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
@@ -1820,11 +1822,11 @@ Deno.serve(async (req) => {
               var matchedProd = products.find(function(p) { return p.title === prod.title; });
               if (matchedProd && matchedProd.shopify_variant_id) varId = matchedProd.shopify_variant_id;
             }
-            var cardBg = dark ? '#374151' : '#e2e8f0';
+            var cardBg = dark ? '#374151' : '#f1f5f9';
             var btnBg = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9';
             var btnColor = dark ? 'rgba(255,255,255,0.7)' : '#475569';
-            msgHtml += '<div style="flex-shrink:0;width:112px;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:' + cardBg + '">';
-            msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;height:80px;overflow:hidden">';
+            msgHtml += '<div style="border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:' + cardBg + '">';
+            msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;aspect-ratio:1/1;overflow:hidden">';
             if (imgSrc) {
               msgHtml += '<img src="' + esc(imgSrc) + '" alt="' + esc(prod.title || '') + '" style="width:100%;height:100%;object-fit:cover"/>';
             } else {
