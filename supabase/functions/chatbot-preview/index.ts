@@ -362,7 +362,7 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
           contents: conversationHistory,
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 800,
+            maxOutputTokens: 1200,
           },
         }),
       }
@@ -421,9 +421,9 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
         cleanReply = FALLBACK_DISCOVERY_REPLY[config.language || "en"] || FALLBACK_DISCOVERY_REPLY.en;
       }
     } else {
-      const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]\s*$/);
+      const productMarkerMatch = cleanReply.match(/\[PRODUCTS:\s*(.+?)\]?\s*$/s);
       if (productMarkerMatch) {
-        cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]\s*$/, "").trim();
+        cleanReply = cleanReply.replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "").trim();
         const requestedTitles = productMarkerMatch[1].split(",").map((t: string) => t.trim().toLowerCase());
         if (productCardsData && productCardsData.length > 0) {
           const matchedProducts = productCardsData.filter((p: any) =>
@@ -444,11 +444,11 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
             })),
           };
         }
-      } else if (productCardsData && productCardsData.length > 0) {
-      // Fallback: if the AI talked about products but forgot the marker, check for product-related keywords
-        const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
-        const mentionsProducts = isProductIntent(lastUserMsg);
-        if (mentionsProducts) {
+      } else {
+        // Fallback: truncated marker (e.g. "[PRODUCTS: title1, title2" without closing bracket)
+        const truncatedMatch = cleanReply.match(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s);
+        if (truncatedMatch && productCardsData && productCardsData.length > 0) {
+          cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
           metadata = {
             ...(metadata || {}),
             products: productCardsData.slice(0, 3).map((p: any) => ({
@@ -459,8 +459,27 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
               shopifyVariantId: p.shopify_variant_id || null,
             })),
           };
+        } else if (productCardsData && productCardsData.length > 0) {
+          // Fallback: keyword-based product intent detection
+          const lastUserMsg = messages.filter((m: { sender: string }) => m.sender === "user").pop()?.text || "";
+          const mentionsProducts = isProductIntent(lastUserMsg);
+          if (mentionsProducts) {
+            metadata = {
+              ...(metadata || {}),
+              products: productCardsData.slice(0, 3).map((p: any) => ({
+                title: p.title,
+                imageUrl: p.image_url || null,
+                productUrl: p.product_url || null,
+                price: p.price || null,
+                shopifyVariantId: p.shopify_variant_id || null,
+              })),
+            };
+          }
         }
       }
+
+      // Safety net: remove any leftover [PRODUCTS: ...] residue from visible text
+      cleanReply = cleanReply.replace(/\[PRODUCTS?:?[^\]]*\]?/gi, "").trim();
     }
 
     return new Response(
