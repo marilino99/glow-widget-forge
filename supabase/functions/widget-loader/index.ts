@@ -1807,7 +1807,7 @@ Deno.serve(async (req) => {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:#f3f4f6;color:#1e293b;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
         var msgHtml = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>');
-        msgHtml += '<div style="max-width:70%"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
+        msgHtml += '<div style="display:flex;flex-direction:column;align-items:stretch;max-width:70%;width:fit-content;min-width:0"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
         
         // Render product cards if metadata contains products
         if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
