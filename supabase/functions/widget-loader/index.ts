@@ -1867,10 +1867,10 @@ Deno.serve(async (req) => {
             msgHtml += '</div></div>';
           });
           msgHtml += '</div>';
-          // Arrow buttons
+          // Arrow buttons (event listeners bound after innerHTML)
           var chevronSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
-          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-left" onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:-150,behavior:\'smooth\'})">' + chevronSvg + '<polyline points="15 18 9 12 15 6"/></svg></button>';
-          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-right" onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:150,behavior:\'smooth\'})">' + chevronSvg + '<polyline points="9 18 15 12 9 6"/></svg></button>';
+          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-left" data-scroll-target="' + prodId + '" data-scroll-dir="-1">' + chevronSvg + '<polyline points="15 18 9 12 15 6"/></svg></button>';
+          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-right" data-scroll-target="' + prodId + '" data-scroll-dir="1">' + chevronSvg + '<polyline points="9 18 15 12 9 6"/></svg></button>';
           msgHtml += '</div>';
         }
 
