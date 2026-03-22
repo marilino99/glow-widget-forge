@@ -1855,7 +1855,7 @@ Deno.serve(async (req) => {
       }
       chatMsgs.appendChild(bubble);
       // Bind dynamic chips
-      var dynamicChips = bubble.querySelectorAll('.wj-dynamic-chip');
+      var dynamicChips = bubble.querySelectorAll('.wj-discovery-chip');
       dynamicChips.forEach(function(chip) {
         chip.addEventListener('click', function() {
           var text = this.textContent;
