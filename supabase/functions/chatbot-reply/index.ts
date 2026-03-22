@@ -35,8 +35,8 @@ const FALLBACK_DISCOVERY_REPLY: Record<string, string> = {
 };
 
 const FALLBACK_DISCOVERY_CHIPS: Record<string, string[]> = {
-  it: ["Più popolari", "Novità", "Consigliati"],
-  en: ["Best sellers", "New arrivals", "Recommended"],
+  it: ["🔥 Più popolari", "✨ Novità", "⭐ Consigliati"],
+  en: ["🔥 Best sellers", "✨ New arrivals", "⭐ Recommended"],
   es: ["Más populares", "Novedades", "Recomendados"],
   fr: ["Best-sellers", "Nouveautés", "Recommandés"],
   de: ["Bestseller", "Neuheiten", "Empfohlen"],
