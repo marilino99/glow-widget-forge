@@ -346,12 +346,12 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-      @-webkit-keyframes wj-dot-bounce{0%,100%{-webkit-transform:translateY(0) scale(1);transform:translateY(0) scale(1);opacity:0.6}50%{-webkit-transform:translateY(-5px) scale(1.05);transform:translateY(-5px) scale(1.05);opacity:1}}
-      @keyframes wj-dot-bounce{0%,100%{-webkit-transform:translateY(0) scale(1);transform:translateY(0) scale(1);opacity:0.6}50%{-webkit-transform:translateY(-5px) scale(1.05);transform:translateY(-5px) scale(1.05);opacity:1}}
+      @-webkit-keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
+      @keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
       #wj-typing{display:flex;align-items:flex-start;gap:12px;margin-top:12px}
       #wj-typing-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
       #wj-typing-dots{padding:10px 16px;border-radius:16px;display:flex;gap:4px;align-items:center}
-      #wj-typing-dots .wj-dot{width:8px;height:8px;border-radius:9999px;background:rgba(255,255,255,0.6);display:inline-block;transform-origin:center bottom;will-change:transform,opacity;-webkit-animation:wj-dot-bounce 1s ease-in-out infinite;animation:wj-dot-bounce 1s ease-in-out infinite}
+      #wj-typing-dots .wj-dot{width:8px;height:8px;border-radius:9999px;background:rgba(255,255,255,0.6);display:inline-block;will-change:transform;-webkit-animation:wj-dot-bounce 1s infinite;animation:wj-dot-bounce 1s infinite}
       #wj-typing-dots .wj-dot:nth-child(2){animation-delay:0.15s;-webkit-animation-delay:0.15s}
       #wj-typing-dots .wj-dot:nth-child(3){animation-delay:0.3s;-webkit-animation-delay:0.3s}
       #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
@@ -494,12 +494,12 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px !important;height:32px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:transparent !important;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff !important;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-      @-webkit-keyframes wj-dot-bounce{0%,100%{-webkit-transform:translateY(0) scale(1);transform:translateY(0) scale(1);opacity:0.6}50%{-webkit-transform:translateY(-5px) scale(1.05);transform:translateY(-5px) scale(1.05);opacity:1}}
-      @keyframes wj-dot-bounce{0%,100%{-webkit-transform:translateY(0) scale(1);transform:translateY(0) scale(1);opacity:0.6}50%{-webkit-transform:translateY(-5px) scale(1.05);transform:translateY(-5px) scale(1.05);opacity:1}}
+      @-webkit-keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
+      @keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
       #wj-typing{display:flex !important;align-items:flex-start !important;gap:12px !important;margin-top:12px !important}
       #wj-typing-avatar{width:24px !important;height:24px !important;border-radius:50% !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important}
       #wj-typing-dots{padding:10px 16px !important;border-radius:16px !important;display:flex !important;gap:4px !important;align-items:center !important}
-      #wj-typing-dots .wj-dot{width:8px !important;height:8px !important;border-radius:9999px !important;background:rgba(255,255,255,0.6) !important;display:inline-block !important;transform-origin:center bottom !important;will-change:transform,opacity !important;-webkit-animation:wj-dot-bounce 1s ease-in-out infinite !important;animation:wj-dot-bounce 1s ease-in-out infinite !important}
+      #wj-typing-dots .wj-dot{width:8px !important;height:8px !important;border-radius:9999px !important;background:rgba(255,255,255,0.6) !important;display:inline-block !important;will-change:transform !important;-webkit-animation:wj-dot-bounce 1s infinite !important;animation:wj-dot-bounce 1s infinite !important}
       #wj-typing-dots .wj-dot:nth-child(2){animation-delay:0.15s !important;-webkit-animation-delay:0.15s !important}
       #wj-typing-dots .wj-dot:nth-child(3){animation-delay:0.3s !important;-webkit-animation-delay:0.3s !important}
       #wj-chat-send{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'}}
