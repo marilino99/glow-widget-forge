@@ -343,6 +343,11 @@ Deno.serve(async (req) => {
       .wj-discovery-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:5px;margin-top:8px;width:100%;box-sizing:border-box}
       .wj-discovery-chip{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;margin:0;padding:6px 10px;border-radius:20px;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:11px;font-weight:400;line-height:1.4;letter-spacing:normal;text-transform:none;text-align:center;white-space:normal;cursor:pointer;transition:all 0.15s;appearance:none;text-decoration:none;overflow:visible}
       .wj-discovery-chip:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'};border-color:\${dark ? 'rgba(255,255,255,0.25)' : '#cbd5e1'}}
+      .wj-prod-wrap{position:relative}
+      .wj-prod-arrow{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid #e5e7eb;box-shadow:0 2px 6px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity 0.2s;z-index:10}
+      .wj-prod-wrap:hover .wj-prod-arrow{opacity:1}
+      .wj-prod-arrow-left{left:4px}
+      .wj-prod-arrow-right{right:4px}
       #wj-chat-input{position:relative;padding:16px}
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
       #wj-chat-input-box input{flex:1;border:none;background:transparent;font-size:14px;color:\${dark ? '#fff' : '#0f172a'};outline:none}
@@ -493,6 +498,11 @@ Deno.serve(async (req) => {
       .wj-discovery-chips{display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;align-items:stretch !important;gap:5px !important;margin-top:8px !important;width:100% !important;box-sizing:border-box !important;padding:0 !important;margin-bottom:0 !important}
       .wj-discovery-chip{display:inline-flex !important;align-items:center !important;justify-content:center !important;box-sizing:border-box !important;width:100% !important;margin:0 !important;padding:6px 10px !important;border-radius:20px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'} !important;background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'} !important;color:\${dark ? '#fff' : '#334155'} !important;font-size:11px !important;font-weight:400 !important;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important;line-height:1.4 !important;letter-spacing:normal !important;text-transform:none !important;text-align:center !important;white-space:normal !important;cursor:pointer !important;transition:all 0.15s !important;appearance:none !important;-webkit-appearance:none !important;text-decoration:none !important;outline:none !important;min-width:0 !important;max-width:100% !important;height:auto !important;float:none !important;position:static !important;overflow:visible !important}
       .wj-discovery-chip:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'} !important;border-color:\${dark ? 'rgba(255,255,255,0.25)' : '#cbd5e1'} !important}
+      .wj-prod-wrap{position:relative !important}
+      .wj-prod-arrow{position:absolute !important;top:50% !important;transform:translateY(-50%) !important;width:28px !important;height:28px !important;border-radius:50% !important;background:#fff !important;border:1px solid #e5e7eb !important;box-shadow:0 2px 6px rgba(0,0,0,0.12) !important;display:flex !important;align-items:center !important;justify-content:center !important;cursor:pointer !important;opacity:0 !important;transition:opacity 0.2s !important;z-index:10 !important}
+      .wj-prod-wrap:hover .wj-prod-arrow{opacity:1 !important}
+      .wj-prod-arrow-left{left:4px !important}
+      .wj-prod-arrow-right{right:4px !important}
       #wj-chat-input{position:relative !important;padding:16px !important}
       #wj-chat-input-box{display:flex !important;align-items:center !important;gap:8px !important;padding:8px 16px !important;border-radius:24px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'};transition:border-color .2s}
       #wj-chat-input-box:focus-within{border-color:\${color.bg}}
@@ -1823,7 +1833,9 @@ Deno.serve(async (req) => {
         
         // Render product cards OUTSIDE the 70% wrapper, full width
         if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
-          msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;width:100%;padding-left:36px;box-sizing:border-box">';
+          var prodId = 'wj-prod-' + msg.id;
+          msgHtml += '<div class="wj-prod-wrap" style="width:100%">';
+          msgHtml += '<div id="' + prodId + '" style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;width:100%;padding-left:36px;box-sizing:border-box">';
           msg.metadata.products.forEach(function(prod) {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
@@ -1854,6 +1866,11 @@ Deno.serve(async (req) => {
             }
             msgHtml += '</div></div>';
           });
+          msgHtml += '</div>';
+          // Arrow buttons
+          var chevronSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-left" onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:-150,behavior:\'smooth\'})">' + chevronSvg + '<polyline points="15 18 9 12 15 6"/></svg></button>';
+          msgHtml += '<button class="wj-prod-arrow wj-prod-arrow-right" onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:150,behavior:\'smooth\'})">' + chevronSvg + '<polyline points="9 18 15 12 9 6"/></svg></button>';
           msgHtml += '</div>';
         }
 

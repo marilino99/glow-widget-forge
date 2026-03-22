@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronLeft, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -1063,41 +1063,63 @@ const WidgetPreviewPanel = ({
                               )}
                             </div>
                             {msg.metadata?.products && msg.metadata.products.length > 0 && (
-                              <div className="flex gap-2 mt-2 overflow-x-auto w-full pl-8" style={{ scrollbarWidth: 'none' }}>
-                                {msg.metadata.products.map((prod, pi) => (
-                                  <div
-                                    key={pi}
-                                    className="shrink-0 rounded-xl overflow-hidden flex flex-col"
-                                    style={{ width: '45%', background: isLight ? '#f1f5f9' : '#374151' }}
-                                  >
-                                    <a
-                                      href={prod.productUrl || '#'}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="block w-full aspect-square overflow-hidden"
+                              <div className="relative w-full group/prod">
+                                <div className="flex gap-2 mt-2 overflow-x-auto w-full pl-8" style={{ scrollbarWidth: 'none' }} ref={el => { if (el) el.dataset.prodScroll = 'true'; }}>
+                                  {msg.metadata.products.map((prod, pi) => (
+                                    <div
+                                      key={pi}
+                                      className="shrink-0 rounded-xl overflow-hidden flex flex-col"
+                                      style={{ width: '45%', background: isLight ? '#f1f5f9' : '#374151' }}
                                     >
-                                      {prod.imageUrl ? (
-                                        <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
-                                          {prod.title}
-                                        </div>
-                                      )}
-                                    </a>
-                                    {prod.price && (
-                                      <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
-                                    )}
-                                    <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
-                                    <div className="flex gap-1 px-1.5 pb-1.5" style={{ alignItems: 'stretch' }}>
-                                      <a href={prod.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center rounded-md py-1 text-[9px] font-semibold no-underline transition-colors" style={{ background: actualHexColor, color: '#fff' }}>
-                                        {t.show}
+                                      <a
+                                        href={prod.productUrl || '#'}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block w-full aspect-square overflow-hidden"
+                                      >
+                                        {prod.imageUrl ? (
+                                          <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
+                                            {prod.title}
+                                          </div>
+                                        )}
                                       </a>
-                                      <button className="flex items-center justify-center rounded-md py-1 transition-colors" style={{ width: 28, background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
-                                        <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
-                                      </button>
+                                      {prod.price && (
+                                        <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
+                                      )}
+                                      <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
+                                      <div className="flex gap-1 px-1.5 pb-1.5" style={{ alignItems: 'stretch' }}>
+                                        <a href={prod.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center rounded-md py-1 text-[9px] font-semibold no-underline transition-colors" style={{ background: actualHexColor, color: '#fff' }}>
+                                          {t.show}
+                                        </a>
+                                        <button className="flex items-center justify-center rounded-md py-1 transition-colors" style={{ width: 28, background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                          <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
+                                        </button>
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
+                                <button
+                                  className="absolute left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover/prod:opacity-100 transition-opacity z-10 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-200"
+                                  style={{ width: 28, height: 28 }}
+                                  onClick={(e) => {
+                                    const container = e.currentTarget.parentElement?.querySelector('[data-prod-scroll]');
+                                    container?.scrollBy({ left: -150, behavior: 'smooth' });
+                                  }}
+                                >
+                                  <ChevronLeft className="h-3.5 w-3.5 text-gray-600" />
+                                </button>
+                                <button
+                                  className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover/prod:opacity-100 transition-opacity z-10 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-200"
+                                  style={{ width: 28, height: 28 }}
+                                  onClick={(e) => {
+                                    const container = e.currentTarget.parentElement?.querySelector('[data-prod-scroll]');
+                                    container?.scrollBy({ left: 150, behavior: 'smooth' });
+                                  }}
+                                >
+                                  <ChevronRight className="h-3.5 w-3.5 text-gray-600" />
+                                </button>
                               </div>
                             )}
                           </div>
@@ -1588,41 +1610,63 @@ const WidgetPreviewPanel = ({
                           )}
                         </div>
                         {msg.metadata?.products && msg.metadata.products.length > 0 && (
-                          <div className="flex gap-2 mt-2 overflow-x-auto w-full pl-8" style={{ scrollbarWidth: 'none' }}>
-                            {msg.metadata.products.map((prod, pi) => (
-                              <div
-                                key={pi}
-                                className="shrink-0 rounded-xl overflow-hidden flex flex-col"
-                                style={{ width: '45%', background: isLight ? '#f1f5f9' : '#374151' }}
-                              >
-                                <a
-                                  href={prod.productUrl || '#'}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="block w-full aspect-square overflow-hidden"
+                          <div className="relative w-full group/prod">
+                            <div className="flex gap-2 mt-2 overflow-x-auto w-full pl-8" style={{ scrollbarWidth: 'none' }} ref={el => { if (el) el.dataset.prodScroll = 'true'; }}>
+                              {msg.metadata.products.map((prod, pi) => (
+                                <div
+                                  key={pi}
+                                  className="shrink-0 rounded-xl overflow-hidden flex flex-col"
+                                  style={{ width: '45%', background: isLight ? '#f1f5f9' : '#374151' }}
                                 >
-                                  {prod.imageUrl ? (
-                                    <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
-                                      {prod.title}
-                                    </div>
-                                  )}
-                                </a>
-                                {prod.price && (
-                                  <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
-                                )}
-                                <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
-                                <div className="flex gap-1 px-1.5 pb-1.5" style={{ alignItems: 'stretch' }}>
-                                  <a href={prod.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center rounded-md py-1 text-[9px] font-semibold no-underline transition-colors" style={{ background: actualHexColor, color: '#fff' }}>
-                                    {t.show}
+                                  <a
+                                    href={prod.productUrl || '#'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full aspect-square overflow-hidden"
+                                  >
+                                    {prod.imageUrl ? (
+                                      <img src={prod.imageUrl} alt={prod.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-[10px] text-center p-1" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>
+                                        {prod.title}
+                                      </div>
+                                    )}
                                   </a>
-                                  <button className="flex items-center justify-center rounded-md py-1 transition-colors" style={{ width: 28, background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
-                                    <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
-                                  </button>
+                                  {prod.price && (
+                                    <p className="text-[10px] font-semibold px-1.5 pt-1 truncate" style={{ color: isLight ? '#1e293b' : '#fff' }}>{prod.price}</p>
+                                  )}
+                                  <p className="text-[9px] px-1.5 pb-1 truncate" style={{ color: isLight ? '#64748b' : 'rgba(255,255,255,0.6)' }}>{prod.title}</p>
+                                  <div className="flex gap-1 px-1.5 pb-1.5" style={{ alignItems: 'stretch' }}>
+                                    <a href={prod.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center rounded-md py-1 text-[9px] font-semibold no-underline transition-colors" style={{ background: actualHexColor, color: '#fff' }}>
+                                      {t.show}
+                                    </a>
+                                    <button className="flex items-center justify-center rounded-md py-1 transition-colors" style={{ width: 28, background: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)' }}>
+                                      <ShoppingCart className="h-3 w-3" style={{ color: isLight ? '#475569' : 'rgba(255,255,255,0.7)' }} />
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
+                            <button
+                              className="absolute left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover/prod:opacity-100 transition-opacity z-10 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-200"
+                              style={{ width: 28, height: 28 }}
+                              onClick={(e) => {
+                                const container = e.currentTarget.parentElement?.querySelector('[data-prod-scroll]');
+                                container?.scrollBy({ left: -150, behavior: 'smooth' });
+                              }}
+                            >
+                              <ChevronLeft className="h-3.5 w-3.5 text-gray-600" />
+                            </button>
+                            <button
+                              className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover/prod:opacity-100 transition-opacity z-10 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-200"
+                              style={{ width: 28, height: 28 }}
+                              onClick={(e) => {
+                                const container = e.currentTarget.parentElement?.querySelector('[data-prod-scroll]');
+                                container?.scrollBy({ left: 150, behavior: 'smooth' });
+                              }}
+                            >
+                              <ChevronRight className="h-3.5 w-3.5 text-gray-600" />
+                            </button>
                           </div>
                         )}
                       </div>
