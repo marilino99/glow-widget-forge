@@ -1049,7 +1049,7 @@ const WidgetPreviewPanel = ({
                                         setHiddenChipGroups(prev => new Set(prev).add(index));
                                         handleSendChatMessage(chip);
                                       }}
-                                      className="cursor-pointer rounded-[20px] px-2.5 py-1 text-left text-[11px] transition-colors hover:opacity-80 whitespace-nowrap"
+                                      className="cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-xs transition-colors hover:opacity-80 whitespace-nowrap flex-1"
                                       style={{
                                         border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
                                         background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
@@ -1574,7 +1574,7 @@ const WidgetPreviewPanel = ({
                                     setHiddenChipGroups(prev => new Set(prev).add(index));
                                     handleSendChatMessage(chip);
                                   }}
-                                  className="cursor-pointer rounded-[20px] px-2.5 py-1 text-left text-[11px] transition-colors hover:opacity-80 whitespace-nowrap"
+                                  className="cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-xs transition-colors hover:opacity-80 whitespace-nowrap flex-1"
                                   style={{
                                     border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
                                     background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
