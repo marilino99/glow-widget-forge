@@ -413,11 +413,10 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
         .replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "")
         .trim();
 
-      if (!metadata?.chips) {
-        metadata = {
-          ...(metadata || {}),
-          chips: deriveDiscoveryChips(productCardsData, config.language || "en"),
-        };
+      // Always force deterministic categories from the catalog
+      const derivedChips = deriveDiscoveryChips(productCardsData, config.language || "en");
+      metadata = { ...(metadata || {}), chips: derivedChips };
+      if (!cleanReply) {
         cleanReply = FALLBACK_DISCOVERY_REPLY[config.language || "en"] || FALLBACK_DISCOVERY_REPLY.en;
       }
     } else {
