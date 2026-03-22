@@ -1143,7 +1143,7 @@ Deno.serve(async (req) => {
             var imgHtml = p.image_url
               ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.title || '') + '"/>'
               : '';
-            html += '<a class="wj-sb-prod" href="' + esc(url) + '" target="_blank" rel="noopener">';
+            html += '<a class="wj-sb-prod" href="' + esc(url) + '" rel="noopener">';
             html += '<div class="wj-sb-prod-img">' + imgHtml + '</div>';
             html += '<div class="wj-sb-prod-info">';
             html += '<div class="wj-sb-prod-title">' + esc(p.title || '') + '</div>';
