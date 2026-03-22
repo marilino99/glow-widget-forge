@@ -111,8 +111,7 @@ function isCategoryDiscoveryIntent(text: string): boolean {
   return CATEGORY_DISCOVERY_PATTERNS.some((pattern) => normalized.includes(pattern));
 }
 
-
-
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
