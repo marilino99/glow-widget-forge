@@ -1,25 +1,27 @@
 
 
-## Piano: Product card a larghezza piena del widget
+## Piano: Frecce di navigazione on-hover per il carosello prodotti nella chat
 
-### Problema
-Le product card sono dentro il wrapper del messaggio bot che ha `max-w-[70%]`, quindi vengono tagliate. I chip devono restare dentro quel wrapper, ma le product card devono estendersi fino al bordo del widget.
-
-### Soluzione
-Spostare il rendering delle product card **fuori** dal wrapper `max-w-[70%]` del messaggio bot, rendendole un elemento separato a larghezza piena sotto il messaggio.
+### Obiettivo
+Aggiungere frecce sinistra/destra (dentro cerchi) a metà altezza del carosello prodotti nella chat, visibili solo al passaggio del mouse. Sia nella preview che nel widget live.
 
 ### Modifiche
 
-**`src/components/builder/WidgetPreviewPanel.tsx`** (2 punti: riga ~1064 e ~1589)
-- Spostare il blocco `{msg.metadata?.products && ...}` fuori dal `<div className="flex w-fit max-w-[70%]...">`, posizionandolo dopo la chiusura di quel div ma ancora dentro il `<div className="flex items-start gap-2 mt-3">` del messaggio bot.
-- Rimuovere il vincolo di larghezza: le card occupano `w-full` del container chat.
-- Aggiungere un `pl-8` (padding-left uguale all'avatar + gap) per allineare l'inizio delle card con la bolla.
+**`src/components/builder/WidgetPreviewPanel.tsx`** (2 blocchi: riga ~1065 e ~1590)
+- Avvolgere il container prodotti (`flex overflow-x-auto`) in un `div` con `position: relative` e `group` (Tailwind).
+- Aggiungere due `button` freccia (sinistra e destra) posizionati `absolute top-1/2 -translate-y-1/2`, con `opacity-0 group-hover:opacity-100 transition-opacity`.
+- Stile: cerchio bianco con ombra, icona `ChevronLeft`/`ChevronRight` di Lucide.
+- onClick: fare scroll del container prodotti di ~200px a sinistra/destra usando `scrollBy({ left: ±200, behavior: 'smooth' })` tramite un `useRef` o `ref` callback.
 
-**`supabase/functions/widget-loader/index.ts`**
-- Stessa logica: nel rendering HTML del messaggio bot, spostare il div dei prodotti fuori dal wrapper con `max-width:70%`.
-- Dare al container prodotti `width:100%` e un `padding-left` coerente con l'avatar.
+**`supabase/functions/widget-loader/index.ts`** (riga ~1826)
+- Avvolgere il `div` dei prodotti in un wrapper con `position:relative`.
+- Aggiungere due bottoni freccia (HTML inline con SVG chevron) posizionati a metà altezza, nascosti di default (`opacity:0;transition:opacity 0.2s`) e visibili al hover del wrapper (`wrapper:hover .arrow { opacity:1 }`).
+- Aggiungere CSS per `.wj-chat-prod-wrap:hover .wj-chat-prod-arrow{opacity:1}` in entrambi i blocchi CSS (standard e hardened).
+- Aggiungere JS per gestire il click delle frecce: `container.scrollBy({ left: ±200, behavior: 'smooth' })`.
 
-### Risultato
-- I chip restano allineati alla message box (max-w-[70%]).
-- Le product card si estendono fino al bordo destro del widget, senza tagli.
+### Dettagli tecnici
+- Freccia sinistra: `left:4px`, freccia destra: `right:4px`
+- Cerchio: ~28px, sfondo bianco, ombra leggera, bordo sottile grigio
+- Icona: chevron SVG ~14px, colore grigio scuro
+- Il wrapper del carosello avrà classe `wj-chat-prod-wrap` nel live
 
