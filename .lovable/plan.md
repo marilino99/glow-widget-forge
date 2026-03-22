@@ -1,29 +1,46 @@
 
+Obiettivo: rendere i chip dinamici come “Clothing” identici alla widget preview e far sì che restino sempre allineati alla message box sopra, senza rompersi di nuovo quando tocchiamo gli altri chip.
 
-## Piano: Allineare stile discovery chips nel widget live alla preview
+### Causa probabile
+Nel live i chip discovery stanno ancora appoggiandosi allo stile generico dei quick chips (`.wj-chat-chip` + override parziale `.wj-dynamic-chip`). Questo li rende fragili: ogni modifica ai chip iniziali può alterare di nuovo dimensioni, larghezza e allineamento.
 
-### Problema
-I chip delle categorie (discovery chips) nel widget live sono troppo grandi perché ereditano lo stile `.wj-chat-chip` pensato per i chip iniziali (padding 10px 16px, font 14px). Nella preview sono molto più compatti: font 11px, padding ~6px 10px, gap 5px.
+### Piano
+1. **Separare definitivamente i discovery chips dai quick chips**
+   - In `supabase/functions/widget-loader/index.ts` creare classi dedicate solo per i chip generati dalle risposte AI, invece di riutilizzare `.wj-chat-chip`.
+   - Esempio concettuale:
+     - wrapper messaggio AI
+     - container chip discovery
+     - bottone chip discovery
 
-### Modifiche
+2. **Far combaciare il blocco chip con la bolla sopra**
+   - Rendere il wrapper del messaggio AI uguale alla struttura della preview: un contenitore unico che include bolla + chip.
+   - Dare al container dei chip una larghezza e un comportamento coerenti con la bolla, così “Clothing” parte esattamente sotto il bordo della message box e non si sposta.
 
-**`supabase/functions/widget-loader/index.ts`** — 2 modifiche:
+3. **Blindare lo stile contro CSS del sito ospitante**
+   - Sui discovery chips aggiungere reset completi e regole forti (`display`, `width:auto`, `max-width`, `font-family`, `line-height`, `letter-spacing`, `text-transform`, `appearance`, `box-sizing`, `margin`, `padding`, `font-size`) per evitare che il CSS del sito live li deformi.
+   - Mantenere lo stile compatto della preview: font piccolo, padding compatto, gap da 5px.
 
-1. **Riga ~1844** — Aggiornare lo stile inline del container dei discovery chips:
-   - Cambiare `gap:6px` → `gap:5px`
+4. **Aggiornare l’HTML renderizzato**
+   - Nel punto in cui vengono renderizzati `msg.metadata.chips`, sostituire l’attuale markup con il nuovo markup dedicato.
+   - Tenere separati:
+     - chip iniziali del welcome flow
+     - chip dinamici di discovery/category/goal
 
-2. **Riga ~1846** — Aggiungere una classe separata `wj-dynamic-chip` con override di stile per i discovery chips, oppure applicare stile inline sui chip dinamici per renderli compatti:
-   - `font-size:11px` (invece di 14px ereditato)
-   - `padding:6px 10px` (invece di 10px 16px ereditato)
-   - `white-space:nowrap` mantenuto
+5. **Applicare la stessa logica in entrambe le varianti CSS del loader**
+   - Aggiornare sia il blocco CSS normale sia quello “hardened” con `!important`, così il comportamento resta identico in tutti i contesti di embed e non si rompe più tra preview/live.
 
-3. **Nel blocco CSS** (righe ~488-489) — Aggiungere regola per `.wj-dynamic-chip` che sovrascrive `.wj-chat-chip`:
-   ```css
-   .wj-dynamic-chip {
-     font-size: 11px !important;
-     padding: 6px 10px !important;
-   }
-   ```
+### File coinvolto
+- `supabase/functions/widget-loader/index.ts`
 
-Questo renderà i discovery chips identici alla preview: compatti, 3 per riga, allineati alla larghezza della bolla del messaggio.
+### Risultato atteso
+- “Clothing” e gli altri discovery chips saranno visivamente uguali alla widget preview.
+- Il primo chip combacerà con la larghezza/allineamento della message box sopra.
+- Le future modifiche ai quick chips non romperanno più i discovery chips, perché avranno stile e struttura separati.
 
+### Dettagli tecnici
+Intervento principale:
+- decoupling da `.wj-chat-chip`
+- nuovo wrapper stabile per messaggio AI + chips
+- nuovo set di classi dedicate per i discovery chips
+- reset CSS più aggressivo per proteggere il live dal CSS esterno
+- nessuna modifica database o backend necessaria
