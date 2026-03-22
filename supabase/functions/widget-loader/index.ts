@@ -192,9 +192,10 @@ Deno.serve(async (req) => {
     var grName = cfg.google_business_name || '';
     var grRating = cfg.google_business_rating || 0;
     var grTotal = cfg.google_business_ratings_total || 0;
-    var grUrl = cfg.google_business_url || '';
+     var grUrl = cfg.google_business_url || '';
+     var ctaText = cfg.cta_text || '';
 
-    var t = {
+     var t = {
       en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', chipFind: 'Find the right product for me', chipTrack: 'Track my order', chipInfo: 'I need more information' },
       es: { contactUs: 'Contáctanos', show: 'Ver', quickAnswers: 'Respuestas rápidas', home: 'Inicio', contact: 'Contacto', followIg: 'Síguenos en Instagram', welcomeMessage: '¡Bienvenido/a! ¿Cómo puedo ayudarte?', writeMessage: 'Escribe un mensaje...', contactWhatsApp: 'Contáctanos por WhatsApp', chipFind: 'Encontrar el producto adecuado', chipTrack: 'Rastrear mi pedido', chipInfo: 'Necesito más información' },
       de: { contactUs: 'Kontakt', show: 'Zeigen', quickAnswers: 'Schnelle Antworten', home: 'Home', contact: 'Kontakt', followIg: 'Folge uns auf Instagram', welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?', writeMessage: 'Nachricht schreiben...', contactWhatsApp: 'Kontaktieren Sie uns über WhatsApp', chipFind: 'Das richtige Produkt finden', chipTrack: 'Meine Bestellung verfolgen', chipInfo: 'Ich brauche mehr Informationen' },
