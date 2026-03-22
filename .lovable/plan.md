@@ -1,27 +1,24 @@
 
 
-## Piano: Frecce di navigazione on-hover per il carosello prodotti nella chat
+## Problema
+Nella `chatbot-preview` il marker `[PRODUCTS: ...]` non viene riconosciuto quando l'AI tronca la risposta (il `maxOutputTokens` è solo 800 vs 2048 nel live). Senza la parentesi di chiusura `]`, la regex non matcha e il testo raw resta visibile nella bolla.
 
-### Obiettivo
-Aggiungere frecce sinistra/destra (dentro cerchi) a metà altezza del carosello prodotti nella chat, visibili solo al passaggio del mouse. Sia nella preview che nel widget live.
+Il `chatbot-reply` (live) ha già un fallback per marker troncati (riga 661), ma `chatbot-preview` no.
 
-### Modifiche
+## Piano
 
-**`src/components/builder/WidgetPreviewPanel.tsx`** (2 blocchi: riga ~1065 e ~1590)
-- Avvolgere il container prodotti (`flex overflow-x-auto`) in un `div` con `position: relative` e `group` (Tailwind).
-- Aggiungere due `button` freccia (sinistra e destra) posizionati `absolute top-1/2 -translate-y-1/2`, con `opacity-0 group-hover:opacity-100 transition-opacity`.
-- Stile: cerchio bianco con ombra, icona `ChevronLeft`/`ChevronRight` di Lucide.
-- onClick: fare scroll del container prodotti di ~200px a sinistra/destra usando `scrollBy({ left: ±200, behavior: 'smooth' })` tramite un `useRef` o `ref` callback.
+### 1. Allineare la logica di parsing in `chatbot-preview` a `chatbot-reply`
+**File:** `supabase/functions/chatbot-preview/index.ts`
 
-**`supabase/functions/widget-loader/index.ts`** (riga ~1826)
-- Avvolgere il `div` dei prodotti in un wrapper con `position:relative`.
-- Aggiungere due bottoni freccia (HTML inline con SVG chevron) posizionati a metà altezza, nascosti di default (`opacity:0;transition:opacity 0.2s`) e visibili al hover del wrapper (`wrapper:hover .arrow { opacity:1 }`).
-- Aggiungere CSS per `.wj-chat-prod-wrap:hover .wj-chat-prod-arrow{opacity:1}` in entrambi i blocchi CSS (standard e hardened).
-- Aggiungere JS per gestire il click delle frecce: `container.scrollBy({ left: ±200, behavior: 'smooth' })`.
+- **Riga 424**: Cambiare la regex del product marker da strict (`\]\s*$`) a flessibile (`\]?\s*$`) con flag `s`, come già fatto nel live.
+- **Aggiungere fallback per marker troncato**: dopo il match principale, aggiungere un secondo tentativo con `/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s` che pulisce il testo e mostra i primi 3 prodotti dal catalogo (stesso pattern del live, righe 661-699).
+- **Aumentare `maxOutputTokens`** da 800 a 1200 per ridurre i casi di troncamento.
 
-### Dettagli tecnici
-- Freccia sinistra: `left:4px`, freccia destra: `right:4px`
-- Cerchio: ~28px, sfondo bianco, ombra leggera, bordo sottile grigio
-- Icona: chevron SVG ~14px, colore grigio scuro
-- Il wrapper del carosello avrà classe `wj-chat-prod-wrap` nel live
+### 2. Aggiungere cleanup del marker anche nel testo visibile
+- Aggiungere una regex di sicurezza finale che rimuova qualsiasi residuo `[PRODUCTS:` dal `cleanReply` prima di restituirlo, come rete di protezione.
+
+### Risultato
+- Il marker `[PRODUCTS:]` non apparirà mai come testo nella bolla, anche se troncato.
+- I prodotti verranno mostrati come card anche in caso di troncamento.
+- Parità logica completa tra preview e live.
 
