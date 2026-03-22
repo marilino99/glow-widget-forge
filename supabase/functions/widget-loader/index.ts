@@ -1842,9 +1842,9 @@ Deno.serve(async (req) => {
 
         // Render chips from metadata
         if (msg.metadata && msg.metadata.chips && msg.metadata.chips.length > 0) {
-          msgHtml += '<div class="wj-chat-chips" style="margin-top:8px;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:5px">';
+          msgHtml += '<div class="wj-discovery-chips">';
           msg.metadata.chips.forEach(function(chipText) {
-            msgHtml += '<button class="wj-chat-chip wj-dynamic-chip">' + esc(chipText) + '</button>';
+            msgHtml += '<button class="wj-discovery-chip">' + esc(chipText) + '</button>';
           });
           msgHtml += '</div>';
         }
