@@ -487,6 +487,7 @@ Deno.serve(async (req) => {
       #wj-chat-chips{display:flex;flex-direction:column !important;align-items:flex-end !important;gap:8px !important;margin-top:12px !important}
       .wj-chat-chip{padding:10px 16px !important;border-radius:20px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:14px !important;font-weight:400 !important;cursor:pointer !important;transition:all 0.15s;text-align:center !important;white-space:nowrap !important}
       .wj-chat-chip:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'};border-color:\${dark ? 'rgba(255,255,255,0.25)' : '#cbd5e1'}}
+      .wj-dynamic-chip{font-size:11px !important;padding:6px 10px !important}
       #wj-chat-input{position:relative !important;padding:16px !important}
       #wj-chat-input-box{display:flex !important;align-items:center !important;gap:8px !important;padding:8px 16px !important;border-radius:24px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'};transition:border-color .2s}
       #wj-chat-input-box:focus-within{border-color:\${color.bg}}
@@ -1841,7 +1842,7 @@ Deno.serve(async (req) => {
 
         // Render chips from metadata
         if (msg.metadata && msg.metadata.chips && msg.metadata.chips.length > 0) {
-          msgHtml += '<div class="wj-chat-chips" style="margin-top:8px;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:6px">';
+          msgHtml += '<div class="wj-chat-chips" style="margin-top:8px;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:5px">';
           msg.metadata.chips.forEach(function(chipText) {
             msgHtml += '<button class="wj-chat-chip wj-dynamic-chip">' + esc(chipText) + '</button>';
           });
