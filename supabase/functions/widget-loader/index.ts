@@ -308,8 +308,8 @@ Deno.serve(async (req) => {
       .wj-link-item:hover{background:\${dark ? '#334155' : '#f1f5f9'}}
       .wj-link-item:last-child{margin-bottom:0}
       .wj-link-name{font-size:14px;font-weight:500;color:\${textMain}}
-      .wj-link-arrow{width:28px;height:28px;border-radius:50%;background:\${dark ? '#374151' : '#e2e8f0'};display:flex;align-items:center;justify-content:center}
-      .wj-link-arrow svg{width:14px;height:14px;color:\${textSub}}
+      .wj-link-arrow{width:28px;height:28px;border-radius:50%;background:\${color.bg};display:flex;align-items:center;justify-content:center}
+      .wj-link-arrow svg{width:14px;height:14px;color:\${btnText}}
       #wj-footer{padding:12px 16px 4px;background:\${bgMain}}
       #wj-nav{display:flex;border-radius:16px;background:\${dark ? 'rgba(51,65,85,0.7)' : 'rgba(255,255,255,0.7)'};backdrop-filter:blur(8px)}
       .wj-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;border:none;background:transparent;cursor:pointer;color:\${textMain};font-size:12px}
