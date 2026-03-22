@@ -1057,7 +1057,7 @@ const WidgetPreviewPanel = ({
                                       }}
                                     >
                                       {(() => {
-                                        const emojiMatch = chip.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)\s*/u);
+                                        const emojiMatch = chip.match(/^((?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\u200D(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F))*(?:\uFE0F)?)\s*/u);
                                         if (emojiMatch) {
                                           return (<><span className="flex-shrink-0">{emojiMatch[1]}</span><span className="leading-tight break-words">{chip.slice(emojiMatch[0].length)}</span></>);
                                         }
