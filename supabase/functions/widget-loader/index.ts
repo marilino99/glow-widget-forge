@@ -1828,11 +1828,21 @@ Deno.serve(async (req) => {
           var limitedChips = msg.metadata.chips.slice(0, 5);
           msgHtml += '<div class="wj-discovery-chips">';
           limitedChips.forEach(function(chipText) {
+            var pos = 0;
             var cp = chipText.codePointAt(0) || 0;
-            var isEmoji = cp > 0x2600;
-            var emojiEnd = isEmoji ? (cp > 0xFFFF ? 2 : 1) : 0;
-            if (isEmoji && emojiEnd > 0 && chipText.charAt(emojiEnd) === ' ') { emojiEnd++; }
-            var emojiMatch = isEmoji ? [chipText.slice(0, emojiEnd), chipText.slice(0, cp > 0xFFFF ? 2 : 1)] : null;
+            var isEmoji = cp > 0x2300;
+            if (isEmoji) {
+              pos += cp > 0xFFFF ? 2 : 1;
+              if (chipText.charCodeAt(pos) === 0xFE0F) pos++;
+              while (chipText.charCodeAt(pos) === 0x200D) {
+                pos++;
+                var nextCp = chipText.codePointAt(pos) || 0;
+                if (nextCp) { pos += nextCp > 0xFFFF ? 2 : 1; }
+                if (chipText.charCodeAt(pos) === 0xFE0F) pos++;
+              }
+              if (chipText.charAt(pos) === ' ') pos++;
+            }
+            var emojiMatch = isEmoji && pos > 0 ? [chipText.slice(0, pos), chipText.slice(0, pos).replace(/\\s+$/, '')] : null;
             if (emojiMatch) {
               var emoji = emojiMatch[1];
               var label = chipText.slice(emojiMatch[0].length);
