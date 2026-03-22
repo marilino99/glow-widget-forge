@@ -1566,7 +1566,7 @@ const WidgetPreviewPanel = ({
                             <p className="text-sm">{msg.text}</p>
                           </div>
                           {msg.metadata?.chips && msg.metadata.chips.length > 0 && !hiddenChipGroups.has(index) && (
-                            <div className="mt-2 flex flex-row flex-wrap items-start gap-1.5">
+                            <div className="mt-2 flex flex-row flex-wrap items-start gap-[5px]">
                               {msg.metadata.chips.map((chip, chipIndex) => (
                                 <button
                                   key={`${index}-chip-full-${chipIndex}`}
