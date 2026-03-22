@@ -1028,7 +1028,7 @@ const WidgetPreviewPanel = ({
                             </div>
                           </div>
                         ) : (
-                          <div key={index} className="flex items-start gap-2 mt-3">
+                          <div key={index} className="flex flex-wrap items-start gap-2 mt-3">
                             {selectedAvatar ? (
                               <img src={selectedAvatar} alt="Avatar" className="h-6 w-6 shrink-0 rounded-full object-cover" />
                             ) : (
