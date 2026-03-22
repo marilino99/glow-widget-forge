@@ -1041,7 +1041,7 @@ const WidgetPreviewPanel = ({
                                 {msg.text}
                               </div>
                               {msg.metadata?.chips && msg.metadata.chips.length > 0 && !hiddenChipGroups.has(index) && (
-                                <div className="mt-2 flex w-full flex-row flex-wrap justify-end items-start gap-[5px]">
+                                <div className="mt-2 grid w-full grid-cols-3 items-stretch gap-[5px]">
                                   {msg.metadata.chips.map((chip, chipIndex) => (
                                     <button
                                       key={`${index}-chip-${chipIndex}`}
@@ -1049,7 +1049,7 @@ const WidgetPreviewPanel = ({
                                         setHiddenChipGroups(prev => new Set(prev).add(index));
                                         handleSendChatMessage(chip);
                                       }}
-                                      className="cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] transition-colors hover:opacity-80 whitespace-nowrap"
+                                      className="flex w-full items-center justify-center cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] transition-colors hover:opacity-80 whitespace-nowrap"
                                       style={{
                                         border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
                                         background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
@@ -1566,7 +1566,7 @@ const WidgetPreviewPanel = ({
                             <p className="text-sm">{msg.text}</p>
                           </div>
                           {msg.metadata?.chips && msg.metadata.chips.length > 0 && !hiddenChipGroups.has(index) && (
-                            <div className="mt-2 flex w-full flex-row flex-wrap justify-end items-start gap-[5px]">
+                            <div className="mt-2 grid w-full grid-cols-3 items-stretch gap-[5px]">
                               {msg.metadata.chips.map((chip, chipIndex) => (
                                 <button
                                   key={`${index}-chip-full-${chipIndex}`}
@@ -1574,7 +1574,7 @@ const WidgetPreviewPanel = ({
                                     setHiddenChipGroups(prev => new Set(prev).add(index));
                                     handleSendChatMessage(chip);
                                   }}
-                                  className="cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] transition-colors hover:opacity-80 whitespace-nowrap"
+                                  className="flex w-full items-center justify-center cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] transition-colors hover:opacity-80 whitespace-nowrap"
                                   style={{
                                     border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
                                     background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
