@@ -362,7 +362,7 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
           contents: conversationHistory,
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 800,
+            maxOutputTokens: 1200,
           },
         }),
       }
