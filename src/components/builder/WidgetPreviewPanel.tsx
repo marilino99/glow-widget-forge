@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronLeft, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
