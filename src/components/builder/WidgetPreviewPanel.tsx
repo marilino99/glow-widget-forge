@@ -1042,14 +1042,14 @@ const WidgetPreviewPanel = ({
                               </div>
                               {msg.metadata?.chips && msg.metadata.chips.length > 0 && !hiddenChipGroups.has(index) && (
                                 <div className="mt-2 grid w-full grid-cols-3 items-stretch gap-[5px]">
-                                  {msg.metadata.chips.map((chip, chipIndex) => (
+                                  {msg.metadata.chips.slice(0, 5).map((chip, chipIndex) => (
                                     <button
                                       key={`${index}-chip-${chipIndex}`}
                                       onClick={() => {
                                         setHiddenChipGroups(prev => new Set(prev).add(index));
                                         handleSendChatMessage(chip);
                                       }}
-                                      className="flex w-full items-center justify-center cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] transition-colors hover:opacity-80 whitespace-nowrap"
+                                      className="flex w-full items-center justify-center cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] leading-tight transition-colors hover:opacity-80"
                                       style={{
                                         border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
                                         background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
