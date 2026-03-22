@@ -50,20 +50,18 @@ Deno.serve(async (req) => {
       .eq("user_id", config.user_id)
       .maybeSingle();
 
-    // Fetch product cards only if Shopify is connected
+    // Fetch product cards (both Shopify and manual)
     let productCards: any[] = [];
-    if (shopifyConn) {
-      const { data: cardsData, error: cardsError } = await supabase
-        .from("product_cards")
-        .select("*")
-        .eq("user_id", config.user_id)
-        .order("sort_order", { ascending: true });
+    const { data: cardsData, error: cardsError } = await supabase
+      .from("product_cards")
+      .select("*")
+      .eq("user_id", config.user_id)
+      .order("sort_order", { ascending: true });
 
-      if (cardsError) {
-        console.error("Product cards error:", cardsError);
-      }
-      productCards = cardsData || [];
+    if (cardsError) {
+      console.error("Product cards error:", cardsError);
     }
+    productCards = cardsData || [];
 
     // Fetch FAQ items for this user
     const { data: faqItems, error: faqError } = await supabase
@@ -137,6 +135,7 @@ Deno.serve(async (req) => {
         google_business_ratings_total: config.google_business_ratings_total ?? null,
         google_business_url: config.google_business_url || null,
         cta_text: config.cta_text || "Contact us",
+        product_carousel_enabled: config.product_carousel_enabled ?? true,
       }),
       { headers: corsHeaders }
     );

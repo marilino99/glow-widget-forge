@@ -174,6 +174,7 @@ Deno.serve(async (req) => {
     var avatar = cfg.selected_avatar;
     var buttonLogo = cfg.button_logo;
     var products = cfg.product_cards || [];
+    var productCarouselEnabled = cfg.product_carousel_enabled !== false;
     var shopifyDomain = cfg.shopify_store_domain || '';
     var faqs = cfg.faq_items || [];
     var igPosts = cfg.instagram_posts || [];
@@ -1433,7 +1434,7 @@ Deno.serve(async (req) => {
     }
 
     // Product cards
-    if (products.length > 0) {
+    if (products.length > 0 && productCarouselEnabled) {
       var prodCont = d.createElement('div');
       prodCont.id = 'wj-products';
       products.forEach(function(p) {
