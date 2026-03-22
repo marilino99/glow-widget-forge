@@ -73,6 +73,21 @@ const CATEGORY_EMOJI_MAP: [RegExp, string][] = [
   [/best.?seller|popolar|popular|più vendut/i, "🔥"],
   [/new|nov|nuov|arrival/i, "✨"],
   [/recommend|consigliat|star|⭐/i, "⭐"],
+  [/hydrat|idrataz|moistur/i, "💧"],
+  [/anti.?ag|anti.?età|anti.?wrinkle|anti.?rug/i, "✨"],
+  [/acne|blemish|impur|brufol/i, "🧹"],
+  [/radianc|luminosit|glow|splendor/i, "🌟"],
+  [/sensitiv|sensibil|delicate|delicat/i, "🌿"],
+  [/repair|riparaz|volume|volum/i, "🧴"],
+  [/shine|lucentezz|smooth|liscio/i, "✨"],
+  [/scalp|cuoio capellut/i, "🌿"],
+  [/casual|informale/i, "👔"],
+  [/formal|elegante/i, "🎩"],
+  [/summer|estate|estiv/i, "🌴"],
+  [/floral|fiorit/i, "🌸"],
+  [/woody|legno|boisé/i, "🪵"],
+  [/fresh|fresc|citrus|agrum/i, "🍊"],
+  [/evening|sera|notte|night/i, "🌙"],
 ];
 
 function hasLeadingEmoji(text: string): boolean {
@@ -288,7 +303,15 @@ STRICT RULES:
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
-- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want and append ONLY this marker at the end: [CHIPS: category1, category2, category3]. The chips must be 3 top-level categories written in the visitor's language. IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 🏠 Home Fragrance, 👜 Accessories].
+- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want and append ONLY this marker at the end: [CHIPS: category1, category2, category3]. The chips must be 3 top-level categories written in the visitor's language. IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 👗 Clothing, 👜 Accessories].
+- GOAL DISCOVERY FLOW (SECOND STEP): When the visitor selects a category (e.g. clicks "Skincare", "Haircare", "Clothing"), DO NOT show products yet. Instead, ask what their goal or need is within that category. Append a [CHIPS:] marker with 3-5 relevant goals/needs for that category. Examples by category:
+  * Skincare → [CHIPS: 💧 Hydration, ✨ Anti-aging, 🧹 Acne & Blemishes, 🌟 Radiance, 🌿 Sensitive skin]
+  * Haircare → [CHIPS: 💧 Hydration & Repair, 🧴 Volume, ✨ Shine & Smoothness, 🌿 Scalp care]
+  * Clothing → [CHIPS: 👔 Casual, 🎩 Formal, 🏃 Sportswear, 🌴 Summer]
+  * Accessories → [CHIPS: 👜 Bags, 💍 Jewelry, 🧣 Scarves, 🕶️ Eyewear]
+  * Fragrance → [CHIPS: 🌸 Floral, 🪵 Woody, 🍊 Fresh & Citrus, 🌙 Evening]
+  Adapt the goals to the actual products in the catalog. Write goals in the visitor's language. ALWAYS prepend a relevant emoji.
+  Only AFTER the visitor selects a goal, show the matching products using the [PRODUCTS:] marker.
 - PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
 ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 
@@ -349,7 +372,7 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
     const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
     if (chipsMarkerMatch) {
       cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
-      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((chip: string) => chip.trim()).filter(Boolean).slice(0, 3));
+      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((chip: string) => chip.trim()).filter(Boolean).slice(0, 5));
       if (chips.length > 0) {
         metadata = { ...(metadata || {}), chips };
       }

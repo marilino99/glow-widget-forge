@@ -55,6 +55,21 @@ const CATEGORY_EMOJI_MAP: [RegExp, string][] = [
   [/best.?seller|popolar|popular|più vendut/i, "🔥"],
   [/new|nov|nuov|arrival/i, "✨"],
   [/recommend|consigliat|star|⭐/i, "⭐"],
+  [/hydrat|idrataz|moistur/i, "💧"],
+  [/anti.?ag|anti.?età|anti.?wrinkle|anti.?rug/i, "✨"],
+  [/acne|blemish|impur|brufol/i, "🧹"],
+  [/radianc|luminosit|glow|splendor/i, "🌟"],
+  [/sensitiv|sensibil|delicate|delicat/i, "🌿"],
+  [/repair|riparaz|volume|volum/i, "🧴"],
+  [/shine|lucentezz|smooth|liscio/i, "✨"],
+  [/scalp|cuoio capellut/i, "🌿"],
+  [/casual|informale/i, "👔"],
+  [/formal|elegante/i, "🎩"],
+  [/summer|estate|estiv/i, "🌴"],
+  [/floral|fiorit/i, "🌸"],
+  [/woody|legno|boisé/i, "🪵"],
+  [/fresh|fresc|citrus|agrum/i, "🍊"],
+  [/evening|sera|notte|night/i, "🌙"],
 ];
 
 function hasLeadingEmoji(text: string): boolean {
@@ -477,13 +492,21 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 7. Be helpful, friendly and concise. Keep responses short (2-3 sentences max unless more detail is needed).
 8. If the FAQ section contains a matching question, use that exact answer.
 10. PRODUCT RECOMMENDATIONS: When the visitor asks about a SPECIFIC product, pricing, plans, or wants to see what you have, AND the Product Catalog exists above, show product cards. Keep text VERY SHORT (1 sentence). Append at the END: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT titles from catalog. NEVER describe product details in text — cards handle that.
-11. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY — OVERRIDES RULE 10): When the visitor says they want help finding/choosing a product (e.g. "Find the right product for me", "Cercare il prodotto adatto a me", "Help me choose", "Aiutami a scegliere", "I need help", "looking for something", "cerco qualcosa"), you MUST follow this flow:
+11. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY — OVERRIDES RULE 10): When the visitor says they want help finding/choosing a product (e.g. "Find the right product for me", "Help me choose", "Aiutami a scegliere", "I need help", "looking for something"), you MUST follow this flow:
    - DO NOT show any [PRODUCTS:] marker
    - Ask them what type/category they're looking for
-    - At the END of your response, append ONLY a [CHIPS: category1, category2, category3] marker with exactly 3 top-level categories based on the product catalog
-    - IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 🏠 Home Fragrance, 👜 Accessories]
+   - At the END of your response, append ONLY a [CHIPS: category1, category2, category3] marker with exactly 3 top-level categories based on the product catalog
+   - IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 👗 Clothing, 👜 Accessories]
    - Write chips in the visitor's language
-   - This rule takes ABSOLUTE PRIORITY over rule 10. When in doubt between showing products or asking categories, ALWAYS ask categories first.
+   - This rule takes ABSOLUTE PRIORITY over rule 10.
+11b. GOAL DISCOVERY FLOW (SECOND STEP — AFTER CATEGORY SELECTION): When the visitor selects a category (e.g. clicks "Skincare", "Haircare", "Clothing"), DO NOT show products yet. Instead, ask what their goal or need is within that category. Append a [CHIPS:] marker with 3-5 relevant goals/needs. Examples by category:
+   * Skincare → [CHIPS: 💧 Hydration, ✨ Anti-aging, 🧹 Acne & Blemishes, 🌟 Radiance, 🌿 Sensitive skin]
+   * Haircare → [CHIPS: 💧 Hydration & Repair, 🧴 Volume, ✨ Shine & Smoothness, 🌿 Scalp care]
+   * Clothing → [CHIPS: 👔 Casual, 🎩 Formal, 🏃 Sportswear, 🌴 Summer]
+   * Accessories → [CHIPS: 👜 Bags, 💍 Jewelry, 🧣 Scarves, 🕶️ Eyewear]
+   * Fragrance → [CHIPS: 🌸 Floral, 🪵 Woody, 🍊 Fresh & Citrus, 🌙 Evening]
+   Adapt goals to the actual products in the catalog. Write in visitor's language. ALWAYS prepend a relevant emoji.
+   Only AFTER the visitor selects a goal, show the matching products using [PRODUCTS:].
 ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 
     // Determine which API key and model to use
@@ -578,7 +601,7 @@ ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: 
     const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
     if (chipsMarkerMatch) {
       cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
-      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 3));
+      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 5));
       if (chips.length > 0) {
         metadata = { ...(metadata || {}), chips };
         console.log(`Chips: ${chips.length} options parsed`);
