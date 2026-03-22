@@ -1802,7 +1802,7 @@ Deno.serve(async (req) => {
       var bubble = d.createElement('div');
       bubble.style.cssText = msg.sender_type === 'visitor' 
         ? 'display:flex;justify-content:flex-end;margin-top:12px'
-        : 'display:flex;align-items:flex-start;gap:12px;margin-top:12px';
+        : 'display:flex;align-items:flex-start;gap:12px;margin-top:12px;flex-wrap:wrap';
       if (msg.sender_type === 'visitor') {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:#f3f4f6;color:#1e293b;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
