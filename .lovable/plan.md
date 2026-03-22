@@ -1,61 +1,29 @@
 
-## Piano: rendere i discovery chip del widget live identici alla preview e molto più robusti
 
-### Diagnosi
-Ho controllato il codice e il problema è reale: nel live i chip sono ancora fragili perché oggi il widget renderizza ogni chip come **testo semplice dentro un bottone** (`'🧴 Skincare'`), mentre la fix precedente ha corretto solo `flex-direction`. Questo non basta su Shopify:
-- il tema host può ancora alterare il layout del bottone;
-- il browser può spezzare emoji e label in modo diverso;
-- la logica è duplicata nella preview, quindi è facile che preview e live tornino a divergere.
+## Piano: Fix regex escape che rompe il widget live
 
-### Implementazione
-#### 1) Allineare davvero preview e live con markup strutturato
-**File:** `src/components/builder/WidgetPreviewPanel.tsx`  
-**File:** `supabase/functions/widget-loader/index.ts`
+### Problema
+Il widget non appare più su Shopify perché la regex per separare emoji e label nei chip (riga 1831) contiene `\p{Emoji_Presentation}` **dentro un template literal** (backtick). Deno interpreta `\p` come una escape sequence non valida nel template literal, producendo codice JS corrotto che causa un SyntaxError fatale nell'intero IIFE del widget — impedendo qualsiasi rendering.
 
-Invece di renderizzare il chip come stringa unica, renderizzerò ogni chip con struttura esplicita:
-```text
-[emoji span] [label span]
+### Soluzione
+Nella riga 1831, i backslash della regex Unicode devono essere raddoppiati (`\\p` invece di `\p`) perché il codice è generato come stringa dentro un template literal, e solo il JS risultante nel browser deve vedere `\p{...}`.
+
+### Modifica
+
+**`supabase/functions/widget-loader/index.ts`** — riga 1831
+
+Da:
+```js
+var emojiMatch = chipText.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)\s*/u);
 ```
 
-Esempio logico:
-- `🧴 Skincare` → `<span class="...emoji">🧴</span><span class="...label">Skincare</span>`
-- `Ispirami` → solo label, senza emoji span
+A:
+```js
+var emojiMatch = chipText.match(/^(\\p{Emoji_Presentation}|\\p{Emoji}\\uFE0F)\\s*/u);
+```
 
-Questo evita che emoji e testo “saltino” verticalmente o si comportino diversamente tra preview e live.
+Poi redeploy della edge function `widget-loader`.
 
-#### 2) Estrarre la logica chip nella preview
-**File:** `src/components/builder/WidgetPreviewPanel.tsx`
+### Risultato
+Il widget tornerà visibile su Shopify. I chip continueranno a separare correttamente emoji e label.
 
-Nel builder ci sono **due blocchi duplicati** per i chip (nei due layout preview).  
-Farò una piccola utility/render helper unica per:
-- separare emoji e label;
-- usare gli stessi className/stili in entrambi i blocchi;
-- evitare che una preview venga aggiornata e l’altra no.
-
-### Stabilizzazione del widget live
-#### 3) Blindare il CSS contro Shopify
-**File:** `supabase/functions/widget-loader/index.ts`
-
-Aggiornerò il CSS del live con regole più forti e più specifiche, non solo `flex-direction`:
-- selettori scoped sotto `#wj-root`;
-- reset espliciti su chip e sottoparti (`font`, `line-height`, `letter-spacing`, `text-transform`, `writing-mode`, `appearance`, `white-space`);
-- layout del chip basato su struttura interna stabile (`emoji` + `label`);
-- stessa protezione in **entrambi** i blocchi CSS del loader (standard + hardened).
-
-#### 4) Rendere il chip resistente anche al wrapping
-Per non “sminchiarli più”:
-- l’emoji resterà un elemento separato e fisso;
-- la label potrà andare a capo solo da sola, senza finire sopra/sotto in modo casuale;
-- i chip senza emoji continueranno a restare centrati.
-
-### Risultato atteso
-- Preview e widget live avranno lo **stesso aspetto**.
-- I chip categoria con emoji non si impileranno più male sul sito Shopify.
-- Anche se il tema del sito prova a sovrascrivere gli stili, il widget resterà coerente.
-
-### Verifica finale
-Controllerò questi casi:
-1. chip categoria con emoji (`Skincare`, `Haircare`, `Clothing`, `Shoes`);
-2. chip senza emoji (`Ispirami` e chip step successivi);
-3. parità tra preview builder e widget live;
-4. test su larghezze strette per confermare che l’emoji non salga più sopra il testo.
