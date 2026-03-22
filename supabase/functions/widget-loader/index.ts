@@ -337,8 +337,8 @@ Deno.serve(async (req) => {
       #wj-chat-bubble-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
       #wj-chat-bubble-avatar svg{width:12px;height:12px;color:#fff}
       #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
-      #wj-chat-chips{display:flex;flex-direction:column;align-items:flex-end;gap:8px;margin-top:12px}
-      .wj-chat-chip{padding:10px 18px;border-radius:20px;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:14px;cursor:pointer;transition:all 0.15s;text-align:right;max-width:85%}
+      #wj-chat-chips{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:6px;margin-top:12px}
+      .wj-chat-chip{padding:6px 14px;border-radius:20px;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:13px;cursor:pointer;transition:all 0.15s;text-align:left;white-space:nowrap}
       .wj-chat-chip:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'};border-color:\${dark ? 'rgba(255,255,255,0.25)' : '#cbd5e1'}}
       #wj-chat-input{position:relative;padding:16px}
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
