@@ -100,9 +100,19 @@ function deriveDiscoveryChips(
   return FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
 }
 
+function isProductIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  if (isCategoryDiscoveryIntent(normalized)) return false;
+  return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function isCategoryDiscoveryIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return CATEGORY_DISCOVERY_PATTERNS.some((pattern) => normalized.includes(pattern));
+}
 
 
-Deno.serve(async (req) => {
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
