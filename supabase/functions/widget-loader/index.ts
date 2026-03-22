@@ -1813,7 +1813,7 @@ Deno.serve(async (req) => {
         
         // Render product cards if metadata contains products
         if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
-          msgHtml += '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;width:100%">';
+          msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;width:100%">';
           msg.metadata.products.forEach(function(prod) {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
@@ -1825,7 +1825,7 @@ Deno.serve(async (req) => {
             var cardBg = dark ? '#374151' : '#f1f5f9';
             var btnBg = dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9';
             var btnColor = dark ? 'rgba(255,255,255,0.7)' : '#475569';
-            msgHtml += '<div style="border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:' + cardBg + '">';
+            msgHtml += '<div style="flex-shrink:0;width:75%;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:' + cardBg + '">';
             msgHtml += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;aspect-ratio:1/1;overflow:hidden">';
             if (imgSrc) {
               msgHtml += '<img src="' + esc(imgSrc) + '" alt="' + esc(prod.title || '') + '" style="width:100%;height:100%;object-fit:cover"/>';
