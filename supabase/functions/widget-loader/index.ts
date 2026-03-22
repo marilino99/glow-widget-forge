@@ -1434,7 +1434,7 @@ Deno.serve(async (req) => {
     }
 
     // Product cards
-    if (products.length > 0) {
+    if (products.length > 0 && productCarouselEnabled) {
       var prodCont = d.createElement('div');
       prodCont.id = 'wj-products';
       products.forEach(function(p) {
