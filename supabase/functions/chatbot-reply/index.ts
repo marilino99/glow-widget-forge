@@ -628,7 +628,7 @@ ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: 
     const chipsMarkerMatch = cleanReply.match(/\[CHIPS:\s*(.+?)\]?\s*$/s);
     if (chipsMarkerMatch) {
       cleanReply = cleanReply.replace(/\[CHIPS:\s*(.+?)\]?\s*$/s, "").trim();
-      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 5));
+      const chips = normalizeChips(chipsMarkerMatch[1].split(",").map((c: string) => c.trim()).filter(Boolean).slice(0, 6));
       if (chips.length > 0) {
         metadata = { ...(metadata || {}), chips };
         console.log(`Chips: ${chips.length} options parsed`);
