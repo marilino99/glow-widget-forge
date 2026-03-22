@@ -1788,8 +1788,8 @@ const WidgetPreviewPanel = ({
                         <Star className={`h-6 w-6 ${isLight ? "text-slate-700" : "text-white"}`} />
                         <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>Share feedback</span>
                       </div>
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-200" : "bg-slate-600"}`}>
-                        <ArrowRight className={`h-4 w-4 ${isLight ? "text-slate-600" : "text-white"}`} />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: actualHexColor }}>
+                        <ArrowRight className={`h-4 w-4 ${isLightColor(actualHexColor) ? "text-slate-900" : "text-white"}`} />
                       </div>
                     </button>
                   )}
