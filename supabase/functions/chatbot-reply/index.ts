@@ -122,6 +122,17 @@ function deriveDiscoveryChips(
   return deriveProductCategories(productCardsData, language);
 }
 
+function isProductIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  if (isCategoryDiscoveryIntent(normalized)) return false;
+  return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}
+
+function isCategoryDiscoveryIntent(text: string): boolean {
+  const normalized = (text || "").toLowerCase();
+  return CATEGORY_DISCOVERY_PATTERNS.some((pattern) => normalized.includes(pattern));
+}
+
 
 async function getMonthlyAiCount(supabase: any, userId: string): Promise<number> {
   const now = new Date();
