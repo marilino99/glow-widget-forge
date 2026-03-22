@@ -53,8 +53,8 @@ const FALLBACK_DISCOVERY_REPLY: Record<string, string> = {
 };
 
 const FALLBACK_DISCOVERY_CHIPS: Record<string, string[]> = {
-  it: ["Più popolari", "Novità", "Consigliati"],
-  en: ["Best sellers", "New arrivals", "Recommended"],
+  it: ["🔥 Più popolari", "✨ Novità", "⭐ Consigliati"],
+  en: ["🔥 Best sellers", "✨ New arrivals", "⭐ Recommended"],
   es: ["Más populares", "Novedades", "Recomendados"],
   fr: ["Best-sellers", "Nouveautés", "Recommandés"],
   de: ["Bestseller", "Neuheiten", "Empfohlen"],
@@ -270,7 +270,7 @@ STRICT RULES:
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
-- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want and append ONLY this marker at the end: [CHIPS: category1, category2, category3]. The chips must be 3 top-level categories written in the visitor's language.
+- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want and append ONLY this marker at the end: [CHIPS: category1, category2, category3]. The chips must be 3 top-level categories written in the visitor's language. IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 🏠 Home Fragrance, 👜 Accessories].
 - PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
 ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 

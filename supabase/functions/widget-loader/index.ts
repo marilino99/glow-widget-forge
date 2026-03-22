@@ -337,8 +337,8 @@ Deno.serve(async (req) => {
       #wj-chat-bubble-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
       #wj-chat-bubble-avatar svg{width:12px;height:12px;color:#fff}
       #wj-chat-bubble-text{padding:12px 16px;border-radius:16px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:#fff;font-size:14px}
-      #wj-chat-chips{display:flex;flex-direction:column;align-items:flex-end;gap:8px;margin-top:12px}
-      .wj-chat-chip{padding:10px 18px;border-radius:20px;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:14px;cursor:pointer;transition:all 0.15s;text-align:right;max-width:85%}
+      #wj-chat-chips{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:6px;margin-top:12px}
+      .wj-chat-chip{padding:6px 14px;border-radius:20px;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:13px;cursor:pointer;transition:all 0.15s;text-align:left;white-space:nowrap}
       .wj-chat-chip:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'};border-color:\${dark ? 'rgba(255,255,255,0.25)' : '#cbd5e1'}}
       #wj-chat-input{position:relative;padding:16px}
       #wj-chat-input-box{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:24px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'}}
@@ -484,8 +484,8 @@ Deno.serve(async (req) => {
       #wj-chat-bubble-avatar{width:24px !important;height:24px !important;border-radius:50% !important;background:#000 !important;display:flex !important;align-items:center !important;justify-content:center !important;flex-shrink:0 !important;color:#fff !important;font-size:10px !important;font-weight:700 !important}
       #wj-chat-bubble-avatar svg{width:12px !important;height:12px !important;color:#fff !important}
       #wj-chat-bubble-text{padding:12px 16px !important;border-radius:16px !important;background:\${color.bg};color:#fff !important;font-size:14px !important}
-      #wj-chat-chips{display:flex;flex-direction:column !important;align-items:flex-end !important;gap:8px !important;margin-top:12px !important}
-      .wj-chat-chip{padding:10px 18px !important;border-radius:20px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:14px !important;cursor:pointer !important;transition:all 0.15s;text-align:right !important;max-width:85% !important}
+      #wj-chat-chips{display:flex;flex-direction:row !important;flex-wrap:wrap !important;align-items:flex-start !important;gap:6px !important;margin-top:12px !important}
+      .wj-chat-chip{padding:6px 14px !important;border-radius:20px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:13px !important;cursor:pointer !important;transition:all 0.15s;text-align:left !important;white-space:nowrap !important}
       .wj-chat-chip:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'};border-color:\${dark ? 'rgba(255,255,255,0.25)' : '#cbd5e1'}}
       #wj-chat-input{position:relative !important;padding:16px !important}
       #wj-chat-input-box{display:flex !important;align-items:center !important;gap:8px !important;padding:8px 16px !important;border-radius:24px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'};transition:border-color .2s}
@@ -1841,7 +1841,7 @@ Deno.serve(async (req) => {
 
         // Render chips from metadata
         if (msg.metadata && msg.metadata.chips && msg.metadata.chips.length > 0) {
-          msgHtml += '<div class="wj-chat-chips" style="margin-top:8px;align-items:flex-start">';
+          msgHtml += '<div class="wj-chat-chips" style="margin-top:8px;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:6px">';
           msg.metadata.chips.forEach(function(chipText) {
             msgHtml += '<button class="wj-chat-chip wj-dynamic-chip">' + esc(chipText) + '</button>';
           });

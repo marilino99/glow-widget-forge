@@ -35,8 +35,8 @@ const FALLBACK_DISCOVERY_REPLY: Record<string, string> = {
 };
 
 const FALLBACK_DISCOVERY_CHIPS: Record<string, string[]> = {
-  it: ["Più popolari", "Novità", "Consigliati"],
-  en: ["Best sellers", "New arrivals", "Recommended"],
+  it: ["🔥 Più popolari", "✨ Novità", "⭐ Consigliati"],
+  en: ["🔥 Best sellers", "✨ New arrivals", "⭐ Recommended"],
   es: ["Más populares", "Novedades", "Recomendados"],
   fr: ["Best-sellers", "Nouveautés", "Recommandés"],
   de: ["Bestseller", "Neuheiten", "Empfohlen"],
@@ -472,8 +472,8 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
 11. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY — OVERRIDES RULE 10): When the visitor says they want help finding/choosing a product (e.g. "Find the right product for me", "Cercare il prodotto adatto a me", "Help me choose", "Aiutami a scegliere", "I need help", "looking for something", "cerco qualcosa"), you MUST follow this flow:
    - DO NOT show any [PRODUCTS:] marker
    - Ask them what type/category they're looking for
-   - At the END of your response, append ONLY a [CHIPS: category1, category2, category3] marker with exactly 3 top-level categories based on the product catalog
-   - Example: [CHIPS: Skincare, Home Fragrance, Accessories]
+    - At the END of your response, append ONLY a [CHIPS: category1, category2, category3] marker with exactly 3 top-level categories based on the product catalog
+    - IMPORTANT: Prepend a relevant emoji to each chip label. Example: [CHIPS: 🧴 Skincare, 🏠 Home Fragrance, 👜 Accessories]
    - Write chips in the visitor's language
    - This rule takes ABSOLUTE PRIORITY over rule 10. When in doubt between showing products or asking categories, ALWAYS ask categories first.
 ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
