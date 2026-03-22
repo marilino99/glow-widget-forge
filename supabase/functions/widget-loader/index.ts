@@ -1802,18 +1802,28 @@ Deno.serve(async (req) => {
       var bubble = d.createElement('div');
       bubble.style.cssText = msg.sender_type === 'visitor' 
         ? 'display:flex;justify-content:flex-end;margin-top:12px'
-        : 'display:flex;align-items:flex-start;gap:12px;margin-top:12px';
+        : 'display:flex;align-items:flex-start;gap:12px;margin-top:12px;flex-wrap:wrap';
       if (msg.sender_type === 'visitor') {
         bubble.innerHTML = '<div style="padding:12px 16px;border-radius:16px;border-top-right-radius:4px;background:#f3f4f6;color:#1e293b;font-size:14px;max-width:80%">' + esc(msg.content) + '</div>';
       } else {
         var msgHtml = (avatar ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>');
-        var hasProducts = msg.metadata && msg.metadata.products && msg.metadata.products.length > 0;
-        var maxW = hasProducts ? '100%' : '70%';
-        msgHtml += '<div style="display:flex;flex-direction:column;align-items:stretch;max-width:' + maxW + ';width:fit-content;min-width:0"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
+        msgHtml += '<div style="display:flex;flex-direction:column;align-items:stretch;max-width:70%;width:fit-content;min-width:0"><div style="padding:12px 16px;border-radius:16px;background:' + color.bg + ';color:#fff;font-size:14px">' + esc(msg.content) + '</div>';
+
+        // Render chips from metadata (inside 70% wrapper)
+        if (msg.metadata && msg.metadata.chips && msg.metadata.chips.length > 0) {
+          var limitedChips = msg.metadata.chips.slice(0, 5);
+          msgHtml += '<div class="wj-discovery-chips">';
+          limitedChips.forEach(function(chipText) {
+            msgHtml += '<button class="wj-discovery-chip">' + esc(chipText) + '</button>';
+          });
+          msgHtml += '</div>';
+        }
         
-        // Render product cards if metadata contains products
+        msgHtml += '</div>'; // close 70% wrapper
+        
+        // Render product cards OUTSIDE the 70% wrapper, full width
         if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
-          msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;width:100%">';
+          msgHtml += '<div style="display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none;width:100%;padding-left:36px;box-sizing:border-box">';
           msg.metadata.products.forEach(function(prod) {
             var imgSrc = prod.imageUrl || '';
             var url = prod.productUrl || '#';
@@ -1847,17 +1857,6 @@ Deno.serve(async (req) => {
           msgHtml += '</div>';
         }
 
-        // Render chips from metadata
-        if (msg.metadata && msg.metadata.chips && msg.metadata.chips.length > 0) {
-          var limitedChips = msg.metadata.chips.slice(0, 5);
-          msgHtml += '<div class="wj-discovery-chips">';
-          limitedChips.forEach(function(chipText) {
-            msgHtml += '<button class="wj-discovery-chip">' + esc(chipText) + '</button>';
-          });
-          msgHtml += '</div>';
-        }
-        
-        msgHtml += '</div>';
         bubble.innerHTML = msgHtml;
         aiMessageCount++;
       }
