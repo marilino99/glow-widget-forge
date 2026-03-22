@@ -1067,7 +1067,7 @@ const WidgetPreviewPanel = ({
                                     <div
                                       key={pi}
                                       className="shrink-0 rounded-xl overflow-hidden flex flex-col"
-                                      style={{ width: '75%', background: isLight ? '#f1f5f9' : '#374151' }}
+                                      style={{ width: '45%', background: isLight ? '#f1f5f9' : '#374151' }}
                                     >
                                       <a
                                         href={prod.productUrl || '#'}
