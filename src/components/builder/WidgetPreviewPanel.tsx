@@ -1770,8 +1770,8 @@ const WidgetPreviewPanel = ({
                         </svg>
                         <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>Report a bug</span>
                       </div>
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-full ${isLight ? "bg-slate-200" : "bg-slate-600"}`}>
-                        <ArrowRight className={`h-4 w-4 ${isLight ? "text-slate-600" : "text-white"}`} />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: actualHexColor }}>
+                        <ArrowRight className={`h-4 w-4 ${isLightColor(actualHexColor) ? "text-slate-900" : "text-white"}`} />
                       </div>
                     </button>
                   )}
