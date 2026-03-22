@@ -1062,12 +1062,12 @@ const WidgetPreviewPanel = ({
                                 </div>
                               )}
                               {msg.metadata?.products && msg.metadata.products.length > 0 && (
-                                <div className="grid grid-cols-2 gap-2 mt-2 w-full">
+                                <div className="flex gap-2 mt-2 overflow-x-auto w-full" style={{ scrollbarWidth: 'none' }}>
                                   {msg.metadata.products.map((prod, pi) => (
                                     <div
                                       key={pi}
-                                      className="rounded-xl overflow-hidden flex flex-col"
-                                      style={{ background: isLight ? '#f1f5f9' : '#374151' }}
+                                      className="shrink-0 rounded-xl overflow-hidden flex flex-col"
+                                      style={{ width: '75%', background: isLight ? '#f1f5f9' : '#374151' }}
                                     >
                                       <a
                                         href={prod.productUrl || '#'}
