@@ -1824,7 +1824,14 @@ Deno.serve(async (req) => {
           var limitedChips = msg.metadata.chips.slice(0, 5);
           msgHtml += '<div class="wj-discovery-chips">';
           limitedChips.forEach(function(chipText) {
-            msgHtml += '<button class="wj-discovery-chip">' + esc(chipText) + '</button>';
+            var emojiMatch = chipText.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)\s*/u);
+            if (emojiMatch) {
+              var emoji = emojiMatch[1];
+              var label = chipText.slice(emojiMatch[0].length);
+              msgHtml += '<button class="wj-discovery-chip"><span class="wj-chip-emoji">' + esc(emoji) + '</span><span class="wj-chip-label">' + esc(label) + '</span></button>';
+            } else {
+              msgHtml += '<button class="wj-discovery-chip"><span class="wj-chip-label">' + esc(chipText) + '</span></button>';
+            }
           });
           msgHtml += '</div>';
         }
