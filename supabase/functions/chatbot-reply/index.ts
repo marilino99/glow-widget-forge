@@ -55,21 +55,6 @@ const CATEGORY_EMOJI_MAP: [RegExp, string][] = [
   [/best.?seller|popolar|popular|più vendut/i, "🔥"],
   [/new|nov|nuov|arrival/i, "✨"],
   [/recommend|consigliat|star|⭐/i, "⭐"],
-  [/hydrat|idrataz|moistur/i, "💧"],
-  [/anti.?ag|anti.?età|anti.?wrinkle|anti.?rug/i, "✨"],
-  [/acne|blemish|impur|brufol/i, "🧹"],
-  [/radianc|luminosit|glow|splendor/i, "🌟"],
-  [/sensitiv|sensibil|delicate|delicat/i, "🌿"],
-  [/repair|riparaz|volume|volum/i, "🧴"],
-  [/shine|lucentezz|smooth|liscio/i, "✨"],
-  [/scalp|cuoio capellut/i, "🌿"],
-  [/casual|informale/i, "👔"],
-  [/formal|elegante/i, "🎩"],
-  [/summer|estate|estiv/i, "🌴"],
-  [/floral|fiorit/i, "🌸"],
-  [/woody|legno|boisé/i, "🪵"],
-  [/fresh|fresc|citrus|agrum/i, "🍊"],
-  [/evening|sera|notte|night/i, "🌙"],
 ];
 
 function hasLeadingEmoji(text: string): boolean {
