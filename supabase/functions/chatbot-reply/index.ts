@@ -491,7 +491,11 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
    * Accessories → [CHIPS: Bags, Jewelry, Scarves, Eyewear]
    * Fragrance → [CHIPS: Floral, Woody, Fresh & Citrus, Evening]
    Adapt goals to the actual products in the catalog. Write in visitor's language. Do NOT add emojis to goal chips.
-   Only AFTER the visitor selects a goal, show the matching products using [PRODUCTS:].
+   Only AFTER the visitor selects a goal, if it's a beauty category (Skincare, Haircare), ask one more question about their skin/hair type. Do NOT add emojis to these chips. Examples:
+   * Skincare goals → Ask skin type: [CHIPS: Oily, Dry, Combination, Sensitive]
+   * Haircare goals → Ask hair type: [CHIPS: Thin, Thick, Curly, Straight]
+   * For non-beauty categories (Clothing, Accessories, Fragrance), skip this step and show products directly after the goal.
+   Translate chip labels into the visitor's language. Only AFTER this third step (or after goal for non-beauty), show the matching products using [PRODUCTS:].
 ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
 
     // Determine which API key and model to use
