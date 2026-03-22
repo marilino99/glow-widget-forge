@@ -1,37 +1,22 @@
 
 
-## Piano: Fix errore sintassi JS nel widget-loader che impedisce il rendering del widget
-
-### Problema
-Le frecce del carosello aggiunte nell'ultimo aggiornamento contengono un errore di escape delle virgolette nell'onclick handler. Il widget-loader genera codice JS con virgolette non escapate che rompono il parsing dell'intera funzione IIFE, impedendo al widget di renderizzarsi.
-
-La riga problematica nel sorgente:
-```js
-onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:-150,behavior:\'smooth\'})"
-```
-
-Poiché questa è dentro un template literal, `\'` diventa `'`, producendo JS non valido:
-```js
-msgHtml += '<button ... onclick="this.parentElement.querySelector('#...'
-```
-La `'` dentro `querySelector('` chiude la stringa JS iniziata con `'<button...`, causando un SyntaxError fatale che blocca l'intero widget.
-
-### Soluzione
-In `supabase/functions/widget-loader/index.ts` (righe 1872-1873), sostituire le virgolette escapate con `&apos;` (HTML entity) oppure usare `\\x27` (escape JS) per evitare conflitti tra i tre livelli di quoting (template literal → JS string → HTML attribute):
-
-```js
-// Da:
-onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:-150,behavior:\'smooth\'})"
-
-// A:
-onclick="this.parentElement.querySelector(&apos;#' + prodId + '&apos;).scrollBy({left:-150,behavior:&apos;smooth&apos;})"
-```
-
-Oppure, meglio ancora, rimuovere completamente gli onclick inline e aggiungere gli event listener via JS dopo `bubble.innerHTML = msgHtml` (come già fatto per i chip e i cart buttons), evitando del tutto i problemi di escaping multi-livello.
-
-### File coinvolto
-- `supabase/functions/widget-loader/index.ts` — righe 1870-1874
+## Analisi: Il widget live mostra "Chat Now" invece di "AI Sales Expert"
 
 ### Risultato
-Il widget tornerà a funzionare correttamente su Shopify (e su qualsiasi sito con embed). Le frecce del carosello continueranno a funzionare ma senza rompere il parsing JS.
+
+Ho verificato riga per riga l'intero flusso:
+
+1. **`widget-config/index.ts`** (riga 34, 105): seleziona e ritorna `offer_help` correttamente.
+2. **`widget-loader/index.ts`** (riga 172): `var help = cfg.offer_help || 'Write to us'` — corretto.
+3. **`widget-loader/index.ts`** (riga 1612): il sottotitolo chat usa `esc(help || tr.contactUs || 'Contact us')` — corretto.
+4. **`widget-loader/index.ts`** (riga 1590): il footer nav usa `esc(ctaText || tr.contact)` — questo mostra `cta_text` ("Chat Now"), ma solo nel footer, non nel sottotitolo.
+
+**Il codice sorgente è già corretto.** "Chat Now" è il valore di `cta_text`, non di `offer_help`. Il fatto che tu veda ancora "Chat Now" nel sottotitolo della chat significa che la versione deployata della edge function è ancora quella vecchia (prima della modifica).
+
+### Piano
+
+Forzare il redeploy della edge function `widget-loader` per sincronizzare il codice sorgente (già corretto) con la versione live. Nessuna modifica al codice necessaria.
+
+### Azione
+- Redeploy di `widget-loader` tramite il tool di deploy.
 
