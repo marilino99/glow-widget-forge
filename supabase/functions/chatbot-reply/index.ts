@@ -68,7 +68,7 @@ function ensureChipEmoji(chip: string): string {
   for (const [pattern, emoji] of CATEGORY_EMOJI_MAP) {
     if (pattern.test(trimmed)) return `${emoji} ${trimmed}`;
   }
-  return `🏷️ ${trimmed}`;
+  return trimmed;
 }
 
 function normalizeChips(chips: string[]): string[] {
