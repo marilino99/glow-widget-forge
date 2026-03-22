@@ -81,10 +81,7 @@ const FaqPanel = ({
           {faqItems.map((item, index) => (
             <div
               key={item.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => handleDragOver(e, index)}
-              onDragEnd={handleDragEnd}
               onDragLeave={handleDragLeave}
               className={`rounded-xl border bg-card p-4 transition-all ${
                 draggedIndex === index 
@@ -98,7 +95,12 @@ const FaqPanel = ({
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {/* Drag handle */}
-                  <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+                  <div
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragEnd={handleDragEnd}
+                    className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
+                  >
                     <GripVertical className="h-5 w-5" />
                   </div>
                   <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
