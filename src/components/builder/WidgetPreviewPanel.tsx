@@ -1049,14 +1049,20 @@ const WidgetPreviewPanel = ({
                                         setHiddenChipGroups(prev => new Set(prev).add(index));
                                         handleSendChatMessage(chip);
                                       }}
-                                      className="flex w-full items-center justify-center cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] leading-tight transition-colors hover:opacity-80"
+                                      className="flex flex-row gap-1 w-full items-center justify-center cursor-pointer rounded-[20px] px-2.5 py-1.5 text-center text-[11px] leading-tight transition-colors hover:opacity-80"
                                       style={{
                                         border: `1px solid ${isLight ? '#e2e8f0' : 'rgba(255,255,255,0.15)'}`,
                                         background: isLight ? '#fff' : 'rgba(255,255,255,0.05)',
                                         color: isLight ? '#334155' : '#fff',
                                       }}
                                     >
-                                      {chip}
+                                      {(() => {
+                                        const emojiMatch = chip.match(/^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)\s*/u);
+                                        if (emojiMatch) {
+                                          return (<><span className="flex-shrink-0">{emojiMatch[1]}</span><span className="leading-tight break-words">{chip.slice(emojiMatch[0].length)}</span></>);
+                                        }
+                                        return <span className="leading-tight break-words">{chip}</span>;
+                                      })()}
                                     </button>
                                   ))}
                                 </div>
