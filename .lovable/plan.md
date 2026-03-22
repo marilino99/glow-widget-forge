@@ -1,27 +1,37 @@
 
 
-## Piano: Frecce di navigazione on-hover per il carosello prodotti nella chat
+## Piano: Fix errore sintassi JS nel widget-loader che impedisce il rendering del widget
 
-### Obiettivo
-Aggiungere frecce sinistra/destra (dentro cerchi) a metà altezza del carosello prodotti nella chat, visibili solo al passaggio del mouse. Sia nella preview che nel widget live.
+### Problema
+Le frecce del carosello aggiunte nell'ultimo aggiornamento contengono un errore di escape delle virgolette nell'onclick handler. Il widget-loader genera codice JS con virgolette non escapate che rompono il parsing dell'intera funzione IIFE, impedendo al widget di renderizzarsi.
 
-### Modifiche
+La riga problematica nel sorgente:
+```js
+onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:-150,behavior:\'smooth\'})"
+```
 
-**`src/components/builder/WidgetPreviewPanel.tsx`** (2 blocchi: riga ~1065 e ~1590)
-- Avvolgere il container prodotti (`flex overflow-x-auto`) in un `div` con `position: relative` e `group` (Tailwind).
-- Aggiungere due `button` freccia (sinistra e destra) posizionati `absolute top-1/2 -translate-y-1/2`, con `opacity-0 group-hover:opacity-100 transition-opacity`.
-- Stile: cerchio bianco con ombra, icona `ChevronLeft`/`ChevronRight` di Lucide.
-- onClick: fare scroll del container prodotti di ~200px a sinistra/destra usando `scrollBy({ left: ±200, behavior: 'smooth' })` tramite un `useRef` o `ref` callback.
+Poiché questa è dentro un template literal, `\'` diventa `'`, producendo JS non valido:
+```js
+msgHtml += '<button ... onclick="this.parentElement.querySelector('#...'
+```
+La `'` dentro `querySelector('` chiude la stringa JS iniziata con `'<button...`, causando un SyntaxError fatale che blocca l'intero widget.
 
-**`supabase/functions/widget-loader/index.ts`** (riga ~1826)
-- Avvolgere il `div` dei prodotti in un wrapper con `position:relative`.
-- Aggiungere due bottoni freccia (HTML inline con SVG chevron) posizionati a metà altezza, nascosti di default (`opacity:0;transition:opacity 0.2s`) e visibili al hover del wrapper (`wrapper:hover .arrow { opacity:1 }`).
-- Aggiungere CSS per `.wj-chat-prod-wrap:hover .wj-chat-prod-arrow{opacity:1}` in entrambi i blocchi CSS (standard e hardened).
-- Aggiungere JS per gestire il click delle frecce: `container.scrollBy({ left: ±200, behavior: 'smooth' })`.
+### Soluzione
+In `supabase/functions/widget-loader/index.ts` (righe 1872-1873), sostituire le virgolette escapate con `&apos;` (HTML entity) oppure usare `\\x27` (escape JS) per evitare conflitti tra i tre livelli di quoting (template literal → JS string → HTML attribute):
 
-### Dettagli tecnici
-- Freccia sinistra: `left:4px`, freccia destra: `right:4px`
-- Cerchio: ~28px, sfondo bianco, ombra leggera, bordo sottile grigio
-- Icona: chevron SVG ~14px, colore grigio scuro
-- Il wrapper del carosello avrà classe `wj-chat-prod-wrap` nel live
+```js
+// Da:
+onclick="this.parentElement.querySelector(\'#' + prodId + '\').scrollBy({left:-150,behavior:\'smooth\'})"
+
+// A:
+onclick="this.parentElement.querySelector(&apos;#' + prodId + '&apos;).scrollBy({left:-150,behavior:&apos;smooth&apos;})"
+```
+
+Oppure, meglio ancora, rimuovere completamente gli onclick inline e aggiungere gli event listener via JS dopo `bubble.innerHTML = msgHtml` (come già fatto per i chip e i cart buttons), evitando del tutto i problemi di escaping multi-livello.
+
+### File coinvolto
+- `supabase/functions/widget-loader/index.ts` — righe 1870-1874
+
+### Risultato
+Il widget tornerà a funzionare correttamente su Shopify (e su qualsiasi sito con embed). Le frecce del carosello continueranno a funzionare ma senza rompere il parsing JS.
 
