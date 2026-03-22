@@ -37,41 +37,49 @@ const FALLBACK_DISCOVERY_REPLY: Record<string, string> = {
 const FALLBACK_DISCOVERY_CHIPS: Record<string, string[]> = {
   it: ["🔥 Più popolari", "✨ Novità", "⭐ Consigliati"],
   en: ["🔥 Best sellers", "✨ New arrivals", "⭐ Recommended"],
-  es: ["Más populares", "Novedades", "Recomendados"],
-  fr: ["Best-sellers", "Nouveautés", "Recommandés"],
-  de: ["Bestseller", "Neuheiten", "Empfohlen"],
+  es: ["🔥 Más populares", "✨ Novedades", "⭐ Recomendados"],
+  fr: ["🔥 Best-sellers", "✨ Nouveautés", "⭐ Recommandés"],
+  de: ["🔥 Bestseller", "✨ Neuheiten", "⭐ Empfohlen"],
 };
 
-function isCategoryDiscoveryIntent(text: string): boolean {
-  const normalized = (text || "").toLowerCase();
-  return CATEGORY_DISCOVERY_PATTERNS.some((p) => normalized.includes(p));
+const CATEGORY_EMOJI_MAP: [RegExp, string][] = [
+  [/skin\s*care|skincare|beauty|face|viso|bellezza|pelle/i, "🧴"],
+  [/hair\s*care|haircare|capelli|hair/i, "💇‍♀️"],
+  [/cloth|apparel|fashion|dress|abbigli|moda|vest/i, "👗"],
+  [/accessor|bag|borsa|jewel|gioiell/i, "👜"],
+  [/fragranc|perfume|profum|scent/i, "🌸"],
+  [/home|casa|arredo|furniture|décor|decor/i, "🏠"],
+  [/food|cibo|drink|bevand|aliment/i, "🍽️"],
+  [/sport|fitness|gym|palestra/i, "💪"],
+  [/tech|elettron|device|gadget/i, "📱"],
+  [/best.?seller|popolar|popular|più vendut/i, "🔥"],
+  [/new|nov|nuov|arrival/i, "✨"],
+  [/recommend|consigliat|star|⭐/i, "⭐"],
+];
+
+function hasLeadingEmoji(text: string): boolean {
+  const emojiRegex = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u;
+  return emojiRegex.test(text.trim());
 }
 
-function isProductIntent(text: string): boolean {
-  const normalized = (text || "").toLowerCase();
-  // If it's a category discovery request, don't treat as product intent
-  if (isCategoryDiscoveryIntent(normalized)) return false;
-  return PRODUCT_KEYWORDS.some((keyword) => normalized.includes(keyword));
+function ensureChipEmoji(chip: string): string {
+  const trimmed = chip.trim();
+  if (hasLeadingEmoji(trimmed)) return trimmed;
+  for (const [pattern, emoji] of CATEGORY_EMOJI_MAP) {
+    if (pattern.test(trimmed)) return `${emoji} ${trimmed}`;
+  }
+  return `🏷️ ${trimmed}`;
+}
+
+function normalizeChips(chips: string[]): string[] {
+  return chips.map(ensureChipEmoji);
 }
 
 function deriveDiscoveryChips(
-  productCardsData: Array<{ subtitle?: string | null }> | null | undefined,
+  _productCardsData: Array<{ subtitle?: string | null }> | null | undefined,
   language: string,
 ): string[] {
-  const seen = new Set<string>();
-  const subtitleChips = (productCardsData || [])
-    .map((product) => (product.subtitle || "").trim())
-    .filter((subtitle) => {
-      if (!subtitle || subtitle.length > 32) return false;
-      const key = subtitle.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .slice(0, 3);
-
-  const fallback = FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
-  return [...subtitleChips, ...fallback.filter((chip) => !seen.has(chip.toLowerCase()))].slice(0, 3);
+  return FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
 }
 
 
