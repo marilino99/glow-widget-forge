@@ -2519,7 +2519,7 @@ const WidgetPreviewPanel = ({
                 )}
 
                 {/* Quick answers section */}
-                {faqEnabled && faqItems.length > 0 && <div id="wj-faq" className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
+                {faqEnabled && faqItems.length > 0 && <div id="wj-faq" className="relative mt-4">
                     {/* Solid mode background band - stops at ~1/4 of FAQ box */}
                     {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
                       <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
