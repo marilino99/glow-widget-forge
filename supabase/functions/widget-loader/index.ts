@@ -1118,7 +1118,7 @@ Deno.serve(async (req) => {
             var imgHtml = prod.imageUrl
               ? '<img src="' + esc(prod.imageUrl) + '" alt="' + esc(prod.title || '') + '"/>'
               : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:' + textSub + ';padding:8px;text-align:center">' + esc(prod.title || '') + '</div>';
-            html += '<a class="wj-sb-prod" href="' + esc(url) + '" target="_blank" rel="noopener">';
+            html += '<a class="wj-sb-prod" href="' + esc(url) + '" rel="noopener">';
             html += '<div class="wj-sb-prod-img">' + imgHtml + '</div>';
             html += '<div class="wj-sb-prod-info">';
             html += '<div class="wj-sb-prod-title">' + esc(prod.title || '') + '</div>';
@@ -1143,7 +1143,7 @@ Deno.serve(async (req) => {
             var imgHtml = p.image_url
               ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.title || '') + '"/>'
               : '';
-            html += '<a class="wj-sb-prod" href="' + esc(url) + '" target="_blank" rel="noopener">';
+            html += '<a class="wj-sb-prod" href="' + esc(url) + '" rel="noopener">';
             html += '<div class="wj-sb-prod-img">' + imgHtml + '</div>';
             html += '<div class="wj-sb-prod-info">';
             html += '<div class="wj-sb-prod-title">' + esc(p.title || '') + '</div>';
@@ -1470,7 +1470,7 @@ Deno.serve(async (req) => {
           ? '<div class="wj-prod-sub">' + esc(p.subtitle) + '</div>' 
           : '<div style="margin-bottom:12px"></div>';
         var btnHtml = p.product_url 
-          ? '<a href="' + esc(p.product_url) + '" target="_blank" rel="noopener" class="wj-prod-btn">' + esc(tr.show) + '</a>' 
+          ? '<a href="' + esc(p.product_url) + '" rel="noopener" class="wj-prod-btn">' + esc(tr.show) + '</a>' 
           : '<button class="wj-prod-btn">' + esc(tr.show) + '</button>';
         var cartBtnHtml = '';
         if (shopifyDomain && p.shopify_variant_id) {
