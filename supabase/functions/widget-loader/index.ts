@@ -485,7 +485,7 @@ Deno.serve(async (req) => {
       #wj-chat-bubble-avatar svg{width:12px !important;height:12px !important;color:#fff !important}
       #wj-chat-bubble-text{padding:12px 16px !important;border-radius:16px !important;background:\${color.bg};color:#fff !important;font-size:14px !important}
       #wj-chat-chips{display:flex;flex-direction:row !important;flex-wrap:wrap !important;align-items:flex-start !important;gap:5px !important;margin-top:12px !important}
-      .wj-chat-chip{padding:5px 10px !important;border-radius:20px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:12px !important;cursor:pointer !important;transition:all 0.15s;text-align:left !important;white-space:nowrap !important}
+      .wj-chat-chip{padding:6px 10px !important;border-radius:20px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0'};background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#334155'};font-size:13px !important;cursor:pointer !important;transition:all 0.15s;text-align:center !important;white-space:nowrap !important;flex:1 !important}
       .wj-chat-chip:hover{background:\${dark ? 'rgba(255,255,255,0.1)' : '#f1f5f9'};border-color:\${dark ? 'rgba(255,255,255,0.25)' : '#cbd5e1'}}
       #wj-chat-input{position:relative !important;padding:16px !important}
       #wj-chat-input-box{display:flex !important;align-items:center !important;gap:8px !important;padding:8px 16px !important;border-radius:24px !important;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'};background:\${dark ? '#111' : '#fff'};transition:border-color .2s}
