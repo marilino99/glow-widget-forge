@@ -168,7 +168,7 @@ const sectionTitle: Record<string, { before: string; accent: string; after: stri
 
 const Solutions = () => {
   const { lang } = useLandingLang();
-  const [activeTab, setActiveTab] = useState<TabId>("support");
+  const [activeTab, setActiveTab] = useState<TabId>("sales");
 
   const contents = tabContents[lang] || tabContents.en;
   const labels = tabLabels[lang] || tabLabels.en;
