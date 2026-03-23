@@ -271,7 +271,7 @@ const Solutions = () => {
                          loop
                          muted
                          playsInline
-                         className="w-full max-w-[900px] rounded-2xl"
+                         className="w-full max-w-[1050px] rounded-2xl"
                        />
                      </div>
                    ) : activeTab === "leadgen" || activeTab === "engagement" ? (
