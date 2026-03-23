@@ -282,7 +282,8 @@ const Solutions = () => {
                           className="w-full max-w-[320px] rounded-2xl"
                         />
                       </div>
-                     active.features.map((f, i) => (
+                   ) : (
+                      active.features.map((f, i) => (
                        <div
                          key={i}
                          className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 md:p-5 shadow-sm"
