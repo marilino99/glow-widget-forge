@@ -8,8 +8,8 @@ import leadgenChat from "@/assets/leadgen-chat.png";
 import engagementChat from "@/assets/engagement-chat.png";
 
 const tabs = [
-  { id: "support", icon: Headphones },
   { id: "sales", icon: ShoppingBag },
+  { id: "support", icon: Headphones },
   { id: "leadgen", icon: Target },
   { id: "selfservice", icon: HelpCircle },
   { id: "engagement", icon: Users },
@@ -168,7 +168,7 @@ const sectionTitle: Record<string, { before: string; accent: string; after: stri
 
 const Solutions = () => {
   const { lang } = useLandingLang();
-  const [activeTab, setActiveTab] = useState<TabId>("support");
+  const [activeTab, setActiveTab] = useState<TabId>("sales");
 
   const contents = tabContents[lang] || tabContents.en;
   const labels = tabLabels[lang] || tabLabels.en;
