@@ -70,7 +70,7 @@ const FeedbackPopover = ({ userEmail }: FeedbackPopoverProps) => {
                 rel="noopener noreferrer"
                 className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
               >
-                ⭐ Leave a review on G2
+                ⭐ Leave a review on G2 and get rewarded 🎁
               </a>
             </div>
             <div className="flex items-end justify-between mt-3">
