@@ -226,63 +226,64 @@ const Solutions = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
-                  className="relative z-10 flex flex-col md:flex-row gap-10 md:gap-16"
+                  className={`relative z-10 flex flex-col md:flex-row gap-10 md:gap-16 ${activeTab === "sales" ? "justify-center items-center" : ""}`}
                 >
-                 {/* Left - headline + description */}
-                 <div className="flex-1 flex flex-col justify-center">
-                   <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
-                     {active.title1}
-                     <br />
-                     <span style={{ color: '#838383' }}>{active.title2}</span>
-                   </h3>
-                   <p className="mt-4 text-sm md:text-base leading-relaxed max-w-md" style={{ color: '#202020' }}>
-                     {active.description}
-                   </p>
+                 {/* Left - headline + description (hidden for sales) */}
+                 {activeTab !== "sales" && (
+                  <div className="flex-1 flex flex-col justify-center">
+                    <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
+                      {active.title1}
+                      <br />
+                      <span style={{ color: '#838383' }}>{active.title2}</span>
+                    </h3>
+                    <p className="mt-4 text-sm md:text-base leading-relaxed max-w-md" style={{ color: '#202020' }}>
+                      {active.description}
+                    </p>
 
-                   <ul className="mt-6 space-y-2.5">
-                     {active.bullets.map((b, i) => (
-                       <li key={i} className="flex items-center gap-2.5 text-sm" style={{ color: '#838383' }}>
-                         <Check className="h-4 w-4 flex-shrink-0" style={{ color: '#838383' }} />
-                         {b}
-                       </li>
-                     ))}
-                   </ul>
+                    <ul className="mt-6 space-y-2.5">
+                      {active.bullets.map((b, i) => (
+                        <li key={i} className="flex items-center gap-2.5 text-sm" style={{ color: '#838383' }}>
+                          <Check className="h-4 w-4 flex-shrink-0" style={{ color: '#838383' }} />
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
 
-                   <div className="mt-8">
-                     <a
-                       href="/signup"
-                       className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:scale-105 hover:shadow-lg"
-                     >
-                       {lang === "it" ? "Inizia Gratis" : "Get Started"}
-                       <ArrowRight className="h-4 w-4" />
-                     </a>
-                   </div>
-                 </div>
+                    <div className="mt-8">
+                      <a
+                        href="/signup"
+                        className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:scale-105 hover:shadow-lg"
+                      >
+                        {lang === "it" ? "Inizia Gratis" : "Get Started"}
+                        <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </div>
+                  </div>
+                 )}
 
-                 {/* Right - feature cards or image */}
-                 <div className="flex-1 flex flex-col gap-3">
-                   {activeTab === "leadgen" || activeTab === "sales" || activeTab === "engagement" ? (
+                 {/* Right - feature cards or image/video */}
+                 <div className={`flex-1 flex flex-col gap-3 ${activeTab === "sales" ? "w-full items-center" : ""}`}>
+                   {activeTab === "sales" ? (
+                     <div className="flex items-center justify-center w-full">
+                       <video
+                         src="/videos/sales-demo.mov"
+                         autoPlay
+                         loop
+                         muted
+                         playsInline
+                         className="w-full max-w-[500px] rounded-2xl"
+                       />
+                     </div>
+                   ) : activeTab === "leadgen" || activeTab === "engagement" ? (
                       <div className="flex items-center justify-center h-full">
-                        {activeTab === "sales" ? (
-                          <video
-                            src="/videos/sales-demo.mov"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="w-full max-w-[360px] rounded-2xl"
-                            style={{ padding: '8px' }}
-                          />
-                        ) : (
-                          <img
-                            src={activeTab === "leadgen" ? leadgenChat : engagementChat}
-                            alt={activeTab === "leadgen" ? "AI chat capturing leads" : "AI chat engagement"}
-                            className="w-full max-w-[320px] rounded-2xl"
-                          />
-                        )}
+                        <img
+                          src={activeTab === "leadgen" ? leadgenChat : engagementChat}
+                          alt={activeTab === "leadgen" ? "AI chat capturing leads" : "AI chat engagement"}
+                          className="w-full max-w-[320px] rounded-2xl"
+                        />
                       </div>
                    ) : (
-                     active.features.map((f, i) => (
+                      active.features.map((f, i) => (
                        <div
                          key={i}
                          className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4 md:p-5 shadow-sm"
