@@ -4,7 +4,7 @@ import { MessageSquare, ShoppingBag, HelpCircle, BarChart3, Check, ArrowRight, B
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { useLandingLang } from "@/contexts/LandingLanguageContext";
 import leadgenChat from "@/assets/leadgen-chat.png";
-import salesChat from "@/assets/sales-chat.png";
+
 import engagementChat from "@/assets/engagement-chat.png";
 
 const tabs = [
@@ -262,13 +262,25 @@ const Solutions = () => {
                  {/* Right - feature cards or image */}
                  <div className="flex-1 flex flex-col gap-3">
                    {activeTab === "leadgen" || activeTab === "sales" || activeTab === "engagement" ? (
-                     <div className="flex items-center justify-center h-full">
-                       <img
-                         src={activeTab === "leadgen" ? leadgenChat : activeTab === "sales" ? salesChat : engagementChat}
-                         alt={activeTab === "leadgen" ? "AI chat capturing leads" : activeTab === "sales" ? "AI chat recommending products" : "AI chat engagement"}
-                         className="w-full max-w-[320px] rounded-2xl"
-                       />
-                     </div>
+                      <div className="flex items-center justify-center h-full">
+                        {activeTab === "sales" ? (
+                          <video
+                            src="/videos/sales-demo.mov"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full max-w-[360px] rounded-2xl"
+                            style={{ padding: '8px' }}
+                          />
+                        ) : (
+                          <img
+                            src={activeTab === "leadgen" ? leadgenChat : engagementChat}
+                            alt={activeTab === "leadgen" ? "AI chat capturing leads" : "AI chat engagement"}
+                            className="w-full max-w-[320px] rounded-2xl"
+                          />
+                        )}
+                      </div>
                    ) : (
                      active.features.map((f, i) => (
                        <div
