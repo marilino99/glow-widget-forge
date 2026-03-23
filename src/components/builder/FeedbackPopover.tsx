@@ -63,6 +63,16 @@ const FeedbackPopover = ({ userEmail }: FeedbackPopoverProps) => {
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
             />
+            <div className="flex items-center mt-3">
+              <a
+                href="https://www.g2.com/products/widjet/reviews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+              >
+                ⭐ Leave a review on G2
+              </a>
+            </div>
             <div className="flex items-end justify-between mt-3">
               <p className="text-xs text-muted-foreground leading-snug max-w-[200px]">
                 We don't respond to submissions,<br />but we read all of them carefully
