@@ -8,8 +8,8 @@ import leadgenChat from "@/assets/leadgen-chat.png";
 import engagementChat from "@/assets/engagement-chat.png";
 
 const tabs = [
-  { id: "support", icon: Headphones },
   { id: "sales", icon: ShoppingBag },
+  { id: "support", icon: Headphones },
   { id: "leadgen", icon: Target },
   { id: "selfservice", icon: HelpCircle },
   { id: "engagement", icon: Users },
