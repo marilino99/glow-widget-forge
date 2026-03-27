@@ -2679,14 +2679,13 @@ const WidgetPreviewPanel = ({
                           className="w-[72px] h-[96px] rounded-xl object-cover flex-shrink-0"
                         />
                       ) : (
-                        <div
-                          className="w-[72px] h-[96px] rounded-xl flex-shrink-0 flex items-center justify-center"
-                          style={{ background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)' }}
-                        >
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5.14v14l11-7-11-7z" fill="white" fillOpacity="0.9"/>
-                          </svg>
-                        </div>
+                        <>
+                          <div
+                            className="w-[72px] h-[96px] rounded-xl flex-shrink-0 overflow-hidden"
+                            style={{ background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)', backgroundSize: '200% 200%', animation: 'inspirePlaceholder 3s ease infinite' }}
+                          />
+                          <style>{`@keyframes inspirePlaceholder { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }`}</style>
+                        </>
                       )}
                       <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                         <span className={`text-[15px] font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>✨ Inspire me</span>
