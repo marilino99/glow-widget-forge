@@ -606,6 +606,8 @@ const Builder = () => {
             }}
             isMiniSidebar={isMiniSidebar}
             widgetId={config.id || undefined}
+            aiResponsesThisMonth={aiResponsesThisMonth}
+            aiResponseLimit={aiResponseLimit}
             isAtLimit={isAtLimit}
             inspireEnabled={config.inspireEnabled}
             onInspireToggle={(enabled) => saveConfig({ inspireEnabled: enabled })}
