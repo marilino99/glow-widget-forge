@@ -9,6 +9,7 @@ import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useCustomLinks } from "@/hooks/useCustomLinks";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useInspireVideos } from "@/hooks/useInspireVideos";
 import { HelpCircle, Loader2, MessageCircle, ChevronsRight, ChevronsLeft, Plus, Check, PanelLeft, Bell, BookOpen, Sparkles, LayoutGrid, Settings, LifeBuoy, ChevronRight, ChevronLeft, LogOut, ExternalLink, Home, Palette, Puzzle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -117,6 +118,7 @@ const Builder = () => {
     deleteLink: deleteCustomLink,
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
+  const { videos: inspireVideos } = useInspireVideos();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
@@ -911,6 +913,8 @@ const Builder = () => {
                   widgetPosition={config.widgetPosition}
                   widgetType={config.widgetType}
                   ctaText={config.ctaText}
+                  inspireEnabled={config.inspireEnabled}
+                  inspireVideos={inspireVideos}
                   minimal
                 />
               </div>
@@ -990,6 +994,8 @@ const Builder = () => {
                 showBranding={config.showBranding}
                 widgetPosition={config.widgetPosition}
                 widgetType={config.widgetType}
+                inspireEnabled={config.inspireEnabled}
+                inspireVideos={inspireVideos}
               />
             </div>
           </>

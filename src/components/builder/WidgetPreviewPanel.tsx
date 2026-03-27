@@ -50,6 +50,8 @@ interface WidgetPreviewPanelProps {
   widgetType?: "popup" | "bottom-bar" | "search-bar";
   minimal?: boolean;
   ctaText?: string;
+  inspireEnabled?: boolean;
+  inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null }[];
 }
 
 // Check if a color is a hex value
@@ -216,6 +218,8 @@ const WidgetPreviewPanel = ({
   widgetType = "popup",
   minimal = false,
   ctaText,
+  inspireEnabled = false,
+  inspireVideos = [],
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -2658,6 +2662,32 @@ const WidgetPreviewPanel = ({
                         </div>
                       </a>
                     ))}
+                  </div>
+                )}
+
+                {/* Inspire Me box section */}
+                {inspireEnabled && inspireVideos.length > 0 && (
+                  <div className={`px-4 pb-4 mt-2 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                    <div className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}>
+                      <video
+                        src={inspireVideos[0].videoUrl}
+                        muted
+                        autoPlay
+                        loop
+                        playsInline
+                        className="w-[72px] h-[96px] rounded-xl object-cover flex-shrink-0"
+                      />
+                      <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                        <span className={`text-[15px] font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>✨ Inspire me</span>
+                        <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/60"}`}>{inspireVideos.length} video{inspireVideos.length > 1 ? 's' : ''}</span>
+                        <button
+                          className="self-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium transition-colors"
+                          style={{ backgroundColor: actualHexColor, color: isLightColor(actualHexColor) ? '#0f172a' : '#fff' }}
+                        >
+                          Inspire Me ✨
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
 
