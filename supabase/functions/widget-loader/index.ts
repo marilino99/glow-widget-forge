@@ -1610,16 +1610,12 @@ Deno.serve(async (req) => {
     inspireView.style.cssText = 'display:none;flex-direction:column;flex:1;min-height:0;background:#000;position:relative';
 
     if (inspireEnabled && inspireVideos.length > 0) {
-      // Add Inspire Me chip after contact card
-      var inspireChip = d.createElement('div');
-      inspireChip.style.cssText = 'padding:8px 16px 0';
-      inspireChip.innerHTML = '<button id="wj-inspire-chip" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:1px solid ' + (dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0') + ';background:' + (dark ? 'rgba(255,255,255,0.05)' : '#fff') + ';color:' + (dark ? '#fff' : '#334155') + ';font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap"><span style="font-size:15px">✨</span> Inspire me</button>';
-      // Insert after contact card
-      if (solid) {
-        scroll.insertBefore(inspireChip, scroll.children[1] || null);
-      } else {
-        scroll.insertBefore(inspireChip, scroll.children[2] || null);
-      }
+      // Add Inspire Me box section (like FAQ, Links, Reviews)
+      var inspireSec = d.createElement('div');
+      inspireSec.id = 'wj-inspire-section';
+      var firstVideoUrl = inspireVideos[0].video_url || '';
+      inspireSec.innerHTML = '<div id="wj-inspire-box"><video src="' + esc(firstVideoUrl) + '" muted autoplay loop playsinline></video><div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + inspireVideos.length + ' video' + (inspireVideos.length > 1 ? 's' : '') + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
+      scroll.appendChild(inspireSec);
 
       // Build reels container
       var reelsScroll = d.createElement('div');
