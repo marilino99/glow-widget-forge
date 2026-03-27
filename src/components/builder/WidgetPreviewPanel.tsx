@@ -2721,55 +2721,6 @@ const WidgetPreviewPanel = ({
                     </div>
                   </div>}
 
-                {/* Instagram UGC Section - horizontal carousel */}
-                {instagramEnabled && instagramPosts.length > 0 && (
-                  <div className={`relative ${productCards.filter(c => !c.isLoading).length === 0 ? "mt-4" : ""}`}>
-                    {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
-                      <div 
-                        className={`absolute top-0 left-0 right-0 h-10 ${useInlineStyles ? "" : colors.solidHeader}`}
-                        style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
-                      />
-                    )}
-                    <div className={`relative pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                      <div className="px-4 mb-2">
-                        <div className="flex items-center gap-2">
-                          <Instagram className={`h-4 w-4 ${isLight ? "text-pink-500" : "text-pink-400"}`} />
-                          <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>Follow us on Instagram</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                        {instagramPosts.map((post) => (
-                          <a
-                            key={post.id}
-                            href={post.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-shrink-0 rounded-lg overflow-hidden hover:opacity-90 transition-opacity"
-                            style={{ width: '100px', height: '100px' }}
-                          >
-                            {post.thumbnailUrl ? (
-                              <img 
-                                src={post.thumbnailUrl} 
-                                alt={post.caption || "Instagram post"}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className={`w-full h-full flex items-center justify-center relative overflow-hidden ${isLight ? "bg-slate-200" : "bg-slate-700"}`}>
-                                <div className="absolute inset-0 animate-pulse" style={{
-                                  background: isLight
-                                    ? 'linear-gradient(135deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%)'
-                                    : 'linear-gradient(135deg, #334155 25%, #475569 50%, #334155 75%)',
-                                  backgroundSize: '200% 200%',
-                                }} />
-                                <Instagram className={`h-6 w-6 relative z-10 ${isLight ? "text-slate-400" : "text-slate-500"}`} />
-                              </div>
-                            )}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Quick answers section */}
                 {faqEnabled && faqItems.length > 0 && <div id="wj-faq" className="relative mt-4">
