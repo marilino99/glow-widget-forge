@@ -1,28 +1,28 @@
 
 
-## Piano: Aprire la vista Reels fullscreen dal bottone "Inspire Me" nel widget preview
+## Piano: Eliminare la sezione "AI & Automation" dal builder
 
-### Situazione attuale
-- **Widget di produzione** (widget-loader): la logica Reels fullscreen è già implementata. Cliccando su "Inspire Me" si apre la vista con video a scroll verticale, snap, autoplay, prodotti overlay, close button. Funziona già.
-- **Widget preview nel builder** (WidgetPreviewPanel.tsx): la box "Inspire Me" è visibile ma il bottone non fa nulla — manca la vista Reels.
+### Cosa viene rimosso
+
+La sezione "AI & Automation" (accessibile dalla sidebar con label "AI Chatbot" e dalla bottom bar mobile con label "AI") con il pannello `ChatbotPanel` che contiene: selezione modello, temperatura, tone of voice, istruzioni aggiuntive.
 
 ### Modifiche
 
-**File: `src/components/builder/WidgetPreviewPanel.tsx`**
+**File: `src/pages/Builder.tsx`**
+1. Rimuovere il blocco `builderView === "ai"` (righe 938-955) che rende il pannello AI & Automation
+2. Rimuovere `"ai"` dal tipo union di `builderView` in tutte le occorrenze (stato, setter, sessionStorage)
+3. Rimuovere l'import di `ChatbotPanel`
+4. Rimuovere le props relative al chatbot passate alla sidebar (`chatbotInstructions`, `aiProvider`, `aiApiKey`, `aiTemperature`, `aiTone`, `onSaveChatbotConfig`, `aiResponsesThisMonth`, `aiResponseLimit`, `isApproachingLimit`, `isAtLimit`)
+5. Rimuovere la voce "AI" dalla bottom bar mobile (riga ~1144)
 
-1. **Aggiungere stato** `showInspireReels` (boolean) per controllare la vista Reels nel preview.
+**File: `src/components/builder/BuilderSidebar.tsx`**
+1. Rimuovere il `SidebarItem` "AI Chatbot" (righe 723-729)
+2. Rimuovere le props relative al chatbot dall'interfaccia e dalla destrutturazione
+3. Rimuovere `"ai"` dal tipo union di `builderView`
+4. Rimuovere import di `ChatbotPanel` e `Bot`
 
-2. **Vista Reels fullscreen**: Quando `showInspireReels` è true, rendere sopra la home view un overlay nero che occupa tutto lo spazio del widget con:
-   - Scroll verticale con `scroll-snap-type: y mandatory`
-   - Ogni video occupa il 100% dell'altezza, con `scroll-snap-align: start`, autoplay, muted, loop
-   - Overlay prodotti in basso con gradiente trasparente→nero, card prodotto con immagine, titolo, prezzo
-   - Bottone X in alto a destra per chiudere (torna alla home)
-   - Tap sul video per mute/unmute
+**File: `src/components/builder/ChatbotPanel.tsx`**
+- Eliminare il file
 
-3. **Click handler**: Collegare il click sulla box e sul bottone "Inspire Me ✨" a `setShowInspireReels(true)`. Se non ci sono video, il click non fa nulla.
-
-4. **Autoplay con IntersectionObserver**: Usare un observer per fare play/pause dei video in base a quale slide è visibile (stesso pattern del widget-loader).
-
-### Risultato
-Nel builder preview, cliccando "Inspire Me" si apre un'esperienza Reels fullscreen identica a quella del widget di produzione, con video scrollabili verticalmente, prodotti taggati, e navigazione stile Instagram/TikTok.
+**Nota**: Le colonne database (`chatbot_enabled`, `chatbot_instructions`, `ai_provider`, ecc.) e le proprietà in `useWidgetConfiguration` restano invariate — i valori continueranno a funzionare nel widget di produzione. Viene rimossa solo l'interfaccia builder.
 
