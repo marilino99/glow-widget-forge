@@ -51,7 +51,7 @@ interface WidgetPreviewPanelProps {
   minimal?: boolean;
   ctaText?: string;
   inspireEnabled?: boolean;
-  inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null }[];
+  inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null; linkedProductIds?: string[] }[];
 }
 
 // Check if a color is a hex value
@@ -317,6 +317,9 @@ const WidgetPreviewPanel = ({
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
   const [chatInputFocused, setChatInputFocused] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [showInspireReels, setShowInspireReels] = useState(false);
+  const [inspireReelsMuted, setInspireReelsMuted] = useState(true);
+  const inspireReelsRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
   const startListening = () => {
@@ -2668,7 +2671,10 @@ const WidgetPreviewPanel = ({
                 {/* Inspire Me box section */}
                 {inspireEnabled && (
                   <div className={`px-4 pb-4 mt-2 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                    <div className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}>
+                    <div 
+                      className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}
+                      onClick={() => inspireVideos.length > 0 && setShowInspireReels(true)}
+                    >
                       {inspireVideos.length > 0 ? (
                         <video
                           src={inspireVideos[0].videoUrl}
@@ -2697,6 +2703,7 @@ const WidgetPreviewPanel = ({
                         <button
                           className="self-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium transition-colors"
                           style={{ backgroundColor: actualHexColor, color: isLightColor(actualHexColor) ? '#0f172a' : '#fff' }}
+                          onClick={(e) => { e.stopPropagation(); if (inspireVideos.length > 0) setShowInspireReels(true); }}
                         >
                           Inspire Me ✨
                         </button>
