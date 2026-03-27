@@ -1298,7 +1298,10 @@ const AppearancePanel = ({
 
 
             {/* Inspire Me - Video Reels */}
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+            <div
+              className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5 cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => onOpenInspireMe?.()}
+            >
               <div className="flex items-center gap-2.5">
                 <Film className="h-4 w-4 text-purple-500" />
                 <div>
@@ -1306,7 +1309,10 @@ const AppearancePanel = ({
                   <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
                 </div>
               </div>
-              <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+              <div className="flex items-center gap-2">
+                <Switch checked={inspireEnabled} onCheckedChange={(checked) => { onInspireToggle(checked); }} onClick={(e) => e.stopPropagation()} />
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </div>
             </div>
 
             {/* Report Bugs */}

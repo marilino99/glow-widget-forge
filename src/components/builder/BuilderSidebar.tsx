@@ -58,6 +58,8 @@ import CustomLinksPanel from "./CustomLinksPanel";
 import MetricsPanel from "./MetricsPanel";
 import SizePositionPanel from "./SizePositionPanel";
 import InjectionCodePanel from "./InjectionCodePanel";
+import InspireMePanel from "./InspireMePanel";
+import { InspireVideo } from "@/hooks/useInspireVideos";
 import SettingsDialog from "./SettingsDialog";
 import ChatbotPanel from "./ChatbotPanel";
 import TemplatesPanel, { WidgetTemplate } from "./TemplatesPanel";
@@ -165,6 +167,12 @@ interface BuilderSidebarProps {
   aiResponseLimit: number;
   isApproachingLimit: boolean;
   isAtLimit: boolean;
+  inspireEnabled: boolean;
+  onInspireToggle: (enabled: boolean) => void;
+  inspireVideos: InspireVideo[];
+  onAddInspireVideo: (file: File) => Promise<void>;
+  onDeleteInspireVideo: (videoId: string) => void;
+  onUpdateInspireLinkedProducts: (videoId: string, productIds: string[]) => void;
 }
 
 const BuilderSidebar = ({
@@ -263,6 +271,12 @@ const BuilderSidebar = ({
   aiResponseLimit,
   isApproachingLimit,
   isAtLimit,
+  inspireEnabled,
+  onInspireToggle,
+  inspireVideos,
+  onAddInspireVideo,
+  onDeleteInspireVideo,
+  onUpdateInspireLinkedProducts,
 }: BuilderSidebarProps) => {
   const navigate = useNavigate();
   
@@ -278,6 +292,7 @@ const BuilderSidebar = ({
   const [showGoogleReviewsPanel, setShowGoogleReviewsPanel] = useState(false);
   const [showSizePositionPanel, setShowSizePositionPanel] = useState(false);
   const [showInjectionCodePanel, setShowInjectionCodePanel] = useState(false);
+  const [showInspireMePanel, setShowInspireMePanel] = useState(false);
   const [googleReviewsEnabled, setGoogleReviewsEnabled] = useState(initialGoogleReviewsEnabled ?? false);
   const [hasGoogleBusiness, setHasGoogleBusiness] = useState(initialHasGoogleBusiness ?? false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -351,6 +366,8 @@ const BuilderSidebar = ({
       setShowChatbotPanel(true);
     } else if (widgetType === "templates") {
       setShowTemplatesPanel(true);
+    } else if (widgetType === "inspire-me") {
+      setShowInspireMePanel(true);
     }
     onPanelOpenChange?.(true);
     onBuilderViewChange("editor");
@@ -645,6 +662,22 @@ const BuilderSidebar = ({
   if (showGoogleReviewsPanel) {
     return (
       <GoogleReviewsPanel onBack={handleBackFromGoogleReviews} onBusinessSelect={handleGoogleBusinessSelect} />
+    );
+  }
+
+  // Show Inspire Me panel
+  if (showInspireMePanel) {
+    return (
+      <InspireMePanel
+        onBack={() => { setShowInspireMePanel(false); closePanel(); }}
+        inspireEnabled={inspireEnabled}
+        onInspireToggle={onInspireToggle}
+        videos={inspireVideos}
+        onAddVideo={onAddInspireVideo}
+        onDeleteVideo={onDeleteInspireVideo}
+        onUpdateLinkedProducts={onUpdateInspireLinkedProducts}
+        productCards={productCards}
+      />
     );
   }
 
