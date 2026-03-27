@@ -323,6 +323,34 @@ const WidgetPreviewPanel = ({
   const inspireVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const recognitionRef = useRef<any>(null);
 
+  // Inspire Reels: autoplay/pause videos based on scroll visibility
+  useEffect(() => {
+    if (!showInspireReels || !inspireReelsRef.current) return;
+    const container = inspireReelsRef.current;
+    const videos = inspireVideoRefs.current.filter(Boolean) as HTMLVideoElement[];
+    if (videos.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { root: container, threshold: 0.6 }
+    );
+
+    videos.forEach((v) => observer.observe(v));
+    // Force-play the first video immediately
+    videos[0]?.play().catch(() => {});
+
+    return () => observer.disconnect();
+  }, [showInspireReels, inspireVideos]);
+
   const startListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
