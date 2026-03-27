@@ -44,6 +44,7 @@ export interface WidgetConfiguration {
   productCarouselEnabled: boolean;
   calendlyEnabled: boolean;
   calendlyEventUrl: string | null;
+  inspireEnabled: boolean;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -87,6 +88,7 @@ const defaultConfig: WidgetConfiguration = {
   productCarouselEnabled: true,
   calendlyEnabled: false,
   calendlyEventUrl: null,
+  inspireEnabled: false,
 };
 
 export const useWidgetConfiguration = () => {
@@ -157,6 +159,7 @@ export const useWidgetConfiguration = () => {
             productCarouselEnabled: (data as any).product_carousel_enabled ?? true,
             calendlyEnabled: (data as any).calendly_enabled ?? false,
             calendlyEventUrl: (data as any).calendly_event_url || null,
+            inspireEnabled: (data as any).inspire_enabled ?? false,
           });
         }
       } catch (error) {
@@ -222,6 +225,7 @@ export const useWidgetConfiguration = () => {
           product_carousel_enabled: updatedConfig.productCarouselEnabled,
           calendly_enabled: updatedConfig.calendlyEnabled,
           calendly_event_url: updatedConfig.calendlyEventUrl,
+          inspire_enabled: updatedConfig.inspireEnabled,
         }, {
           onConflict: "user_id"
         })
