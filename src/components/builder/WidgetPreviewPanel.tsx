@@ -2437,24 +2437,12 @@ const WidgetPreviewPanel = ({
                             <video
                               src={video.videoUrl}
                               muted={inspireReelsMuted}
-                              autoPlay={idx === 0}
                               loop
                               playsInline
                               className="absolute inset-0 h-full w-full object-cover"
                               onClick={() => setInspireReelsMuted(!inspireReelsMuted)}
                               ref={(el) => {
-                                if (!el || !inspireReelsRef.current) return;
-                                const observer = new IntersectionObserver(
-                                  ([entry]) => {
-                                    if (entry.isIntersecting) {
-                                      el.play().catch(() => {});
-                                    } else {
-                                      el.pause();
-                                    }
-                                  },
-                                  { root: inspireReelsRef.current, threshold: 0.6 }
-                                );
-                                observer.observe(el);
+                                inspireVideoRefs.current[idx] = el;
                               }}
                             />
 
