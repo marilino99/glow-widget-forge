@@ -869,6 +869,8 @@ const Builder = () => {
                       });
                     }
                   }}
+                  inspireEnabled={(config as any).inspireEnabled ?? false}
+                  onInspireToggle={(enabled) => saveConfig({ inspireEnabled: enabled })}
                 />
               </div>
             </div>

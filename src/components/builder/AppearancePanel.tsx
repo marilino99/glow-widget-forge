@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight, ChevronDown, Eye, Clock, Search, MapPin } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight, ChevronDown, Eye, Clock, Search, MapPin, Film } from "lucide-react";
 import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
 import { FaqItemData } from "@/types/faqItem";
 import { CustomLinkData } from "@/types/customLink";
@@ -120,6 +120,10 @@ interface AppearancePanelProps {
   onOpenGoogleReviews?: () => void;
   onBusinessSelect?: (business: GoogleBusinessData | null) => void;
   savedGoogleBusiness?: GoogleBusinessData | null;
+  // Inspire Me
+  inspireEnabled: boolean;
+  onInspireToggle: (enabled: boolean) => void;
+  onOpenInspireMe?: () => void;
 }
 
 const presetColors = [
@@ -207,6 +211,9 @@ const AppearancePanel = ({
   onOpenGoogleReviews,
   onBusinessSelect,
   savedGoogleBusiness,
+  inspireEnabled,
+  onInspireToggle,
+  onOpenInspireMe,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -1287,6 +1294,19 @@ const AppearancePanel = ({
                   </button>
                 </div>
               )}
+            </div>
+
+
+            {/* Inspire Me - Video Reels */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <Film className="h-4 w-4 text-purple-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Inspire Me</p>
+                  <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
+                </div>
+              </div>
+              <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
             </div>
 
             {/* Report Bugs */}
