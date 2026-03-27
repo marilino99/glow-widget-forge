@@ -51,7 +51,7 @@ interface WidgetPreviewPanelProps {
   minimal?: boolean;
   ctaText?: string;
   inspireEnabled?: boolean;
-  inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null }[];
+  inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null; linkedProductIds?: string[] }[];
 }
 
 // Check if a color is a hex value
@@ -317,6 +317,9 @@ const WidgetPreviewPanel = ({
   const [googleReviewDismissed, setGoogleReviewDismissed] = useState(false);
   const [chatInputFocused, setChatInputFocused] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [showInspireReels, setShowInspireReels] = useState(false);
+  const [inspireReelsMuted, setInspireReelsMuted] = useState(true);
+  const inspireReelsRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
   const startListening = () => {
@@ -2364,7 +2367,121 @@ const WidgetPreviewPanel = ({
                 </div>
                 )}
               </div>) : (/* Home View */
-          <div id="wj-pop" className={`flex flex-col h-[660px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
+          <div id="wj-pop" className={`relative flex flex-col h-[660px] max-h-[calc(100vh-6rem)] overflow-hidden rounded-2xl shadow-2xl ${isSolidMode ? "bg-slate-800" : widgetBg} ${widgetText} ${isAnimatingCollapse ? 'animate-widget-collapse' : ''} ${isAnimatingExpand ? 'animate-widget-expand' : ''}`} style={!isSolidMode && backgroundType !== "image" ? customGradientStyle : {}}>
+
+                {/* Inspire Me Reels Fullscreen Overlay */}
+                {showInspireReels && inspireVideos.length > 0 && (
+                  <div className="absolute inset-0 z-50 bg-black flex flex-col" style={{ borderRadius: 'inherit' }}>
+                    {/* Close button */}
+                    <button
+                      onClick={() => { setShowInspireReels(false); setInspireReelsMuted(true); }}
+                      className="absolute top-4 right-4 z-[60] flex h-9 w-9 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+
+                    {/* Mute/unmute indicator */}
+                    <button
+                      onClick={() => setInspireReelsMuted(!inspireReelsMuted)}
+                      className="absolute top-4 left-4 z-[60] flex h-9 items-center gap-1.5 px-3 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs hover:bg-black/70 transition-colors"
+                    >
+                      {inspireReelsMuted ? '🔇 Tap to unmute' : '🔊 Playing'}
+                    </button>
+
+                    {/* Vertical scroll container */}
+                    <div
+                      ref={inspireReelsRef}
+                      className="flex-1 overflow-y-auto snap-y snap-mandatory"
+                      style={{ scrollSnapType: 'y mandatory' }}
+                    >
+                      {inspireVideos.map((video, idx) => {
+                        const linkedProducts = (video.linkedProductIds || [])
+                          .map(pid => productCards.find(p => p.id === pid))
+                          .filter(Boolean) as ProductCardData[];
+
+                        return (
+                          <div
+                            key={video.id}
+                            className="relative w-full flex-shrink-0 snap-start snap-always"
+                            style={{ height: '100%', minHeight: '100%' }}
+                          >
+                            <video
+                              src={video.videoUrl}
+                              muted={inspireReelsMuted}
+                              autoPlay={idx === 0}
+                              loop
+                              playsInline
+                              className="absolute inset-0 h-full w-full object-cover"
+                              onClick={() => setInspireReelsMuted(!inspireReelsMuted)}
+                              ref={(el) => {
+                                if (!el || !inspireReelsRef.current) return;
+                                const observer = new IntersectionObserver(
+                                  ([entry]) => {
+                                    if (entry.isIntersecting) {
+                                      el.play().catch(() => {});
+                                    } else {
+                                      el.pause();
+                                    }
+                                  },
+                                  { root: inspireReelsRef.current, threshold: 0.6 }
+                                );
+                                observer.observe(el);
+                              }}
+                            />
+
+                            {/* Gradient overlay at bottom */}
+                            <div className="absolute inset-x-0 bottom-0 h-48 pointer-events-none" style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.85))' }} />
+
+                            {/* Product cards overlay */}
+                            {linkedProducts.length > 0 && (
+                              <div className="absolute inset-x-0 bottom-6 z-10 px-4">
+                                <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
+                                  {linkedProducts.map((product) => (
+                                    <a
+                                      key={product.id}
+                                      href={product.productUrl || '#'}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex-shrink-0 flex items-center gap-2.5 rounded-xl bg-white/15 backdrop-blur-md p-2.5 pr-4 hover:bg-white/25 transition-colors"
+                                      style={{ minWidth: '180px', maxWidth: '220px' }}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {product.imageUrl && (
+                                        <img src={product.imageUrl} alt={product.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
+                                      )}
+                                      <div className="flex flex-col gap-0.5 min-w-0">
+                                        <span className="text-white text-xs font-semibold truncate">{product.title}</span>
+                                        {product.price && (
+                                          <div className="flex items-center gap-1.5">
+                                            <span className="text-white text-sm font-bold">{product.price}</span>
+                                            {product.oldPrice && (
+                                              <span className="text-white/50 text-xs line-through">{product.oldPrice}</span>
+                                            )}
+                                          </div>
+                                        )}
+                                        <span className="text-white/70 text-[10px] flex items-center gap-1">
+                                          <ShoppingCart className="h-3 w-3" /> View product
+                                        </span>
+                                      </div>
+                                    </a>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Video counter */}
+                            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[60] flex gap-1">
+                              {inspireVideos.map((_, i) => (
+                                <div key={i} className={`h-1 rounded-full transition-all ${i === idx ? 'w-5 bg-white' : 'w-1.5 bg-white/40'}`} />
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Scrollable content area */}
                 <div className={`flex-1 overflow-y-auto relative pb-8 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                 {/* Background image for image mode */}
@@ -2668,7 +2785,10 @@ const WidgetPreviewPanel = ({
                 {/* Inspire Me box section */}
                 {inspireEnabled && (
                   <div className={`px-4 pb-4 mt-2 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
-                    <div className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}>
+                    <div 
+                      className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}
+                      onClick={() => inspireVideos.length > 0 && setShowInspireReels(true)}
+                    >
                       {inspireVideos.length > 0 ? (
                         <video
                           src={inspireVideos[0].videoUrl}
@@ -2697,6 +2817,7 @@ const WidgetPreviewPanel = ({
                         <button
                           className="self-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium transition-colors"
                           style={{ backgroundColor: actualHexColor, color: isLightColor(actualHexColor) ? '#0f172a' : '#fff' }}
+                          onClick={(e) => { e.stopPropagation(); if (inspireVideos.length > 0) setShowInspireReels(true); }}
                         >
                           Inspire Me ✨
                         </button>
