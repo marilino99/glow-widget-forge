@@ -221,6 +221,7 @@ const WidgetPreviewPanel = ({
   ctaText,
   inspireEnabled = false,
   inspireVideos = [],
+  inspireStoreProducts,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");

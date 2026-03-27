@@ -920,6 +920,7 @@ const Builder = () => {
                   ctaText={config.ctaText}
                   inspireEnabled={config.inspireEnabled}
                   inspireVideos={inspireVideos}
+                  inspireStoreProducts={rawProductCards}
                   minimal
                 />
               </div>
@@ -983,6 +984,7 @@ const Builder = () => {
                 widgetType={config.widgetType}
                 inspireEnabled={config.inspireEnabled}
                 inspireVideos={inspireVideos}
+                inspireStoreProducts={rawProductCards}
               />
             </div>
           </>
