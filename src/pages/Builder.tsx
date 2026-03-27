@@ -913,6 +913,8 @@ const Builder = () => {
                   widgetPosition={config.widgetPosition}
                   widgetType={config.widgetType}
                   ctaText={config.ctaText}
+                  inspireEnabled={config.inspireEnabled}
+                  inspireVideos={inspireVideos}
                   minimal
                 />
               </div>
@@ -992,6 +994,8 @@ const Builder = () => {
                 showBranding={config.showBranding}
                 widgetPosition={config.widgetPosition}
                 widgetType={config.widgetType}
+                inspireEnabled={config.inspireEnabled}
+                inspireVideos={inspireVideos}
               />
             </div>
           </>
