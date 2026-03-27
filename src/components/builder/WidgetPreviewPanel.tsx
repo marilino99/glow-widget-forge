@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronLeft, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart } from "lucide-react";
+import { ArrowRight, Minus, Home, MessageCircle, HelpCircle, ChevronDown, ChevronLeft, ChevronRight, ArrowLeft, MoreHorizontal, Smile, ArrowUp, Sparkle, Sparkles, Loader2, Smartphone, Monitor, Instagram, Star, Plus, X, Download, Trash2, Maximize2, Minimize2, Mic, ShoppingCart, Check } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCardData } from "@/types/productCard";
@@ -2449,40 +2449,58 @@ const WidgetPreviewPanel = ({
                             {/* Gradient overlay at bottom */}
                             <div className="absolute inset-x-0 bottom-0 h-48 pointer-events-none" style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.85))' }} />
 
-                            {/* Product cards overlay */}
+                            {/* Product cards overlay — stacked vertically from bottom */}
                             {linkedProducts.length > 0 && (
-                              <div className="absolute inset-x-0 bottom-6 z-10 px-4">
-                                <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
-                                  {linkedProducts.map((product) => (
+                              <div className="absolute inset-x-0 bottom-6 z-10 px-3 flex flex-col gap-2 items-stretch">
+                                {linkedProducts.map((product) => (
+                                  <div
+                                    key={product.id}
+                                    className="flex items-center gap-2.5 rounded-xl bg-white/15 backdrop-blur-md p-2 hover:bg-white/25 transition-colors"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {/* Left: product image */}
+                                    {product.imageUrl ? (
+                                      <img src={product.imageUrl} alt={product.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
+                                    ) : (
+                                      <div className="h-12 w-12 rounded-lg bg-white/10 flex-shrink-0" />
+                                    )}
+
+                                    {/* Center: title + price */}
                                     <a
-                                      key={product.id}
                                       href={product.productUrl || '#'}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="flex-shrink-0 flex items-center gap-2.5 rounded-xl bg-white/15 backdrop-blur-md p-2.5 pr-4 hover:bg-white/25 transition-colors"
-                                      style={{ minWidth: '180px', maxWidth: '220px' }}
-                                      onClick={(e) => e.stopPropagation()}
+                                      className="flex flex-col gap-0.5 min-w-0 flex-1"
                                     >
-                                      {product.imageUrl && (
-                                        <img src={product.imageUrl} alt={product.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
+                                      <span className="text-white text-xs font-semibold truncate">{product.title}</span>
+                                      {product.price && (
+                                        <div className="flex items-center gap-1.5">
+                                          <span className="text-white text-sm font-bold">{product.price}</span>
+                                          {product.oldPrice && (
+                                            <span className="text-white/50 text-xs line-through">{product.oldPrice}</span>
+                                          )}
+                                        </div>
                                       )}
-                                      <div className="flex flex-col gap-0.5 min-w-0">
-                                        <span className="text-white text-xs font-semibold truncate">{product.title}</span>
-                                        {product.price && (
-                                          <div className="flex items-center gap-1.5">
-                                            <span className="text-white text-sm font-bold">{product.price}</span>
-                                            {product.oldPrice && (
-                                              <span className="text-white/50 text-xs line-through">{product.oldPrice}</span>
-                                            )}
-                                          </div>
-                                        )}
-                                        <span className="text-white/70 text-[10px] flex items-center gap-1">
-                                          <ShoppingCart className="h-3 w-3" /> View product
-                                        </span>
-                                      </div>
                                     </a>
-                                  ))}
-                                </div>
+
+                                    {/* Right: add-to-cart button */}
+                                    <button
+                                      className="flex-shrink-0 h-9 w-9 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const btn = e.currentTarget;
+                                        btn.classList.add('inspire-cart-added');
+                                        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                                        setTimeout(() => {
+                                          btn.classList.remove('inspire-cart-added');
+                                          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>';
+                                        }, 1200);
+                                      }}
+                                    >
+                                      <ShoppingCart className="h-4 w-4 text-white" />
+                                    </button>
+                                  </div>
+                                ))}
                               </div>
                             )}
 
