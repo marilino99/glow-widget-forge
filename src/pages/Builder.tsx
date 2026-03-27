@@ -615,8 +615,6 @@ const Builder = () => {
             onAddInspireVideo={addInspireVideo}
             onDeleteInspireVideo={deleteInspireVideo}
             onUpdateInspireLinkedProducts={updateInspireLinkedProducts}
-            inspireStoreProducts={rawProductCards}
-            hasStoreConnection={!!shopifyConnection}
           />
         </div>
       </div>
