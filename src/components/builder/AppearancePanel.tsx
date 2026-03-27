@@ -1207,65 +1207,7 @@ const AppearancePanel = ({
               )}
             </div>
 
-            {/* Instagram UGC */}
-            <div className="rounded-lg border border-border overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2.5">
-                <div className="flex items-center gap-2.5">
-                  <Instagram className="h-4 w-4 text-pink-500" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Instagram UGC</p>
-                    <p className="text-[11px] text-muted-foreground">User-generated content carousel</p>
-                  </div>
-                </div>
-                <Switch checked={instagramEnabled} onCheckedChange={onInstagramToggle} />
-              </div>
-              {instagramEnabled && (
-                <div className="border-t border-border px-3 py-2.5 space-y-2">
-                  {instagramPosts.map((post, idx) => (
-                    <div
-                      key={post.id}
-                      className="flex items-start gap-1.5 group"
-                      draggable
-                      onDragStart={(e) => { e.dataTransfer.setData("ig-idx", String(idx)); }}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const fromIdx = parseInt(e.dataTransfer.getData("ig-idx"), 10);
-                        if (!isNaN(fromIdx) && fromIdx !== idx) onReorderInstagramPosts(fromIdx, idx);
-                      }}
-                    >
-                      <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
-                        <GripVertical className="h-3.5 w-3.5" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <Input
-                          value={post.url}
-                          onChange={(e) => onUpdateInstagramPost(post.id, { url: e.target.value })}
-                          placeholder="Instagram post URL"
-                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
-                        />
-                        {post.thumbnailUrl && (
-                          <img src={post.thumbnailUrl} alt="" className="h-10 w-10 rounded object-cover" />
-                        )}
-                      </div>
-                      <button
-                        onClick={() => onDeleteInstagramPost(post.id)}
-                        className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => onAddInstagramPost("")}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                  >
-                    <Plus className="h-3 w-3" />
-                    Add post
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* Instagram UGC - temporarily hidden */}
 
 
             {/* Inspire Me - Video Reels */}
