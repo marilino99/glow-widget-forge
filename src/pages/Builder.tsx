@@ -879,6 +879,10 @@ const Builder = () => {
                   }}
                   inspireEnabled={(config as any).inspireEnabled ?? false}
                   onInspireToggle={(enabled) => saveConfig({ inspireEnabled: enabled })}
+                  onOpenInspireMe={() => {
+                    setActiveWidget("inspire-me");
+                    setIsPanelOpen(true);
+                  }}
                 />
               </div>
             </div>
