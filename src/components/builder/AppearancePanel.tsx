@@ -211,6 +211,9 @@ const AppearancePanel = ({
   onOpenGoogleReviews,
   onBusinessSelect,
   savedGoogleBusiness,
+  inspireEnabled,
+  onInspireToggle,
+  onOpenInspireMe,
 }: AppearancePanelProps) => {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -1291,6 +1294,19 @@ const AppearancePanel = ({
                   </button>
                 </div>
               )}
+            </div>
+
+
+            {/* Inspire Me - Video Reels */}
+            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2.5">
+                <Film className="h-4 w-4 text-purple-500" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Inspire Me</p>
+                  <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
+                </div>
+              </div>
+              <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
             </div>
 
             {/* Report Bugs */}
