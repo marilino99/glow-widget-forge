@@ -366,6 +366,8 @@ const BuilderSidebar = ({
       setShowChatbotPanel(true);
     } else if (widgetType === "templates") {
       setShowTemplatesPanel(true);
+    } else if (widgetType === "inspire-me") {
+      setShowInspireMePanel(true);
     }
     onPanelOpenChange?.(true);
     onBuilderViewChange("editor");
