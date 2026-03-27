@@ -123,7 +123,10 @@ interface AppearancePanelProps {
   // Inspire Me
   inspireEnabled: boolean;
   onInspireToggle: (enabled: boolean) => void;
-  onOpenInspireMe?: () => void;
+  inspireVideos: import("@/hooks/useInspireVideos").InspireVideo[];
+  onAddInspireVideo: (file: File) => Promise<void>;
+  onDeleteInspireVideo: (videoId: string) => void;
+  onUpdateInspireLinkedProducts: (videoId: string, productIds: string[]) => void;
 }
 
 const presetColors = [
@@ -213,8 +216,14 @@ const AppearancePanel = ({
   savedGoogleBusiness,
   inspireEnabled,
   onInspireToggle,
-  onOpenInspireMe,
+  inspireVideos,
+  onAddInspireVideo,
+  onDeleteInspireVideo,
+  onUpdateInspireLinkedProducts,
 }: AppearancePanelProps) => {
+  const inspireFileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingInspire, setIsUploadingInspire] = useState(false);
+  const [expandedInspireVideoId, setExpandedInspireVideoId] = useState<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarTab, setAvatarTab] = useState("gallery");
@@ -1298,21 +1307,97 @@ const AppearancePanel = ({
 
 
             {/* Inspire Me - Video Reels */}
-            <div
-              className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5 cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => onOpenInspireMe?.()}
-            >
-              <div className="flex items-center gap-2.5">
-                <Film className="h-4 w-4 text-purple-500" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Inspire Me</p>
-                  <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <Film className="h-4 w-4 text-purple-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Inspire Me</p>
+                    <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
+                  </div>
                 </div>
+                <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
               </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={inspireEnabled} onCheckedChange={(checked) => { onInspireToggle(checked); }} onClick={(e) => e.stopPropagation()} />
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </div>
+              {inspireEnabled && (
+                <div className="border-t border-border px-3 py-2.5 space-y-2">
+                  <input
+                    ref={inspireFileInputRef}
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setIsUploadingInspire(true);
+                      await onAddInspireVideo(file);
+                      setIsUploadingInspire(false);
+                      if (inspireFileInputRef.current) inspireFileInputRef.current.value = "";
+                    }}
+                  />
+                  {inspireVideos.map((video) => (
+                    <div key={video.id} className="rounded-lg border border-border bg-muted/20 overflow-hidden">
+                      <div className="relative aspect-video max-h-[120px] bg-black">
+                        <video
+                          src={video.videoUrl}
+                          className="w-full h-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                        <button
+                          onClick={() => onDeleteInspireVideo(video.id)}
+                          className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/50 hover:bg-black/70 transition-colors"
+                        >
+                          <Trash2 className="h-3 w-3 text-white" />
+                        </button>
+                      </div>
+                      <div className="px-2 py-1.5">
+                        <button
+                          onClick={() => setExpandedInspireVideoId(expandedInspireVideoId === video.id ? null : video.id)}
+                          className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <ShoppingBag className="h-3 w-3" />
+                          {video.linkedProductIds.length > 0
+                            ? `${video.linkedProductIds.length} product${video.linkedProductIds.length > 1 ? "s" : ""} linked`
+                            : "Link products"}
+                        </button>
+                        {expandedInspireVideoId === video.id && productCards.length > 0 && (
+                          <div className="mt-1.5 space-y-1 max-h-[150px] overflow-y-auto">
+                            {productCards.map((card) => (
+                              <label key={card.id} className="flex items-center gap-1.5 text-[11px] p-1 rounded hover:bg-muted cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={video.linkedProductIds.includes(card.id)}
+                                  onChange={() => {
+                                    const newIds = video.linkedProductIds.includes(card.id)
+                                      ? video.linkedProductIds.filter((id) => id !== card.id)
+                                      : [...video.linkedProductIds, card.id];
+                                    onUpdateInspireLinkedProducts(video.id, newIds);
+                                  }}
+                                  className="rounded"
+                                />
+                                <span className="truncate text-foreground">{card.title || "Untitled"}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => inspireFileInputRef.current?.click()}
+                    disabled={isUploadingInspire}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                  >
+                    {isUploadingInspire ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Plus className="h-3 w-3" />
+                    )}
+                    {isUploadingInspire ? "Uploading..." : "Add video"}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Report Bugs */}
