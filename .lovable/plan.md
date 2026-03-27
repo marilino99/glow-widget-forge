@@ -1,28 +1,23 @@
 
 
-## Piano: Eliminare la sezione "AI & Automation" dal builder
+## Piano: Fix "Link products" — mostrare lista prodotti cliccabile
 
-### Cosa viene rimosso
+### Problema
+Cliccando "Link products" sotto un video nella sezione Inspire Me, non succede nulla visibilmente. Due cause:
 
-La sezione "AI & Automation" (accessibile dalla sidebar con label "AI Chatbot" e dalla bottom bar mobile con label "AI") con il pannello `ChatbotPanel` che contiene: selezione modello, temperatura, tone of voice, istruzioni aggiuntive.
+1. Se `productCards` è vuoto (nessun prodotto nell'e-commerce), il dropdown non si apre perché la condizione `productCards.length > 0` lo blocca — e non c'è messaggio di fallback.
+2. Se `linkedProductIds` non è presente nell'oggetto video (undefined), il check `.includes()` potrebbe fallire silenziosamente.
 
 ### Modifiche
 
-**File: `src/pages/Builder.tsx`**
-1. Rimuovere il blocco `builderView === "ai"` (righe 938-955) che rende il pannello AI & Automation
-2. Rimuovere `"ai"` dal tipo union di `builderView` in tutte le occorrenze (stato, setter, sessionStorage)
-3. Rimuovere l'import di `ChatbotPanel`
-4. Rimuovere le props relative al chatbot passate alla sidebar (`chatbotInstructions`, `aiProvider`, `aiApiKey`, `aiTemperature`, `aiTone`, `onSaveChatbotConfig`, `aiResponsesThisMonth`, `aiResponseLimit`, `isApproachingLimit`, `isAtLimit`)
-5. Rimuovere la voce "AI" dalla bottom bar mobile (riga ~1144)
+**File: `src/components/builder/AppearancePanel.tsx`**
 
-**File: `src/components/builder/BuilderSidebar.tsx`**
-1. Rimuovere il `SidebarItem` "AI Chatbot" (righe 723-729)
-2. Rimuovere le props relative al chatbot dall'interfaccia e dalla destrutturazione
-3. Rimuovere `"ai"` dal tipo union di `builderView`
-4. Rimuovere import di `ChatbotPanel` e `Bot`
+1. **Aggiungere fallback quando non ci sono prodotti**: sotto il bottone "Link products", se `expandedInspireVideoId === video.id` ma `productCards.length === 0`, mostrare un messaggio tipo "No products available. Add products in the Product Carousel section first."
 
-**File: `src/components/builder/ChatbotPanel.tsx`**
-- Eliminare il file
+2. **Migliorare la UI della lista prodotti**: quando ci sono prodotti, mostrare anche l'immagine del prodotto (thumbnail) e il prezzo accanto al titolo, per rendere la selezione più chiara — stesso pattern già presente in `InspireMePanel.tsx` (righe 147-165).
 
-**Nota**: Le colonne database (`chatbot_enabled`, `chatbot_instructions`, `ai_provider`, ecc.) e le proprietà in `useWidgetConfiguration` restano invariate — i valori continueranno a funzionare nel widget di produzione. Viene rimossa solo l'interfaccia builder.
+3. **Assicurarsi che `linkedProductIds` sia sempre un array**: aggiungere un fallback `video.linkedProductIds || []` nel rendering per evitare errori se la proprietà è undefined.
+
+### Risultato
+Cliccando "Link products" si espande un dropdown con la lista dei prodotti (con immagine, titolo, prezzo) selezionabili tramite checkbox per collegare i prodotti al video. Se non ci sono prodotti, appare un messaggio guida.
 
