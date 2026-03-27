@@ -392,7 +392,6 @@ const IntegrationsPanel = ({
           </div>
         </div>
       </div>
-      </div>
 
       <ShopifyConnectDialog
         open={dialogOpen}
