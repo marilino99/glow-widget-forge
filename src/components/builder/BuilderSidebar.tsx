@@ -254,6 +254,8 @@ const BuilderSidebar = ({
   onBuilderViewChange,
   isMiniSidebar,
   widgetId,
+  aiResponsesThisMonth,
+  aiResponseLimit,
   isAtLimit,
   inspireEnabled,
   onInspireToggle,
