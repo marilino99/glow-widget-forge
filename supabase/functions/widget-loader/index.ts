@@ -1686,14 +1686,15 @@ Deno.serve(async (req) => {
       inspireView.appendChild(reelsScroll);
       inspireView.appendChild(inspireClose);
 
-      // Event: open inspire
-      inspireChip.querySelector('#wj-inspire-chip').addEventListener('click', function() {
+      // Event: open inspire (from box button or entire box)
+      var openInspire = function() {
         homeView.style.display = 'none';
         inspireView.style.display = 'flex';
-        // Autoplay first video
         var firstVid = reelsScroll.querySelector('video');
         if (firstVid) firstVid.play().catch(function(){});
-      });
+      };
+      inspireSec.querySelector('#wj-inspire-box-btn').addEventListener('click', function(e) { e.stopPropagation(); openInspire(); });
+      inspireSec.querySelector('#wj-inspire-box').addEventListener('click', openInspire);
 
       // Event: close inspire
       inspireClose.addEventListener('click', function() {
