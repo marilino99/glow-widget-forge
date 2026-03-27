@@ -52,6 +52,7 @@ interface WidgetPreviewPanelProps {
   ctaText?: string;
   inspireEnabled?: boolean;
   inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null; linkedProductIds?: string[] }[];
+  inspireStoreProducts?: ProductCardData[];
 }
 
 // Check if a color is a hex value
@@ -2424,8 +2425,9 @@ const WidgetPreviewPanel = ({
                       style={{ scrollSnapType: 'y mandatory' }}
                     >
                       {inspireVideos.map((video, idx) => {
+                        const productsSource = inspireStoreProducts && inspireStoreProducts.length > 0 ? inspireStoreProducts : productCards;
                         const linkedProducts = (video.linkedProductIds || [])
-                          .map(pid => productCards.find(p => p.id === pid))
+                          .map(pid => productsSource.find(p => p.id === pid))
                           .filter(Boolean) as ProductCardData[];
 
                         return (
