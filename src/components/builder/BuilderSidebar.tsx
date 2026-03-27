@@ -119,12 +119,6 @@ interface BuilderSidebarProps {
   onUpdateInstagramPost: (postId: string, updates: Partial<InstagramPostData>) => void;
   onDeleteInstagramPost: (postId: string) => void;
   onReorderInstagramPosts: (fromIndex: number, toIndex: number) => void;
-  whatsappEnabled: boolean;
-  onWhatsappToggle: (enabled: boolean) => void;
-  whatsappCountryCode: string;
-  onWhatsappCountryCodeChange: (code: string) => void;
-  whatsappNumber: string;
-  onWhatsappNumberChange: (number: string) => void;
   onLocalLinksChange?: (links: LocalLink[]) => void;
   reportBugsEnabled: boolean;
   onReportBugsChange: (enabled: boolean) => void;
@@ -216,12 +210,6 @@ const BuilderSidebar = ({
   onUpdateInstagramPost,
   onDeleteInstagramPost,
   onReorderInstagramPosts,
-  whatsappEnabled,
-  onWhatsappToggle,
-  whatsappCountryCode,
-  onWhatsappCountryCodeChange,
-  whatsappNumber,
-  onWhatsappNumberChange,
   onLocalLinksChange,
   reportBugsEnabled,
   onReportBugsChange,
@@ -272,7 +260,7 @@ const BuilderSidebar = ({
   const [showTypographyPanel, setShowTypographyPanel] = useState(false);
   const [showInstagramPanel, setShowInstagramPanel] = useState(false);
   const [showFaqPanel, setShowFaqPanel] = useState(false);
-  const [showWhatsAppPanel, setShowWhatsAppPanel] = useState(false);
+  
   const [showCustomLinksPanel, setShowCustomLinksPanel] = useState(false);
   const [showMetricsPanel, setShowMetricsPanel] = useState(false);
   const [showGoogleReviewsPanel, setShowGoogleReviewsPanel] = useState(false);
@@ -336,8 +324,6 @@ const BuilderSidebar = ({
       setShowFaqPanel(true);
     } else if (widgetType === "instagram") {
       setShowInstagramPanel(true);
-    } else if (widgetType === "whatsapp") {
-      setShowWhatsAppPanel(true);
     } else if (widgetType === "custom-links") {
       setShowCustomLinksPanel(true);
     } else if (widgetType === "metrics") {
@@ -395,10 +381,6 @@ const BuilderSidebar = ({
     closePanel();
   };
 
-  const handleBackFromWhatsApp = () => {
-    setShowWhatsAppPanel(false);
-    closePanel();
-  };
 
   const handleBackFromCustomLinks = () => {
     setShowCustomLinksPanel(false);
@@ -497,19 +479,6 @@ const BuilderSidebar = ({
     );
   }
 
-  // Show WhatsApp panel
-  if (showWhatsAppPanel) {
-    return (
-      <WhatsAppPanel
-        onBack={handleBackFromWhatsApp}
-        whatsappEnabled={whatsappEnabled}
-        onWhatsappToggle={onWhatsappToggle}
-        whatsappCountryCode={whatsappCountryCode}
-        onWhatsappCountryCodeChange={onWhatsappCountryCodeChange}
-        whatsappNumber={whatsappNumber}
-        onWhatsappNumberChange={onWhatsappNumberChange}
-        onSaveConfig={onSaveConfig}
-      />
     );
   }
 

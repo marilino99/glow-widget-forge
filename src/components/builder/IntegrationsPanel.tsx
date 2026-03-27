@@ -17,7 +17,25 @@ import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
 
-const IntegrationsPanel = () => {
+interface IntegrationsPanelProps {
+  whatsappEnabled: boolean;
+  onWhatsappToggle: (enabled: boolean) => void;
+  whatsappCountryCode: string;
+  onWhatsappCountryCodeChange: (code: string) => void;
+  whatsappNumber: string;
+  onWhatsappNumberChange: (number: string) => void;
+  onSaveConfig: (config: Record<string, unknown>) => void;
+}
+
+const IntegrationsPanel = ({
+  whatsappEnabled,
+  onWhatsappToggle,
+  whatsappCountryCode,
+  onWhatsappCountryCodeChange,
+  whatsappNumber,
+  onWhatsappNumberChange,
+  onSaveConfig,
+}: IntegrationsPanelProps) => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const calendly = useCalendlyConnection();
   const instagram = useInstagramDMConnection();
