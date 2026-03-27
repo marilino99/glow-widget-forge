@@ -120,6 +120,10 @@ interface AppearancePanelProps {
   onOpenGoogleReviews?: () => void;
   onBusinessSelect?: (business: GoogleBusinessData | null) => void;
   savedGoogleBusiness?: GoogleBusinessData | null;
+  // Inspire Me
+  inspireEnabled: boolean;
+  onInspireToggle: (enabled: boolean) => void;
+  onOpenInspireMe?: () => void;
 }
 
 const presetColors = [
