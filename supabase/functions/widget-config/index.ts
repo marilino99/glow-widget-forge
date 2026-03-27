@@ -170,6 +170,8 @@ Deno.serve(async (req) => {
         google_business_url: config.google_business_url || null,
         cta_text: config.cta_text || "Contact us",
         product_carousel_enabled: config.product_carousel_enabled ?? true,
+        inspire_enabled: config.inspire_enabled ?? false,
+        inspire_videos: inspireVideos,
       }),
       { headers: corsHeaders }
     );
