@@ -320,6 +320,7 @@ const WidgetPreviewPanel = ({
   const [showInspireReels, setShowInspireReels] = useState(false);
   const [inspireReelsMuted, setInspireReelsMuted] = useState(true);
   const inspireReelsRef = useRef<HTMLDivElement>(null);
+  const inspireVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const recognitionRef = useRef<any>(null);
 
   const startListening = () => {
