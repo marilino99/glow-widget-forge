@@ -157,6 +157,8 @@ interface BuilderSidebarProps {
   onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "integrations" | null) => void;
   isMiniSidebar?: boolean;
   widgetId?: string;
+  aiResponsesThisMonth: number;
+  aiResponseLimit: number;
   isAtLimit: boolean;
   inspireEnabled: boolean;
   onInspireToggle: (enabled: boolean) => void;
