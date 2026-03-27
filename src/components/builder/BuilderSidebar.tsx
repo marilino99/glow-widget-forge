@@ -30,7 +30,7 @@ import {
   Settings,
   LifeBuoy,
   ChevronRight,
-  Bot,
+  
   Puzzle,
   BookOpen,
   LayoutTemplate,
@@ -61,7 +61,7 @@ import InjectionCodePanel from "./InjectionCodePanel";
 import InspireMePanel from "./InspireMePanel";
 import { InspireVideo } from "@/hooks/useInspireVideos";
 import SettingsDialog from "./SettingsDialog";
-import ChatbotPanel from "./ChatbotPanel";
+
 import TemplatesPanel, { WidgetTemplate } from "./TemplatesPanel";
 import AddToWebsiteDialog from "./AddToWebsiteDialog";
 import { ProductCardData } from "@/types/productCard";
@@ -147,25 +147,16 @@ interface BuilderSidebarProps {
   onShowBrandingChange: (show: boolean) => void;
   chatbotEnabled: boolean;
   onChatbotToggle: (enabled: boolean) => void;
-  chatbotInstructions: string;
-  aiProvider: string;
-  aiApiKey: string;
-  aiTemperature: number;
-  aiTone: string;
-  onSaveChatbotConfig: (config: Record<string, unknown>) => void;
   widgetPosition: "left" | "right";
   onWidgetPositionChange: (position: "left" | "right") => void;
   widgetType: "popup" | "bottom-bar" | "search-bar";
   onWidgetTypeChange: (type: "popup" | "bottom-bar" | "search-bar") => void;
   initialGoogleReviewsEnabled?: boolean;
   initialHasGoogleBusiness?: boolean;
-  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null;
-  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null) => void;
+  builderView: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "integrations" | null;
+  onBuilderViewChange: (view: "home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "integrations" | null) => void;
   isMiniSidebar?: boolean;
   widgetId?: string;
-  aiResponsesThisMonth: number;
-  aiResponseLimit: number;
-  isApproachingLimit: boolean;
   isAtLimit: boolean;
   inspireEnabled: boolean;
   onInspireToggle: (enabled: boolean) => void;
@@ -251,12 +242,6 @@ const BuilderSidebar = ({
   onShowBrandingChange,
   chatbotEnabled,
   onChatbotToggle,
-  chatbotInstructions,
-  aiProvider,
-  aiApiKey,
-  aiTemperature,
-  aiTone,
-  onSaveChatbotConfig,
   widgetPosition,
   onWidgetPositionChange,
   widgetType,
@@ -267,9 +252,6 @@ const BuilderSidebar = ({
   onBuilderViewChange,
   isMiniSidebar,
   widgetId,
-  aiResponsesThisMonth,
-  aiResponseLimit,
-  isApproachingLimit,
   isAtLimit,
   inspireEnabled,
   onInspireToggle,
@@ -718,13 +700,6 @@ const BuilderSidebar = ({
               label="Data Sources"
               active={builderView === "data-sources"}
               onClick={() => onBuilderViewChange("data-sources")}
-              miniMode={isMiniSidebar}
-            />
-            <SidebarItem
-              icon={Bot}
-              label="AI Chatbot"
-              active={builderView === "ai"}
-              onClick={() => onBuilderViewChange("ai")}
               miniMode={isMiniSidebar}
             />
             <SidebarItem

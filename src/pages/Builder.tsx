@@ -23,7 +23,7 @@ import BuilderHome from "@/components/builder/BuilderHome";
 import ConversationsPanel from "@/components/builder/ConversationsPanel";
 import ContactsPanel from "@/components/builder/ContactsPanel";
 import AppearancePanel from "@/components/builder/AppearancePanel";
-import ChatbotPanel from "@/components/builder/ChatbotPanel";
+
 import DataSourcesPanel from "@/components/builder/DataSourcesPanel";
 import WidgetPreviewPanel from "@/components/builder/WidgetPreviewPanel";
 import UpgradeOverlay from "@/components/builder/UpgradeOverlay";
@@ -384,7 +384,7 @@ const Builder = () => {
   }
 
   const userInitial = (userDisplayName || user?.email || "U").charAt(0).toUpperCase();
-  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", "data-sources": "Data Sources", ai: "AI & Automation", integrations: "Integrations" };
+  const viewLabels: Record<string, string> = { home: "Home", editor: "Editor", conversations: "Conversations", contacts: "Contacts", appearance: "Appearance", "data-sources": "Data Sources", integrations: "Integrations" };
 
   return (
     <div className="flex h-screen bg-background">
@@ -591,12 +591,6 @@ const Builder = () => {
             onShowBrandingChange={(show) => updateConfig({ showBranding: show })}
             chatbotEnabled={config.chatbotEnabled}
             onChatbotToggle={(enabled) => saveConfig({ chatbotEnabled: enabled })}
-            chatbotInstructions={config.chatbotInstructions}
-            aiProvider={config.aiProvider}
-            aiApiKey={config.aiApiKey}
-            aiTemperature={config.aiTemperature}
-            aiTone={config.aiTone}
-            onSaveChatbotConfig={saveConfig}
             widgetPosition={config.widgetPosition}
             onWidgetPositionChange={(pos) => saveConfig({ widgetPosition: pos })}
             widgetType={config.widgetType}
@@ -612,9 +606,6 @@ const Builder = () => {
             }}
             isMiniSidebar={isMiniSidebar}
             widgetId={config.id || undefined}
-            aiResponsesThisMonth={aiResponsesThisMonth}
-            aiResponseLimit={aiResponseLimit}
-            isApproachingLimit={isApproachingLimit}
             isAtLimit={isAtLimit}
             inspireEnabled={config.inspireEnabled}
             onInspireToggle={(enabled) => saveConfig({ inspireEnabled: enabled })}
@@ -935,24 +926,6 @@ const Builder = () => {
             setActiveWidget("faq");
             setIsPanelOpen(true);
           }} />
-        ) : builderView === "ai" ? (
-          <div className="flex h-full flex-col">
-            <div className="shrink-0 px-8 pt-8 pb-6 text-center">
-              <h1 className="text-2xl font-bold text-foreground">AI & Automation</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Optimize responses and manage automated actions
-              </p>
-            </div>
-            <div className="flex-1 overflow-y-auto px-8 py-6 flex justify-center">
-              <ChatbotPanel
-                chatbotInstructions={config.chatbotInstructions}
-                aiProvider={config.aiProvider}
-                aiTemperature={config.aiTemperature}
-                aiTone={config.aiTone}
-                onSaveConfig={saveConfig}
-              />
-            </div>
-          </div>
         ) : builderView === "integrations" ? (
           <IntegrationsPanel />
         ) : (
@@ -1141,7 +1114,7 @@ const Builder = () => {
           { key: "conversations" as const, icon: MessageCircle, label: "Chats" },
           { key: "appearance" as const, icon: Palette, label: "Design" },
           { key: "data-sources" as const, icon: BookOpen, label: "Data" },
-          { key: "ai" as const, icon: Sparkles, label: "AI" },
+          
         ].map((item) => {
           const isActive = builderView === item.key || (item.key === "home" && builderView === null);
           return (
