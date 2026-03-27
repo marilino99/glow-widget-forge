@@ -195,6 +195,8 @@ Deno.serve(async (req) => {
     var grTotal = cfg.google_business_ratings_total || 0;
      var grUrl = cfg.google_business_url || '';
      var ctaText = cfg.cta_text || '';
+     var inspireEnabled = cfg.inspire_enabled || false;
+     var inspireVideos = cfg.inspire_videos || [];
 
      var t = {
       en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', chipFind: 'Find the right product for me', chipTrack: 'Track my order', chipInfo: 'I need more information' },
