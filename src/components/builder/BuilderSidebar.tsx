@@ -53,7 +53,7 @@ import TypographyPanel from "./TypographyPanel";
 import FaqPanel from "./FaqPanel";
 import InstagramPanel from "./InstagramPanel";
 import GoogleReviewsPanel from "./GoogleReviewsPanel";
-import WhatsAppPanel from "./WhatsAppPanel";
+
 import CustomLinksPanel from "./CustomLinksPanel";
 import MetricsPanel from "./MetricsPanel";
 import SizePositionPanel from "./SizePositionPanel";
