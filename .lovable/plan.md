@@ -1,29 +1,23 @@
 
 
-## Piano: Espandere "Inspire Me" inline nell'AppearancePanel
+## Piano: Mostrare la box "Inspire Me" con mockup quando non ci sono video
 
 ### Problema
-Attualmente cliccando su "Inspire Me" si apre un pannello separato. L'utente vuole che si espanda verso il basso inline, come fanno le altre sezioni (FAQ, Instagram UGC, Custom Links).
+Quando il toggle "Inspire Me" è attivo ma non ci sono video caricati, la box non appare nel preview del widget. L'utente vuole vedere comunque la sezione con un video mockup/placeholder.
 
 ### Modifiche
 
-**File: `src/components/builder/AppearancePanel.tsx`**
+**File: `src/components/builder/WidgetPreviewPanel.tsx`**
 
-1. **Rimuovere la navigazione al pannello separato**: Togliere `onOpenInspireMe` e il `ChevronRight`. Il click sulla riga header non fa più navigare.
+1. Cambiare la condizione da `inspireEnabled && inspireVideos.length > 0` a solo `inspireEnabled`
+2. Se ci sono video, mostrare il primo video come ora
+3. Se non ci sono video, mostrare un placeholder al posto del `<video>`: un div 72x96px con sfondo gradient (toni caldi/beauty), un'icona play centrata, e un leggero effetto shimmer — simulando un video mockup
+4. Il contatore mostra "No videos yet" invece di "1 video"
 
-2. **Aggiungere espansione inline**: Quando `inspireEnabled` è true, mostrare sotto la riga header un blocco espanso (come Instagram UGC) con:
-   - Bottone "Upload Video" con input file nascosto
-   - Lista dei video caricati con thumbnail, bottone elimina, e link prodotti
-   - Bottone "Add video" per aggiungerne altri
+**File: `supabase/functions/widget-loader/index.ts`**
 
-3. **Aggiungere props necessari**: Il componente ha già `inspireEnabled` e `onInspireToggle`. Servono anche: `inspireVideos`, `onAddInspireVideo`, `onDeleteInspireVideo`, `onUpdateInspireLinkedProducts`, `productCards` (quest'ultimo già presente).
+Stessa logica: se `inspire_enabled` è true ma non ci sono video, rendere comunque la box con un placeholder grafico al posto del video (div con gradient + icona play SVG inline).
 
-**File: `src/pages/Builder.tsx`**
-- Passare le props aggiuntive (`inspireVideos`, `onAddInspireVideo`, `onDeleteInspireVideo`, `onUpdateInspireLinkedProducts`) all'`AppearancePanel`.
-
-**File: `src/components/builder/BuilderSidebar.tsx`**
-- Rimuovere la logica del pannello separato `InspireMePanel` dalla sidebar (non più necessario come pannello standalone).
-
-### Pattern di riferimento
-Stessa struttura usata per Instagram UGC (righe 1240-1297): wrapper `rounded-lg border`, header con toggle, e blocco espanso condizionale sotto `border-t`.
+### Risultato
+La box "Inspire Me" è sempre visibile quando il toggle è attivo, con un mockup video placeholder che dà all'utente un'anteprima dell'esperienza.
 
