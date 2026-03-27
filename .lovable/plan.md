@@ -1,24 +1,26 @@
 
 
-## Piano: Fix product card non visibili nei Reels del preview
+## Piano: Product card a mazzo con animazione
 
-### Problema
-Le product card nei Reels non appaiono perché alla riga 2428, `linkedProducts` cerca i prodotti in `productCards` — che è la lista filtrata del Product Carousel (vuota se il carousel è disabilitato o non ci sono prodotti Shopify). I prodotti dello store (`rawProductCards`) non vengono passati al `WidgetPreviewPanel`.
+### Concetto
+Le product card appaiono dal basso con animazione e sono impilate/sovrapposte come un mazzo di carte (solo la prima visibile, le altre dietro sfalsate). Cliccando, si espandono tutte con animazione fan-out.
 
 ### Modifiche
 
-**File: `src/components/builder/WidgetPreviewPanel.tsx`**
-1. Aggiungere una prop opzionale `inspireStoreProducts?: ProductCardData[]` all'interfaccia.
-2. Alla riga 2428, usare `inspireStoreProducts` (con fallback a `productCards`) per risolvere i `linkedProductIds`:
-   ```
-   const linkedProducts = (video.linkedProductIds || [])
-     .map(pid => (inspireStoreProducts || productCards).find(p => p.id === pid))
-     .filter(Boolean);
-   ```
+**File: `src/components/builder/WidgetPreviewPanel.tsx`** (righe 2456-2507)
 
-**File: `src/pages/Builder.tsx`**
-1. Passare `inspireStoreProducts={rawProductCards}` a entrambe le istanze di `WidgetPreviewPanel` (riga ~886 e ~950).
+1. **Stato locale**: aggiungere `inspireCardsExpanded` (Record<number, boolean>) per tracciare quale slide ha le card espanse.
+
+2. **Layout "a mazzo" (chiuso)**: quando le card non sono espanse, sovrapporre le card con `position: absolute` e offset progressivo (`bottom: 0, 4px, 8px`) + leggera scala decrescente (`scale(0.95)`, `scale(0.90)`). Solo la card in primo piano è completamente visibile, le altre spuntano dietro con un piccolo offset. Il wrapper ha un'altezza fissa contenuta.
+
+3. **Layout "espanso" (aperto)**: al click sul mazzo, le card si espandono in colonna verticale (`flex-col gap-2`) con transizione animata (`transition-all duration-300`). Ogni card entra con un leggero delay progressivo (via `transition-delay`).
+
+4. **Animazione ingresso dal basso**: il container ha un'animazione CSS di slide-up al montaggio (`@keyframes slideUpCards` in style inline: `translateY(20px) → translateY(0)` + `opacity 0 → 1`).
+
+5. **Click per chiudere**: cliccando di nuovo, le card tornano a mazzo con transizione inversa.
+
+6. **Badge conteggio**: quando chiuso, mostrare un piccolo badge con il numero di prodotti (es. "3 products").
 
 ### Risultato
-Le product card linkate ai video appariranno correttamente nella vista Reels del preview, indipendentemente dallo stato del Product Carousel.
+Le card appaiono dal basso con animazione, si presentano sovrapposte a mazzo, e si espandono a ventaglio al click dell'utente.
 
