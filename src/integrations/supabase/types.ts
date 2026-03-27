@@ -258,6 +258,78 @@ export type Database = {
         }
         Relationships: []
       }
+      inspire_video_products: {
+        Row: {
+          created_at: string
+          id: string
+          product_card_id: string
+          sort_order: number
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_card_id: string
+          sort_order?: number
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_card_id?: string
+          sort_order?: number
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspire_video_products_product_card_id_fkey"
+            columns: ["product_card_id"]
+            isOneToOne: false
+            referencedRelation: "product_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inspire_video_products_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "inspire_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inspire_videos: {
+        Row: {
+          created_at: string
+          id: string
+          sort_order: number
+          source: string
+          thumbnail_url: string | null
+          updated_at: string
+          user_id: string
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          source?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id: string
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          source?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
       instagram_connections: {
         Row: {
           connected_at: string
@@ -602,6 +674,7 @@ export type Database = {
           google_business_url: string | null
           google_reviews_enabled: boolean
           id: string
+          inspire_enabled: boolean
           instagram_dm_enabled: boolean
           instagram_enabled: boolean
           language: string
@@ -648,6 +721,7 @@ export type Database = {
           google_business_url?: string | null
           google_reviews_enabled?: boolean
           id?: string
+          inspire_enabled?: boolean
           instagram_dm_enabled?: boolean
           instagram_enabled?: boolean
           language?: string
@@ -694,6 +768,7 @@ export type Database = {
           google_business_url?: string | null
           google_reviews_enabled?: boolean
           id?: string
+          inspire_enabled?: boolean
           instagram_dm_enabled?: boolean
           instagram_enabled?: boolean
           language?: string
