@@ -320,7 +320,36 @@ const WidgetPreviewPanel = ({
   const [showInspireReels, setShowInspireReels] = useState(false);
   const [inspireReelsMuted, setInspireReelsMuted] = useState(true);
   const inspireReelsRef = useRef<HTMLDivElement>(null);
+  const inspireVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const recognitionRef = useRef<any>(null);
+
+  // Inspire Reels: autoplay/pause videos based on scroll visibility
+  useEffect(() => {
+    if (!showInspireReels || !inspireReelsRef.current) return;
+    const container = inspireReelsRef.current;
+    const videos = inspireVideoRefs.current.filter(Boolean) as HTMLVideoElement[];
+    if (videos.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { root: container, threshold: 0.6 }
+    );
+
+    videos.forEach((v) => observer.observe(v));
+    // Force-play the first video immediately
+    videos[0]?.play().catch(() => {});
+
+    return () => observer.disconnect();
+  }, [showInspireReels, inspireVideos]);
 
   const startListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -2408,24 +2437,12 @@ const WidgetPreviewPanel = ({
                             <video
                               src={video.videoUrl}
                               muted={inspireReelsMuted}
-                              autoPlay={idx === 0}
                               loop
                               playsInline
                               className="absolute inset-0 h-full w-full object-cover"
                               onClick={() => setInspireReelsMuted(!inspireReelsMuted)}
                               ref={(el) => {
-                                if (!el || !inspireReelsRef.current) return;
-                                const observer = new IntersectionObserver(
-                                  ([entry]) => {
-                                    if (entry.isIntersecting) {
-                                      el.play().catch(() => {});
-                                    } else {
-                                      el.pause();
-                                    }
-                                  },
-                                  { root: inspireReelsRef.current, threshold: 0.6 }
-                                );
-                                observer.observe(el);
+                                inspireVideoRefs.current[idx] = el;
                               }}
                             />
 
