@@ -118,7 +118,7 @@ const Builder = () => {
     deleteLink: deleteCustomLink,
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
-  const { videos: inspireVideos } = useInspireVideos();
+  const { videos: inspireVideos, addVideo: addInspireVideo, deleteVideo: deleteInspireVideo, updateLinkedProducts: updateInspireLinkedProducts } = useInspireVideos();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
@@ -616,6 +616,12 @@ const Builder = () => {
             aiResponseLimit={aiResponseLimit}
             isApproachingLimit={isApproachingLimit}
             isAtLimit={isAtLimit}
+            inspireEnabled={config.inspireEnabled}
+            onInspireToggle={(enabled) => saveConfig({ inspireEnabled: enabled })}
+            inspireVideos={inspireVideos}
+            onAddInspireVideo={addInspireVideo}
+            onDeleteInspireVideo={deleteInspireVideo}
+            onUpdateInspireLinkedProducts={updateInspireLinkedProducts}
           />
         </div>
       </div>
