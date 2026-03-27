@@ -118,6 +118,7 @@ const Builder = () => {
     deleteLink: deleteCustomLink,
     reorderLinks: reorderCustomLinks,
   } = useCustomLinks();
+  const { videos: inspireVideos } = useInspireVideos();
   const [activeWidget, setActiveWidget] = useState<string | null>(null);
   const [builderView, setBuilderViewRaw] = useState<"home" | "editor" | "conversations" | "contacts" | "appearance" | "data-sources" | "ai" | "integrations" | null>(() => {
     const saved = sessionStorage.getItem("widjet_builder_view");
