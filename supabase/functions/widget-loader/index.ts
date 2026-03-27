@@ -1630,6 +1630,7 @@ Deno.serve(async (req) => {
       inspireSec.innerHTML = '<div id="wj-inspire-box">' + mediaHtml + '<div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + subText + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
       scroll.appendChild(inspireSec);
 
+      if (hasVideos) {
       // Build reels container
       var reelsScroll = d.createElement('div');
       reelsScroll.style.cssText = 'flex:1;overflow-y:auto;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch';
@@ -1731,6 +1732,7 @@ Deno.serve(async (req) => {
           if (v) v.muted = !v.muted;
         }
       });
+      } // end if (hasVideos)
     }
 
     // CHAT VIEW
