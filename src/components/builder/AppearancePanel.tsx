@@ -1357,28 +1357,45 @@ const AppearancePanel = ({
                           className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
                         >
                           <ShoppingBag className="h-3 w-3" />
-                          {video.linkedProductIds.length > 0
-                            ? `${video.linkedProductIds.length} product${video.linkedProductIds.length > 1 ? "s" : ""} linked`
+                          {(video.linkedProductIds || []).length > 0
+                            ? `${(video.linkedProductIds || []).length} product${(video.linkedProductIds || []).length > 1 ? "s" : ""} linked`
                             : "Link products"}
                         </button>
-                        {expandedInspireVideoId === video.id && productCards.length > 0 && (
+                        {expandedInspireVideoId === video.id && (
                           <div className="mt-1.5 space-y-1 max-h-[150px] overflow-y-auto">
-                            {productCards.map((card) => (
-                              <label key={card.id} className="flex items-center gap-1.5 text-[11px] p-1 rounded hover:bg-muted cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={video.linkedProductIds.includes(card.id)}
-                                  onChange={() => {
-                                    const newIds = video.linkedProductIds.includes(card.id)
-                                      ? video.linkedProductIds.filter((id) => id !== card.id)
-                                      : [...video.linkedProductIds, card.id];
-                                    onUpdateInspireLinkedProducts(video.id, newIds);
-                                  }}
-                                  className="rounded"
-                                />
-                                <span className="truncate text-foreground">{card.title || "Untitled"}</span>
-                              </label>
-                            ))}
+                            {productCards.length > 0 ? (
+                              productCards.map((card) => (
+                                <label key={card.id} className="flex items-center gap-2 text-[11px] p-1.5 rounded-lg hover:bg-muted cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={(video.linkedProductIds || []).includes(card.id)}
+                                    onChange={() => {
+                                      const currentIds = video.linkedProductIds || [];
+                                      const newIds = currentIds.includes(card.id)
+                                        ? currentIds.filter((id) => id !== card.id)
+                                        : [...currentIds, card.id];
+                                      onUpdateInspireLinkedProducts(video.id, newIds);
+                                    }}
+                                    className="rounded"
+                                  />
+                                  {card.imageUrl && (
+                                    <img
+                                      src={card.imageUrl}
+                                      alt=""
+                                      className="w-5 h-5 rounded object-cover flex-shrink-0"
+                                    />
+                                  )}
+                                  <span className="truncate text-foreground">{card.title || "Untitled"}</span>
+                                  {card.price && (
+                                    <span className="ml-auto text-muted-foreground flex-shrink-0">{card.price}</span>
+                                  )}
+                                </label>
+                              ))
+                            ) : (
+                              <p className="text-[11px] text-muted-foreground py-1">
+                                No products available. Add products in the Product Carousel section first.
+                              </p>
+                            )}
                           </div>
                         )}
                       </div>
