@@ -2666,20 +2666,35 @@ const WidgetPreviewPanel = ({
                 )}
 
                 {/* Inspire Me box section */}
-                {inspireEnabled && inspireVideos.length > 0 && (
+                {inspireEnabled && (
                   <div className={`px-4 pb-4 mt-2 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                     <div className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}>
-                      <video
-                        src={inspireVideos[0].videoUrl}
-                        muted
-                        autoPlay
-                        loop
-                        playsInline
-                        className="w-[72px] h-[96px] rounded-xl object-cover flex-shrink-0"
-                      />
+                      {inspireVideos.length > 0 ? (
+                        <video
+                          src={inspireVideos[0].videoUrl}
+                          muted
+                          autoPlay
+                          loop
+                          playsInline
+                          className="w-[72px] h-[96px] rounded-xl object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div
+                          className="w-[72px] h-[96px] rounded-xl flex-shrink-0 flex items-center justify-center"
+                          style={{ background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)' }}
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 5.14v14l11-7-11-7z" fill="white" fillOpacity="0.9"/>
+                          </svg>
+                        </div>
+                      )}
                       <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                         <span className={`text-[15px] font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>✨ Inspire me</span>
-                        <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/60"}`}>{inspireVideos.length} video{inspireVideos.length > 1 ? 's' : ''}</span>
+                        <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/60"}`}>
+                          {inspireVideos.length > 0
+                            ? `${inspireVideos.length} video${inspireVideos.length > 1 ? 's' : ''}`
+                            : 'No videos yet'}
+                        </span>
                         <button
                           className="self-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium transition-colors"
                           style={{ backgroundColor: actualHexColor, color: isLightColor(actualHexColor) ? '#0f172a' : '#fff' }}
