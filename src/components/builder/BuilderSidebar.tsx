@@ -665,21 +665,6 @@ const BuilderSidebar = ({
     );
   }
 
-  // Show Inspire Me panel
-  if (showInspireMePanel) {
-    return (
-      <InspireMePanel
-        onBack={() => { setShowInspireMePanel(false); closePanel(); }}
-        inspireEnabled={inspireEnabled}
-        onInspireToggle={onInspireToggle}
-        videos={inspireVideos}
-        onAddVideo={onAddInspireVideo}
-        onDeleteVideo={onDeleteInspireVideo}
-        onUpdateLinkedProducts={onUpdateInspireLinkedProducts}
-        productCards={productCards}
-      />
-    );
-  }
 
   const userInitial = userEmail?.charAt(0).toUpperCase() || "U";
 
