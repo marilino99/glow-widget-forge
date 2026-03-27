@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, AlertTriangle, Send } from "lucide-react";
+import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, AlertTriangle, Send, MessageCircle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -17,7 +18,25 @@ import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
 
-const IntegrationsPanel = () => {
+interface IntegrationsPanelProps {
+  whatsappEnabled: boolean;
+  onWhatsappToggle: (enabled: boolean) => void;
+  whatsappCountryCode: string;
+  onWhatsappCountryCodeChange: (code: string) => void;
+  whatsappNumber: string;
+  onWhatsappNumberChange: (number: string) => void;
+  onSaveConfig: (config: Record<string, unknown>) => void;
+}
+
+const IntegrationsPanel = ({
+  whatsappEnabled,
+  onWhatsappToggle,
+  whatsappCountryCode,
+  onWhatsappCountryCodeChange,
+  whatsappNumber,
+  onWhatsappNumberChange,
+  onSaveConfig,
+}: IntegrationsPanelProps) => {
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const calendly = useCalendlyConnection();
   const instagram = useInstagramDMConnection();
@@ -305,6 +324,69 @@ const IntegrationsPanel = () => {
               <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                 <BookOpen className="h-4 w-4" />
               </button>
+            </div>
+          </div>
+
+          {/* WhatsApp Card */}
+          <div className="group relative flex flex-col justify-between rounded-2xl border border-border bg-background p-5 transition-all duration-200 hover:border-foreground/20 hover:shadow-sm">
+            <div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#25D366]/10">
+                <MessageCircle className="h-6 w-6 text-[#25D366]" />
+              </div>
+
+              <h3 className="mt-3.5 text-sm font-semibold text-foreground">WhatsApp</h3>
+
+              <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                Add a quick contact button so visitors can reach you on WhatsApp.
+              </p>
+
+              {whatsappEnabled && whatsappNumber && (
+                <div className="mt-2 flex flex-col gap-0.5">
+                  <span className="inline-flex items-center gap-1 text-xs text-green-600">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Active
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {whatsappCountryCode} {whatsappNumber}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Phone number config */}
+            {whatsappEnabled && (
+              <div className="mt-3 space-y-2">
+                <div className="flex gap-2">
+                  <Input
+                    value={whatsappCountryCode}
+                    onChange={(e) => {
+                      onWhatsappCountryCodeChange(e.target.value);
+                    }}
+                    placeholder="+39"
+                    className="h-8 w-16 rounded-md border-border bg-muted/50 text-xs text-center"
+                  />
+                  <Input
+                    value={whatsappNumber}
+                    onChange={(e) => {
+                      onWhatsappNumberChange(e.target.value.replace(/\D/g, ""));
+                    }}
+                    placeholder="Phone number"
+                    className="h-8 flex-1 rounded-md border-border bg-muted/50 text-xs"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Toggle */}
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">{whatsappEnabled ? "Enabled" : "Disabled"}</span>
+              <Switch
+                checked={whatsappEnabled}
+                onCheckedChange={(enabled) => {
+                  onWhatsappToggle(enabled);
+                  onSaveConfig({ whatsappEnabled: enabled });
+                }}
+              />
             </div>
           </div>
         </div>

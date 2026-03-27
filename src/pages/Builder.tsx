@@ -563,12 +563,6 @@ const Builder = () => {
             onUpdateInstagramPost={updateInstagramPost}
             onDeleteInstagramPost={deleteInstagramPost}
             onReorderInstagramPosts={reorderInstagramPosts}
-            whatsappEnabled={config.whatsappEnabled}
-            onWhatsappToggle={(enabled) => saveConfig({ whatsappEnabled: enabled })}
-            whatsappCountryCode={config.whatsappCountryCode}
-            onWhatsappCountryCodeChange={(code) => updateConfig({ whatsappCountryCode: code })}
-            whatsappNumber={config.whatsappNumber}
-            onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
             onLocalLinksChange={handleLocalLinksChange}
             reportBugsEnabled={reportBugsEnabled}
             onReportBugsChange={setReportBugsEnabled}
@@ -798,12 +792,6 @@ const Builder = () => {
                   onCtaTextChange={(text) => updateConfig({ ctaText: text })}
                   onSave={() => saveConfig({})}
                   activeTab={appearanceTab}
-                  whatsappEnabled={config.whatsappEnabled ?? false}
-                  onWhatsappToggle={(enabled) => saveConfig({ whatsappEnabled: enabled })}
-                  whatsappCountryCode={config.whatsappCountryCode ?? "+39"}
-                  onWhatsappCountryCodeChange={(code) => updateConfig({ whatsappCountryCode: code })}
-                  whatsappNumber={config.whatsappNumber ?? ""}
-                  onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
                   faqEnabled={config.faqEnabled}
                   onFaqToggle={(enabled) => saveConfig({ faqEnabled: enabled })}
                   faqItems={faqItems}
@@ -932,7 +920,15 @@ const Builder = () => {
             setIsPanelOpen(true);
           }} />
         ) : builderView === "integrations" ? (
-          <IntegrationsPanel />
+          <IntegrationsPanel
+            whatsappEnabled={config.whatsappEnabled ?? false}
+            onWhatsappToggle={(enabled) => saveConfig({ whatsappEnabled: enabled })}
+            whatsappCountryCode={config.whatsappCountryCode ?? "+39"}
+            onWhatsappCountryCodeChange={(code) => updateConfig({ whatsappCountryCode: code })}
+            whatsappNumber={config.whatsappNumber ?? ""}
+            onWhatsappNumberChange={(number) => updateConfig({ whatsappNumber: number })}
+            onSaveConfig={saveConfig}
+          />
         ) : (
           <>
             {/* Right header with actions */}
