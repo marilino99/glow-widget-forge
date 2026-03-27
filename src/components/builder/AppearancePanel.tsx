@@ -223,6 +223,8 @@ const AppearancePanel = ({
   onAddInspireVideo,
   onDeleteInspireVideo,
   onUpdateInspireLinkedProducts,
+  inspireStoreProducts,
+  hasStoreConnection,
 }: AppearancePanelProps) => {
   const inspireFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
