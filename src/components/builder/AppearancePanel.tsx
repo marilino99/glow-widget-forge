@@ -127,6 +127,9 @@ interface AppearancePanelProps {
   onAddInspireVideo: (file: File) => Promise<void>;
   onDeleteInspireVideo: (videoId: string) => void;
   onUpdateInspireLinkedProducts: (videoId: string, productIds: string[]) => void;
+  // Store products for linking to Inspire videos (from connected store)
+  inspireStoreProducts: ProductCardData[];
+  hasStoreConnection: boolean;
 }
 
 const presetColors = [
@@ -1363,8 +1366,8 @@ const AppearancePanel = ({
                         </button>
                         {expandedInspireVideoId === video.id && (
                           <div className="mt-1.5 space-y-1 max-h-[150px] overflow-y-auto">
-                            {productCards.length > 0 ? (
-                              productCards.map((card) => (
+                            {inspireStoreProducts.length > 0 ? (
+                              inspireStoreProducts.map((card) => (
                                 <label key={card.id} className="flex items-center gap-2 text-[11px] p-1.5 rounded-lg hover:bg-muted cursor-pointer">
                                   <input
                                     type="checkbox"
@@ -1393,7 +1396,9 @@ const AppearancePanel = ({
                               ))
                             ) : (
                               <p className="text-[11px] text-muted-foreground py-1">
-                                No products available. Add products in the Product Carousel section first.
+                                {hasStoreConnection
+                                  ? "No products found. Sync your store catalog in the Integrations section."
+                                  : "No store connected. Connect your Shopify store in the Integrations section to link products to videos."}
                               </p>
                             )}
                           </div>
