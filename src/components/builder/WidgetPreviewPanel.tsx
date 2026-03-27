@@ -2754,8 +2754,14 @@ const WidgetPreviewPanel = ({
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className={`w-full h-full flex items-center justify-center ${isLight ? "bg-slate-200" : "bg-slate-700"}`}>
-                                <Instagram className={`h-6 w-6 ${isLight ? "text-slate-400" : "text-slate-500"}`} />
+                              <div className={`w-full h-full flex items-center justify-center relative overflow-hidden ${isLight ? "bg-slate-200" : "bg-slate-700"}`}>
+                                <div className="absolute inset-0 animate-pulse" style={{
+                                  background: isLight
+                                    ? 'linear-gradient(135deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%)'
+                                    : 'linear-gradient(135deg, #334155 25%, #475569 50%, #334155 75%)',
+                                  backgroundSize: '200% 200%',
+                                }} />
+                                <Instagram className={`h-6 w-6 relative z-10 ${isLight ? "text-slate-400" : "text-slate-500"}`} />
                               </div>
                             )}
                           </a>
