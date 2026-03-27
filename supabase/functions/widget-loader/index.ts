@@ -1618,12 +1618,16 @@ Deno.serve(async (req) => {
     inspireView.id = 'wj-inspire-view';
     inspireView.style.cssText = 'display:none;flex-direction:column;flex:1;min-height:0;background:#000;position:relative';
 
-    if (inspireEnabled && inspireVideos.length > 0) {
+    if (inspireEnabled) {
       // Add Inspire Me box section (like FAQ, Links, Reviews)
       var inspireSec = d.createElement('div');
       inspireSec.id = 'wj-inspire-section';
-      var firstVideoUrl = inspireVideos[0].video_url || '';
-      inspireSec.innerHTML = '<div id="wj-inspire-box"><video src="' + esc(firstVideoUrl) + '" muted autoplay loop playsinline></video><div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + inspireVideos.length + ' video' + (inspireVideos.length > 1 ? 's' : '') + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
+      var hasVideos = inspireVideos.length > 0;
+      var mediaHtml = hasVideos
+        ? '<video src="' + esc(inspireVideos[0].video_url || '') + '" muted autoplay loop playsinline></video>'
+        : '<div style="width:72px;height:96px;border-radius:12px;background:linear-gradient(135deg,#f97316,#ec4899,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 5.14v14l11-7-11-7z" fill="white" fill-opacity="0.9"/></svg></div>';
+      var subText = hasVideos ? (inspireVideos.length + ' video' + (inspireVideos.length > 1 ? 's' : '')) : 'No videos yet';
+      inspireSec.innerHTML = '<div id="wj-inspire-box">' + mediaHtml + '<div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + subText + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
       scroll.appendChild(inspireSec);
 
       // Build reels container
