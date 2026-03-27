@@ -2455,56 +2455,87 @@ const WidgetPreviewPanel = ({
 
                             {/* Product cards overlay — stacked vertically from bottom */}
                             {linkedProducts.length > 0 && (
-                              <div className="absolute inset-x-0 bottom-6 z-10 px-3 flex flex-col gap-2 items-stretch">
-                                {linkedProducts.map((product) => (
-                                  <div
-                                    key={product.id}
-                                    className="flex items-center gap-2.5 rounded-xl bg-white/15 backdrop-blur-md p-2 hover:bg-white/25 transition-colors"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    {/* Left: product image */}
-                                    {product.imageUrl ? (
-                                      <img src={product.imageUrl} alt={product.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
-                                    ) : (
-                                      <div className="h-12 w-12 rounded-lg bg-white/10 flex-shrink-0" />
-                                    )}
+                              <div
+                                className="absolute inset-x-0 bottom-6 z-10 px-3"
+                                style={{ animation: 'slideUpCards 0.5s ease-out both' }}
+                                onClick={(e) => { e.stopPropagation(); setInspireCardsExpanded(prev => ({ ...prev, [idx]: !prev[idx] })); }}
+                              >
+                                <style>{`@keyframes slideUpCards { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }`}</style>
 
-                                    {/* Center: title + price */}
-                                    <a
-                                      href={product.productUrl || '#'}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="flex flex-col gap-0.5 min-w-0 flex-1"
-                                    >
-                                      <span className="text-white text-xs font-semibold truncate">{product.title}</span>
-                                      {product.price && (
-                                        <div className="flex items-center gap-1.5">
-                                          <span className="text-white text-sm font-bold">{product.price}</span>
-                                          {product.oldPrice && (
-                                            <span className="text-white/50 text-xs line-through">{product.oldPrice}</span>
+                                {inspireCardsExpanded[idx] ? (
+                                  /* Expanded: vertical stack */
+                                  <div className="flex flex-col gap-2">
+                                    {linkedProducts.map((product, pIdx) => (
+                                      <div
+                                        key={product.id}
+                                        className="flex items-center gap-2.5 rounded-xl bg-white/15 backdrop-blur-md p-2 hover:bg-white/25 transition-all duration-300"
+                                        style={{ transitionDelay: `${pIdx * 60}ms`, animation: `slideUpCards 0.3s ease-out ${pIdx * 60}ms both` }}
+                                      >
+                                        {product.imageUrl ? (
+                                          <img src={product.imageUrl} alt={product.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
+                                        ) : (
+                                          <div className="h-12 w-12 rounded-lg bg-white/10 flex-shrink-0" />
+                                        )}
+                                        <a href={product.productUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex flex-col gap-0.5 min-w-0 flex-1" onClick={(e) => e.stopPropagation()}>
+                                          <span className="text-white text-xs font-semibold truncate">{product.title}</span>
+                                          {product.price && (
+                                            <div className="flex items-center gap-1.5">
+                                              <span className="text-white text-sm font-bold">{product.price}</span>
+                                              {product.oldPrice && <span className="text-white/50 text-xs line-through">{product.oldPrice}</span>}
+                                            </div>
                                           )}
-                                        </div>
-                                      )}
-                                    </a>
-
-                                    {/* Right: add-to-cart button */}
-                                    <button
-                                      className="flex-shrink-0 h-9 w-9 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const btn = e.currentTarget;
-                                        btn.classList.add('inspire-cart-added');
-                                        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                                        setTimeout(() => {
-                                          btn.classList.remove('inspire-cart-added');
-                                          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>';
-                                        }, 1200);
-                                      }}
-                                    >
-                                      <ShoppingCart className="h-4 w-4 text-white" />
-                                    </button>
+                                        </a>
+                                        <button
+                                          className="flex-shrink-0 h-9 w-9 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center transition-colors"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            const btn = e.currentTarget;
+                                            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                                            setTimeout(() => { btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>'; }, 1200);
+                                          }}
+                                        >
+                                          <ShoppingCart className="h-4 w-4 text-white" />
+                                        </button>
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
+                                ) : (
+                                  /* Collapsed: stacked deck */
+                                  <div className="relative cursor-pointer" style={{ height: '56px' }}>
+                                    {linkedProducts.slice(0, 3).map((product, pIdx) => (
+                                      <div
+                                        key={product.id}
+                                        className="absolute inset-x-0 flex items-center gap-2.5 rounded-xl bg-white/15 backdrop-blur-md p-2 transition-all duration-300"
+                                        style={{
+                                          bottom: `${pIdx * 5}px`,
+                                          transform: `scale(${1 - pIdx * 0.04})`,
+                                          opacity: pIdx === 0 ? 1 : 0.7 - pIdx * 0.2,
+                                          zIndex: 10 - pIdx,
+                                        }}
+                                      >
+                                        {product.imageUrl ? (
+                                          <img src={product.imageUrl} alt={product.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
+                                        ) : (
+                                          <div className="h-12 w-12 rounded-lg bg-white/10 flex-shrink-0" />
+                                        )}
+                                        <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                                          <span className="text-white text-xs font-semibold truncate">{product.title}</span>
+                                          {product.price && <span className="text-white text-sm font-bold">{product.price}</span>}
+                                        </div>
+                                        {pIdx === 0 && (
+                                          <div className="flex-shrink-0 h-9 w-9 rounded-full bg-white/20 flex items-center justify-center">
+                                            <ShoppingCart className="h-4 w-4 text-white" />
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                    {linkedProducts.length > 1 && (
+                                      <div className="absolute -top-2 right-2 z-20 bg-white/25 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                                        {linkedProducts.length} products
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             )}
 
