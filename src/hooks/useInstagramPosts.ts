@@ -105,6 +105,35 @@ export const useInstagramPosts = () => {
         title: "Post added",
         description: "Instagram post has been added to your widget.",
       });
+
+      // Fetch thumbnail via instagram-oembed edge function (async, non-blocking)
+      try {
+        const { data: oembedData, error: oembedError } = await supabase.functions.invoke("instagram-oembed", {
+          body: { url: newPost.url }
+        });
+
+        if (!oembedError && oembedData && oembedData.thumbnail_url) {
+          // Update local state
+          setInstagramPosts(prev =>
+            prev.map(p => p.id === newPost.id
+              ? { ...p, thumbnailUrl: oembedData.thumbnail_url, authorName: oembedData.author_name || p.authorName }
+              : p
+            )
+          );
+
+          // Update database
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (supabase.from("instagram_posts") as any)
+            .update({
+              thumbnail_url: oembedData.thumbnail_url,
+              author_name: oembedData.author_name || newPost.authorName || null,
+            })
+            .eq("id", newPost.id)
+            .eq("user_id", user.id);
+        }
+      } catch (oembedErr) {
+        console.warn("Could not fetch Instagram thumbnail:", oembedErr);
+      }
     } catch (error) {
       console.error("Error adding Instagram post:", error);
       // Revert optimistic update
