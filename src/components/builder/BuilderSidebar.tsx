@@ -479,8 +479,6 @@ const BuilderSidebar = ({
     );
   }
 
-    );
-  }
 
   // Show FAQ panel
   if (showFaqPanel) {
