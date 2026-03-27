@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     // Fetch widget configuration
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("user_id, widget_color, widget_theme, contact_name, offer_help, say_hello, selected_avatar, faq_enabled, instagram_enabled, background_type, background_image, logo, button_logo, language, whatsapp_enabled, whatsapp_country_code, whatsapp_number, show_branding, forward_email, chatbot_enabled, chatbot_instructions, ai_provider, custom_css, custom_js, widget_position, widget_type, google_reviews_enabled, google_business_name, google_business_rating, google_business_ratings_total, google_business_url, cta_text, product_carousel_enabled")
+      .select("user_id, widget_color, widget_theme, contact_name, offer_help, say_hello, selected_avatar, faq_enabled, instagram_enabled, background_type, background_image, logo, button_logo, language, whatsapp_enabled, whatsapp_country_code, whatsapp_number, show_branding, forward_email, chatbot_enabled, chatbot_instructions, ai_provider, custom_css, custom_js, widget_position, widget_type, google_reviews_enabled, google_business_name, google_business_rating, google_business_ratings_total, google_business_url, cta_text, product_carousel_enabled, inspire_enabled")
       .eq("id", widgetId)
       .single();
 
@@ -94,6 +94,40 @@ Deno.serve(async (req) => {
 
     if (customLinksError) {
       console.error("Custom links error:", customLinksError);
+    }
+
+    // Fetch inspire videos with linked products
+    let inspireVideos: any[] = [];
+    if (config.inspire_enabled) {
+      const { data: videosData, error: videosError } = await supabase
+        .from("inspire_videos")
+        .select("id, video_url, thumbnail_url, source, sort_order")
+        .eq("user_id", config.user_id)
+        .order("sort_order", { ascending: true });
+
+      if (videosError) {
+        console.error("Inspire videos error:", videosError);
+      }
+
+      if (videosData && videosData.length > 0) {
+        const videoIds = videosData.map((v: any) => v.id);
+        const { data: linksData } = await supabase
+          .from("inspire_video_products")
+          .select("video_id, product_card_id")
+          .in("video_id", videoIds)
+          .order("sort_order", { ascending: true });
+
+        const linksByVideo: Record<string, string[]> = {};
+        (linksData || []).forEach((l: any) => {
+          if (!linksByVideo[l.video_id]) linksByVideo[l.video_id] = [];
+          linksByVideo[l.video_id].push(l.product_card_id);
+        });
+
+        inspireVideos = videosData.map((v: any) => ({
+          ...v,
+          linked_product_ids: linksByVideo[v.id] || [],
+        }));
+      }
     }
 
     // Return the complete widget configuration
