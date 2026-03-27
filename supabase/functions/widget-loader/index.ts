@@ -301,6 +301,15 @@ Deno.serve(async (req) => {
       #wj-greview-box{border-radius:16px;padding:16px;background:\${bgFaq};cursor:pointer;transition:background .15s}
       #wj-greview-box:hover{background:\${dark ? '#2a2a2a' : '#f1f5f9'}}
       #wj-greview-stars{display:flex;align-items:center;gap:2px}
+      #wj-inspire-section{padding:0 16px 16px;margin-top:8px}
+      #wj-inspire-box{display:flex;align-items:center;gap:14px;padding:16px;border-radius:16px;background:${bgFaq};cursor:pointer;transition:background .15s;overflow:hidden}
+      #wj-inspire-box:hover{background:${dark ? '#2a2a2a' : '#f1f5f9'}}
+      #wj-inspire-box video{width:72px;height:96px;border-radius:12px;object-fit:cover;flex-shrink:0}
+      #wj-inspire-box-right{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+      #wj-inspire-box-title{font-size:15px;font-weight:600;color:${textMain}}
+      #wj-inspire-box-sub{font-size:12px;color:${textSub}}
+      #wj-inspire-box-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:20px;border:none;background:${color.bg};color:${btnText};font-size:13px;font-weight:500;cursor:pointer;transition:background .15s;white-space:nowrap;align-self:flex-start}
+      #wj-inspire-box-btn:hover{background:${color.hover}}
       .wj-star{width:20px;height:20px;position:relative}
       .wj-star svg{position:absolute;inset:0;width:20px;height:20px}
       .wj-star-empty{color:\${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'}}
@@ -1610,16 +1619,12 @@ Deno.serve(async (req) => {
     inspireView.style.cssText = 'display:none;flex-direction:column;flex:1;min-height:0;background:#000;position:relative';
 
     if (inspireEnabled && inspireVideos.length > 0) {
-      // Add Inspire Me chip after contact card
-      var inspireChip = d.createElement('div');
-      inspireChip.style.cssText = 'padding:8px 16px 0';
-      inspireChip.innerHTML = '<button id="wj-inspire-chip" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:1px solid ' + (dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0') + ';background:' + (dark ? 'rgba(255,255,255,0.05)' : '#fff') + ';color:' + (dark ? '#fff' : '#334155') + ';font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap"><span style="font-size:15px">✨</span> Inspire me</button>';
-      // Insert after contact card
-      if (solid) {
-        scroll.insertBefore(inspireChip, scroll.children[1] || null);
-      } else {
-        scroll.insertBefore(inspireChip, scroll.children[2] || null);
-      }
+      // Add Inspire Me box section (like FAQ, Links, Reviews)
+      var inspireSec = d.createElement('div');
+      inspireSec.id = 'wj-inspire-section';
+      var firstVideoUrl = inspireVideos[0].video_url || '';
+      inspireSec.innerHTML = '<div id="wj-inspire-box"><video src="' + esc(firstVideoUrl) + '" muted autoplay loop playsinline></video><div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + inspireVideos.length + ' video' + (inspireVideos.length > 1 ? 's' : '') + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
+      scroll.appendChild(inspireSec);
 
       // Build reels container
       var reelsScroll = d.createElement('div');
@@ -1681,14 +1686,15 @@ Deno.serve(async (req) => {
       inspireView.appendChild(reelsScroll);
       inspireView.appendChild(inspireClose);
 
-      // Event: open inspire
-      inspireChip.querySelector('#wj-inspire-chip').addEventListener('click', function() {
+      // Event: open inspire (from box button or entire box)
+      var openInspire = function() {
         homeView.style.display = 'none';
         inspireView.style.display = 'flex';
-        // Autoplay first video
         var firstVid = reelsScroll.querySelector('video');
         if (firstVid) firstVid.play().catch(function(){});
-      });
+      };
+      inspireSec.querySelector('#wj-inspire-box-btn').addEventListener('click', function(e) { e.stopPropagation(); openInspire(); });
+      inspireSec.querySelector('#wj-inspire-box').addEventListener('click', openInspire);
 
       // Event: close inspire
       inspireClose.addEventListener('click', function() {
