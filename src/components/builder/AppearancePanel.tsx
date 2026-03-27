@@ -229,6 +229,7 @@ const AppearancePanel = ({
   const inspireFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
   const [expandedInspireVideoId, setExpandedInspireVideoId] = useState<string | null>(null);
+  const [inspireProductSearch, setInspireProductSearch] = useState("");
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarTab, setAvatarTab] = useState("gallery");
@@ -1358,7 +1359,11 @@ const AppearancePanel = ({
                       </div>
                       <div className="px-2 py-1.5">
                         <button
-                          onClick={() => setExpandedInspireVideoId(expandedInspireVideoId === video.id ? null : video.id)}
+                          onClick={() => {
+                            const newId = expandedInspireVideoId === video.id ? null : video.id;
+                            setExpandedInspireVideoId(newId);
+                            setInspireProductSearch("");
+                          }}
                           className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
                         >
                           <ShoppingBag className="h-3 w-3" />
@@ -1367,35 +1372,58 @@ const AppearancePanel = ({
                             : "Link products"}
                         </button>
                         {expandedInspireVideoId === video.id && (
-                          <div className="mt-1.5 space-y-1 max-h-[150px] overflow-y-auto">
+                          <div className="mt-1.5 space-y-1">
                             {inspireStoreProducts.length > 0 ? (
-                              inspireStoreProducts.map((card) => (
-                                <label key={card.id} className="flex items-center gap-2 text-[11px] p-1.5 rounded-lg hover:bg-muted cursor-pointer">
+                              <>
+                                <div className="relative">
+                                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
                                   <input
-                                    type="checkbox"
-                                    checked={(video.linkedProductIds || []).includes(card.id)}
-                                    onChange={() => {
-                                      const currentIds = video.linkedProductIds || [];
-                                      const newIds = currentIds.includes(card.id)
-                                        ? currentIds.filter((id) => id !== card.id)
-                                        : [...currentIds, card.id];
-                                      onUpdateInspireLinkedProducts(video.id, newIds);
-                                    }}
-                                    className="rounded"
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={inspireProductSearch}
+                                    onChange={(e) => setInspireProductSearch(e.target.value)}
+                                    className="w-full pl-7 pr-2 py-1.5 text-[11px] rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
                                   />
-                                  {card.imageUrl && (
-                                    <img
-                                      src={card.imageUrl}
-                                      alt=""
-                                      className="w-5 h-5 rounded object-cover flex-shrink-0"
-                                    />
+                                </div>
+                                <div className="max-h-[150px] overflow-y-auto space-y-1">
+                                  {inspireStoreProducts
+                                    .filter((card) =>
+                                      (card.title || "").toLowerCase().includes(inspireProductSearch.toLowerCase())
+                                    )
+                                    .map((card) => (
+                                    <label key={card.id} className="flex items-center gap-2 text-[11px] p-1.5 rounded-lg hover:bg-muted cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={(video.linkedProductIds || []).includes(card.id)}
+                                        onChange={() => {
+                                          const currentIds = video.linkedProductIds || [];
+                                          const newIds = currentIds.includes(card.id)
+                                            ? currentIds.filter((id) => id !== card.id)
+                                            : [...currentIds, card.id];
+                                          onUpdateInspireLinkedProducts(video.id, newIds);
+                                        }}
+                                        className="rounded"
+                                      />
+                                      {card.imageUrl && (
+                                        <img
+                                          src={card.imageUrl}
+                                          alt=""
+                                          className="w-5 h-5 rounded object-cover flex-shrink-0"
+                                        />
+                                      )}
+                                      <span className="truncate text-foreground">{card.title || "Untitled"}</span>
+                                      {card.price && (
+                                        <span className="ml-auto text-muted-foreground flex-shrink-0">{card.price}</span>
+                                      )}
+                                    </label>
+                                  ))}
+                                  {inspireStoreProducts.filter((card) =>
+                                    (card.title || "").toLowerCase().includes(inspireProductSearch.toLowerCase())
+                                  ).length === 0 && (
+                                    <p className="text-[11px] text-muted-foreground py-1">No products match your search.</p>
                                   )}
-                                  <span className="truncate text-foreground">{card.title || "Untitled"}</span>
-                                  {card.price && (
-                                    <span className="ml-auto text-muted-foreground flex-shrink-0">{card.price}</span>
-                                  )}
-                                </label>
-                              ))
+                                </div>
+                              </>
                             ) : (
                               <p className="text-[11px] text-muted-foreground py-1">
                                 {hasStoreConnection
