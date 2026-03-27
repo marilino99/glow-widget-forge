@@ -1,23 +1,28 @@
 
 
-## Piano: Mostrare la box "Inspire Me" con mockup quando non ci sono video
+## Piano: Aprire la vista Reels fullscreen dal bottone "Inspire Me" nel widget preview
 
-### Problema
-Quando il toggle "Inspire Me" è attivo ma non ci sono video caricati, la box non appare nel preview del widget. L'utente vuole vedere comunque la sezione con un video mockup/placeholder.
+### Situazione attuale
+- **Widget di produzione** (widget-loader): la logica Reels fullscreen è già implementata. Cliccando su "Inspire Me" si apre la vista con video a scroll verticale, snap, autoplay, prodotti overlay, close button. Funziona già.
+- **Widget preview nel builder** (WidgetPreviewPanel.tsx): la box "Inspire Me" è visibile ma il bottone non fa nulla — manca la vista Reels.
 
 ### Modifiche
 
 **File: `src/components/builder/WidgetPreviewPanel.tsx`**
 
-1. Cambiare la condizione da `inspireEnabled && inspireVideos.length > 0` a solo `inspireEnabled`
-2. Se ci sono video, mostrare il primo video come ora
-3. Se non ci sono video, mostrare un placeholder al posto del `<video>`: un div 72x96px con sfondo gradient (toni caldi/beauty), un'icona play centrata, e un leggero effetto shimmer — simulando un video mockup
-4. Il contatore mostra "No videos yet" invece di "1 video"
+1. **Aggiungere stato** `showInspireReels` (boolean) per controllare la vista Reels nel preview.
 
-**File: `supabase/functions/widget-loader/index.ts`**
+2. **Vista Reels fullscreen**: Quando `showInspireReels` è true, rendere sopra la home view un overlay nero che occupa tutto lo spazio del widget con:
+   - Scroll verticale con `scroll-snap-type: y mandatory`
+   - Ogni video occupa il 100% dell'altezza, con `scroll-snap-align: start`, autoplay, muted, loop
+   - Overlay prodotti in basso con gradiente trasparente→nero, card prodotto con immagine, titolo, prezzo
+   - Bottone X in alto a destra per chiudere (torna alla home)
+   - Tap sul video per mute/unmute
 
-Stessa logica: se `inspire_enabled` è true ma non ci sono video, rendere comunque la box con un placeholder grafico al posto del video (div con gradient + icona play SVG inline).
+3. **Click handler**: Collegare il click sulla box e sul bottone "Inspire Me ✨" a `setShowInspireReels(true)`. Se non ci sono video, il click non fa nulla.
+
+4. **Autoplay con IntersectionObserver**: Usare un observer per fare play/pause dei video in base a quale slide è visibile (stesso pattern del widget-loader).
 
 ### Risultato
-La box "Inspire Me" è sempre visibile quando il toggle è attivo, con un mockup video placeholder che dà all'utente un'anteprima dell'esperienza.
+Nel builder preview, cliccando "Inspire Me" si apre un'esperienza Reels fullscreen identica a quella del widget di produzione, con video scrollabili verticalmente, prodotti taggati, e navigazione stile Instagram/TikTok.
 
