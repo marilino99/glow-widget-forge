@@ -1604,6 +1604,125 @@ Deno.serve(async (req) => {
       homeView.appendChild(powered);
     }
 
+    // INSPIRE ME (Reels) VIEW
+    var inspireView = d.createElement('div');
+    inspireView.id = 'wj-inspire-view';
+    inspireView.style.cssText = 'display:none;flex-direction:column;flex:1;min-height:0;background:#000;position:relative';
+
+    if (inspireEnabled && inspireVideos.length > 0) {
+      // Add Inspire Me chip after contact card
+      var inspireChip = d.createElement('div');
+      inspireChip.style.cssText = 'padding:8px 16px 0';
+      inspireChip.innerHTML = '<button id="wj-inspire-chip" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;border:1px solid ' + (dark ? 'rgba(255,255,255,0.15)' : '#e2e8f0') + ';background:' + (dark ? 'rgba(255,255,255,0.05)' : '#fff') + ';color:' + (dark ? '#fff' : '#334155') + ';font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap"><span style="font-size:15px">✨</span> Inspire me</button>';
+      // Insert after contact card
+      if (solid) {
+        scroll.insertBefore(inspireChip, scroll.children[1] || null);
+      } else {
+        scroll.insertBefore(inspireChip, scroll.children[2] || null);
+      }
+
+      // Build reels container
+      var reelsScroll = d.createElement('div');
+      reelsScroll.style.cssText = 'flex:1;overflow-y:auto;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch';
+
+      inspireVideos.forEach(function(vid) {
+        var slide = d.createElement('div');
+        slide.style.cssText = 'height:100%;scroll-snap-align:start;position:relative;flex-shrink:0';
+
+        var video = d.createElement('video');
+        video.src = vid.video_url;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.style.cssText = 'width:100%;height:100%;object-fit:cover';
+
+        slide.appendChild(video);
+
+        // Product overlay if linked products exist
+        if (vid.linked_product_ids && vid.linked_product_ids.length > 0 && products.length > 0) {
+          var linkedProds = vid.linked_product_ids.map(function(pid) {
+            return products.find(function(p) { return p.id === pid; });
+          }).filter(Boolean);
+
+          if (linkedProds.length > 0) {
+            var overlay = d.createElement('div');
+            overlay.style.cssText = 'position:absolute;bottom:0;left:0;right:0;padding:12px;background:linear-gradient(transparent,rgba(0,0,0,0.7));display:flex;gap:8px;overflow-x:auto;scrollbar-width:none';
+
+            linkedProds.forEach(function(prod) {
+              var card = d.createElement('div');
+              card.style.cssText = 'flex-shrink:0;width:140px;border-radius:12px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);overflow:hidden;cursor:pointer';
+              var imgHtml = prod.image_url ? '<img src="' + esc(prod.image_url) + '" style="width:100%;height:80px;object-fit:cover"/>' : '<div style="width:100%;height:80px;background:rgba(255,255,255,0.1)"></div>';
+              var priceHtml = prod.price ? '<span style="font-size:12px;font-weight:600;color:#fff">' + esc(prod.price) + '</span>' : '';
+              card.innerHTML = imgHtml + '<div style="padding:8px"><p style="font-size:11px;font-weight:600;color:#fff;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(prod.title) + '</p>' + priceHtml + '</div>';
+
+              card.addEventListener('click', function() {
+                if (shopifyDomain && prod.shopify_variant_id) {
+                  addToShopifyCart(prod.shopify_variant_id, null);
+                } else if (prod.product_url) {
+                  w.location.href = prod.product_url;
+                }
+              });
+
+              overlay.appendChild(card);
+            });
+            slide.appendChild(overlay);
+          }
+        }
+
+        reelsScroll.appendChild(slide);
+      });
+
+      // Close button
+      var inspireClose = d.createElement('button');
+      inspireClose.style.cssText = 'position:absolute;top:12px;right:12px;z-index:10;width:32px;height:32px;border-radius:50%;border:none;background:rgba(0,0,0,0.5);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center';
+      inspireClose.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg>';
+
+      inspireView.appendChild(reelsScroll);
+      inspireView.appendChild(inspireClose);
+
+      // Event: open inspire
+      inspireChip.querySelector('#wj-inspire-chip').addEventListener('click', function() {
+        homeView.style.display = 'none';
+        inspireView.style.display = 'flex';
+        // Autoplay first video
+        var firstVid = reelsScroll.querySelector('video');
+        if (firstVid) firstVid.play().catch(function(){});
+      });
+
+      // Event: close inspire
+      inspireClose.addEventListener('click', function() {
+        inspireView.style.display = 'none';
+        homeView.style.display = 'flex';
+        // Pause all videos
+        reelsScroll.querySelectorAll('video').forEach(function(v) { v.pause(); });
+      });
+
+      // Autoplay on scroll snap
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var vid = entry.target.querySelector('video');
+          if (!vid) return;
+          if (entry.isIntersecting) { vid.play().catch(function(){}); }
+          else { vid.pause(); }
+        });
+      }, { root: reelsScroll, threshold: 0.6 });
+
+      reelsScroll.querySelectorAll('div[style*="scroll-snap-align"]').forEach(function(slide) {
+        observer.observe(slide);
+      });
+
+      // Tap to unmute/mute
+      reelsScroll.addEventListener('click', function(e) {
+        if (e.target.closest('div[style*="backdrop-filter"]')) return; // Don't toggle on product card click
+        var vid = e.target.closest('div[style*="scroll-snap-align"]');
+        if (vid) {
+          var v = vid.querySelector('video');
+          if (v) v.muted = !v.muted;
+        }
+      });
+    }
+
     // CHAT VIEW
     var chatView = d.createElement('div');
     chatView.id = 'wj-chat-view';
