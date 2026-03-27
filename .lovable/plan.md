@@ -1,26 +1,27 @@
 
 
-## Piano: Product card a mazzo con animazione
+## Piano: Mostrare i post Instagram nel widget preview
 
-### Concetto
-Le product card appaiono dal basso con animazione e sono impilate/sovrapposte come un mazzo di carte (solo la prima visibile, le altre dietro sfalsate). Cliccando, si espandono tutte con animazione fan-out.
+### Problema
+Quando aggiungi un URL di Instagram, nel widget preview appare solo un'icona Instagram generica invece del contenuto del post. Questo perché:
+
+1. La funzione `instagram-oembed` esiste ma **non viene mai chiamata** durante l'aggiunta di un post — il hook `addInstagramPost` salva solo l'URL senza recuperare alcuna thumbnail
+2. Instagram blocca l'embedding diretto delle immagini (CORS), quindi senza thumbnail il preview mostra un placeholder vuoto
+
+### Soluzione
+Chiamare automaticamente l'edge function `instagram-oembed` quando l'utente aggiunge un post, per recuperare la thumbnail e l'autore. Se la chiamata fallisce (token non configurato o errore API), mostrare un fallback visivo migliore.
 
 ### Modifiche
 
-**File: `src/components/builder/WidgetPreviewPanel.tsx`** (righe 2456-2507)
+**File: `src/hooks/useInstagramPosts.ts`**
+1. Dopo l'inserimento nel database (riga 100), chiamare `supabase.functions.invoke("instagram-oembed", { body: { url } })` per ottenere `thumbnail_url` e `author_name`
+2. Se la risposta contiene una thumbnail, aggiornare sia lo state locale che il database con `thumbnail_url` e `author_name`
+3. Gestire il fallimento silenziosamente (il post resta salvato con il placeholder)
 
-1. **Stato locale**: aggiungere `inspireCardsExpanded` (Record<number, boolean>) per tracciare quale slide ha le card espanse.
+**File: `src/components/builder/WidgetPreviewPanel.tsx`**
+1. Migliorare il fallback quando non c'è thumbnail (righe 2756-2759): invece dell'icona Instagram generica, mostrare un placeholder con gradiente animato (shimmer) e l'icona Instagram, così l'utente capisce che il contenuto sta caricando o non è disponibile
 
-2. **Layout "a mazzo" (chiuso)**: quando le card non sono espanse, sovrapporre le card con `position: absolute` e offset progressivo (`bottom: 0, 4px, 8px`) + leggera scala decrescente (`scale(0.95)`, `scale(0.90)`). Solo la card in primo piano è completamente visibile, le altre spuntano dietro con un piccolo offset. Il wrapper ha un'altezza fissa contenuta.
-
-3. **Layout "espanso" (aperto)**: al click sul mazzo, le card si espandono in colonna verticale (`flex-col gap-2`) con transizione animata (`transition-all duration-300`). Ogni card entra con un leggero delay progressivo (via `transition-delay`).
-
-4. **Animazione ingresso dal basso**: il container ha un'animazione CSS di slide-up al montaggio (`@keyframes slideUpCards` in style inline: `translateY(20px) → translateY(0)` + `opacity 0 → 1`).
-
-5. **Click per chiudere**: cliccando di nuovo, le card tornano a mazzo con transizione inversa.
-
-6. **Badge conteggio**: quando chiuso, mostrare un piccolo badge con il numero di prodotti (es. "3 products").
-
-### Risultato
-Le card appaiono dal basso con animazione, si presentano sovrapposte a mazzo, e si espandono a ventaglio al click dell'utente.
+### Dettagli tecnici
+- L'edge function `instagram-oembed` usa l'API Graph di Facebook, che richiede un `INSTAGRAM_ACCESS_TOKEN`. Se il token non è configurato, la funzione ritorna `thumbnail_url: null` — il post resta salvato ma senza anteprima visiva
+- Il fetch della thumbnail è asincrono e non blocca l'aggiunta del post (l'utente vede subito il post nella lista, la thumbnail appare dopo qualche secondo)
 
