@@ -1,49 +1,40 @@
 
 
-## Piano: Chip di azione rapida personalizzabili per ogni business
+## Piano: Generazione automatica dei Quick Action Chips tramite AI
 
-### Problema
-I 3 chip ("Find the right product for me", "Track my order", "I need more information") sono hardcoded nel widget-loader e uguali per tutti. Un ristorante, uno studio legale o un hotel vedono chip pensati per e-commerce.
+### Idea
+Invece di lasciare all'utente la responsabilità di scrivere i chip, il sistema li genera automaticamente al momento del primo caricamento del widget-config, basandosi sui dati già disponibili (FAQ, prodotti, istruzioni chatbot, custom links). I chip vengono salvati nel DB e serviti nelle richieste successive senza rigenerarli ogni volta.
 
-### Soluzione
-Aggiungere 3 campi personalizzabili nella configurazione widget. Il business può scrivere i propri testi, e se non li imposta, vengono generati automaticamente dall'AI in base al contesto del business (FAQ, prodotti, istruzioni chatbot).
+### Come funziona
 
-### Modifiche
+1. **Nel `widget-config` edge function**: quando un widget viene richiesto e `custom_chips` è `null` (mai impostato), la funzione:
+   - Raccoglie il contesto disponibile: titoli prodotti, domande FAQ, nomi custom links, chatbot instructions
+   - Chiama il Lovable AI Gateway con un prompt che chiede 3 chip pertinenti nella lingua del widget
+   - Salva i chip generati nella colonna `custom_chips` del DB (così non li rigenera ad ogni richiesta)
+   - Li restituisce nella risposta
 
-**1. Database — nuova colonna `custom_chips`**
-Aggiungere una colonna `custom_chips` (jsonb, nullable) alla tabella `widget_configurations`:
-```sql
-ALTER TABLE widget_configurations ADD COLUMN custom_chips jsonb DEFAULT NULL;
-```
-Formato: `["Prenota un tavolo", "Vedi il menù", "Orari di apertura"]`
+2. **Se i dati cambiano**: l'utente può sempre rigenerare dal builder con "Generate with AI", oppure scriverli manualmente
 
-**2. Widget-config edge function**
-Esporre `custom_chips` nella risposta JSON della configurazione.
+3. **Fallback**: se la generazione AI fallisce (rate limit, errore), si usano i chip tradotti di default (`chipFind`, `chipTrack`, `chipInfo`)
 
-**3. Widget-loader**
-Nel render, se `cfg.custom_chips` è un array con almeno 1 elemento, usare quei testi. Altrimenti, usare i fallback tradotti correnti (`chipFind`, `chipTrack`, `chipInfo`).
+### Modifiche tecniche
 
-**4. Builder — nuovo pannello nel builder**
-Aggiungere una sezione "Quick Action Chips" (dentro la sidebar, ad esempio sotto "Contact Card") dove il business può:
-- Vedere i 3 chip attuali
-- Modificare il testo di ciascuno
-- Opzionale: bottone "Genera con AI" che analizza FAQ + prodotti + istruzioni chatbot e suggerisce 3 chip pertinenti
+**File: `supabase/functions/widget-config/index.ts`**
+- Dopo aver caricato config, FAQ, prodotti e custom links, se `custom_chips` è null:
+  - Costruire un contesto testuale (max ~500 chars) da FAQ titles + product titles + chatbot instructions
+  - Chiamare `https://ai.gateway.lovable.dev/v1/chat/completions` con `LOVABLE_API_KEY`
+  - Parsare la risposta JSON array di 3 stringhe
+  - Salvare nel DB con un update su `widget_configurations`
+  - Restituire i chip generati nel payload
+- Se `custom_chips` è già valorizzato, comportamento invariato
 
-**5. Hook useWidgetConfiguration**
-Mappare `custom_chips` nel config load/save.
+### Vantaggi
+- Zero sforzo per il business: i chip sono rilevanti dal primo momento
+- Il business può comunque personalizzarli dal builder se vuole
+- La generazione avviene una sola volta, non ad ogni page view
 
-### Flusso utente
-1. Business apre il builder → sezione "Quick Chips"
-2. Vede 3 input con placeholder dei default tradotti
-3. Può personalizzare (es. "Prenota una consulenza", "Listino prezzi", "Dove siamo")
-4. Oppure clicca "Genera con AI" → l'AI suggerisce chip basati sul contesto
-5. Salva → il widget live mostra i chip personalizzati
-
-### File coinvolti
-- Migration SQL (1 colonna)
-- `supabase/functions/widget-config/index.ts`
-- `supabase/functions/widget-loader/index.ts`
-- `src/hooks/useWidgetConfiguration.ts`
-- Nuovo componente builder (es. `src/components/builder/QuickChipsPanel.tsx`)
-- `src/components/builder/BuilderSidebar.tsx` (aggiungere voce menu)
+### Rischi mitigati
+- **Latenza**: la generazione avviene solo la prima volta, poi i chip sono cached nel DB
+- **Errori AI**: fallback ai chip tradotti di default
+- **Costi**: una sola chiamata AI per widget, mai ripetuta
 
