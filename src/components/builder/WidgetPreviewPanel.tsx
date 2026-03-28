@@ -223,6 +223,7 @@ const WidgetPreviewPanel = ({
   inspireEnabled = false,
   inspireVideos = [],
   inspireStoreProducts,
+  homeSectionOrder = ["product-carousel", "faq", "custom-links", "inspire-me"],
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
   const [previewUrl, setPreviewUrl] = useState("");
