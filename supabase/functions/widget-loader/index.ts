@@ -106,6 +106,15 @@ Deno.serve(async (req) => {
   } catch(e) {}
 
   console.log('[Widjet] Script loaded, fetching config...');
+
+  // Track loader_boot event immediately
+  try {
+    var bootXhr = new XMLHttpRequest();
+    bootXhr.open('POST', u + '/functions/v1/track-widget-event', true);
+    bootXhr.setRequestHeader('Content-Type', 'application/json');
+    bootXhr.send(JSON.stringify({ widget_id: id, event_type: 'loader_boot', page_url: w.location.href }));
+  } catch(e) {}
+
   var x = new XMLHttpRequest();
   x.open('GET', u + '/functions/v1/widget-config?id=' + id, true);
   x.onreadystatechange = function() {
