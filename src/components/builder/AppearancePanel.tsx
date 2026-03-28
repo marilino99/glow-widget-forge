@@ -230,6 +230,7 @@ const AppearancePanel = ({
   const [showCustomColor, setShowCustomColor] = useState(false);
   const colorInputRef = useRef<HTMLInputElement>(null);
   const [googleExpanded, setGoogleExpanded] = useState(false);
+  const [expandedHomeSection, setExpandedHomeSection] = useState<string | null>(null);
   const [googleSearchQuery, setGoogleSearchQuery] = useState("");
   const [googleLinkValue, setGoogleLinkValue] = useState("");
   const [googleSearchTab, setGoogleSearchTab] = useState<"search" | "link">("search");
