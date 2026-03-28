@@ -1369,17 +1369,19 @@ const AppearancePanel = ({
                   <div
                     key={sectionKey}
                     className="relative"
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("section-idx", String(idx));
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
                     onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => handleSectionDrop(e, idx)}
+                    onDrop={(e) => {
+                      // Ignore inner FAQ/link drags
+                      if (e.dataTransfer.types.includes("faq-idx") || e.dataTransfer.types.includes("link-idx")) return;
+                      handleSectionDrop(e, idx);
+                    }}
                   >
-                    <div
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData("section-idx", String(idx));
-                        e.dataTransfer.effectAllowed = "move";
-                      }}
-                      className="absolute -left-6 top-2.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors z-10"
-                    >
+                    <div className="absolute -left-6 top-2.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors z-10 pointer-events-none">
                       <GripVertical className="h-4 w-4" />
                     </div>
                     {renderer()}
