@@ -2800,7 +2800,7 @@ const WidgetPreviewPanel = ({
                             <span className={`text-[15px] font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>✨ Inspire me</span>
                             
                             <button className="self-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium transition-colors"
-                              style={{ backgroundColor: actualHexColor, color: isLightColor(actualHexColor) ? '#0f172a' : '#fff' }}
+                              style={{ backgroundColor: 'transparent', border: `1.5px solid ${actualHexColor}`, color: actualHexColor }}
                               onClick={(e) => { e.stopPropagation(); if (inspireVideos.length > 0) setShowInspireReels(true); }}
                             >Inspire Me ✨</button>
                           </div>
