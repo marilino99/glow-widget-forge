@@ -127,6 +127,11 @@ interface AppearancePanelProps {
   // Home section order
   homeSectionOrder: string[];
   onHomeSectionOrderChange: (order: string[]) => void;
+  // Quick Chips
+  customChips: string[];
+  onCustomChipsChange: (chips: string[]) => void;
+  onSaveCustomChips: (chips: string[]) => void;
+  chatbotInstructions: string;
 }
 
 const presetColors = [
@@ -218,6 +223,10 @@ const AppearancePanel = ({
   hasStoreConnection,
   homeSectionOrder,
   onHomeSectionOrderChange,
+  customChips,
+  onCustomChipsChange,
+  onSaveCustomChips,
+  chatbotInstructions,
 }: AppearancePanelProps) => {
   const inspireFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
