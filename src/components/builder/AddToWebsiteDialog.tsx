@@ -511,9 +511,21 @@ useEffect(() => {
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div>
-                        <span className="text-muted-foreground">Tag status:</span>{" "}
+                        <span className="text-muted-foreground">Admin tag:</span>{" "}
                         <span className={diagnostics.tagInstalled ? "text-green-600" : "text-destructive"}>
                           {diagnostics.tagInstalled ? `✓ Installed (${diagnostics.method})` : "✗ Not found"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Live storefront:</span>{" "}
+                        <span className={diagnostics.storefrontVerified ? "text-green-600 font-medium" : "text-amber-600"}>
+                          {diagnostics.storefrontVerified ? "✓ Confirmed" : "✗ Not confirmed"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Loader boot:</span>{" "}
+                        <span className={diagnostics.loaderBooted ? "text-green-600" : "text-amber-600"}>
+                          {diagnostics.loaderBooted ? "✓ Yes" : "✗ No signal"}
                         </span>
                       </div>
                       <div>
@@ -544,22 +556,28 @@ useEffect(() => {
                         )}
                       </div>
                     )}
-                    {diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
+                    {diagnostics.storefrontError && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3" />
-                        Tag installed but no activity from connected store — try reinstalling
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                        {diagnostics.storefrontError}
+                      </div>
+                    )}
+                    {diagnostics.tagInstalled && !diagnostics.loaderBooted && diagnostics.recentImpressions === 0 && (
+                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                        Tag installed but loader never started — script may be blocked or store is password-protected.
                       </div>
                     )}
                     {diagnostics.tagInstalled && diagnostics.recentImpressions > 0 && diagnostics.launcherChecked && !diagnostics.launcherVisible && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3" />
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
                         Script loads but launcher is hidden — may be covered by theme CSS. Try reinstalling.
                       </div>
                     )}
                     {diagnostics.otherDomainUrl && diagnostics.recentImpressions === 0 && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3" />
-                        Widget seen on another domain ({diagnostics.otherDomainUrl}) but not on your connected store.
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                        Widget active on another domain ({diagnostics.otherDomainUrl}) but not on your connected store.
                       </div>
                     )}
                   </div>
