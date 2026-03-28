@@ -1,21 +1,21 @@
 
 
-## Piano: Uniformare spaziatura tra sezioni nel widget preview
+## Piano: Uniformare margine inferiore tra sezioni nel widget preview
 
 ### Problema
-Le sezioni hanno spacing inconsistente: `product-carousel` usa `mt-4`, `faq` usa `mt-4`, `custom-links` non ha margin-top, `inspire-me` usa `mt-2`. Anche lo spazio tra la contact card e la prima sezione è diverso.
+Tra la contact card ("Chat Now") e la prima sezione c'è solo `mt-4` (16px). Ma tra due sezioni consecutive lo spazio è `pb-4` + `mt-4` = 32px, perché ogni sezione ha `pb-4` interno. Il risultato è che lo spazio tra sezioni è il doppio rispetto allo spazio contact-card → prima sezione.
 
 ### Soluzione
-Uniformare tutte le sezioni con lo stesso `mt-4` (16px) per avere spaziatura identica tra la contact card e ogni sezione, e tra le sezioni stesse.
+Rimuovere `pb-4` da tutte le sezioni, lasciando solo `mt-4` come spaziatore uniforme (16px) tra ogni elemento.
 
 ### Modifiche
 
 **File: `src/components/builder/WidgetPreviewPanel.tsx`**
 
-1. **Riga ~2651** (`product-carousel`): ha già `mt-4` — OK, nessuna modifica
-2. **Riga ~2716** (`faq`): ha già `mt-4` — OK, nessuna modifica  
-3. **Riga ~2767** (`custom-links`): aggiungere `mt-4` al div wrapper
-4. **Riga ~2785** (`inspire-me`): cambiare `mt-2` → `mt-4`
+1. **`product-carousel`** (~riga 2658): rimuovere `pb-4` dal div interno
+2. **`faq`** (~riga 2720): rimuovere `pb-4` dal div interno  
+3. **`custom-links`** (~riga 2767): rimuovere `pb-4` dal div wrapper
+4. **`inspire-me`** (~riga 2785): rimuovere `pb-4` dal div wrapper
 
-Questo garantisce che tutte le sezioni abbiano esattamente 16px di spazio sopra, identico allo spazio tra la contact card e la prima sezione.
+Risultato: tutte le sezioni avranno esattamente 16px di distanza, uguale allo spazio tra la contact card e la prima sezione.
 
