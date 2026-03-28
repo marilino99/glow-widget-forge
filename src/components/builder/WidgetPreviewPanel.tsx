@@ -2648,8 +2648,170 @@ const WidgetPreviewPanel = ({
                   if (sectionKey === "product-carousel") {
                     if (!(productCarouselEnabled && productCards.filter(c => !c.isLoading).length > 0)) return null;
                     return (
-                {productCarouselEnabled && productCards.filter(c => !c.isLoading).length > 0 && <div className="relative mt-4">
-                    {/* Solid mode background band - stops at ~1/4 of first card */}
+                      <div key="product-carousel" className="relative mt-4">
+                        {isSolidMode && (
+                          <div 
+                            className={`absolute top-0 left-0 right-0 h-12 ${useInlineStyles ? "" : colors.solidHeader}`}
+                            style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
+                          />
+                        )}
+                        <div className={`relative pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                          <div className="relative">
+                            <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                              {productCards.filter(c => !c.isLoading).map(card => (
+                                <div key={card.id} className={`flex-shrink-0 rounded-2xl overflow-hidden ${isSolidMode ? "bg-slate-800" : isLight ? "bg-white shadow-sm" : "bg-slate-800"}`} style={{ width: 'calc(100% - 48px)' }}>
+                                  <div className={`aspect-[4/3] flex items-center justify-center ${isSolidMode ? "bg-slate-300" : isLight ? "bg-slate-200" : "bg-slate-300"}`}>
+                                    {card.imageUrl ? <img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover" /> : <div className="h-12 w-12 rounded bg-slate-400" />}
+                                  </div>
+                                  <div className={`p-4 ${isSolidMode ? "text-white" : ""}`}>
+                                    {card.price && (
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-base">{card.price}</span>
+                                        {card.oldPrice && (
+                                          <span className={`text-sm line-through ${isSolidMode ? "text-slate-400" : isLight ? "text-muted-foreground" : "text-slate-500"}`}>{card.oldPrice}</span>
+                                        )}
+                                      </div>
+                                    )}
+                                    <h4 className="font-bold text-base">{card.title}</h4>
+                                    {card.subtitle && (
+                                      <p className={`text-sm mt-0.5 mb-3 ${isSolidMode ? "text-slate-300" : isLight ? "text-muted-foreground" : "text-slate-400"}`}>{card.subtitle}</p>
+                                    )}
+                                    {!card.subtitle && <div className="mb-3" />}
+                                    {card.productUrl ? (
+                                      <a href={card.productUrl} target="_blank" rel="noopener noreferrer" className="block">
+                                        <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`} style={buttonStyle}
+                                          onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
+                                          onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
+                                        >{t.show}</Button>
+                                      </a>
+                                    ) : (
+                                      <Button className={`w-full ${buttonClass} rounded-lg py-2.5 text-sm font-medium`} style={buttonStyle}
+                                        onMouseEnter={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = buttonHoverColor)}
+                                        onMouseLeave={(e) => useInlineStyles && (e.currentTarget.style.backgroundColor = actualHexColor)}
+                                      >{t.show}</Button>
+                                    )}
+                                    <div className="flex gap-2 mt-2">
+                                      <button className={`w-10 flex items-center justify-center rounded-lg py-2 transition-colors ${isSolidMode || !isLight ? "bg-white/10 hover:bg-white/20 text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-700"}`}
+                                        onClick={(e) => { e.preventDefault(); }} title="Add to Shopify cart">
+                                        <ShoppingCart className="h-3.5 w-3.5" />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            {productCards.filter(c => !c.isLoading).length > 1 && (
+                              <button className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+                                <ChevronDown className="h-5 w-5 text-slate-700 -rotate-90" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  if (sectionKey === "faq") {
+                    if (!(faqEnabled && faqItems.length > 0)) return null;
+                    return (
+                      <div key="faq" id="wj-faq" className="relative mt-4">
+                        {isSolidMode && productCards.filter(c => !c.isLoading).length === 0 && (
+                          <div className={`absolute top-0 left-0 right-0 h-10 ${colors.solidHeader}`} />
+                        )}
+                        <div className={`relative px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                          <div className="rounded-2xl p-4" style={{ backgroundColor: isLight ? '#ffffff' : '#252525' }}>
+                            <div className="mb-3 flex items-center gap-2">
+                              <HelpCircle className={`h-4 w-4 ${isLight ? "text-slate-500" : widgetSubtext}`} />
+                              <span className={`text-sm font-medium ${isLight ? "text-slate-900" : ""}`}>{t.quickAnswers}</span>
+                            </div>
+                            <div className="space-y-1">
+                              {faqItems.map((faq) => (
+                                <div key={faq.id}>
+                                  <button 
+                                    onClick={() => setExpandedFaqId(expandedFaqId === faq.id ? null : faq.id)}
+                                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${isLight ? "text-slate-900 hover:bg-slate-100" : "hover:bg-white/5"}`}
+                                  >
+                                    <span className="font-medium">{faq.question || "Untitled question"}</span>
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${expandedFaqId === faq.id ? "rotate-180" : ""} ${isLight ? "text-slate-500" : widgetSubtext}`} />
+                                  </button>
+                                  {expandedFaqId === faq.id && (
+                                    <div className={`px-3 pb-3 pt-1 text-sm ${isLight ? "text-slate-500" : "text-white/60"}`}>
+                                      {faq.answer?.trim()
+                                        ? faq.answer
+                                        : faqAiLoading === faq.id
+                                          ? (
+                                            <div className="flex items-center gap-1.5">
+                                              <div className="flex gap-1">
+                                                <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: actualHexColor, animationDelay: '0ms' }} />
+                                                <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: actualHexColor, animationDelay: '150ms' }} />
+                                                <span className="h-1.5 w-1.5 rounded-full animate-bounce" style={{ backgroundColor: actualHexColor, animationDelay: '300ms' }} />
+                                              </div>
+                                            </div>
+                                          )
+                                          : faqAiAnswers[faq.id]
+                                            ? <span className="italic">{faqAiAnswers[faq.id]}</span>
+                                            : <span className="italic opacity-50">No answer set</span>
+                                      }
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  if (sectionKey === "custom-links") {
+                    if (allLinksForPreview.length === 0) return null;
+                    return (
+                      <div key="custom-links" className={`px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                        {allLinksForPreview.map((link) => (
+                          <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
+                            onClick={(e) => { e.preventDefault(); if (link.url) window.open(link.url, '_blank', 'noopener,noreferrer'); }}
+                            className={`flex items-center justify-between rounded-xl px-4 py-3.5 mb-2 last:mb-0 transition-colors shadow-sm ${isLight ? "bg-white hover:bg-slate-50" : "bg-slate-800 hover:bg-slate-700"}`}
+                          >
+                            <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-white"}`}>{link.name || ""}</span>
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full" style={{ backgroundColor: actualHexColor }}>
+                              <ArrowRight className={`h-4 w-4 ${isLightColor(actualHexColor) ? "text-slate-900" : "text-white"}`} />
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    );
+                  }
+                  if (sectionKey === "inspire-me") {
+                    if (!inspireEnabled) return null;
+                    return (
+                      <div key="inspire-me" className={`px-4 pb-4 mt-2 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                        <div 
+                          className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}
+                          onClick={() => inspireVideos.length > 0 && setShowInspireReels(true)}
+                        >
+                          {inspireVideos.length > 0 ? (
+                            <video src={inspireVideos[0].videoUrl} muted autoPlay loop playsInline className="w-[72px] h-[96px] rounded-xl object-cover flex-shrink-0" />
+                          ) : (
+                            <>
+                              <div className="w-[72px] h-[96px] rounded-xl flex-shrink-0 overflow-hidden"
+                                style={{ background: 'linear-gradient(135deg, #f97316, #ec4899, #8b5cf6)', backgroundSize: '200% 200%', animation: 'inspirePlaceholder 3s ease infinite' }} />
+                              <style>{`@keyframes inspirePlaceholder { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }`}</style>
+                            </>
+                          )}
+                          <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                            <span className={`text-[15px] font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>✨ Inspire me</span>
+                            <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/60"}`}>
+                              {inspireVideos.length > 0 ? `${inspireVideos.length} video${inspireVideos.length > 1 ? 's' : ''}` : 'No videos yet'}
+                            </span>
+                            <button className="self-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium transition-colors"
+                              style={{ backgroundColor: actualHexColor, color: isLightColor(actualHexColor) ? '#0f172a' : '#fff' }}
+                              onClick={(e) => { e.stopPropagation(); if (inspireVideos.length > 0) setShowInspireReels(true); }}
+                            >Inspire Me ✨</button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
                     {isSolidMode && (
                       <div 
                         className={`absolute top-0 left-0 right-0 h-12 ${useInlineStyles ? "" : colors.solidHeader}`}
