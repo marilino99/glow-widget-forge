@@ -218,7 +218,6 @@ const AppearancePanel = ({
   hasStoreConnection,
   homeSectionOrder,
   onHomeSectionOrderChange,
-  onNavigateToSection,
 }: AppearancePanelProps) => {
   const inspireFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
