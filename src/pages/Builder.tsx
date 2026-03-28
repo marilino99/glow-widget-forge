@@ -595,8 +595,8 @@ const Builder = () => {
             onBuilderViewChange={(view) => {
               const wasConversations = builderView === "conversations";
               setBuilderView(view);
-              if (view === "conversations") setIsMiniSidebar(true);
-              if (wasConversations && view === "contacts" && !autoMini) setIsMiniSidebar(false);
+              if (view === "conversations" || view === "appearance" || view === "data-sources" || view === "integrations") setIsMiniSidebar(true);
+              else if ((wasConversations || builderView === "appearance" || builderView === "data-sources" || builderView === "integrations") && !autoMini) setIsMiniSidebar(false);
             }}
             isMiniSidebar={isMiniSidebar}
             widgetId={config.id || undefined}
