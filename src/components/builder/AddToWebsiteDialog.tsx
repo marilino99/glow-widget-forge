@@ -248,7 +248,7 @@ useEffect(() => {
       });
 
       if (res.error) throw res.error;
-      const result = res.data as { success?: boolean; alreadyInstalled?: boolean; error?: string; method?: string };
+      const result = res.data as { success?: boolean; alreadyInstalled?: boolean; error?: string; method?: string; storefrontVerified?: boolean; storefrontError?: string };
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
@@ -261,8 +261,15 @@ useEffect(() => {
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: result.storefrontVerified ?? false,
+          storefrontError: result.storefrontError,
         }));
-        toast({ title: "Already installed!", description: "The widget is already active on your Shopify store." });
+        toast({ 
+          title: result.storefrontVerified ? "Already installed!" : "Installed in admin", 
+          description: result.storefrontVerified 
+            ? "The widget is active on your Shopify store." 
+            : result.storefrontError || "Installed in admin but not confirmed on live storefront." 
+        });
       } else if (result.success) {
         setShopifyInstalled(true);
         setDiagnostics(prev => ({
@@ -272,8 +279,15 @@ useEffect(() => {
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: result.storefrontVerified ?? false,
+          storefrontError: result.storefrontError,
         }));
-        toast({ title: "Installed!", description: "Widget is now live on your Shopify store." });
+        toast({ 
+          title: result.storefrontVerified ? "Installed & verified!" : "Installed in admin", 
+          description: result.storefrontVerified 
+            ? "Widget is live on your Shopify store." 
+            : result.storefrontError || "Installed but not yet confirmed on live storefront."
+        });
         // Refresh diagnostics after a short delay
         setTimeout(() => fetchDiagnostics(), 2000);
         if (user) {
@@ -307,7 +321,7 @@ useEffect(() => {
       });
 
       if (res.error) throw res.error;
-      const result = res.data as { success?: boolean; error?: string; method?: string; verified?: boolean };
+      const result = res.data as { success?: boolean; error?: string; method?: string; verified?: boolean; storefrontVerified?: boolean; storefrontError?: string };
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
@@ -321,8 +335,14 @@ useEffect(() => {
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: result.storefrontVerified ?? false,
+          storefrontError: result.storefrontError,
         }));
-        toast({ title: result.verified ? "Verified!" : "Reinstalled!", description: result.verified ? "Widget installed and verified on your Shopify store." : "Widget has been freshly installed on your Shopify store." });
+        const title = result.storefrontVerified ? "Verified!" : "Reinstalled in admin";
+        const desc = result.storefrontVerified 
+          ? "Widget installed and verified on your Shopify store." 
+          : result.storefrontError || "Installed but not yet confirmed on live storefront.";
+        toast({ title, description: desc });
         setTimeout(() => fetchDiagnostics(), 2000);
       }
     } catch (e: any) {
