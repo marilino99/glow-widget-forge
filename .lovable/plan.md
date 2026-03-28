@@ -1,34 +1,27 @@
 
 
-## Piano: Migliorare il drag-and-drop con indicatore visivo di drop
+## Piano: Fix wobble durante drag-and-drop sezioni
 
 ### Problema
-Il drag-and-drop funziona ma non è chiaro *dove* la sezione verrà posizionata. Manca un feedback visivo durante il trascinamento.
+Il "traballo" è causato dal fatto che ogni volta che il cursore si muove sopra una sezione durante il drag, `onDragOver` ricalcola `dropTargetIdx` e l'indicatore di drop appare/scompare rapidamente, causando il resize del layout che a sua volta muove gli elementi sotto il cursore, triggerando un nuovo `onDragOver` — creando un loop visivo.
+
+### Soluzione
+Aggiungere un **debounce spaziale** (dead zone) per evitare che piccoli movimenti del mouse causino il flicker dell'indicatore.
 
 ### Modifiche
 
 **File: `src/components/builder/AppearancePanel.tsx`**
 
-1. Aggiungere stato `dropTargetIdx: number | null` per tracciare dove l'utente sta trascinando
+1. Nel `onDragOver`, ignorare aggiornamenti se il nuovo `targetIdx` è uguale al `dropTargetIdx` corrente (evitare re-render inutili)
 
-2. Nel `onDragOver` di ogni sezione, calcolare se il cursore è nella metà superiore o inferiore dell'elemento per determinare se l'indicatore va sopra o sotto:
-   - Usare `e.clientY` vs `getBoundingClientRect()` per capire la posizione
-   - Settare `dropTargetIdx` all'indice corrispondente
+2. Aggiungere una dead zone centrale: se il cursore è nel 30% centrale dell'elemento, non cambiare `dropTargetIdx` — reagire solo quando il cursore è chiaramente nella metà superiore o inferiore (es. primo 35% = sopra, ultimo 35% = sotto, centro = ignora)
 
-3. Rendere una **linea blu orizzontale** (2-3px, colore primary) tra le sezioni nella posizione indicata da `dropTargetIdx`:
-   - La linea appare tra le sezioni come indicatore di inserimento
-   - Con una piccola animazione di fade-in
+3. Dare all'indicatore di drop una dimensione fissa con `min-height` e `margin` negativi o `absolute positioning` per evitare che la sua apparizione sposti gli altri elementi nel layout (causa principale del wobble)
 
-4. Nel `onDragLeave` del container, resettare `dropTargetIdx` a null
-
-5. Nel `onDrop`, resettare `dropTargetIdx` a null
-
-6. Spostare il grip handle dentro l'header della sezione (visibile, non con offset negativo) per renderlo più ovvio e accessibile
-
-7. Aggiungere un leggero `border-dashed border-primary` sulla sezione che si sta trascinando (oltre all'opacity ridotta)
+4. Rendere l'indicatore `position: absolute` con `pointer-events: none` sovrapposto al bordo tra le sezioni, così non altera il flusso del documento
 
 ### Dettagli tecnici
-- Stato locale `dropTargetIdx` gestito con `useState<number | null>`
-- L'indicatore è un `div` con `h-0.5 bg-primary rounded-full mx-4` inserito condizionalmente tra le sezioni
-- Il calcolo sopra/sotto usa: `const rect = e.currentTarget.getBoundingClientRect(); const isAbove = e.clientY < rect.top + rect.height / 2`
+- L'indicatore diventa `absolute` posizionato con `top: -4px` rispetto alla sezione target, anziché essere un elemento nel flusso
+- Il wrapper di ogni sezione diventa `relative` per contenere l'indicatore assoluto
+- Dead zone: `const ratio = (e.clientY - rect.top) / rect.height; if (ratio > 0.3 && ratio < 0.7) return;`
 
