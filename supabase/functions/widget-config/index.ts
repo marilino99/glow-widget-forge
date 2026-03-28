@@ -130,6 +130,72 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Auto-generate custom_chips if null
+    let customChips = config.custom_chips;
+    if (!customChips) {
+      try {
+        const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+        if (LOVABLE_API_KEY) {
+          // Build context from available data
+          const contextParts: string[] = [];
+          if (config.chatbot_instructions) {
+            contextParts.push("Business instructions: " + config.chatbot_instructions.slice(0, 200));
+          }
+          if (faqItems && faqItems.length > 0) {
+            contextParts.push("FAQ topics: " + faqItems.slice(0, 5).map((f: any) => f.question).join(", "));
+          }
+          if (productCards && productCards.length > 0) {
+            contextParts.push("Products: " + productCards.slice(0, 5).map((p: any) => p.title).join(", "));
+          }
+          if (customLinks && customLinks.length > 0) {
+            contextParts.push("Links: " + customLinks.slice(0, 5).map((l: any) => l.name).join(", "));
+          }
+          const context = contextParts.join(". ").slice(0, 500);
+
+          const lang = config.language || "en";
+          const prompt = context.length > 0
+            ? `Based on this business context: "${context}". Generate exactly 3 short action button labels (max 5 words each) that a website visitor would click to get help. Return ONLY a JSON array of 3 strings in language "${lang}". Example: ["Book a table","See the menu","Opening hours"]`
+            : `Generate 3 generic short action button labels (max 5 words each) for a website chat widget. Return ONLY a JSON array of 3 strings in language "${lang}".`;
+
+          const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "google/gemini-2.5-flash-lite",
+              messages: [
+                { role: "system", content: "You return only valid JSON arrays. No markdown, no explanation." },
+                { role: "user", content: prompt },
+              ],
+            }),
+          });
+
+          if (aiResp.ok) {
+            const aiData = await aiResp.json();
+            const raw = aiData.choices?.[0]?.message?.content?.trim() || "";
+            // Extract JSON array from response
+            const match = raw.match(/\[[\s\S]*?\]/);
+            if (match) {
+              const parsed = JSON.parse(match[0]);
+              if (Array.isArray(parsed) && parsed.length >= 3 && parsed.every((s: any) => typeof s === "string")) {
+                customChips = parsed.slice(0, 3);
+                // Save to DB so we don't regenerate
+                await supabase
+                  .from("widget_configurations")
+                  .update({ custom_chips: customChips })
+                  .eq("id", widgetId);
+                console.log("Auto-generated chips:", customChips);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Chip auto-generation failed, using defaults:", e);
+      }
+    }
+
     // Return the complete widget configuration
     return new Response(
       JSON.stringify({
@@ -173,7 +239,7 @@ Deno.serve(async (req) => {
         inspire_enabled: config.inspire_enabled ?? false,
         inspire_videos: inspireVideos,
         home_section_order: config.home_section_order || ["product-carousel", "faq", "custom-links", "inspire-me"],
-        custom_chips: config.custom_chips || null,
+        custom_chips: customChips || null,
       }),
       { headers: corsHeaders }
     );
