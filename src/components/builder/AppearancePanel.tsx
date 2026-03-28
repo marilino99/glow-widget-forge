@@ -127,6 +127,8 @@ interface AppearancePanelProps {
   // Home section order
   homeSectionOrder: string[];
   onHomeSectionOrderChange: (order: string[]) => void;
+  // Navigation to section panels
+  onNavigateToSection?: (sectionKey: string) => void;
 }
 
 const presetColors = [
