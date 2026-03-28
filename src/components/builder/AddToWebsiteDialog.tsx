@@ -298,7 +298,7 @@ useEffect(() => {
       });
 
       if (res.error) throw res.error;
-      const result = res.data as { success?: boolean; error?: string; method?: string };
+      const result = res.data as { success?: boolean; error?: string; method?: string; verified?: boolean };
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
