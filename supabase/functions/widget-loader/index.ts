@@ -1638,6 +1638,25 @@ Deno.serve(async (req) => {
         reelsScroll.querySelectorAll('video').forEach(function(v) { v.muted = isMuted; });
       });
 
+      // Video counter dots
+      var dotsWrap = d.createElement('div');
+      dotsWrap.style.cssText = 'position:absolute !important;top:14px !important;left:50% !important;transform:translateX(-50%) !important;z-index:60 !important;display:flex !important;gap:4px !important';
+      var dots = [];
+      inspireVideos.forEach(function(_, i) {
+        var dot = d.createElement('div');
+        dot.style.cssText = 'height:4px !important;border-radius:2px !important;transition:all .2s !important;' + (i === 0 ? 'width:20px !important;background:#fff !important' : 'width:6px !important;background:rgba(255,255,255,0.4) !important');
+        dots.push(dot);
+        dotsWrap.appendChild(dot);
+      });
+
+      // Slide animation keyframes
+      var animStyle = d.createElement('style');
+      animStyle.textContent = '@keyframes wjSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}';
+      inspireView.appendChild(animStyle);
+
+      // Track expanded state per slide
+      var expandedSlides = {};
+
       inspireVideos.forEach(function(vid, vidIdx) {
         var slide = d.createElement('div');
         slide.style.cssText = 'height:100% !important;scroll-snap-align:start !important;position:relative !important;flex-shrink:0 !important';
@@ -1673,7 +1692,7 @@ Deno.serve(async (req) => {
         gradOverlay.style.cssText = 'position:absolute !important;inset:auto 0 0 0 !important;height:180px !important;background:linear-gradient(transparent,rgba(0,0,0,0.85)) !important;pointer-events:none !important;z-index:5 !important';
         slide.appendChild(gradOverlay);
 
-        // Product overlay if linked products exist
+        // Product overlay — stacked deck with expand/collapse
         if (vid.linked_product_ids && vid.linked_product_ids.length > 0 && products.length > 0) {
           var linkedProds = vid.linked_product_ids.map(function(pid) {
             return products.find(function(p) { return p.id === pid; });
@@ -1681,26 +1700,63 @@ Deno.serve(async (req) => {
 
           if (linkedProds.length > 0) {
             var overlay = d.createElement('div');
-            overlay.style.cssText = 'position:absolute !important;inset:auto 0 24px 0 !important;padding:0 12px !important;z-index:10 !important;display:flex !important;flex-direction:column !important;gap:8px !important';
+            overlay.style.cssText = 'position:absolute !important;inset:auto 0 24px 0 !important;padding:0 12px !important;z-index:10 !important;animation:wjSlideUp 0.5s ease-out both !important';
 
-            linkedProds.forEach(function(prod) {
-              var card = d.createElement('div');
-              card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;cursor:pointer !important;transition:background .15s !important';
+            function buildCardHtml(prod) {
               var imgHtml = prod.image_url ? '<img src="' + esc(prod.image_url) + '" style="width:48px !important;height:48px !important;border-radius:8px !important;object-fit:cover !important;flex-shrink:0 !important"/>' : '<div style="width:48px !important;height:48px !important;border-radius:8px !important;background:rgba(255,255,255,0.1) !important;flex-shrink:0 !important"></div>';
               var priceHtml = prod.price ? '<span style="font-size:14px !important;font-weight:700 !important;color:#fff !important">' + esc(prod.price) + '</span>' : '';
               var oldPriceHtml = prod.old_price ? '<span style="font-size:12px !important;color:rgba(255,255,255,0.5) !important;text-decoration:line-through !important">' + esc(prod.old_price) + '</span>' : '';
-              card.innerHTML = imgHtml + '<div style="display:flex !important;flex-direction:column !important;gap:2px !important;min-width:0 !important;flex:1 !important"><span style="font-size:11px !important;font-weight:600 !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important">' + esc(prod.title) + '</span><div style="display:flex !important;align-items:center !important;gap:6px !important">' + priceHtml + oldPriceHtml + '</div></div><div style="flex-shrink:0 !important;width:36px !important;height:36px !important;border-radius:50% !important;background:rgba(255,255,255,0.2) !important;display:flex !important;align-items:center !important;justify-content:center !important"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>';
+              return imgHtml + '<div style="display:flex !important;flex-direction:column !important;gap:2px !important;min-width:0 !important;flex:1 !important"><span style="font-size:11px !important;font-weight:600 !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important">' + esc(prod.title) + '</span><div style="display:flex !important;align-items:center !important;gap:6px !important">' + priceHtml + oldPriceHtml + '</div></div><div style="flex-shrink:0 !important;width:36px !important;height:36px !important;border-radius:50% !important;background:rgba(255,255,255,0.2) !important;display:flex !important;align-items:center !important;justify-content:center !important"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>';
+            }
 
-              card.addEventListener('click', function() {
-                if (shopifyDomain && prod.shopify_variant_id) {
-                  addToShopifyCart(prod.shopify_variant_id, null);
-                } else if (prod.product_url) {
-                  w.location.href = prod.product_url;
+            function renderCards(isExpanded) {
+              overlay.innerHTML = '';
+              if (isExpanded) {
+                // Expanded: vertical stack
+                var stack = d.createElement('div');
+                stack.style.cssText = 'display:flex !important;flex-direction:column !important;gap:8px !important';
+                linkedProds.forEach(function(prod, pIdx) {
+                  var card = d.createElement('div');
+                  card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;cursor:pointer !important;transition:all .3s !important;animation:wjSlideUp 0.3s ease-out ' + (pIdx * 60) + 'ms both !important';
+                  card.innerHTML = buildCardHtml(prod);
+                  card.querySelector('div[style*="border-radius:50%"]').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (shopifyDomain && prod.shopify_variant_id) {
+                      addToShopifyCart(prod.shopify_variant_id, null);
+                    } else if (prod.product_url) {
+                      w.open(prod.product_url, '_blank');
+                    }
+                  });
+                  stack.appendChild(card);
+                });
+                overlay.appendChild(stack);
+              } else {
+                // Collapsed: stacked deck
+                var deck = d.createElement('div');
+                deck.style.cssText = 'position:relative !important;height:56px !important;cursor:pointer !important';
+                linkedProds.slice(0, 3).forEach(function(prod, pIdx) {
+                  var card = d.createElement('div');
+                  card.style.cssText = 'position:absolute !important;left:0 !important;right:0 !important;display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;transition:all .3s !important;bottom:' + (pIdx * 5) + 'px !important;transform:scale(' + (1 - pIdx * 0.04) + ') !important;opacity:' + (pIdx === 0 ? 1 : 0.7 - pIdx * 0.2) + ' !important;z-index:' + (10 - pIdx) + ' !important';
+                  card.innerHTML = buildCardHtml(prod);
+                  deck.appendChild(card);
+                });
+                if (linkedProds.length > 1) {
+                  var badge = d.createElement('div');
+                  badge.style.cssText = 'position:absolute !important;top:-8px !important;right:8px !important;z-index:20 !important;background:rgba(255,255,255,0.25) !important;backdrop-filter:blur(4px) !important;color:#fff !important;font-size:10px !important;font-weight:600 !important;padding:2px 8px !important;border-radius:10px !important';
+                  badge.textContent = linkedProds.length + ' products';
+                  deck.appendChild(badge);
                 }
-              });
+                overlay.appendChild(deck);
+              }
+            }
 
-              overlay.appendChild(card);
+            renderCards(false);
+            overlay.addEventListener('click', function(e) {
+              e.stopPropagation();
+              expandedSlides[vidIdx] = !expandedSlides[vidIdx];
+              renderCards(expandedSlides[vidIdx]);
             });
+
             slide.appendChild(overlay);
           }
         }
@@ -1714,6 +1770,7 @@ Deno.serve(async (req) => {
       inspireClose.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg>';
 
       inspireView.appendChild(reelsScroll);
+      inspireView.appendChild(dotsWrap);
       inspireView.appendChild(muteBtn);
       inspireView.appendChild(inspireClose);
 
@@ -1740,8 +1797,17 @@ Deno.serve(async (req) => {
         entries.forEach(function(entry) {
           var vid = entry.target.querySelector('video');
           if (!vid) return;
-          if (entry.isIntersecting) { vid.play().catch(function(){}); }
-          else { vid.pause(); }
+          if (entry.isIntersecting) {
+            vid.play().catch(function(){});
+            // Update dots
+            var slides = Array.from(reelsScroll.children);
+            var activeIdx = slides.indexOf(entry.target);
+            dots.forEach(function(dot, i) {
+              dot.style.cssText = 'height:4px !important;border-radius:2px !important;transition:all .2s !important;' + (i === activeIdx ? 'width:20px !important;background:#fff !important' : 'width:6px !important;background:rgba(255,255,255,0.4) !important');
+            });
+          } else {
+            vid.pause();
+          }
         });
       }, { root: reelsScroll, threshold: 0.6 });
 
