@@ -1015,7 +1015,14 @@ const AppearancePanel = ({
           const sectionRenderers: Record<string, () => React.ReactNode> = {
             "faq": () => (
               <div className="rounded-lg border border-border overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-2.5">
+                <div
+                  className="flex items-center justify-between px-3 py-2.5 cursor-pointer select-none"
+                  onClick={() => setExpandedSections(prev => {
+                    const next = new Set(prev);
+                    next.has("faq") ? next.delete("faq") : next.add("faq");
+                    return next;
+                  })}
+                >
                   <div className="flex items-center gap-2.5">
                     <HelpCircle className="h-4 w-4 text-blue-500" />
                     <div>
@@ -1023,9 +1030,14 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">Frequently asked questions</p>
                     </div>
                   </div>
-                  <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+                  <div className="flex items-center gap-2">
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("faq") ? "rotate-180" : ""}`} />
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+                    </div>
+                  </div>
                 </div>
-                {faqEnabled && (
+                {expandedSections.has("faq") && faqEnabled && (
                   <div className="border-t border-border px-3 py-3 space-y-3">
                     {faqItems.map((item, idx) => {
                       const ordinal = idx === 0 ? "1st" : idx === 1 ? "2nd" : idx === 2 ? "3rd" : `${idx + 1}th`;
