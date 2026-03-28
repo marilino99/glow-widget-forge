@@ -1403,14 +1403,16 @@ const AppearancePanel = ({
             ),
           };
 
-          const handleSectionDrop = (e: React.DragEvent, toIdx: number) => {
+          const handleSectionDrop = (e: React.DragEvent, _toIdx: number) => {
             e.preventDefault();
             const fromIdx = parseInt(e.dataTransfer.getData("section-idx"), 10);
-            if (isNaN(fromIdx) || fromIdx === toIdx) return;
+            if (isNaN(fromIdx) || dropTargetIdx === null) return;
             const newOrder = [...homeSectionOrder];
             const [moved] = newOrder.splice(fromIdx, 1);
-            newOrder.splice(toIdx, 0, moved);
+            const insertIdx = dropTargetIdx > fromIdx ? dropTargetIdx - 1 : dropTargetIdx;
+            newOrder.splice(insertIdx, 0, moved);
             onHomeSectionOrderChange(newOrder);
+            setDropTargetIdx(null);
           };
 
           return (
