@@ -43,6 +43,9 @@ interface ShopifyDiagnostics {
   launcherChecked: boolean;
   otherDomainUrl?: string;
   otherDomainCount?: number;
+  storefrontVerified?: boolean;
+  storefrontError?: string;
+  loaderBooted?: boolean;
 }
 
 const LovableLogo = ({ className }: { className?: string }) => (
@@ -110,6 +113,7 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
       const hasLauncherVisible = storeEvents.some(e => e.event_type === "launcher_visible");
       const hasLauncherHidden = storeEvents.some(e => e.event_type === "launcher_hidden");
       const launcherChecked = hasLauncherVisible || hasLauncherHidden;
+      const hasLoaderBoot = (recentEvents || []).some(e => e.event_type === "loader_boot");
 
       // Check if there are events from other domains (mismatch warning)
       const otherDomainUrl = otherDomainEvents.length > 0 ? otherDomainEvents[0]?.page_url : undefined;
@@ -124,6 +128,9 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         launcherChecked,
         otherDomainUrl,
         otherDomainCount: otherDomainEvents.length,
+        storefrontVerified: prev?.storefrontVerified,
+        storefrontError: prev?.storefrontError,
+        loaderBooted: hasLoaderBoot,
       }));
     } catch (e) {
       // Silent
@@ -149,6 +156,8 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: res.data?.storefrontVerified ?? false,
+          storefrontError: res.data?.storefrontError,
         }));
       } else {
         setDiagnostics(prev => ({
@@ -239,7 +248,7 @@ useEffect(() => {
       });
 
       if (res.error) throw res.error;
-      const result = res.data as { success?: boolean; alreadyInstalled?: boolean; error?: string; method?: string };
+      const result = res.data as { success?: boolean; alreadyInstalled?: boolean; error?: string; method?: string; storefrontVerified?: boolean; storefrontError?: string };
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
@@ -252,8 +261,15 @@ useEffect(() => {
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: result.storefrontVerified ?? false,
+          storefrontError: result.storefrontError,
         }));
-        toast({ title: "Already installed!", description: "The widget is already active on your Shopify store." });
+        toast({ 
+          title: result.storefrontVerified ? "Already installed!" : "Installed in admin", 
+          description: result.storefrontVerified 
+            ? "The widget is active on your Shopify store." 
+            : result.storefrontError || "Installed in admin but not confirmed on live storefront." 
+        });
       } else if (result.success) {
         setShopifyInstalled(true);
         setDiagnostics(prev => ({
@@ -263,8 +279,15 @@ useEffect(() => {
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: result.storefrontVerified ?? false,
+          storefrontError: result.storefrontError,
         }));
-        toast({ title: "Installed!", description: "Widget is now live on your Shopify store." });
+        toast({ 
+          title: result.storefrontVerified ? "Installed & verified!" : "Installed in admin", 
+          description: result.storefrontVerified 
+            ? "Widget is live on your Shopify store." 
+            : result.storefrontError || "Installed but not yet confirmed on live storefront."
+        });
         // Refresh diagnostics after a short delay
         setTimeout(() => fetchDiagnostics(), 2000);
         if (user) {
@@ -298,7 +321,7 @@ useEffect(() => {
       });
 
       if (res.error) throw res.error;
-      const result = res.data as { success?: boolean; error?: string; method?: string; verified?: boolean };
+      const result = res.data as { success?: boolean; error?: string; method?: string; verified?: boolean; storefrontVerified?: boolean; storefrontError?: string };
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
@@ -312,8 +335,14 @@ useEffect(() => {
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: result.storefrontVerified ?? false,
+          storefrontError: result.storefrontError,
         }));
-        toast({ title: result.verified ? "Verified!" : "Reinstalled!", description: result.verified ? "Widget installed and verified on your Shopify store." : "Widget has been freshly installed on your Shopify store." });
+        const title = result.storefrontVerified ? "Verified!" : "Reinstalled in admin";
+        const desc = result.storefrontVerified 
+          ? "Widget installed and verified on your Shopify store." 
+          : result.storefrontError || "Installed but not yet confirmed on live storefront.";
+        toast({ title, description: desc });
         setTimeout(() => fetchDiagnostics(), 2000);
       }
     } catch (e: any) {
@@ -482,9 +511,21 @@ useEffect(() => {
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div>
-                        <span className="text-muted-foreground">Tag status:</span>{" "}
+                        <span className="text-muted-foreground">Admin tag:</span>{" "}
                         <span className={diagnostics.tagInstalled ? "text-green-600" : "text-destructive"}>
                           {diagnostics.tagInstalled ? `✓ Installed (${diagnostics.method})` : "✗ Not found"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Live storefront:</span>{" "}
+                        <span className={diagnostics.storefrontVerified ? "text-green-600 font-medium" : "text-amber-600"}>
+                          {diagnostics.storefrontVerified ? "✓ Confirmed" : "✗ Not confirmed"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Loader boot:</span>{" "}
+                        <span className={diagnostics.loaderBooted ? "text-green-600" : "text-amber-600"}>
+                          {diagnostics.loaderBooted ? "✓ Yes" : "✗ No signal"}
                         </span>
                       </div>
                       <div>
@@ -515,22 +556,28 @@ useEffect(() => {
                         )}
                       </div>
                     )}
-                    {diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
+                    {diagnostics.storefrontError && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3" />
-                        Tag installed but no activity from connected store — try reinstalling
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                        {diagnostics.storefrontError}
+                      </div>
+                    )}
+                    {diagnostics.tagInstalled && !diagnostics.loaderBooted && diagnostics.recentImpressions === 0 && (
+                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                        Tag installed but loader never started — script may be blocked or store is password-protected.
                       </div>
                     )}
                     {diagnostics.tagInstalled && diagnostics.recentImpressions > 0 && diagnostics.launcherChecked && !diagnostics.launcherVisible && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3" />
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
                         Script loads but launcher is hidden — may be covered by theme CSS. Try reinstalling.
                       </div>
                     )}
                     {diagnostics.otherDomainUrl && diagnostics.recentImpressions === 0 && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3" />
-                        Widget seen on another domain ({diagnostics.otherDomainUrl}) but not on your connected store.
+                        <AlertTriangle className="h-3 w-3 shrink-0" />
+                        Widget active on another domain ({diagnostics.otherDomainUrl}) but not on your connected store.
                       </div>
                     )}
                   </div>
@@ -538,16 +585,31 @@ useEffect(() => {
                 
                 {shopifyInstalled ? (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 p-4">
-                      <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                    <div className="flex items-center gap-2 rounded-lg border p-4" style={{
+                      backgroundColor: diagnostics?.storefrontVerified ? 'hsl(var(--primary) / 0.1)' : 'hsl(45 93% 47% / 0.1)',
+                      borderColor: diagnostics?.storefrontVerified ? 'hsl(var(--primary) / 0.2)' : 'hsl(45 93% 47% / 0.3)',
+                    }}>
+                      {diagnostics?.storefrontVerified ? (
+                        <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                      ) : (
+                        <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+                      )}
                        <div>
-                         <p className="text-sm font-semibold text-foreground">Widget installed!</p>
+                         <p className="text-sm font-semibold text-foreground">
+                           {diagnostics?.storefrontVerified 
+                             ? "Widget live & verified!" 
+                             : "Installed in admin — not confirmed live"}
+                         </p>
                          <p className="text-xs text-muted-foreground">
-                           {diagnostics && diagnostics.launcherChecked && diagnostics.launcherVisible
-                             ? "Widget confirmed live and visible on your store."
-                             : diagnostics && diagnostics.recentImpressions > 0
-                             ? "Script running — waiting for visibility confirmation."
-                             : "The script tag is installed on your store."}
+                           {diagnostics?.storefrontVerified
+                             ? diagnostics.launcherChecked && diagnostics.launcherVisible
+                               ? "Widget confirmed live and visible on your store."
+                               : diagnostics.recentImpressions > 0
+                               ? "Script running — waiting for visibility confirmation."
+                               : "Script found on your live storefront."
+                             : diagnostics?.storefrontError 
+                               ? diagnostics.storefrontError
+                               : "The tag is in your theme, but the widget was not detected on the live storefront. Your store may be password-protected."}
                          </p>
                        </div>
                     </div>

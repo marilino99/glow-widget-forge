@@ -137,8 +137,39 @@ Deno.serve(async (req) => {
       }
     }
 
+    // --- Storefront verification: check if script actually appears on public site ---
+    let storefrontVerified = false;
+    let storefrontError = "";
+    if (!checkOnly || themeLiquidResult.alreadyInstalled) {
+      try {
+        const sfRes = await fetch(`https://${conn.store_domain}`, {
+          headers: { "User-Agent": "Widjet-Verifier/1.0" },
+          redirect: "follow",
+        });
+        if (sfRes.ok) {
+          const html = await sfRes.text();
+          storefrontVerified = html.includes("widget-loader") && html.includes(widget.id);
+          if (!storefrontVerified) {
+            storefrontError = "Script not found in storefront HTML. Store may be password-protected or theme not published.";
+          }
+        } else if (sfRes.status === 401 || sfRes.status === 403) {
+          storefrontError = "Store appears password-protected. Widget cannot load until password page is removed.";
+        } else {
+          storefrontError = `Storefront returned status ${sfRes.status}`;
+        }
+      } catch (e) {
+        storefrontError = `Could not reach storefront: ${e.message}`;
+      }
+      console.log(`[install-widget] Storefront verification: verified=${storefrontVerified}, error=${storefrontError}`);
+    }
+
     return new Response(
-      JSON.stringify(themeLiquidResult),
+      JSON.stringify({
+        ...themeLiquidResult,
+        storefrontVerified,
+        storefrontError: storefrontError || undefined,
+        storeDomain: conn.store_domain,
+      }),
       { status: themeLiquidResult.error ? 500 : 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
