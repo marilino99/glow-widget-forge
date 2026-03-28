@@ -302,6 +302,7 @@ useEffect(() => {
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
+        setShopifyInstalled(false);
       } else if (result.success) {
         setShopifyInstalled(true);
         setDiagnostics(prev => ({
@@ -312,7 +313,7 @@ useEffect(() => {
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
         }));
-        toast({ title: "Reinstalled!", description: "Widget has been freshly installed on your Shopify store." });
+        toast({ title: result.verified ? "Verified!" : "Reinstalled!", description: result.verified ? "Widget installed and verified on your Shopify store." : "Widget has been freshly installed on your Shopify store." });
         setTimeout(() => fetchDiagnostics(), 2000);
       }
     } catch (e: any) {
