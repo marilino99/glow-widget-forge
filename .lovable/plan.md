@@ -1,26 +1,31 @@
 
 
-## Piano: Migliorare leggibilità delle product card nei Reels
+## Piano: Spostare "Powered by WidJet" sotto la barra Home/Contact
 
-### Problema
-Le product card nella vista Reels del widget live hanno testo sovrapposto e poco leggibile perché:
-1. Lo sfondo della card è troppo trasparente (`rgba(255,255,255,0.15)`) — il contenuto del video dietro traspare troppo
-2. Il padding e la spaziatura tra titolo e prezzo sono troppo stretti (`gap:2px`, `padding:8px`)
-3. Il gradiente scuro sul fondo del video non è abbastanza intenso per garantire contrasto
+### Situazione attuale
+Nel `widget-loader/index.ts` (righe 1830-1844), l'ordine di assemblaggio è:
+1. `scroll` (contenuto scrollabile)
+2. `powered` (branding "Powered by WidJet")
+3. `footer` (barra navigazione Home/Contact)
 
-### Modifiche
+Questo fa apparire il branding tra il contenuto e la nav bar, come si vede nello screenshot di BCP AI.
+
+### Modifica proposta
 
 **File: `supabase/functions/widget-loader/index.ts`**
 
-1. **Aumentare opacità sfondo card** — da `rgba(255,255,255,0.15)` a `rgba(0,0,0,0.65)` (sfondo scuro semi-trasparente) sia nelle card collapsed (deck) che expanded, per contrasto netto col video dietro
+Invertire l'ordine di `powered` e `footer` nell'assemblaggio DOM:
 
-2. **Aumentare padding e gap** — card padding da `8px` a `10px 12px`, gap tra titolo e prezzo da `2px` a `4px`
+```
+homeView.appendChild(scroll);
+homeView.appendChild(footer);    // nav bar PRIMA
+if (showBranding) {
+  homeView.appendChild(powered); // branding DOPO
+}
+```
 
-3. **Aumentare dimensione testo** — titolo da `11px` a `13px`, prezzo da `14px` a `15px`
+In questo modo il "Powered by WidJet" apparirà **sotto** la barra Home/Contact, oppure in alternativa possiamo integrarlo come riga piccola dentro il footer stesso.
 
-4. **Aumentare altezza del deck collapsed** — da `56px` a `64px` per evitare che le card si sovrappongano verticalmente
-
-5. **Intensificare il gradiente di fondo** — da `rgba(0,0,0,0.85)` a `rgba(0,0,0,0.9)` e altezza da `180px` a `220px`
-
-Queste modifiche si applicano alla funzione `buildCardHtml` e ai container `deck`/`stack` (righe ~1697-1742).
+### Risultato
+Il branding sarà posizionato sotto la navigazione, risultando meno intrusivo e più coerente col layout.
 
