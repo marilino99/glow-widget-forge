@@ -228,6 +228,7 @@ const AppearancePanel = ({
   onCustomChipsChange,
   onSaveCustomChips,
   chatbotInstructions,
+  widgetId,
 }: AppearancePanelProps) => {
   const inspireFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
