@@ -585,16 +585,31 @@ useEffect(() => {
                 
                 {shopifyInstalled ? (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 p-4">
-                      <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                    <div className="flex items-center gap-2 rounded-lg border p-4" style={{
+                      backgroundColor: diagnostics?.storefrontVerified ? 'hsl(var(--primary) / 0.1)' : 'hsl(45 93% 47% / 0.1)',
+                      borderColor: diagnostics?.storefrontVerified ? 'hsl(var(--primary) / 0.2)' : 'hsl(45 93% 47% / 0.3)',
+                    }}>
+                      {diagnostics?.storefrontVerified ? (
+                        <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                      ) : (
+                        <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+                      )}
                        <div>
-                         <p className="text-sm font-semibold text-foreground">Widget installed!</p>
+                         <p className="text-sm font-semibold text-foreground">
+                           {diagnostics?.storefrontVerified 
+                             ? "Widget live & verified!" 
+                             : "Installed in admin — not confirmed live"}
+                         </p>
                          <p className="text-xs text-muted-foreground">
-                           {diagnostics && diagnostics.launcherChecked && diagnostics.launcherVisible
-                             ? "Widget confirmed live and visible on your store."
-                             : diagnostics && diagnostics.recentImpressions > 0
-                             ? "Script running — waiting for visibility confirmation."
-                             : "The script tag is installed on your store."}
+                           {diagnostics?.storefrontVerified
+                             ? diagnostics.launcherChecked && diagnostics.launcherVisible
+                               ? "Widget confirmed live and visible on your store."
+                               : diagnostics.recentImpressions > 0
+                               ? "Script running — waiting for visibility confirmation."
+                               : "Script found on your live storefront."
+                             : diagnostics?.storefrontError 
+                               ? diagnostics.storefrontError
+                               : "The tag is in your theme, but the widget was not detected on the live storefront. Your store may be password-protected."}
                          </p>
                        </div>
                     </div>
