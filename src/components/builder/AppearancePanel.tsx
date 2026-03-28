@@ -1025,6 +1025,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <HelpCircle className="h-4 w-4 text-blue-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">FAQs</p>
@@ -1109,6 +1110,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <Link2 className="h-4 w-4 text-purple-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Custom Links</p>
@@ -1187,6 +1189,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <ShoppingBag className="h-4 w-4 text-orange-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Product Carousel</p>
@@ -1256,6 +1259,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <Film className="h-4 w-4 text-purple-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Inspire Me</p>
