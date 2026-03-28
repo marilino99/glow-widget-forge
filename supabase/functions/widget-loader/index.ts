@@ -1296,6 +1296,21 @@ Deno.serve(async (req) => {
     pop.addEventListener('touchstart', function(e) { e.stopPropagation(); }, false);
     pop.addEventListener('touchend', function(e) { e.stopPropagation(); }, false);
 
+    // Launcher button
+    var btn = d.createElement('button');
+    btn.id = 'wj-btn';
+    if (buttonLogo) {
+      btn.innerHTML = '<img src="' + esc(buttonLogo) + '" alt=""/>';
+    } else {
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>';
+    }
+    btn.style.pointerEvents = 'auto';
+
+    function showLauncher(withPop) {
+      btn.classList.remove('hidden');
+      if (withPop) { btn.classList.add('pop'); setTimeout(function() { btn.classList.remove('pop'); }, 400); }
+    }
+
     // HOME VIEW
     var homeView = d.createElement('div');
     homeView.id = 'wj-home-view';
