@@ -113,6 +113,7 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
       const hasLauncherVisible = storeEvents.some(e => e.event_type === "launcher_visible");
       const hasLauncherHidden = storeEvents.some(e => e.event_type === "launcher_hidden");
       const launcherChecked = hasLauncherVisible || hasLauncherHidden;
+      const hasLoaderBoot = (recentEvents || []).some(e => e.event_type === "loader_boot");
 
       // Check if there are events from other domains (mismatch warning)
       const otherDomainUrl = otherDomainEvents.length > 0 ? otherDomainEvents[0]?.page_url : undefined;
@@ -127,6 +128,9 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         launcherChecked,
         otherDomainUrl,
         otherDomainCount: otherDomainEvents.length,
+        storefrontVerified: prev?.storefrontVerified,
+        storefrontError: prev?.storefrontError,
+        loaderBooted: hasLoaderBoot,
       }));
     } catch (e) {
       // Silent
