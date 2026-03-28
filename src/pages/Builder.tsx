@@ -872,6 +872,7 @@ const Builder = () => {
                   onCustomChipsChange={(chips) => updateConfig({ customChips: chips })}
                   onSaveCustomChips={(chips) => saveConfig({ customChips: chips })}
                   chatbotInstructions={config.chatbotInstructions}
+                  widgetId={config.id || undefined}
                 />
               </div>
             </div>
