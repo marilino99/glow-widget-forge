@@ -1,56 +1,73 @@
 
-## Piano: ripristinare il widget live che non appare
 
-### Problema reale
-Do I know what the issue is? Sì.
+## Piano: correggere il falso “installed” e ripristinare davvero il widget live
 
-L’errore che sta bloccando tutto è questo: nel `widget-loader` del layout popup viene usata la variabile `btn`, ma il bottone launcher non viene più creato da nessuna parte.
+### Problema trovato
+Dai controlli fatti emerge un problema preciso:
 
-Ho verificato che:
-- in `supabase/functions/widget-loader/index.ts` esistono riferimenti a `btn` in più punti:
-  - `hideLauncher()`
-  - `btn.onclick = ...`
-  - `root.appendChild(btn)`
-- però non esiste più nessun `var btn = d.createElement('button')` nel ramo popup
-- invece nel layout `bottom-bar` il launcher esiste (`bbLauncher`), quindi quel ramo non ha questo bug
+- lo store **attualmente connesso** è `wkrgbz-jm.myshopify.com`
+- però gli **ultimi eventi live del widget** per questo widget arrivano da **un altro dominio**: `dalilly.myshopify.com`
+- quindi oggi il builder può mostrare uno stato fuorviante: sembra “installato”, ma in realtà sta leggendo attività di un altro storefront o di una vecchia installazione
 
-Questo spiega perfettamente il log:
-`[Widjet] Render error: btn is not defined`
-e il motivo per cui il widget non compare proprio sul sito: il render va in crash prima di montare il launcher.
+In più, il flusso di reinstall attuale ha due punti deboli:
+1. `shopify-install-widget` considera riuscita l’installazione anche senza verificare davvero che lo snippet sia finito nel tema
+2. `checkOnly` controlla solo `theme.liquid`, ma non verifica bene anche la presenza reale del `ScriptTag`
 
-### File da correggere
+### File da aggiornare
+- `src/components/builder/AddToWebsiteDialog.tsx`
+- `supabase/functions/shopify-install-widget/index.ts`
 - `supabase/functions/widget-loader/index.ts`
 
-### Nota importante
-Gli altri warning che si vedono nella console del builder (`DialogContent`, `Function components cannot be given refs`) sono rumore del pannello interno e non sono la causa della sparizione del widget sul sito live.
-
 ### Modifiche da fare
-1. Ripristinare la creazione del launcher popup `btn`
-   - creare di nuovo il bottone con `id = 'wj-btn'`
-   - usare `buttonLogo` se presente, altrimenti l’icona fallback
-   - inserirlo nel ramo popup, prima dei listener che lo usano
 
-2. Riallineare tutta la logica open/close del popup al launcher reale
-   - `hideLauncher()` deve agire su `btn`
-   - `showLauncher()` deve ri-mostrare `btn`
-   - `btn.onclick` deve aprire `pop`
-   - `closeWidget()` deve chiudere `pop` e far riapparire `btn`
+#### 1. Rendere i diagnostics affidabili nel builder
+In `AddToWebsiteDialog.tsx`:
+- filtrare i `widget_events` in base allo **store realmente connesso**
+- distinguere chiaramente:
+  - “widget visto sullo store connesso”
+  - “widget visto su un altro dominio”
+- mostrare un warning esplicito se c’è **mismatch di dominio**
+- non mostrare più uno stato rassicurante basato su eventi provenienti da altri siti
 
-3. Verificare il montaggio DOM del popup
-   - mantenere:
-     - `root.appendChild(pop)`
-     - `root.appendChild(btn)`
-   - evitare altri riferimenti a variabili non definite nello stesso ramo popup
+#### 2. Rendere la reinstallazione realmente verificata
+In `shopify-install-widget/index.ts`:
+- dopo l’iniezione in `theme.liquid`, rileggere il file e verificare che lo snippet sia davvero presente
+- se il `replace("</body>", ...)` non inserisce nulla, restituire **errore esplicito**, non `success: true`
+- dopo la creazione del `ScriptTag`, fare una verifica reale che il tag esista e punti al `widgetId` corretto
+- fare in modo che `checkOnly` controlli **sia** `theme.liquid` **sia** `ScriptTag`
 
-4. Fare un controllo rapido di coerenza con le modifiche recenti
-   - lasciare invariati:
-     - spacing uniforme tra sezioni
-     - stile outline del bottone “Inspire Me”
-   - assicurarsi che il fix tocchi solo il launcher e non rompa la parità preview/live
+#### 3. Aggiungere diagnostica visiva anche per il popup live
+In `widget-loader/index.ts`:
+- aggiungere un controllo reale di visibilità del launcher popup dopo il mount
+- tracciare eventi tipo:
+  - `launcher_visible`
+  - `launcher_hidden`
+- così il builder potrà distinguere:
+  - script non caricato
+  - widget caricato ma nascosto/coperto
+  - widget visibile correttamente
+
+#### 4. Migliorare il messaggio di stato nel builder
+Nel pannello Shopify:
+- se lo store connesso non ha eventi recenti, mostrare chiaramente che il widget **non sta girando su quello store**
+- se esistono eventi da un altro dominio, mostrarlo come informazione diagnostica
+- se la verifica post-install fallisce, mostrare “installazione non confermata” invece di “reinstalled”
 
 ### Risultato atteso
-Dopo il fix:
-- il widget live tornerà a comparire sul sito
-- il launcher sarà di nuovo visibile
-- cliccando il launcher il popup si aprirà correttamente
-- il crash `btn is not defined` sparirà dalla console
+Dopo queste modifiche:
+- il builder smetterà di dare falsi positivi
+- la reinstallazione dirà la verità sullo stato reale dello store connesso
+- sapremo se il problema è:
+  - installazione non applicata
+  - widget caricato ma nascosto
+  - mismatch tra store connesso e store controllato
+- il widget live potrà essere ripristinato con una diagnosi chiara, invece di continuare a risultare “installato” senza apparire davvero
+
+### Dettagli tecnici
+- Nessuna modifica al database
+- Nessuna modifica all’autenticazione
+- Il focus è su:
+  - verifica post-install
+  - diagnostica per-store
+  - telemetria di visibilità del launcher popup
+
