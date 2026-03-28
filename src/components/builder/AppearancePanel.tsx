@@ -132,6 +132,7 @@ interface AppearancePanelProps {
   onCustomChipsChange: (chips: string[]) => void;
   onSaveCustomChips: (chips: string[]) => void;
   chatbotInstructions: string;
+  widgetId?: string;
 }
 
 const presetColors = [
