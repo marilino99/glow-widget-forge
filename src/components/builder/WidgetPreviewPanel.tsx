@@ -2655,7 +2655,7 @@ const WidgetPreviewPanel = ({
                             style={useInlineStyles ? { backgroundColor: actualHexColor } : {}}
                           />
                         )}
-                        <div className={`relative pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                        <div className={`relative ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                           <div className="relative">
                             <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                               {productCards.filter(c => !c.isLoading).map(card => (
