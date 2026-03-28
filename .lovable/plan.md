@@ -1,31 +1,57 @@
 
 
-## Piano: Fix widget che scompare — variabile `inspireView` non definita
+## Piano: Fix widget invisibile — migliorare error handling e diagnostica
 
-### Problema identificato
-Il widget live crasha completamente a causa di un bug nella struttura del codice in `widget-loader/index.ts`:
+### Problema
+Il widget-loader ha un `try-catch` che cattura sia errori di JSON parse sia errori runtime di `render()`, ma logga solo `'[Widjet] Parse error'` senza mostrare l'errore reale. Qualsiasi crash dentro `render()` viene silenziosamente ingoiato, rendendo impossibile diagnosticare il problema.
 
-1. **Linea 1807**: `pop.appendChild(inspireView)` viene eseguito **sempre**, indipendentemente dalla configurazione
-2. Ma `inspireView` viene creato solo dentro il blocco `if (hasVideos)` (linea ~1587), che a sua volta dipende da `inspireEnabled`
-3. Quando `inspireEnabled` è `false` (o è true ma non ci sono video), `inspireView` è `undefined` → `appendChild(undefined)` genera un **TypeError** che blocca l'intero script del widget, facendolo sparire
-
-### Soluzione
+### Modifiche
 
 **File: `supabase/functions/widget-loader/index.ts`**
 
-1. **Creare `inspireView` sempre** (prima della sezione inspire, subito dopo la dichiarazione di `homeView`):
-   - `var inspireView = d.createElement('div'); inspireView.id = 'wj-inspire-view'; inspireView.style.display = 'none';`
-   - Così `pop.appendChild(inspireView)` non crasherà mai
+1. **Migliorare il try-catch principale** (~riga 116-125):
+   - Cambiare `console.error('[Widjet] Parse error')` in `console.error('[Widjet] Error:', e.message, e.stack)`
+   - Separare il JSON parse dal render in due try-catch distinti
 
-2. **Spostare il blocco `if (hasVideos)`** (righe 1587-1790) **dentro** il blocco `if (inspireEnabled)` (prima della chiusura a riga 1578), in modo che la logica dei video sia correttamente nidificata
+2. **Aggiungere try-catch interno a `render()`** (~riga 129):
+   - Wrappare tutto il corpo di `render()` in un try-catch che logga l'errore specifico con stack trace
+   - In caso di errore, creare comunque il bottone del widget (degradazione graceful)
 
-3. **Wrap condizionale per `pop.appendChild(inspireView)`** — aggiungere solo se `inspireEnabled` è true:
-   ```
-   pop.appendChild(homeView);
-   if (inspireEnabled) { pop.appendChild(inspireView); }
-   pop.appendChild(chatView);
-   ```
+3. **Aggiungere log di diagnostica**:
+   - `console.log('[Widjet] Script loaded, fetching config...')` prima della XHR
+   - `console.log('[Widjet] Config received, rendering...')` prima di `render(cfg)`
+   - `console.log('[Widjet] Render complete')` alla fine di `render()`
+
+### Codice chiave
+
+```javascript
+// Prima (riga 116-125):
+try {
+  var cfg = JSON.parse(x.responseText);
+  if (cfg.error) { console.error('[Widjet]', cfg.error); return; }
+  render(cfg);
+} catch(e) {
+  console.error('[Widjet] Parse error');
+}
+
+// Dopo:
+var cfg;
+try {
+  cfg = JSON.parse(x.responseText);
+} catch(e) {
+  console.error('[Widjet] JSON parse error:', e.message);
+  return;
+}
+if (cfg.error) { console.error('[Widjet]', cfg.error); return; }
+console.log('[Widjet] Config loaded, rendering...');
+try {
+  render(cfg);
+  console.log('[Widjet] Render complete');
+} catch(e) {
+  console.error('[Widjet] Render error:', e.message, e.stack);
+}
+```
 
 ### Risultato
-Il widget non crasherà più quando `inspireEnabled` è false o quando non ci sono video, risolvendo il problema della sparizione del widget dal sito.
+Con questa modifica, se il widget non appare, aprendo la console del browser sulla pagina Shopify vedrai l'errore specifico (es. `TypeError: Cannot read property 'addEventListener' of null at line X`), permettendo di identificare e risolvere il bug esatto.
 
