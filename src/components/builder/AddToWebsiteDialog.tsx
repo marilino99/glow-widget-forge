@@ -619,22 +619,35 @@ useEffect(() => {
                          </p>
                        </div>
                     </div>
-                    <Button 
-                      onClick={handleShopifyReinstall} 
-                      disabled={isInstallingShopify}
-                      variant="outline"
-                      className="gap-2 w-full"
-                      size="sm"
-                    >
-                      {isInstallingShopify ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Reinstalling...
-                        </>
-                      ) : (
-                        "Reinstall widget"
+                    <div className="space-y-2">
+                      <Button 
+                        onClick={() => handleShopifyReinstall(false)} 
+                        disabled={isInstallingShopify}
+                        variant="outline"
+                        className="gap-2 w-full"
+                        size="sm"
+                      >
+                        {isInstallingShopify ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Reinstalling...
+                          </>
+                        ) : (
+                          "Reinstall widget"
+                        )}
+                      </Button>
+                      {diagnostics && diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
+                        <Button 
+                          onClick={() => handleShopifyReinstall(true)} 
+                          disabled={isInstallingShopify}
+                          variant="destructive"
+                          className="gap-2 w-full"
+                          size="sm"
+                        >
+                          Force reinstall (clear cache)
+                        </Button>
                       )}
-                    </Button>
+                    </div>
                   </div>
                 ) : (
                   <>
