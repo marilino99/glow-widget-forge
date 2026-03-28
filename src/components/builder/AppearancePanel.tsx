@@ -223,6 +223,7 @@ const AppearancePanel = ({
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
   const [expandedInspireVideoId, setExpandedInspireVideoId] = useState<string | null>(null);
   const [inspireProductSearch, setInspireProductSearch] = useState("");
+  const [dragSectionIdx, setDragSectionIdx] = useState<number | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarTab, setAvatarTab] = useState("gallery");
