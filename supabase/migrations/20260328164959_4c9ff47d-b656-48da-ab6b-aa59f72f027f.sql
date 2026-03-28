@@ -1,0 +1,1 @@
+ALTER TABLE widget_configurations ADD COLUMN custom_chips jsonb DEFAULT NULL;
