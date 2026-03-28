@@ -230,6 +230,7 @@ const AppearancePanel = ({
   const [showCustomColor, setShowCustomColor] = useState(false);
   const colorInputRef = useRef<HTMLInputElement>(null);
   const [googleExpanded, setGoogleExpanded] = useState(false);
+  const [expandedHomeSection, setExpandedHomeSection] = useState<string | null>(null);
   const [googleSearchQuery, setGoogleSearchQuery] = useState("");
   const [googleLinkValue, setGoogleLinkValue] = useState("");
   const [googleSearchTab, setGoogleSearchTab] = useState<"search" | "link">("search");
@@ -1021,8 +1022,31 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">{faqItems.length} questions</p>
                     </div>
                   </div>
-                  <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+                  <div className="flex items-center gap-2">
+                    <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+                    <button onClick={() => setExpandedHomeSection(expandedHomeSection === "faq" ? null : "faq")} className="p-1 rounded hover:bg-accent transition-colors">
+                      <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expandedHomeSection === "faq" ? "rotate-180" : ""}`} />
+                    </button>
+                  </div>
                 </div>
+                {expandedHomeSection === "faq" && (
+                  <div className="border-t border-border px-3 py-3 space-y-2">
+                    {faqItems.map((item, i) => (
+                      <div key={item.id} className="flex items-center justify-between gap-2 rounded-md bg-muted/50 px-2.5 py-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">{item.question || `Question ${i + 1}`}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">{item.answer || "No answer yet"}</p>
+                        </div>
+                        <button onClick={() => onDeleteFaqItem(item.id)} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive shrink-0">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                    <Button variant="outline" size="sm" className="w-full gap-1.5 text-xs" onClick={() => onAddFaqItem({ id: crypto.randomUUID(), question: "", answer: "", sortOrder: faqItems.length } as FaqItemData)}>
+                      <Plus className="h-3.5 w-3.5" /> Add question
+                    </Button>
+                  </div>
+                )}
               </div>
             ),
             "custom-links": () => (
@@ -1035,7 +1059,28 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">{customLinks.length} links</p>
                     </div>
                   </div>
+                  <button onClick={() => setExpandedHomeSection(expandedHomeSection === "custom-links" ? null : "custom-links")} className="p-1 rounded hover:bg-accent transition-colors">
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expandedHomeSection === "custom-links" ? "rotate-180" : ""}`} />
+                  </button>
                 </div>
+                {expandedHomeSection === "custom-links" && (
+                  <div className="border-t border-border px-3 py-3 space-y-2">
+                    {customLinks.map((link) => (
+                      <div key={link.id} className="flex items-center justify-between gap-2 rounded-md bg-muted/50 px-2.5 py-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">{link.name || "Untitled"}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">{link.url || "No URL"}</p>
+                        </div>
+                        <button onClick={() => onDeleteCustomLink(link.id)} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive shrink-0">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                    <Button variant="outline" size="sm" className="w-full gap-1.5 text-xs" onClick={() => onAddCustomLink("", "")}>
+                      <Plus className="h-3.5 w-3.5" /> Add link
+                    </Button>
+                  </div>
+                )}
               </div>
             ),
             "product-carousel": () => (
@@ -1048,8 +1093,30 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">{productCards.length} products</p>
                     </div>
                   </div>
-                  <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
+                  <div className="flex items-center gap-2">
+                    <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
+                    <button onClick={() => setExpandedHomeSection(expandedHomeSection === "product-carousel" ? null : "product-carousel")} className="p-1 rounded hover:bg-accent transition-colors">
+                      <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expandedHomeSection === "product-carousel" ? "rotate-180" : ""}`} />
+                    </button>
+                  </div>
                 </div>
+                {expandedHomeSection === "product-carousel" && (
+                  <div className="border-t border-border px-3 py-3 space-y-2">
+                    {productCards.map((card) => (
+                      <div key={card.id} className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2">
+                        {card.imageUrl && <img src={card.imageUrl} alt="" className="w-8 h-8 rounded object-cover shrink-0" />}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">{card.title}</p>
+                          {card.price && <p className="text-[11px] text-muted-foreground">{card.price}</p>}
+                        </div>
+                        <button onClick={() => onDeleteProductCard(card.id)} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive shrink-0">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                    {productCards.length === 0 && <p className="text-xs text-muted-foreground text-center py-2">No products yet</p>}
+                  </div>
+                )}
               </div>
             ),
             "inspire-me": () => (
@@ -1062,8 +1129,30 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">{inspireVideos.length} videos</p>
                     </div>
                   </div>
-                  <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                  <div className="flex items-center gap-2">
+                    <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                    <button onClick={() => setExpandedHomeSection(expandedHomeSection === "inspire-me" ? null : "inspire-me")} className="p-1 rounded hover:bg-accent transition-colors">
+                      <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${expandedHomeSection === "inspire-me" ? "rotate-180" : ""}`} />
+                    </button>
+                  </div>
                 </div>
+                {expandedHomeSection === "inspire-me" && (
+                  <div className="border-t border-border px-3 py-3 space-y-2">
+                    {inspireVideos.map((video) => (
+                      <div key={video.id} className="flex items-center gap-2 rounded-md bg-muted/50 px-2.5 py-2">
+                        <video src={video.videoUrl} className="w-10 h-14 rounded object-cover shrink-0" muted playsInline preload="metadata" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground capitalize">{video.source}</p>
+                          <p className="text-[11px] text-muted-foreground">{video.linkedProductIds.length} products linked</p>
+                        </div>
+                        <button onClick={() => onDeleteInspireVideo(video.id)} className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive shrink-0">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                    {inspireVideos.length === 0 && <p className="text-xs text-muted-foreground text-center py-2">No videos yet</p>}
+                  </div>
+                )}
               </div>
             ),
           };
