@@ -1410,43 +1410,71 @@ const AppearancePanel = ({
           };
 
           return (
-            <div className="max-w-xs mx-auto space-y-1">
+            <div className="max-w-xs mx-auto space-y-0">
               <p className="mb-3 text-xs text-muted-foreground">Drag to reorder sections on the widget home screen.</p>
 
               {homeSectionOrder.map((sectionKey, idx) => {
                 const renderer = sectionRenderers[sectionKey];
                 if (!renderer) return null;
                 return (
-                  <div
-                    key={sectionKey}
-                    className="relative transition-transform duration-150"
-                    draggable={dragSectionIdx === idx}
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("section-idx", String(idx));
-                      e.dataTransfer.effectAllowed = "move";
-                      (e.currentTarget as HTMLElement).style.opacity = "0.5";
-                    }}
-                    onDragEnd={(e) => {
-                      (e.currentTarget as HTMLElement).style.opacity = "1";
-                      setDragSectionIdx(null);
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.dataTransfer.dropEffect = "move";
-                    }}
-                    onDrop={(e) => {
-                      if (e.dataTransfer.types.includes("faq-idx") || e.dataTransfer.types.includes("link-idx")) return;
-                      handleSectionDrop(e, idx);
-                    }}
-                  >
+                  <div key={sectionKey}>
+                    {/* Drop indicator line above */}
+                    {dropTargetIdx === idx && (
+                      <div className="flex items-center gap-2 py-1 animate-in fade-in duration-150">
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                        <div className="h-0.5 flex-1 rounded-full bg-primary" />
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                      </div>
+                    )}
                     <div
-                      className="absolute -left-6 top-2.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors z-10"
-                      onMouseDown={() => setDragSectionIdx(idx)}
-                      onMouseUp={() => setDragSectionIdx(null)}
+                      className={`relative transition-all duration-150 my-0.5 ${dragSectionIdx === idx ? "opacity-40 border-dashed border border-primary rounded-lg" : ""}`}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("section-idx", String(idx));
+                        e.dataTransfer.effectAllowed = "move";
+                        setDragSectionIdx(idx);
+                      }}
+                      onDragEnd={() => {
+                        setDragSectionIdx(null);
+                        setDropTargetIdx(null);
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                        if (dragSectionIdx === null || dragSectionIdx === idx) {
+                          setDropTargetIdx(null);
+                          return;
+                        }
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const isAbove = e.clientY < rect.top + rect.height / 2;
+                        const targetIdx = isAbove ? idx : idx + 1;
+                        if (targetIdx !== dragSectionIdx && targetIdx !== dragSectionIdx + 1) {
+                          setDropTargetIdx(targetIdx);
+                        } else {
+                          setDropTargetIdx(null);
+                        }
+                      }}
+                      onDragLeave={(e) => {
+                        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                          setDropTargetIdx(null);
+                        }
+                      }}
+                      onDrop={(e) => {
+                        if (e.dataTransfer.types.includes("faq-idx") || e.dataTransfer.types.includes("link-idx")) return;
+                        setDropTargetIdx(null);
+                        handleSectionDrop(e, dropTargetIdx !== null && dropTargetIdx <= idx ? dropTargetIdx : idx);
+                      }}
                     >
-                      <GripVertical className="h-4 w-4" />
+                      {renderer()}
                     </div>
-                    {renderer()}
+                    {/* Drop indicator line below last item */}
+                    {dropTargetIdx === homeSectionOrder.length && idx === homeSectionOrder.length - 1 && (
+                      <div className="flex items-center gap-2 py-1 animate-in fade-in duration-150">
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                        <div className="h-0.5 flex-1 rounded-full bg-primary" />
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                      </div>
+                    )}
                   </div>
                 );
               })}
