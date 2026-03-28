@@ -1,29 +1,34 @@
 
 
-## Piano: Sezioni collassabili nel pannello Home Screen
+## Piano: Migliorare il drag-and-drop con indicatore visivo di drop
 
-### Concetto
-Ogni sezione (FAQ, Custom Links, Product Carousel, Inspire Me) diventa collassabile con una freccia (ChevronDown). Quando chiusa, mostra solo l'header compatto (icona + titolo + descrizione + toggle), come nello screenshot. Quando aperta, mostra il contenuto di configurazione sotto.
+### Problema
+Il drag-and-drop funziona ma non è chiaro *dove* la sezione verrà posizionata. Manca un feedback visivo durante il trascinamento.
 
 ### Modifiche
 
 **File: `src/components/builder/AppearancePanel.tsx`**
 
-1. Aggiungere uno stato `expandedSections: Set<string>` (default: tutte espanse, o tutte chiuse — meglio tutte chiuse per facilitare il riordino)
+1. Aggiungere stato `dropTargetIdx: number | null` per tracciare dove l'utente sta trascinando
 
-2. Separare ogni sezione in due parti:
-   - **Header** (sempre visibile): icona, titolo, descrizione, grip handle a sinistra, toggle/info a destra, **più una ChevronDown** che ruota quando espansa
-   - **Content** (visibile solo se la sezione è in `expandedSections`): il contenuto di configurazione attuale (FAQ items, link items, product cards, video)
+2. Nel `onDragOver` di ogni sezione, calcolare se il cursore è nella metà superiore o inferiore dell'elemento per determinare se l'indicatore va sopra o sotto:
+   - Usare `e.clientY` vs `getBoundingClientRect()` per capire la posizione
+   - Settare `dropTargetIdx` all'indice corrispondente
 
-3. Click sull'header (escluso toggle e grip) togga l'espansione della sezione
+3. Rendere una **linea blu orizzontale** (2-3px, colore primary) tra le sezioni nella posizione indicata da `dropTargetIdx`:
+   - La linea appare tra le sezioni come indicatore di inserimento
+   - Con una piccola animazione di fade-in
 
-4. Quando collassata, la sezione ha esattamente la forma dello screenshot: una riga compatta con icona, titolo, descrizione e toggle
+4. Nel `onDragLeave` del container, resettare `dropTargetIdx` a null
 
-5. Aggiungere una `ChevronDown` nell'header che ruota a 180° quando espansa (transizione CSS `rotate-180`)
+5. Nel `onDrop`, resettare `dropTargetIdx` a null
+
+6. Spostare il grip handle dentro l'header della sezione (visibile, non con offset negativo) per renderlo più ovvio e accessibile
+
+7. Aggiungere un leggero `border-dashed border-primary` sulla sezione che si sta trascinando (oltre all'opacity ridotta)
 
 ### Dettagli tecnici
-- Stato locale `expandedSections` gestito con `useState<Set<string>>`
-- Il toggle Switch resta cliccabile indipendentemente dallo stato di espansione (stopPropagation sul click del toggle)
-- La ChevronDown va posizionata tra il testo e il toggle, o a sinistra del toggle
-- Transizione smooth sull'espansione con `overflow-hidden` e animazione altezza opzionale
+- Stato locale `dropTargetIdx` gestito con `useState<number | null>`
+- L'indicatore è un `div` con `h-0.5 bg-primary rounded-full mx-4` inserito condizionalmente tra le sezioni
+- Il calcolo sopra/sotto usa: `const rect = e.currentTarget.getBoundingClientRect(); const isAbove = e.clientY < rect.top + rect.height / 2`
 
