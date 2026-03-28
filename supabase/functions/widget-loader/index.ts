@@ -1797,8 +1797,17 @@ Deno.serve(async (req) => {
         entries.forEach(function(entry) {
           var vid = entry.target.querySelector('video');
           if (!vid) return;
-          if (entry.isIntersecting) { vid.play().catch(function(){}); }
-          else { vid.pause(); }
+          if (entry.isIntersecting) {
+            vid.play().catch(function(){});
+            // Update dots
+            var slides = Array.from(reelsScroll.children);
+            var activeIdx = slides.indexOf(entry.target);
+            dots.forEach(function(dot, i) {
+              dot.style.cssText = 'height:4px !important;border-radius:2px !important;transition:all .2s !important;' + (i === activeIdx ? 'width:20px !important;background:#fff !important' : 'width:6px !important;background:rgba(255,255,255,0.4) !important');
+            });
+          } else {
+            vid.pause();
+          }
         });
       }, { root: reelsScroll, threshold: 0.6 });
 
