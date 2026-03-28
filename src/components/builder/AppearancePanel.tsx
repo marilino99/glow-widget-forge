@@ -1031,10 +1031,10 @@ const AppearancePanel = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("faq") ? "rotate-180" : ""}`} />
                     <div onClick={(e) => e.stopPropagation()}>
                       <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
                     </div>
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("faq") ? "rotate-180" : ""}`} />
                   </div>
                 </div>
                 {expandedSections.has("faq") && faqEnabled && (
@@ -1115,8 +1115,8 @@ const AppearancePanel = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("custom-links") ? "rotate-180" : ""}`} />
                     <span className="text-[11px] text-muted-foreground">{customLinks.length} links</span>
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("custom-links") ? "rotate-180" : ""}`} />
                   </div>
                 </div>
                 {expandedSections.has("custom-links") && (
@@ -1193,10 +1193,10 @@ const AppearancePanel = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("product-carousel") ? "rotate-180" : ""}`} />
                     <div onClick={(e) => e.stopPropagation()}>
                       <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
                     </div>
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("product-carousel") ? "rotate-180" : ""}`} />
                   </div>
                 </div>
                 {expandedSections.has("product-carousel") && productCarouselEnabled && (
@@ -1262,10 +1262,10 @@ const AppearancePanel = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("inspire-me") ? "rotate-180" : ""}`} />
                     <div onClick={(e) => e.stopPropagation()}>
                       <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
                     </div>
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("inspire-me") ? "rotate-180" : ""}`} />
                   </div>
                 </div>
                 {expandedSections.has("inspire-me") && inspireEnabled && (
