@@ -1826,6 +1826,46 @@ Deno.serve(async (req) => {
       }
     });
 
+    // ====== DOM ASSEMBLY (homeView → scroll, footer, branding) ======
+    homeView.appendChild(scroll);
+
+    // Branding footer inside homeView
+    if (showBranding) {
+      var powered = d.createElement('div');
+      powered.id = 'wj-powered';
+      powered.innerHTML = poweredHtml;
+      homeView.appendChild(powered);
+    }
+
+    // Navigation footer
+    var footer = d.createElement('div');
+    footer.id = 'wj-footer';
+    footer.innerHTML = '<div id="wj-nav"><button class="wj-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/></svg>' + esc(tr.home) + '</button><button class="wj-nav-item inactive"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>' + esc(tr.contact) + '</button></div>';
+    homeView.appendChild(footer);
+
+    // ====== CHAT VIEW ======
+    var chatView = d.createElement('div');
+    chatView.id = 'wj-chat-view';
+
+    var chatAvatarHtml = avatar
+      ? '<img src="' + esc(avatar) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover"/>'
+      : '<div id="wj-chat-avatar">' + esc(avatarInitial) + '</div>';
+
+    var bubbleAvatarHtml = avatar
+      ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>'
+      : '<div style="width:24px;height:24px;border-radius:50%;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:10px;font-weight:700">' + esc(avatarInitial) + '</div>';
+
+    var emojis = ['😀','😂','❤️','👍','🎉','🔥','😍','🤔','👋','✨','😊','🙏','💪','😅','🥰','😎','💯','🤗','😇','🤩','✅','⭐','💜','🌟','😢','🙌','💡','🎁','🤝','❓'];
+    var emojiHtml = '';
+    emojis.forEach(function(e) { emojiHtml += '<button class="wj-emoji">' + e + '</button>'; });
+
+    chatView.innerHTML = '<div id="wj-chat-header"><div id="wj-chat-title"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button>' + chatAvatarHtml + '<div id="wj-chat-title-text"><div id="wj-chat-name">' + esc(name) + '</div><div id="wj-chat-subtitle">Online</div></div></div><div id="wj-chat-header-right"><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button><div id="wj-chat-menu"><button class="wj-menu-item" id="wj-menu-clear"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>Clear chat</button><button class="wj-menu-item" id="wj-menu-download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>Download</button></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/></svg></button></div></div><div id="wj-chat-msgs"><div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div><div id="wj-chat-chips"><button class="wj-chat-chip">' + esc(tr.chipFind) + '</button><button class="wj-chat-chip">' + esc(tr.chipTrack) + '</button><button class="wj-chat-chip">' + esc(tr.chipInfo) + '</button></div></div><div id="wj-chat-input"><div id="wj-emoji-picker">' + emojiHtml + '</div><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div>' + (showBranding ? '<div id="wj-chat-powered">' + poweredHtml + '</div>' : '');
+
+    // ====== FINAL ASSEMBLY: append views to pop ======
+    pop.appendChild(homeView);
+    if (inspireEnabled) { pop.appendChild(inspireView); }
+    pop.appendChild(chatView);
+
     function hideLauncher() {
       btn.classList.add('hidden');
     }
