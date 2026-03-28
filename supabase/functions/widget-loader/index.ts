@@ -216,6 +216,8 @@ Deno.serve(async (req) => {
      var inspireEnabled = cfg.inspire_enabled || false;
      var inspireVideos = cfg.inspire_videos || [];
      var homeSectionOrder = cfg.home_section_order || ['product-carousel', 'faq', 'custom-links', 'inspire-me'];
+     var customChips = cfg.custom_chips;
+     var chipLabels = (Array.isArray(customChips) && customChips.length >= 3) ? customChips : [tr.chipFind, tr.chipTrack, tr.chipInfo];
 
      var t = {
       en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', chipFind: 'Find the right product for me', chipTrack: 'Track my order', chipInfo: 'I need more information' },
