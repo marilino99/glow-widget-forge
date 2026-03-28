@@ -2764,7 +2764,7 @@ const WidgetPreviewPanel = ({
                   if (sectionKey === "custom-links") {
                     if (allLinksForPreview.length === 0) return null;
                     return (
-                      <div key="custom-links" className={`px-4 pb-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                      <div key="custom-links" className={`px-4 pb-4 mt-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                         {allLinksForPreview.map((link) => (
                           <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
                             onClick={(e) => { e.preventDefault(); if (link.url) window.open(link.url, '_blank', 'noopener,noreferrer'); }}
@@ -2782,7 +2782,7 @@ const WidgetPreviewPanel = ({
                   if (sectionKey === "inspire-me") {
                     if (!inspireEnabled) return null;
                     return (
-                      <div key="inspire-me" className={`px-4 pb-4 mt-2 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
+                      <div key="inspire-me" className={`px-4 pb-4 mt-4 ${isLight ? "" : "bg-black"}`} style={isLight ? { backgroundColor: '#f8f8f8' } : undefined}>
                         <div 
                           className={`flex items-center gap-3.5 p-4 rounded-2xl cursor-pointer transition-colors ${isLight ? "bg-white hover:bg-slate-50" : "bg-[#252525] hover:bg-[#2a2a2a]"}`}
                           onClick={() => inspireVideos.length > 0 && setShowInspireReels(true)}
