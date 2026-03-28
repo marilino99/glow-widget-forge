@@ -782,6 +782,76 @@ const AppearancePanel = ({
             </div>
 
             <div className="border-t border-border" />
+
+            {/* Quick Action Chips */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-foreground">
+                Quick action chips
+              </label>
+              <p className="text-xs text-muted-foreground mb-3">
+                Customize the 3 buttons visitors see when opening the chat.
+              </p>
+              <div className="space-y-2">
+                {[0, 1, 2].map((i) => {
+                  const defaultLabels: Record<string, string[]> = {
+                    en: ["Find the right product for me", "Track my order", "I need more information"],
+                    it: ["Cercare il prodotto adatto a me", "Tracciare il mio ordine", "Ho bisogno di più informazioni"],
+                    es: ["Encontrar el producto adecuado", "Rastrear mi pedido", "Necesito más información"],
+                    de: ["Das richtige Produkt finden", "Meine Bestellung verfolgen", "Ich brauche mehr Informationen"],
+                    fr: ["Trouver le bon produit", "Suivre ma commande", "J'ai besoin de plus d'informations"],
+                  };
+                  const lang = (customLinks as any)?.language || "en";
+                  const placeholders = defaultLabels[lang] || defaultLabels.en;
+                  return (
+                    <Input
+                      key={i}
+                      value={customChips[i] || ""}
+                      onChange={(e) => {
+                        const newChips = [...customChips];
+                        while (newChips.length < 3) newChips.push("");
+                        newChips[i] = e.target.value;
+                        onCustomChipsChange(newChips);
+                      }}
+                      placeholder={placeholders[i]}
+                      maxLength={60}
+                      className="h-9 text-sm"
+                    />
+                  );
+                })}
+              </div>
+              <div className="flex gap-2 mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-xs"
+                  onClick={async () => {
+                    const context = [
+                      chatbotInstructions ? "Business: " + chatbotInstructions : "",
+                      faqItems.length > 0 ? "FAQ: " + faqItems.map(f => f.question).join(", ") : "",
+                      productCards.length > 0 ? "Products: " + productCards.map(p => p.title).join(", ") : "",
+                    ].filter(Boolean).join(". ");
+                    try {
+                      const { data } = await supabase.functions.invoke("chatbot-preview", {
+                        body: { message: "Based on this business context, generate 3 short quick-action button labels (max 6 words each) relevant to THIS business. Output ONLY a JSON array of 3 strings. Context: " + (context || "General business"), widgetId: null, systemPrompt: "Respond ONLY with a valid JSON array of 3 strings." },
+                      });
+                      if (data?.reply) {
+                        const match = data.reply.match(/\[[\s\S]*\]/);
+                        if (match) {
+                          const parsed = JSON.parse(match[0]);
+                          if (Array.isArray(parsed) && parsed.length >= 3) {
+                            onCustomChipsChange(parsed.slice(0, 3).map(String));
+                          }
+                        }
+                      }
+                    } catch (e) { console.error("AI chip generation error:", e); }
+                  }}
+                >
+                  <Sparkles className="h-3 w-3" /> Generate with AI
+                </Button>
+              </div>
+            </div>
+
+            <div className="border-t border-border" />
           </div>
         )}
 
