@@ -461,6 +461,15 @@ Deno.serve(async (req) => {
       #wj-greview-box{border-radius:16px !important;padding:16px !important;background:\${bgFaq};cursor:pointer !important;transition:background .15s}
       #wj-greview-box:hover{background:\${dark ? '#2a2a2a' : '#f1f5f9'}}
       #wj-greview-stars{display:flex !important;align-items:center !important;gap:2px !important}
+      #wj-inspire-section{padding:0 16px 16px !important;margin-top:8px !important}
+      #wj-inspire-box{display:flex !important;align-items:center !important;gap:14px !important;padding:16px !important;border-radius:16px !important;background:\${bgFaq};cursor:pointer !important;transition:background .15s;overflow:hidden !important}
+      #wj-inspire-box:hover{background:\${dark ? '#2a2a2a' : '#f1f5f9'}}
+      #wj-inspire-box video{width:72px !important;height:96px !important;border-radius:12px !important;object-fit:cover !important;flex-shrink:0 !important}
+      #wj-inspire-box-right{display:flex !important;flex-direction:column !important;gap:6px !important;flex:1 !important;min-width:0 !important}
+      #wj-inspire-box-title{font-size:15px !important;font-weight:600 !important;color:\${textMain}}
+      #wj-inspire-box-sub{font-size:12px !important;color:\${textSub}}
+      #wj-inspire-box-btn{display:inline-flex !important;align-items:center !important;gap:6px !important;padding:8px 16px !important;border-radius:20px !important;border:none !important;background:\${color.bg};color:\${btnText};font-size:13px !important;font-weight:500 !important;cursor:pointer !important;transition:background .15s;white-space:nowrap !important;align-self:flex-start !important}
+      #wj-inspire-box-btn:hover{background:\${color.hover}}
       .wj-star{width:20px !important;height:20px !important;position:relative !important}
       .wj-star svg{position:absolute !important;inset:0 !important;width:20px !important;height:20px !important}
       .wj-star-empty{color:\${dark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'}}
