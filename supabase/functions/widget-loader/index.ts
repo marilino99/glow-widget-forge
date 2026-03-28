@@ -1770,6 +1770,7 @@ Deno.serve(async (req) => {
       inspireClose.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg>';
 
       inspireView.appendChild(reelsScroll);
+      inspireView.appendChild(dotsWrap);
       inspireView.appendChild(muteBtn);
       inspireView.appendChild(inspireClose);
 
