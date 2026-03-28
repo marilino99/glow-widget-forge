@@ -1,57 +1,56 @@
 
+## Piano: ripristinare il widget live che non appare
 
-## Piano: Fix widget invisibile — migliorare error handling e diagnostica
+### Problema reale
+Do I know what the issue is? Sì.
 
-### Problema
-Il widget-loader ha un `try-catch` che cattura sia errori di JSON parse sia errori runtime di `render()`, ma logga solo `'[Widjet] Parse error'` senza mostrare l'errore reale. Qualsiasi crash dentro `render()` viene silenziosamente ingoiato, rendendo impossibile diagnosticare il problema.
+L’errore che sta bloccando tutto è questo: nel `widget-loader` del layout popup viene usata la variabile `btn`, ma il bottone launcher non viene più creato da nessuna parte.
 
-### Modifiche
+Ho verificato che:
+- in `supabase/functions/widget-loader/index.ts` esistono riferimenti a `btn` in più punti:
+  - `hideLauncher()`
+  - `btn.onclick = ...`
+  - `root.appendChild(btn)`
+- però non esiste più nessun `var btn = d.createElement('button')` nel ramo popup
+- invece nel layout `bottom-bar` il launcher esiste (`bbLauncher`), quindi quel ramo non ha questo bug
 
-**File: `supabase/functions/widget-loader/index.ts`**
+Questo spiega perfettamente il log:
+`[Widjet] Render error: btn is not defined`
+e il motivo per cui il widget non compare proprio sul sito: il render va in crash prima di montare il launcher.
 
-1. **Migliorare il try-catch principale** (~riga 116-125):
-   - Cambiare `console.error('[Widjet] Parse error')` in `console.error('[Widjet] Error:', e.message, e.stack)`
-   - Separare il JSON parse dal render in due try-catch distinti
+### File da correggere
+- `supabase/functions/widget-loader/index.ts`
 
-2. **Aggiungere try-catch interno a `render()`** (~riga 129):
-   - Wrappare tutto il corpo di `render()` in un try-catch che logga l'errore specifico con stack trace
-   - In caso di errore, creare comunque il bottone del widget (degradazione graceful)
+### Nota importante
+Gli altri warning che si vedono nella console del builder (`DialogContent`, `Function components cannot be given refs`) sono rumore del pannello interno e non sono la causa della sparizione del widget sul sito live.
 
-3. **Aggiungere log di diagnostica**:
-   - `console.log('[Widjet] Script loaded, fetching config...')` prima della XHR
-   - `console.log('[Widjet] Config received, rendering...')` prima di `render(cfg)`
-   - `console.log('[Widjet] Render complete')` alla fine di `render()`
+### Modifiche da fare
+1. Ripristinare la creazione del launcher popup `btn`
+   - creare di nuovo il bottone con `id = 'wj-btn'`
+   - usare `buttonLogo` se presente, altrimenti l’icona fallback
+   - inserirlo nel ramo popup, prima dei listener che lo usano
 
-### Codice chiave
+2. Riallineare tutta la logica open/close del popup al launcher reale
+   - `hideLauncher()` deve agire su `btn`
+   - `showLauncher()` deve ri-mostrare `btn`
+   - `btn.onclick` deve aprire `pop`
+   - `closeWidget()` deve chiudere `pop` e far riapparire `btn`
 
-```javascript
-// Prima (riga 116-125):
-try {
-  var cfg = JSON.parse(x.responseText);
-  if (cfg.error) { console.error('[Widjet]', cfg.error); return; }
-  render(cfg);
-} catch(e) {
-  console.error('[Widjet] Parse error');
-}
+3. Verificare il montaggio DOM del popup
+   - mantenere:
+     - `root.appendChild(pop)`
+     - `root.appendChild(btn)`
+   - evitare altri riferimenti a variabili non definite nello stesso ramo popup
 
-// Dopo:
-var cfg;
-try {
-  cfg = JSON.parse(x.responseText);
-} catch(e) {
-  console.error('[Widjet] JSON parse error:', e.message);
-  return;
-}
-if (cfg.error) { console.error('[Widjet]', cfg.error); return; }
-console.log('[Widjet] Config loaded, rendering...');
-try {
-  render(cfg);
-  console.log('[Widjet] Render complete');
-} catch(e) {
-  console.error('[Widjet] Render error:', e.message, e.stack);
-}
-```
+4. Fare un controllo rapido di coerenza con le modifiche recenti
+   - lasciare invariati:
+     - spacing uniforme tra sezioni
+     - stile outline del bottone “Inspire Me”
+   - assicurarsi che il fix tocchi solo il launcher e non rompa la parità preview/live
 
-### Risultato
-Con questa modifica, se il widget non appare, aprendo la console del browser sulla pagina Shopify vedrai l'errore specifico (es. `TypeError: Cannot read property 'addEventListener' of null at line X`), permettendo di identificare e risolvere il bug esatto.
-
+### Risultato atteso
+Dopo il fix:
+- il widget live tornerà a comparire sul sito
+- il launcher sarà di nuovo visibile
+- cliccando il launcher il popup si aprirà correttamente
+- il crash `btn is not defined` sparirà dalla console
