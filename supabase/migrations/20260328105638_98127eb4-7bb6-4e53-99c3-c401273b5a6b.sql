@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_configurations ADD COLUMN IF NOT EXISTS home_section_order text[] DEFAULT ARRAY['product-carousel', 'faq', 'custom-links', 'inspire-me'];

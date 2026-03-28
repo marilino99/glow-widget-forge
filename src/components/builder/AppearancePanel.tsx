@@ -124,6 +124,9 @@ interface AppearancePanelProps {
   // Store products for linking to Inspire videos (from connected store)
   inspireStoreProducts: ProductCardData[];
   hasStoreConnection: boolean;
+  // Home section order
+  homeSectionOrder: string[];
+  onHomeSectionOrderChange: (order: string[]) => void;
 }
 
 const presetColors = [
@@ -213,6 +216,8 @@ const AppearancePanel = ({
   onUpdateInspireLinkedProducts,
   inspireStoreProducts,
   hasStoreConnection,
+  homeSectionOrder,
+  onHomeSectionOrderChange,
 }: AppearancePanelProps) => {
   const inspireFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
@@ -1004,192 +1009,130 @@ const AppearancePanel = ({
           </div>
         )}
 
-        {activeTab === "home-screen" && (
-          <div className="max-w-xs mx-auto space-y-1">
-            <p className="mb-3 text-xs text-muted-foreground">Toggle sections visible on the widget home screen.</p>
-
-            {/* FAQs */}
-            <div className="rounded-lg border border-border overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2.5">
-                <div className="flex items-center gap-2.5">
-                  <HelpCircle className="h-4 w-4 text-blue-500" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">FAQs</p>
-                    <p className="text-[11px] text-muted-foreground">Frequently asked questions</p>
+        {activeTab === "home-screen" && (() => {
+          const sectionRenderers: Record<string, () => React.ReactNode> = {
+            "faq": () => (
+              <div className="rounded-lg border border-border overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <HelpCircle className="h-4 w-4 text-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">FAQs</p>
+                      <p className="text-[11px] text-muted-foreground">Frequently asked questions</p>
+                    </div>
                   </div>
+                  <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
                 </div>
-                <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
-              </div>
-              {faqEnabled && (
-                <div className="border-t border-border px-3 py-3 space-y-3">
-                  {faqItems.map((item, idx) => {
-                    const ordinal = idx === 0 ? "1st" : idx === 1 ? "2nd" : idx === 2 ? "3rd" : `${idx + 1}th`;
-                    return (
-                      <div
-                        key={item.id}
-                        className="rounded-xl border border-border bg-card p-4"
-                        draggable
-                        onDragStart={(e) => { e.dataTransfer.setData("faq-idx", String(idx)); }}
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          const fromIdx = parseInt(e.dataTransfer.getData("faq-idx"), 10);
-                          if (!isNaN(fromIdx) && fromIdx !== idx) onReorderFaqItems(fromIdx, idx);
-                        }}
-                      >
-                        {/* Header row: grip + ordinal + "Question" + delete */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="cursor-grab text-muted-foreground/50 hover:text-muted-foreground transition-colors">
-                            <GripVertical className="h-4 w-4" />
+                {faqEnabled && (
+                  <div className="border-t border-border px-3 py-3 space-y-3">
+                    {faqItems.map((item, idx) => {
+                      const ordinal = idx === 0 ? "1st" : idx === 1 ? "2nd" : idx === 2 ? "3rd" : `${idx + 1}th`;
+                      return (
+                        <div
+                          key={item.id}
+                          className="rounded-xl border border-border bg-card p-4"
+                          draggable
+                          onDragStart={(e) => { e.dataTransfer.setData("faq-idx", String(idx)); }}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            const fromIdx = parseInt(e.dataTransfer.getData("faq-idx"), 10);
+                            if (!isNaN(fromIdx) && fromIdx !== idx) onReorderFaqItems(fromIdx, idx);
+                          }}
+                        >
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="cursor-grab text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+                              <GripVertical className="h-4 w-4" />
+                            </div>
+                            <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">{ordinal}</span>
+                            <span className="text-sm font-semibold text-foreground">Question</span>
+                            <button
+                              onClick={() => onDeleteFaqItem(item.id)}
+                              className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
                           </div>
-                          <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">{ordinal}</span>
-                          <span className="text-sm font-semibold text-foreground">Question</span>
-                          <button
-                            onClick={() => onDeleteFaqItem(item.id)}
-                            className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          <Input
+                            value={item.question}
+                            onChange={(e) => onUpdateFaqItem(item.id, { question: e.target.value })}
+                            placeholder={`Question ${idx + 1}`}
+                            className="mb-3 rounded-xl border-border bg-muted/30 text-sm"
+                          />
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-semibold text-foreground">Answer</span>
+                            <Sparkles className="h-4 w-4 text-muted-foreground/50" />
+                          </div>
+                          <Textarea
+                            value={item.answer}
+                            onChange={(e) => onUpdateFaqItem(item.id, { answer: e.target.value })}
+                            placeholder="Enter the answer..."
+                            className="min-h-[80px] resize-none rounded-xl border-border bg-muted/30 text-sm"
+                          />
                         </div>
-                        {/* Question input */}
-                        <Input
-                          value={item.question}
-                          onChange={(e) => onUpdateFaqItem(item.id, { question: e.target.value })}
-                          placeholder={`Question ${idx + 1}`}
-                          className="mb-3 rounded-xl border-border bg-muted/30 text-sm"
-                        />
-                        {/* Answer label */}
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-semibold text-foreground">Answer</span>
-                          <Sparkles className="h-4 w-4 text-muted-foreground/50" />
-                        </div>
-                        {/* Answer textarea */}
-                        <Textarea
-                          value={item.answer}
-                          onChange={(e) => onUpdateFaqItem(item.id, { answer: e.target.value })}
-                          placeholder="Enter the answer..."
-                          className="min-h-[80px] resize-none rounded-xl border-border bg-muted/30 text-sm"
-                        />
-                      </div>
-                    );
-                  })}
-                  <button
-                    onClick={() => onAddFaqItem({ id: crypto.randomUUID(), question: "", answer: "", sortOrder: faqItems.length })}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    Add question
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Custom Links */}
-            <div className="rounded-lg border border-border overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2.5">
-                <div className="flex items-center gap-2.5">
-                  <Link2 className="h-4 w-4 text-purple-500" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Custom Links</p>
-                    <p className="text-[11px] text-muted-foreground">External URL cards</p>
-                  </div>
-                </div>
-                <span className="text-[11px] text-muted-foreground">{customLinks.length} links</span>
-              </div>
-              <div className="border-t border-border px-3 py-2.5 space-y-2">
-                {customLinks.map((link, idx) => (
-                  <div
-                    key={link.id}
-                    className="flex items-start gap-1.5 group"
-                    draggable
-                    onDragStart={(e) => { e.dataTransfer.setData("link-idx", String(idx)); }}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const fromIdx = parseInt(e.dataTransfer.getData("link-idx"), 10);
-                      if (!isNaN(fromIdx) && fromIdx !== idx) {
-                        const newLinks = [...customLinks];
-                        const [moved] = newLinks.splice(fromIdx, 1);
-                        newLinks.splice(idx, 0, moved);
-                        onReorderCustomLinks(newLinks);
-                      }
-                    }}
-                  >
-                    <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
-                      <GripVertical className="h-3.5 w-3.5" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <Input
-                        value={link.name}
-                        onChange={(e) => onUpdateCustomLink(link.id, { name: e.target.value })}
-                        placeholder="Link name"
-                        className="h-7 rounded-md border-border bg-muted/50 text-xs"
-                      />
-                      <Input
-                        value={link.url}
-                        onChange={(e) => onUpdateCustomLink(link.id, { url: e.target.value })}
-                        placeholder="https://..."
-                        className="h-7 rounded-md border-border bg-muted/50 text-xs"
-                      />
-                    </div>
+                      );
+                    })}
                     <button
-                      onClick={() => onDeleteCustomLink(link.id)}
-                      className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      onClick={() => onAddFaqItem({ id: crypto.randomUUID(), question: "", answer: "", sortOrder: faqItems.length })}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Plus className="h-3.5 w-3.5" />
+                      Add question
                     </button>
                   </div>
-                ))}
-                <button
-                  onClick={() => onAddCustomLink("", "")}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                >
-                  <Plus className="h-3 w-3" />
-                  Add link
-                </button>
+                )}
               </div>
-            </div>
-
-            {/* Product Carousel */}
-            <div className="rounded-lg border border-border overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2.5">
-                <div className="flex items-center gap-2.5">
-                  <ShoppingBag className="h-4 w-4 text-orange-500" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Product Carousel</p>
-                    <p className="text-[11px] text-muted-foreground">Showcase products</p>
+            ),
+            "custom-links": () => (
+              <div className="rounded-lg border border-border overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <Link2 className="h-4 w-4 text-purple-500" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Custom Links</p>
+                      <p className="text-[11px] text-muted-foreground">External URL cards</p>
+                    </div>
                   </div>
+                  <span className="text-[11px] text-muted-foreground">{customLinks.length} links</span>
                 </div>
-                <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
-              </div>
-              {productCarouselEnabled && (
                 <div className="border-t border-border px-3 py-2.5 space-y-2">
-                  {productCards.map((card) => (
-                    <div key={card.id} className="flex items-start gap-1.5 group">
+                  {customLinks.map((link, idx) => (
+                    <div
+                      key={link.id}
+                      className="flex items-start gap-1.5 group"
+                      draggable
+                      onDragStart={(e) => { e.dataTransfer.setData("link-idx", String(idx)); }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const fromIdx = parseInt(e.dataTransfer.getData("link-idx"), 10);
+                        if (!isNaN(fromIdx) && fromIdx !== idx) {
+                          const newLinks = [...customLinks];
+                          const [moved] = newLinks.splice(fromIdx, 1);
+                          newLinks.splice(idx, 0, moved);
+                          onReorderCustomLinks(newLinks);
+                        }
+                      }}
+                    >
+                      <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
+                        <GripVertical className="h-3.5 w-3.5" />
+                      </div>
                       <div className="flex-1 space-y-1">
                         <Input
-                          value={card.title}
-                          onChange={(e) => onUpdateProductCard(card.id, { title: e.target.value })}
-                          placeholder="Product title"
+                          value={link.name}
+                          onChange={(e) => onUpdateCustomLink(link.id, { name: e.target.value })}
+                          placeholder="Link name"
                           className="h-7 rounded-md border-border bg-muted/50 text-xs"
                         />
-                        <div className="flex gap-1">
-                          <Input
-                            value={card.price || ""}
-                            onChange={(e) => onUpdateProductCard(card.id, { price: e.target.value })}
-                            placeholder="Price"
-                            className="h-7 w-20 rounded-md border-border bg-muted/50 text-xs"
-                          />
-                          <Input
-                            value={card.productUrl || ""}
-                            onChange={(e) => onUpdateProductCard(card.id, { productUrl: e.target.value })}
-                            placeholder="Product URL"
-                            className="h-7 flex-1 rounded-md border-border bg-muted/50 text-xs"
-                          />
-                        </div>
+                        <Input
+                          value={link.url}
+                          onChange={(e) => onUpdateCustomLink(link.id, { url: e.target.value })}
+                          placeholder="https://..."
+                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                        />
                       </div>
                       <button
-                        onClick={() => onDeleteProductCard(card.id)}
+                        onClick={() => onDeleteCustomLink(link.id)}
                         className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                       >
                         <Trash2 className="h-3 w-3" />
@@ -1197,198 +1140,293 @@ const AppearancePanel = ({
                     </div>
                   ))}
                   <button
-                    onClick={() => onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false })}
+                    onClick={() => onAddCustomLink("", "")}
                     className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
                   >
                     <Plus className="h-3 w-3" />
-                    Add product
+                    Add link
                   </button>
                 </div>
-              )}
-            </div>
+              </div>
+            ),
+            "product-carousel": () => (
+              <div className="rounded-lg border border-border overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <ShoppingBag className="h-4 w-4 text-orange-500" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Product Carousel</p>
+                      <p className="text-[11px] text-muted-foreground">Showcase products</p>
+                    </div>
+                  </div>
+                  <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
+                </div>
+                {productCarouselEnabled && (
+                  <div className="border-t border-border px-3 py-2.5 space-y-2">
+                    {productCards.map((card) => (
+                      <div key={card.id} className="flex items-start gap-1.5 group">
+                        <div className="flex-1 space-y-1">
+                          <Input
+                            value={card.title}
+                            onChange={(e) => onUpdateProductCard(card.id, { title: e.target.value })}
+                            placeholder="Product title"
+                            className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                          />
+                          <div className="flex gap-1">
+                            <Input
+                              value={card.price || ""}
+                              onChange={(e) => onUpdateProductCard(card.id, { price: e.target.value })}
+                              placeholder="Price"
+                              className="h-7 w-20 rounded-md border-border bg-muted/50 text-xs"
+                            />
+                            <Input
+                              value={card.productUrl || ""}
+                              onChange={(e) => onUpdateProductCard(card.id, { productUrl: e.target.value })}
+                              placeholder="Product URL"
+                              className="h-7 flex-1 rounded-md border-border bg-muted/50 text-xs"
+                            />
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => onDeleteProductCard(card.id)}
+                          className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => onAddProductCard({ id: crypto.randomUUID(), title: "", isLoading: false })}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                    >
+                      <Plus className="h-3 w-3" />
+                      Add product
+                    </button>
+                  </div>
+                )}
+              </div>
+            ),
+            "inspire-me": () => (
+              <div className="rounded-lg border border-border overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <Film className="h-4 w-4 text-purple-500" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Inspire Me</p>
+                      <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
+                    </div>
+                  </div>
+                  <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                </div>
+                {inspireEnabled && (
+                  <div className="border-t border-border px-3 py-2.5 space-y-2">
+                    <input
+                      ref={inspireFileInputRef}
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setIsUploadingInspire(true);
+                        await onAddInspireVideo(file);
+                        setIsUploadingInspire(false);
+                        if (inspireFileInputRef.current) inspireFileInputRef.current.value = "";
+                      }}
+                    />
+                    {inspireVideos.map((video) => (
+                      <div key={video.id} className="rounded-lg border border-border bg-muted/20 overflow-hidden">
+                        <div className="relative aspect-video max-h-[120px] bg-black">
+                          <video
+                            src={video.videoUrl}
+                            className="w-full h-full object-cover"
+                            muted
+                            playsInline
+                            preload="metadata"
+                          />
+                          <button
+                            onClick={() => onDeleteInspireVideo(video.id)}
+                            className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/50 hover:bg-black/70 transition-colors"
+                          >
+                            <Trash2 className="h-3 w-3 text-white" />
+                          </button>
+                        </div>
+                        <div className="px-2 py-1.5">
+                          <button
+                            onClick={() => {
+                              const newId = expandedInspireVideoId === video.id ? null : video.id;
+                              setExpandedInspireVideoId(newId);
+                              setInspireProductSearch("");
+                            }}
+                            className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <ShoppingBag className="h-3 w-3" />
+                            {(video.linkedProductIds || []).length > 0
+                              ? `${(video.linkedProductIds || []).length} product${(video.linkedProductIds || []).length > 1 ? "s" : ""} linked`
+                              : "Link products"}
+                          </button>
+                          {expandedInspireVideoId === video.id && (
+                            <div className="mt-1.5 space-y-1">
+                              {inspireStoreProducts.length > 0 ? (
+                                <>
+                                  <div className="relative">
+                                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                                    <input
+                                      type="text"
+                                      placeholder="Search products..."
+                                      value={inspireProductSearch}
+                                      onChange={(e) => setInspireProductSearch(e.target.value)}
+                                      className="w-full pl-7 pr-2 py-1.5 text-[11px] rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
+                                    />
+                                  </div>
+                                  <div className="max-h-[150px] overflow-y-auto space-y-1">
+                                    {inspireStoreProducts
+                                      .filter((card) =>
+                                        (card.title || "").toLowerCase().includes(inspireProductSearch.toLowerCase())
+                                      )
+                                      .map((card) => (
+                                      <label key={card.id} className="flex items-center gap-2 text-[11px] p-1.5 rounded-lg hover:bg-muted cursor-pointer">
+                                        <input
+                                          type="checkbox"
+                                          checked={(video.linkedProductIds || []).includes(card.id)}
+                                          onChange={() => {
+                                            const currentIds = video.linkedProductIds || [];
+                                            const newIds = currentIds.includes(card.id)
+                                              ? currentIds.filter((id) => id !== card.id)
+                                              : [...currentIds, card.id];
+                                            onUpdateInspireLinkedProducts(video.id, newIds);
+                                          }}
+                                          className="rounded"
+                                        />
+                                        {card.imageUrl && (
+                                          <img
+                                            src={card.imageUrl}
+                                            alt=""
+                                            className="w-5 h-5 rounded object-cover flex-shrink-0"
+                                          />
+                                        )}
+                                        <span className="truncate text-foreground">{card.title || "Untitled"}</span>
+                                        {card.price && (
+                                          <span className="ml-auto text-muted-foreground flex-shrink-0">{card.price}</span>
+                                        )}
+                                      </label>
+                                    ))}
+                                    {inspireStoreProducts.filter((card) =>
+                                      (card.title || "").toLowerCase().includes(inspireProductSearch.toLowerCase())
+                                    ).length === 0 && (
+                                      <p className="text-[11px] text-muted-foreground py-1">No products match your search.</p>
+                                    )}
+                                  </div>
+                                </>
+                              ) : (
+                                <p className="text-[11px] text-muted-foreground py-1">
+                                  {hasStoreConnection
+                                    ? "No products found. Sync your store catalog in the Integrations section."
+                                    : "No store connected. Connect your Shopify store in the Integrations section to link products to videos."}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => inspireFileInputRef.current?.click()}
+                      disabled={isUploadingInspire}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                    >
+                      {isUploadingInspire ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <Plus className="h-3 w-3" />
+                      )}
+                      {isUploadingInspire ? "Uploading..." : "Add video"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ),
+          };
 
-            {/* Instagram UGC - temporarily hidden */}
+          const handleSectionDrop = (e: React.DragEvent, toIdx: number) => {
+            e.preventDefault();
+            const fromIdx = parseInt(e.dataTransfer.getData("section-idx"), 10);
+            if (isNaN(fromIdx) || fromIdx === toIdx) return;
+            const newOrder = [...homeSectionOrder];
+            const [moved] = newOrder.splice(fromIdx, 1);
+            newOrder.splice(toIdx, 0, moved);
+            onHomeSectionOrderChange(newOrder);
+          };
 
+          return (
+            <div className="max-w-xs mx-auto space-y-1">
+              <p className="mb-3 text-xs text-muted-foreground">Drag to reorder sections on the widget home screen.</p>
 
-            {/* Inspire Me - Video Reels */}
-            <div className="rounded-lg border border-border overflow-hidden">
-              <div className="flex items-center justify-between px-3 py-2.5">
+              {homeSectionOrder.map((sectionKey, idx) => {
+                const renderer = sectionRenderers[sectionKey];
+                if (!renderer) return null;
+                return (
+                  <div
+                    key={sectionKey}
+                    className="relative"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleSectionDrop(e, idx)}
+                  >
+                    <div
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("section-idx", String(idx));
+                        e.dataTransfer.effectAllowed = "move";
+                      }}
+                      className="absolute -left-6 top-2.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors z-10"
+                    >
+                      <GripVertical className="h-4 w-4" />
+                    </div>
+                    {renderer()}
+                  </div>
+                );
+              })}
+
+              {/* Report Bugs */}
+              <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Film className="h-4 w-4 text-purple-500" />
+                  <Bug className="h-4 w-4 text-red-500" />
                   <div>
-                    <p className="text-sm font-medium text-foreground">Inspire Me</p>
-                    <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
+                    <p className="text-sm font-medium text-foreground">Report Bugs</p>
+                    <p className="text-[11px] text-muted-foreground">Let visitors report issues</p>
                   </div>
                 </div>
-                <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                <Switch checked={reportBugsEnabled} onCheckedChange={onReportBugsChange} />
               </div>
-              {inspireEnabled && (
-                <div className="border-t border-border px-3 py-2.5 space-y-2">
-                  <input
-                    ref={inspireFileInputRef}
-                    type="file"
-                    accept="video/*"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      setIsUploadingInspire(true);
-                      await onAddInspireVideo(file);
-                      setIsUploadingInspire(false);
-                      if (inspireFileInputRef.current) inspireFileInputRef.current.value = "";
-                    }}
-                  />
-                  {inspireVideos.map((video) => (
-                    <div key={video.id} className="rounded-lg border border-border bg-muted/20 overflow-hidden">
-                      <div className="relative aspect-video max-h-[120px] bg-black">
-                        <video
-                          src={video.videoUrl}
-                          className="w-full h-full object-cover"
-                          muted
-                          playsInline
-                          preload="metadata"
-                        />
-                        <button
-                          onClick={() => onDeleteInspireVideo(video.id)}
-                          className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/50 hover:bg-black/70 transition-colors"
-                        >
-                          <Trash2 className="h-3 w-3 text-white" />
-                        </button>
-                      </div>
-                      <div className="px-2 py-1.5">
-                        <button
-                          onClick={() => {
-                            const newId = expandedInspireVideoId === video.id ? null : video.id;
-                            setExpandedInspireVideoId(newId);
-                            setInspireProductSearch("");
-                          }}
-                          className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <ShoppingBag className="h-3 w-3" />
-                          {(video.linkedProductIds || []).length > 0
-                            ? `${(video.linkedProductIds || []).length} product${(video.linkedProductIds || []).length > 1 ? "s" : ""} linked`
-                            : "Link products"}
-                        </button>
-                        {expandedInspireVideoId === video.id && (
-                          <div className="mt-1.5 space-y-1">
-                            {inspireStoreProducts.length > 0 ? (
-                              <>
-                                <div className="relative">
-                                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                                  <input
-                                    type="text"
-                                    placeholder="Search products..."
-                                    value={inspireProductSearch}
-                                    onChange={(e) => setInspireProductSearch(e.target.value)}
-                                    className="w-full pl-7 pr-2 py-1.5 text-[11px] rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring"
-                                  />
-                                </div>
-                                <div className="max-h-[150px] overflow-y-auto space-y-1">
-                                  {inspireStoreProducts
-                                    .filter((card) =>
-                                      (card.title || "").toLowerCase().includes(inspireProductSearch.toLowerCase())
-                                    )
-                                    .map((card) => (
-                                    <label key={card.id} className="flex items-center gap-2 text-[11px] p-1.5 rounded-lg hover:bg-muted cursor-pointer">
-                                      <input
-                                        type="checkbox"
-                                        checked={(video.linkedProductIds || []).includes(card.id)}
-                                        onChange={() => {
-                                          const currentIds = video.linkedProductIds || [];
-                                          const newIds = currentIds.includes(card.id)
-                                            ? currentIds.filter((id) => id !== card.id)
-                                            : [...currentIds, card.id];
-                                          onUpdateInspireLinkedProducts(video.id, newIds);
-                                        }}
-                                        className="rounded"
-                                      />
-                                      {card.imageUrl && (
-                                        <img
-                                          src={card.imageUrl}
-                                          alt=""
-                                          className="w-5 h-5 rounded object-cover flex-shrink-0"
-                                        />
-                                      )}
-                                      <span className="truncate text-foreground">{card.title || "Untitled"}</span>
-                                      {card.price && (
-                                        <span className="ml-auto text-muted-foreground flex-shrink-0">{card.price}</span>
-                                      )}
-                                    </label>
-                                  ))}
-                                  {inspireStoreProducts.filter((card) =>
-                                    (card.title || "").toLowerCase().includes(inspireProductSearch.toLowerCase())
-                                  ).length === 0 && (
-                                    <p className="text-[11px] text-muted-foreground py-1">No products match your search.</p>
-                                  )}
-                                </div>
-                              </>
-                            ) : (
-                              <p className="text-[11px] text-muted-foreground py-1">
-                                {hasStoreConnection
-                                  ? "No products found. Sync your store catalog in the Integrations section."
-                                  : "No store connected. Connect your Shopify store in the Integrations section to link products to videos."}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => inspireFileInputRef.current?.click()}
-                    disabled={isUploadingInspire}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                  >
-                    {isUploadingInspire ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Plus className="h-3 w-3" />
-                    )}
-                    {isUploadingInspire ? "Uploading..." : "Add video"}
-                  </button>
-                </div>
-              )}
-            </div>
 
-            {/* Report Bugs */}
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-              <div className="flex items-center gap-2.5">
-                <Bug className="h-4 w-4 text-red-500" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Report Bugs</p>
-                  <p className="text-[11px] text-muted-foreground">Let visitors report issues</p>
+              {/* Share Feedback */}
+              <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Share Feedback</p>
+                    <p className="text-[11px] text-muted-foreground">Collect user feedback</p>
+                  </div>
                 </div>
+                <Switch checked={shareFeedbackEnabled} onCheckedChange={onShareFeedbackChange} />
               </div>
-              <Switch checked={reportBugsEnabled} onCheckedChange={onReportBugsChange} />
-            </div>
 
-            {/* Share Feedback */}
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-              <div className="flex items-center gap-2.5">
-                <Star className="h-4 w-4 text-yellow-500" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Share Feedback</p>
-                  <p className="text-[11px] text-muted-foreground">Collect user feedback</p>
-                </div>
+              {/* Forward form inquiries to */}
+              <div className="mt-4">
+                <Label className="mb-2 block text-sm font-semibold text-foreground">
+                  Forward form inquires to <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  type="email"
+                  value={forwardEmail}
+                  onChange={(e) => onForwardEmailChange(e.target.value)}
+                  placeholder="your@email.com"
+                  className="rounded-xl"
+                />
               </div>
-              <Switch checked={shareFeedbackEnabled} onCheckedChange={onShareFeedbackChange} />
             </div>
-
-            {/* Forward form inquiries to */}
-            <div className="mt-4">
-              <Label className="mb-2 block text-sm font-semibold text-foreground">
-                Forward form inquires to <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                type="email"
-                value={forwardEmail}
-                onChange={(e) => onForwardEmailChange(e.target.value)}
-                placeholder="your@email.com"
-                className="rounded-xl"
-              />
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
 
         {activeTab === "widget-button" && (

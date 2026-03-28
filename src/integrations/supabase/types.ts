@@ -673,6 +673,7 @@ export type Database = {
           google_business_ratings_total: number | null
           google_business_url: string | null
           google_reviews_enabled: boolean
+          home_section_order: string[] | null
           id: string
           inspire_enabled: boolean
           instagram_dm_enabled: boolean
@@ -720,6 +721,7 @@ export type Database = {
           google_business_ratings_total?: number | null
           google_business_url?: string | null
           google_reviews_enabled?: boolean
+          home_section_order?: string[] | null
           id?: string
           inspire_enabled?: boolean
           instagram_dm_enabled?: boolean
@@ -767,6 +769,7 @@ export type Database = {
           google_business_ratings_total?: number | null
           google_business_url?: string | null
           google_reviews_enabled?: boolean
+          home_section_order?: string[] | null
           id?: string
           inspire_enabled?: boolean
           instagram_dm_enabled?: boolean

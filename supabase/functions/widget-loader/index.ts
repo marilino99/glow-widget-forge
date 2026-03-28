@@ -197,6 +197,7 @@ Deno.serve(async (req) => {
      var ctaText = cfg.cta_text || '';
      var inspireEnabled = cfg.inspire_enabled || false;
      var inspireVideos = cfg.inspire_videos || [];
+     var homeSectionOrder = cfg.home_section_order || ['product-carousel', 'faq', 'custom-links', 'inspire-me'];
 
      var t = {
       en: { contactUs: 'Contact us', show: 'Show', quickAnswers: 'Quick answers', home: 'Home', contact: 'Contact', followIg: 'Follow us on Instagram', welcomeMessage: 'Welcome! How can I help you?', writeMessage: 'Write a message...', contactWhatsApp: 'Contact us on WhatsApp', chipFind: 'Find the right product for me', chipTrack: 'Track my order', chipInfo: 'I need more information' },
@@ -1475,6 +1476,9 @@ Deno.serve(async (req) => {
       setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
+    // Build section elements (but don't append yet - we'll append in homeSectionOrder)
+    var sectionElements = {};
+
     // Product cards
     if (products.length > 0 && productCarouselEnabled) {
       var prodCont = d.createElement('div');
@@ -1499,7 +1503,6 @@ Deno.serve(async (req) => {
           cartBtnHtml = '<button class="wj-prod-cart-btn" data-variant="' + esc(p.shopify_variant_id) + '"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>';
         }
         card.innerHTML = '<div class="wj-prod-img">' + imgHtml + '</div><div class="wj-prod-info">' + priceHtml + '<div class="wj-prod-title">' + esc(p.title) + '</div>' + subHtml + '<div class="wj-prod-actions">' + btnHtml + cartBtnHtml + '</div></div>';
-        // Bind cart click
         var cartBtn = card.querySelector('.wj-prod-cart-btn');
         if (cartBtn) {
           cartBtn.addEventListener('click', function(ev) {
@@ -1510,10 +1513,8 @@ Deno.serve(async (req) => {
         }
         prodCont.appendChild(card);
       });
-      scroll.appendChild(prodCont);
+      sectionElements['product-carousel'] = prodCont;
     }
-
-    // Instagram UGC section removed
 
     // FAQ
     if (faqEnabled && faqs.length > 0) {
@@ -1544,7 +1545,7 @@ Deno.serve(async (req) => {
         };
         faqItems.appendChild(item);
       });
-      scroll.appendChild(faqCont);
+      sectionElements['faq'] = faqCont;
     }
 
     // Custom Links
@@ -1560,57 +1561,11 @@ Deno.serve(async (req) => {
         item.innerHTML = '<span class="wj-link-name">' + esc(link.name || 'Untitled') + '</span><div class="wj-link-arrow"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>';
         linksCont.appendChild(item);
       });
-      scroll.appendChild(linksCont);
+      sectionElements['custom-links'] = linksCont;
     }
 
-    // Google Reviews inline card
-    if (grEnabled && grName) {
-      var grCont = d.createElement('div');
-      grCont.id = 'wj-greview';
-      var starsSvg = '';
-      for (var s = 1; s <= 5; s++) {
-        var isFull = s <= Math.floor(grRating);
-        var isHalf = !isFull && s === Math.ceil(grRating) && grRating % 1 >= 0.25;
-        var starFillSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-        var starEmptySvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-        if (isFull) {
-          starsSvg += '<div class="wj-star"><span class="wj-star-empty">' + starEmptySvg + '</span><div class="wj-star-clip" style="width:100%"><span class="wj-star-fill">' + starFillSvg + '</span></div></div>';
-        } else if (isHalf) {
-          starsSvg += '<div class="wj-star"><span class="wj-star-empty">' + starEmptySvg + '</span><div class="wj-star-clip" style="width:50%"><span class="wj-star-fill">' + starFillSvg + '</span></div></div>';
-        } else {
-          starsSvg += '<div class="wj-star"><span class="wj-star-empty">' + starEmptySvg + '</span></div>';
-        }
-      }
-      grCont.innerHTML = '<div id="wj-greview-box"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:24px;font-weight:700;color:' + textMain + '">' + grRating + '</span><div id="wj-greview-stars">' + starsSvg + '</div></div><p style="font-size:14px;color:' + textSub + ';margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(grName) + '</p><p style="font-size:14px;color:' + textSub + ';margin:4px 0 0">Check <span style="font-weight:700;color:' + textMain + '">' + grTotal + '</span> reviews on <span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span></p></div>';
-      grCont.querySelector('#wj-greview-box').onclick = function() {
-        if (grUrl) w.open(grUrl, '_blank', 'noopener,noreferrer');
-      };
-      scroll.appendChild(grCont);
-    }
-
-    homeView.appendChild(scroll);
-
-    // Footer nav
-    var footer = d.createElement('div');
-    footer.id = 'wj-footer';
-    footer.innerHTML = '<div id="wj-nav"><button class="wj-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>' + esc(tr.home) + '</span></button><button class="wj-nav-item inactive"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>' + esc(ctaText || tr.contact) + '</span></button></div>';
-    homeView.appendChild(footer);
-
-    // Powered by (conditional based on showBranding)
-    if (showBranding) {
-      var powered = d.createElement('div');
-      powered.id = 'wj-powered';
-      powered.innerHTML = poweredHtml;
-      homeView.appendChild(powered);
-    }
-
-    // INSPIRE ME (Reels) VIEW
-    var inspireView = d.createElement('div');
-    inspireView.id = 'wj-inspire-view';
-    inspireView.style.cssText = 'display:none;flex-direction:column;flex:1;min-height:0;background:#000;position:relative';
-
+    // Inspire Me box
     if (inspireEnabled) {
-      // Add Inspire Me box section (like FAQ, Links, Reviews)
       var inspireSec = d.createElement('div');
       inspireSec.id = 'wj-inspire-section';
       var hasVideos = inspireVideos.length > 0;
@@ -1619,7 +1574,15 @@ Deno.serve(async (req) => {
         : '<div style="width:72px;height:96px;border-radius:12px;background:linear-gradient(135deg,#f97316,#ec4899,#8b5cf6);background-size:200% 200%;animation:wjInspirePh 3s ease infinite;flex-shrink:0"></div><style>@keyframes wjInspirePh{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}</style>';
       var subText = hasVideos ? (inspireVideos.length + ' video' + (inspireVideos.length > 1 ? 's' : '')) : 'No videos yet';
       inspireSec.innerHTML = '<div id="wj-inspire-box">' + mediaHtml + '<div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + subText + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
-      scroll.appendChild(inspireSec);
+      sectionElements['inspire-me'] = inspireSec;
+    }
+
+    // Append sections in homeSectionOrder
+    homeSectionOrder.forEach(function(key) {
+      if (sectionElements[key]) {
+        scroll.appendChild(sectionElements[key]);
+      }
+    });
 
       if (hasVideos) {
       var isMuted = true;
