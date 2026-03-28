@@ -156,6 +156,8 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
           recentImpressions: prev?.recentImpressions ?? 0,
           launcherVisible: prev?.launcherVisible ?? null,
           launcherChecked: prev?.launcherChecked ?? false,
+          storefrontVerified: res.data?.storefrontVerified ?? false,
+          storefrontError: res.data?.storefrontError,
         }));
       } else {
         setDiagnostics(prev => ({
