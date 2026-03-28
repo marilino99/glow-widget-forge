@@ -1,27 +1,36 @@
 
 
-## Piano: Mostrare i post Instagram nel widget preview
+## Piano: Fix diagnostica Shopify post-installazione
 
 ### Problema
-Quando aggiungi un URL di Instagram, nel widget preview appare solo un'icona Instagram generica invece del contenuto del post. Questo perché:
+L'installazione del widget su Shopify **funziona correttamente** (confermato dai log del server: theme.liquid aggiornato + ScriptTag creato). Il problema è nella UI del builder:
 
-1. La funzione `instagram-oembed` esiste ma **non viene mai chiamata** durante l'aggiunta di un post — il hook `addInstagramPost` salva solo l'URL senza recuperare alcuna thumbnail
-2. Instagram blocca l'embedding diretto delle immagini (CORS), quindi senza thumbnail il preview mostra un placeholder vuoto
-
-### Soluzione
-Chiamare automaticamente l'edge function `instagram-oembed` quando l'utente aggiunge un post, per recuperare la thumbnail e l'autore. Se la chiamata fallisce (token non configurato o errore API), mostrare un fallback visivo migliore.
+1. Quando si apre il tab Shopify, `checkShopifyInstallation` (checkOnly) parte insieme all'installazione, creando una race condition
+2. Dopo l'installazione, i diagnostici non vengono ricalcolati — `tagInstalled` resta `false` perché nessuno rilancia il check
+3. Risultato: "Tag status: Not found" accanto a "Widget installed!" — confusivo
 
 ### Modifiche
 
-**File: `src/hooks/useInstagramPosts.ts`**
-1. Dopo l'inserimento nel database (riga 100), chiamare `supabase.functions.invoke("instagram-oembed", { body: { url } })` per ottenere `thumbnail_url` e `author_name`
-2. Se la risposta contiene una thumbnail, aggiornare sia lo state locale che il database con `thumbnail_url` e `author_name`
-3. Gestire il fallimento silenziosamente (il post resta salvato con il placeholder)
+**File: `src/components/builder/AddToWebsiteDialog.tsx`**
 
-**File: `src/components/builder/WidgetPreviewPanel.tsx`**
-1. Migliorare il fallback quando non c'è thumbnail (righe 2756-2759): invece dell'icona Instagram generica, mostrare un placeholder con gradiente animato (shimmer) e l'icona Instagram, così l'utente capisce che il contenuto sta caricando o non è disponibile
+1. **In `handleShopifyOneClick`** (riga ~224): dopo `setShopifyInstalled(true)`, aggiornare anche `diagnostics.tagInstalled = true` con il metodo restituito dalla response:
+   ```
+   setDiagnostics(prev => ({
+     ...prev,
+     tagInstalled: true,
+     method: result.method || "theme_liquid",
+     recentImpressions: prev?.recentImpressions ?? 0,
+     launcherVisible: prev?.launcherVisible ?? null,
+     launcherChecked: prev?.launcherChecked ?? false,
+   }));
+   ```
 
-### Dettagli tecnici
-- L'edge function `instagram-oembed` usa l'API Graph di Facebook, che richiede un `INSTAGRAM_ACCESS_TOKEN`. Se il token non è configurato, la funzione ritorna `thumbnail_url: null` — il post resta salvato ma senza anteprima visiva
-- Il fetch della thumbnail è asincrono e non blocca l'aggiunta del post (l'utente vede subito il post nella lista, la thumbnail appare dopo qualche secondo)
+2. **In `handleShopifyReinstall`** (riga ~263): stessa cosa dopo reinstallazione riuscita
+
+3. **In `handleShopifyOneClick`**: dopo l'installazione, chiamare `fetchDiagnostics()` con un piccolo delay (1-2 secondi) per aggiornare le impressioni
+
+4. **Nel response del server** (`shopify-install-widget/index.ts`): il risultato di `installViaThemeLiquid` include già `method: "theme_liquid"` — assicurarsi che il frontend lo legga dalla response (aggiungere `method` al tipo `result`)
+
+### Risultato
+Dopo l'installazione, la diagnostica mostra immediatamente "Tag status: ✓ Installed (theme_liquid)" coerente con "Widget installed!", eliminando la confusione.
 
