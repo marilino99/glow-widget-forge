@@ -1021,10 +1021,15 @@ const AppearancePanel = ({
                     <HelpCircle className="h-4 w-4 text-blue-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">FAQs</p>
-                      <p className="text-[11px] text-muted-foreground">Frequently asked questions</p>
+                      <p className="text-[11px] text-muted-foreground">{faqItems.length} questions</p>
                     </div>
                   </div>
-                  <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+                  <div className="flex items-center gap-2">
+                    <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
+                    <button onClick={() => onNavigateToSection?.("faq")} className="p-1 rounded hover:bg-accent transition-colors">
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ),
@@ -1035,10 +1040,14 @@ const AppearancePanel = ({
                     <Link2 className="h-4 w-4 text-purple-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Custom Links</p>
-                      <p className="text-[11px] text-muted-foreground">External URL cards</p>
+                      <p className="text-[11px] text-muted-foreground">{customLinks.length} links</p>
                     </div>
                   </div>
-                  <span className="text-[11px] text-muted-foreground">{customLinks.length} links</span>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => onNavigateToSection?.("custom-links")} className="p-1 rounded hover:bg-accent transition-colors">
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ),
@@ -1049,10 +1058,15 @@ const AppearancePanel = ({
                     <ShoppingBag className="h-4 w-4 text-orange-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Product Carousel</p>
-                      <p className="text-[11px] text-muted-foreground">Showcase products</p>
+                      <p className="text-[11px] text-muted-foreground">{productCards.length} products</p>
                     </div>
                   </div>
-                  <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
+                  <div className="flex items-center gap-2">
+                    <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
+                    <button onClick={() => onNavigateToSection?.("product-carousel")} className="p-1 rounded hover:bg-accent transition-colors">
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ),
@@ -1063,10 +1077,15 @@ const AppearancePanel = ({
                     <Film className="h-4 w-4 text-purple-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Inspire Me</p>
-                      <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
+                      <p className="text-[11px] text-muted-foreground">{inspireVideos.length} videos</p>
                     </div>
                   </div>
-                  <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                  <div className="flex items-center gap-2">
+                    <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                    <button onClick={() => onNavigateToSection?.("inspire-me")} className="p-1 rounded hover:bg-accent transition-colors">
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ),
