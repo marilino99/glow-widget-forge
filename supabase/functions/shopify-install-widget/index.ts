@@ -216,7 +216,26 @@ async function installViaThemeLiquid(storeDomain: string, token: string, loaderU
   const hasCorrectSnippet = hasSnippet && themeContent.includes(`widgetId=${widgetId}`);
 
   if (checkOnly) {
-    return { success: true, alreadyInstalled: hasCorrectSnippet, method: "theme_liquid" };
+    // Also check ScriptTag presence
+    let scriptTagFound = false;
+    try {
+      const stRes = await fetch(
+        `https://${storeDomain}/admin/api/2024-01/script_tags.json`,
+        { headers: { "X-Shopify-Access-Token": token } }
+      );
+      if (stRes.ok) {
+        const stData = await stRes.json();
+        scriptTagFound = (stData.script_tags || []).some((t: any) => t.src && t.src.includes(`widgetId=${widgetId}`));
+      }
+    } catch (_) {}
+    
+    return { 
+      success: true, 
+      alreadyInstalled: hasCorrectSnippet || scriptTagFound, 
+      themeLiquid: hasCorrectSnippet,
+      scriptTag: scriptTagFound,
+      method: hasCorrectSnippet ? "theme_liquid" : scriptTagFound ? "script_tag" : "none"
+    };
   }
 
   // Remove old snippet if present
@@ -226,6 +245,12 @@ async function installViaThemeLiquid(storeDomain: string, token: string, loaderU
 
   // Inject before </body>
   const updatedContent = themeContent.replace("</body>", `${snippet}\n</body>`);
+
+  // Check that </body> was actually found and replaced
+  if (updatedContent === themeContent) {
+    console.error("[install-widget] No </body> tag found in theme.liquid — injection skipped");
+    return { error: "Could not find </body> in theme layout. Widget was not installed." };
+  }
 
   const updateRes = await fetch(
     `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json`,
@@ -242,6 +267,23 @@ async function installViaThemeLiquid(storeDomain: string, token: string, loaderU
     return { error: "Failed to install widget in theme. Please try again." };
   }
 
+  // Verify: re-read theme.liquid and confirm snippet is present
+  const verifyRes = await fetch(
+    `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json?asset[key]=layout/theme.liquid`,
+    { headers: { "X-Shopify-Access-Token": token } }
+  );
+  if (verifyRes.ok) {
+    const verifyData = await verifyRes.json();
+    const verifyContent = verifyData.asset?.value || "";
+    if (!verifyContent.includes(`widgetId=${widgetId}`)) {
+      console.error("[install-widget] Post-install verification failed: snippet not found after write");
+      return { error: "Installation could not be verified. The snippet was not found after writing. Please try again." };
+    }
+    console.log("[install-widget] Post-install verification passed ✓");
+  } else {
+    console.warn("[install-widget] Could not verify installation (read-back failed), proceeding anyway");
+  }
+
   console.log(`[install-widget] Installed via theme.liquid for ${storeDomain}`);
-  return { success: true, method: "theme_liquid" };
+  return { success: true, method: "theme_liquid", verified: true };
 }

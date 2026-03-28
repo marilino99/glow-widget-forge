@@ -2343,6 +2343,21 @@ Deno.serve(async (req) => {
     trackEvent('impression');
     trackEvent('widget_rendered');
 
+    // Launcher visibility telemetry
+    setTimeout(function() {
+      try {
+        var launcherEl = d.getElementById('wj-btn');
+        if (launcherEl) {
+          var rect = launcherEl.getBoundingClientRect();
+          var style = w.getComputedStyle(launcherEl);
+          var isVisible = rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+          trackEvent(isVisible ? 'launcher_visible' : 'launcher_hidden');
+        } else {
+          trackEvent('launcher_hidden');
+        }
+      } catch(e) {}
+    }, 1000);
+
     // Inject custom JS if provided
     if (customJs) {
       try { new Function(customJs)(); } catch(e) { console.error('[Widjet] Custom JS error:', e); }

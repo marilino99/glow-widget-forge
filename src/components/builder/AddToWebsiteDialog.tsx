@@ -71,7 +71,7 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
   const { user } = useAuth();
   const { connection: shopifyConnection } = useShopifyConnection();
 
-  // Fetch live diagnostics: last impression URL + recent count
+  // Fetch live diagnostics: last impression URL + recent count, filtered by connected store
   const fetchDiagnostics = useCallback(async () => {
     if (!widgetId) return;
     try {
@@ -85,11 +85,32 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         .order("created_at", { ascending: false })
         .limit(100);
 
-      const impressions = recentEvents?.filter(e => e.event_type === "impression") || [];
-      const lastWithUrl = recentEvents?.find(e => e.page_url);
-      const hasLauncherVisible = recentEvents?.some(e => e.event_type === "launcher_visible") || false;
-      const hasLauncherHidden = recentEvents?.some(e => e.event_type === "launcher_hidden") || false;
+      const connectedDomain = shopifyConnection?.store_domain || "";
+      
+      // Filter events: only count those from the connected store domain
+      const storeEvents = connectedDomain 
+        ? recentEvents?.filter(e => {
+            if (!e.page_url) return false;
+            try {
+              const url = new URL(e.page_url);
+              return url.hostname.includes(connectedDomain.replace(".myshopify.com", ""));
+            } catch { return false; }
+          }) || []
+        : recentEvents || [];
+
+      const allEvents = recentEvents || [];
+      const otherDomainEvents = connectedDomain
+        ? allEvents.filter(e => e.page_url && !storeEvents.includes(e))
+        : [];
+
+      const impressions = storeEvents.filter(e => e.event_type === "impression");
+      const lastWithUrl = storeEvents.find(e => e.page_url);
+      const hasLauncherVisible = storeEvents.some(e => e.event_type === "launcher_visible");
+      const hasLauncherHidden = storeEvents.some(e => e.event_type === "launcher_hidden");
       const launcherChecked = hasLauncherVisible || hasLauncherHidden;
+
+      // Check if there are events from other domains (mismatch warning)
+      const otherDomainUrl = otherDomainEvents.length > 0 ? otherDomainEvents[0]?.page_url : undefined;
 
       setDiagnostics(prev => ({
         tagInstalled: prev?.tagInstalled ?? false,
@@ -99,11 +120,13 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
         recentImpressions: impressions.length,
         launcherVisible: launcherChecked ? hasLauncherVisible : null,
         launcherChecked,
+        otherDomainUrl,
+        otherDomainCount: otherDomainEvents.length,
       }));
     } catch (e) {
       // Silent
     }
-  }, [widgetId]);
+  }, [widgetId, shopifyConnection?.store_domain]);
 
   // Auto-check if widget is already installed on Shopify
   const checkShopifyInstallation = useCallback(async () => {
