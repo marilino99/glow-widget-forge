@@ -868,6 +868,10 @@ const Builder = () => {
                   hasStoreConnection={!!shopifyConnection}
                   homeSectionOrder={config.homeSectionOrder}
                   onHomeSectionOrderChange={(order) => saveConfig({ homeSectionOrder: order })}
+                  customChips={config.customChips}
+                  onCustomChipsChange={(chips) => updateConfig({ customChips: chips })}
+                  onSaveCustomChips={(chips) => saveConfig({ customChips: chips })}
+                  chatbotInstructions={config.chatbotInstructions}
                 />
               </div>
             </div>
