@@ -1,36 +1,23 @@
 
 
-## Piano: Fix diagnostica Shopify post-installazione
+## Piano: Fix errore `bgFaq is not defined` nel widget-loader
 
-### Problema
-L'installazione del widget su Shopify **funziona correttamente** (confermato dai log del server: theme.liquid aggiornato + ScriptTag creato). Il problema è nella UI del builder:
+### Causa
+Il `widget-loader` crasha alla riga 305 perché le righe 305-312 (sezione CSS "Inspire") usano interpolazioni non-escaped (`${bgFaq}`, `${dark}`, `${textMain}`, ecc.) dentro un template literal server-side. Deno prova a risolvere queste variabili a livello server dove non esistono. Le righe precedenti (es. 301) usano correttamente `\${bgFaq}` (con backslash).
 
-1. Quando si apre il tab Shopify, `checkShopifyInstallation` (checkOnly) parte insieme all'installazione, creando una race condition
-2. Dopo l'installazione, i diagnostici non vengono ricalcolati — `tagInstalled` resta `false` perché nessuno rilancia il check
-3. Risultato: "Tag status: Not found" accanto a "Widget installed!" — confusivo
+### Fix
 
-### Modifiche
+**File: `supabase/functions/widget-loader/index.ts`** (righe 305-312)
 
-**File: `src/components/builder/AddToWebsiteDialog.tsx`**
+Aggiungere il backslash di escape a tutte le interpolazioni nelle righe della sezione "Inspire":
 
-1. **In `handleShopifyOneClick`** (riga ~224): dopo `setShopifyInstalled(true)`, aggiornare anche `diagnostics.tagInstalled = true` con il metodo restituito dalla response:
-   ```
-   setDiagnostics(prev => ({
-     ...prev,
-     tagInstalled: true,
-     method: result.method || "theme_liquid",
-     recentImpressions: prev?.recentImpressions ?? 0,
-     launcherVisible: prev?.launcherVisible ?? null,
-     launcherChecked: prev?.launcherChecked ?? false,
-   }));
-   ```
-
-2. **In `handleShopifyReinstall`** (riga ~263): stessa cosa dopo reinstallazione riuscita
-
-3. **In `handleShopifyOneClick`**: dopo l'installazione, chiamare `fetchDiagnostics()` con un piccolo delay (1-2 secondi) per aggiornare le impressioni
-
-4. **Nel response del server** (`shopify-install-widget/index.ts`): il risultato di `installViaThemeLiquid` include già `method: "theme_liquid"` — assicurarsi che il frontend lo legga dalla response (aggiungere `method` al tipo `result`)
+- Riga 305: `${bgFaq}` → `\${bgFaq}`
+- Riga 306: `${dark ? ...}` → `\${dark ? ...}`
+- Riga 309: `${textMain}` → `\${textMain}`
+- Riga 310: `${textSub}` → `\${textSub}`
+- Riga 311: `${color.bg}`, `${btnText}` → `\${color.bg}`, `\${btnText}`
+- Riga 312: `${color.hover}` → `\${color.hover}`
 
 ### Risultato
-Dopo l'installazione, la diagnostica mostra immediatamente "Tag status: ✓ Installed (theme_liquid)" coerente con "Widget installed!", eliminando la confusione.
+Il widget-loader non crasherà più e il widget sarà visibile sullo store Shopify.
 
