@@ -1423,17 +1423,17 @@ const AppearancePanel = ({
                 const renderer = sectionRenderers[sectionKey];
                 if (!renderer) return null;
                 return (
-                  <div key={sectionKey}>
-                    {/* Drop indicator line above */}
+                  <div key={sectionKey} className="relative">
+                    {/* Drop indicator line above — absolute positioned to avoid layout shifts */}
                     {dropTargetIdx === idx && (
-                      <div className="flex items-center gap-2 py-1 animate-in fade-in duration-150">
-                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                        <div className="h-0.5 flex-1 rounded-full bg-primary" />
-                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                      <div className="absolute -top-[5px] left-0 right-0 z-10 flex items-center gap-2 pointer-events-none">
+                        <div className="h-2.5 w-2.5 rounded-full bg-primary shrink-0" />
+                        <div className="h-[3px] flex-1 rounded-full bg-primary" />
+                        <div className="h-2.5 w-2.5 rounded-full bg-primary shrink-0" />
                       </div>
                     )}
                     <div
-                      className={`relative transition-all duration-150 my-0.5 ${dragSectionIdx === idx ? "opacity-40 border-dashed border border-primary rounded-lg" : ""}`}
+                      className={`relative transition-opacity duration-150 my-0.5 ${dragSectionIdx === idx ? "opacity-40 border-dashed border border-primary rounded-lg" : ""}`}
                       draggable
                       onDragStart={(e) => {
                         e.dataTransfer.setData("section-idx", String(idx));
@@ -1447,17 +1447,18 @@ const AppearancePanel = ({
                       onDragOver={(e) => {
                         e.preventDefault();
                         e.dataTransfer.dropEffect = "move";
-                        if (dragSectionIdx === null || dragSectionIdx === idx) {
-                          setDropTargetIdx(null);
+                        if (dragSectionIdx === null || dragSectionIdx === idx) return;
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const ratio = (e.clientY - rect.top) / rect.height;
+                        // Dead zone in the center 30% — ignore to prevent flicker
+                        if (ratio > 0.35 && ratio < 0.65) return;
+                        const targetIdx = ratio < 0.35 ? idx : idx + 1;
+                        if (targetIdx === dragSectionIdx || targetIdx === dragSectionIdx + 1) {
+                          if (dropTargetIdx !== null) setDropTargetIdx(null);
                           return;
                         }
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const isAbove = e.clientY < rect.top + rect.height / 2;
-                        const targetIdx = isAbove ? idx : idx + 1;
-                        if (targetIdx !== dragSectionIdx && targetIdx !== dragSectionIdx + 1) {
+                        if (targetIdx !== dropTargetIdx) {
                           setDropTargetIdx(targetIdx);
-                        } else {
-                          setDropTargetIdx(null);
                         }
                       }}
                       onDragLeave={(e) => {
@@ -1473,12 +1474,12 @@ const AppearancePanel = ({
                     >
                       {renderer()}
                     </div>
-                    {/* Drop indicator line below last item */}
+                    {/* Drop indicator line below last item — absolute */}
                     {dropTargetIdx === homeSectionOrder.length && idx === homeSectionOrder.length - 1 && (
-                      <div className="flex items-center gap-2 py-1 animate-in fade-in duration-150">
-                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                        <div className="h-0.5 flex-1 rounded-full bg-primary" />
-                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                      <div className="absolute -bottom-[5px] left-0 right-0 z-10 flex items-center gap-2 pointer-events-none">
+                        <div className="h-2.5 w-2.5 rounded-full bg-primary shrink-0" />
+                        <div className="h-[3px] flex-1 rounded-full bg-primary" />
+                        <div className="h-2.5 w-2.5 rounded-full bg-primary shrink-0" />
                       </div>
                     )}
                   </div>
