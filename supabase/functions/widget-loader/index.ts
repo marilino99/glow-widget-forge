@@ -1696,9 +1696,9 @@ Deno.serve(async (req) => {
 
               function buildCardHtml(prod) {
                 var imgHtml = prod.image_url ? '<img src="' + esc(prod.image_url) + '" style="width:48px !important;height:48px !important;border-radius:8px !important;object-fit:cover !important;flex-shrink:0 !important"/>' : '<div style="width:48px !important;height:48px !important;border-radius:8px !important;background:rgba(255,255,255,0.1) !important;flex-shrink:0 !important"></div>';
-                var priceHtml = prod.price ? '<span style="font-size:14px !important;font-weight:700 !important;color:#fff !important">' + esc(prod.price) + '</span>' : '';
+                var priceHtml = prod.price ? '<span style="font-size:15px !important;font-weight:700 !important;color:#fff !important">' + esc(prod.price) + '</span>' : '';
                 var oldPriceHtml = prod.old_price ? '<span style="font-size:12px !important;color:rgba(255,255,255,0.5) !important;text-decoration:line-through !important">' + esc(prod.old_price) + '</span>' : '';
-                return imgHtml + '<div style="display:flex !important;flex-direction:column !important;gap:2px !important;min-width:0 !important;flex:1 !important"><span style="font-size:11px !important;font-weight:600 !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important">' + esc(prod.title) + '</span><div style="display:flex !important;align-items:center !important;gap:6px !important">' + priceHtml + oldPriceHtml + '</div></div><div style="flex-shrink:0 !important;width:36px !important;height:36px !important;border-radius:50% !important;background:rgba(255,255,255,0.2) !important;display:flex !important;align-items:center !important;justify-content:center !important"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>';
+                return imgHtml + '<div style="display:flex !important;flex-direction:column !important;gap:4px !important;min-width:0 !important;flex:1 !important"><span style="font-size:13px !important;font-weight:600 !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important">' + esc(prod.title) + '</span><div style="display:flex !important;align-items:center !important;gap:6px !important">' + priceHtml + oldPriceHtml + '</div></div><div style="flex-shrink:0 !important;width:36px !important;height:36px !important;border-radius:50% !important;background:rgba(255,255,255,0.2) !important;display:flex !important;align-items:center !important;justify-content:center !important"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>';
               }
 
               function renderCards(isExpanded) {
@@ -1709,7 +1709,7 @@ Deno.serve(async (req) => {
                   stack.style.cssText = 'display:flex !important;flex-direction:column !important;gap:8px !important';
                   linkedProds.forEach(function(prod, pIdx) {
                     var card = d.createElement('div');
-                    card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;cursor:pointer !important;transition:all .3s !important;animation:wjSlideUp 0.3s ease-out ' + (pIdx * 60) + 'ms both !important';
+                    card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(0,0,0,0.65) !important;backdrop-filter:blur(12px) !important;padding:10px 12px !important;cursor:pointer !important;transition:all .3s !important;animation:wjSlideUp 0.3s ease-out ' + (pIdx * 60) + 'ms both !important';
                     card.innerHTML = buildCardHtml(prod);
                     card.querySelector('div[style*="border-radius:50%"]').addEventListener('click', function(e) {
                       e.stopPropagation();
@@ -1725,10 +1725,10 @@ Deno.serve(async (req) => {
                 } else {
                   // Collapsed: stacked deck
                   var deck = d.createElement('div');
-                  deck.style.cssText = 'position:relative !important;height:56px !important;cursor:pointer !important';
+                  deck.style.cssText = 'position:relative !important;height:64px !important;cursor:pointer !important';
                   linkedProds.slice(0, 3).forEach(function(prod, pIdx) {
                     var card = d.createElement('div');
-                    card.style.cssText = 'position:absolute !important;left:0 !important;right:0 !important;display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;transition:all .3s !important;bottom:' + (pIdx * 5) + 'px !important;transform:scale(' + (1 - pIdx * 0.04) + ') !important;opacity:' + (pIdx === 0 ? 1 : 0.7 - pIdx * 0.2) + ' !important;z-index:' + (10 - pIdx) + ' !important';
+                    card.style.cssText = 'position:absolute !important;left:0 !important;right:0 !important;display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(0,0,0,0.65) !important;backdrop-filter:blur(12px) !important;padding:10px 12px !important;transition:all .3s !important;bottom:' + (pIdx * 5) + 'px !important;transform:scale(' + (1 - pIdx * 0.04) + ') !important;opacity:' + (pIdx === 0 ? 1 : 0.7 - pIdx * 0.2) + ' !important;z-index:' + (10 - pIdx) + ' !important';
                     card.innerHTML = buildCardHtml(prod);
                     deck.appendChild(card);
                   });
