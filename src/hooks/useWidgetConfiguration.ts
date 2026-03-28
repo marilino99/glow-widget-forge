@@ -45,6 +45,7 @@ export interface WidgetConfiguration {
   calendlyEnabled: boolean;
   calendlyEventUrl: string | null;
   inspireEnabled: boolean;
+  homeSectionOrder: string[];
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -89,6 +90,7 @@ const defaultConfig: WidgetConfiguration = {
   calendlyEnabled: false,
   calendlyEventUrl: null,
   inspireEnabled: false,
+  homeSectionOrder: ["product-carousel", "faq", "custom-links", "inspire-me"],
 };
 
 export const useWidgetConfiguration = () => {
@@ -160,6 +162,7 @@ export const useWidgetConfiguration = () => {
             calendlyEnabled: (data as any).calendly_enabled ?? false,
             calendlyEventUrl: (data as any).calendly_event_url || null,
             inspireEnabled: (data as any).inspire_enabled ?? false,
+            homeSectionOrder: (data as any).home_section_order || defaultConfig.homeSectionOrder,
           });
         }
       } catch (error) {
@@ -226,6 +229,7 @@ export const useWidgetConfiguration = () => {
           calendly_enabled: updatedConfig.calendlyEnabled,
           calendly_event_url: updatedConfig.calendlyEventUrl,
           inspire_enabled: updatedConfig.inspireEnabled,
+          home_section_order: updatedConfig.homeSectionOrder,
         }, {
           onConflict: "user_id"
         })
