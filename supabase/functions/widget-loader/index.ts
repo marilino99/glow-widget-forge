@@ -105,23 +105,32 @@ Deno.serve(async (req) => {
     else visitorSystem = 'Other';
   } catch(e) {}
 
+  console.log('[Widjet] Script loaded, fetching config...');
   var x = new XMLHttpRequest();
   x.open('GET', u + '/functions/v1/widget-config?id=' + id, true);
   x.onreadystatechange = function() {
     if (x.readyState !== 4) return;
     if (x.status !== 200) {
-      console.error('[Widjet] Load failed');
+      console.error('[Widjet] Load failed, status:', x.status);
       return;
     }
+    var cfg;
     try {
-      var cfg = JSON.parse(x.responseText);
-      if (cfg.error) {
-        console.error('[Widjet]', cfg.error);
-        return;
-      }
-      render(cfg);
+      cfg = JSON.parse(x.responseText);
     } catch(e) {
-      console.error('[Widjet] Parse error');
+      console.error('[Widjet] JSON parse error:', e.message);
+      return;
+    }
+    if (cfg.error) {
+      console.error('[Widjet]', cfg.error);
+      return;
+    }
+    console.log('[Widjet] Config loaded, rendering...');
+    try {
+      render(cfg);
+      console.log('[Widjet] Render complete');
+    } catch(e) {
+      console.error('[Widjet] Render error:', e.message, e.stack);
     }
   };
   x.send();
