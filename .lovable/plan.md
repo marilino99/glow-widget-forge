@@ -1,40 +1,29 @@
 
 
-## Piano: Generazione automatica dei Quick Action Chips tramite AI
+## Piano: Aggiornamento batch dei chip per tutti i widget attivi
 
-### Idea
-Invece di lasciare all'utente la responsabilità di scrivere i chip, il sistema li genera automaticamente al momento del primo caricamento del widget-config, basandosi sui dati già disponibili (FAQ, prodotti, istruzioni chatbot, custom links). I chip vengono salvati nel DB e serviti nelle richieste successive senza rigenerarli ogni volta.
+### Situazione
+- Tutti i widget hanno `custom_chips = null`
+- La logica di auto-generazione nel `widget-config` li genererà al prossimo caricamento, ma il user vuole aggiornarli **adesso** proattivamente
+- Bisogna distinguere e-commerce (hanno prodotti o Shopify) da non-e-commerce
 
-### Come funziona
+### Approccio
+Creare un **edge function one-off** (`batch-generate-chips`) che:
 
-1. **Nel `widget-config` edge function**: quando un widget viene richiesto e `custom_chips` è `null` (mai impostato), la funzione:
-   - Raccoglie il contesto disponibile: titoli prodotti, domande FAQ, nomi custom links, chatbot instructions
-   - Chiama il Lovable AI Gateway con un prompt che chiede 3 chip pertinenti nella lingua del widget
-   - Salva i chip generati nella colonna `custom_chips` del DB (così non li rigenera ad ogni richiesta)
-   - Li restituisce nella risposta
+1. Carica tutti i widget con `custom_chips IS NULL`
+2. Per ogni widget, controlla se è e-commerce (`product_cards > 0` oppure `shopify_connections` presente)
+3. **Se e-commerce**: imposta i chip tradotti di default (es. "Find the right product for me", "Track my order", "I need more information" — nella lingua del widget)
+4. **Se non e-commerce**: raccoglie contesto (chatbot_instructions, FAQ, training_chunks) e chiama l'AI per generare 3 chip pertinenti
+5. Salva i chip generati nel DB
 
-2. **Se i dati cambiano**: l'utente può sempre rigenerare dal builder con "Generate with AI", oppure scriverli manualmente
+### File coinvolti
+- **Nuovo**: `supabase/functions/batch-generate-chips/index.ts` — edge function che esegue il batch
+- Nessuna modifica ad altri file
 
-3. **Fallback**: se la generazione AI fallisce (rate limit, errore), si usano i chip tradotti di default (`chipFind`, `chipTrack`, `chipInfo`)
-
-### Modifiche tecniche
-
-**File: `supabase/functions/widget-config/index.ts`**
-- Dopo aver caricato config, FAQ, prodotti e custom links, se `custom_chips` è null:
-  - Costruire un contesto testuale (max ~500 chars) da FAQ titles + product titles + chatbot instructions
-  - Chiamare `https://ai.gateway.lovable.dev/v1/chat/completions` con `LOVABLE_API_KEY`
-  - Parsare la risposta JSON array di 3 stringhe
-  - Salvare nel DB con un update su `widget_configurations`
-  - Restituire i chip generati nel payload
-- Se `custom_chips` è già valorizzato, comportamento invariato
-
-### Vantaggi
-- Zero sforzo per il business: i chip sono rilevanti dal primo momento
-- Il business può comunque personalizzarli dal builder se vuole
-- La generazione avviene una sola volta, non ad ogni page view
-
-### Rischi mitigati
-- **Latenza**: la generazione avviene solo la prima volta, poi i chip sono cached nel DB
-- **Errori AI**: fallback ai chip tradotti di default
-- **Costi**: una sola chiamata AI per widget, mai ripetuta
+### Dettagli tecnici
+- Rate limiting: delay di 500ms tra chiamate AI per evitare 429
+- Batch size: processa max 20 widget per invocazione (per evitare timeout 60s)
+- Fallback: se AI fallisce per un widget, salta e continua col prossimo
+- I chip e-commerce di default vengono mappati dalla lingua del widget (en/it/es/fr/de/pt)
+- Dopo il deploy, lo invochiamo una volta per aggiornare tutti i widget esistenti
 
