@@ -43,6 +43,9 @@ interface ShopifyDiagnostics {
   launcherChecked: boolean;
   otherDomainUrl?: string;
   otherDomainCount?: number;
+  storefrontVerified?: boolean;
+  storefrontError?: string;
+  loaderBooted?: boolean;
 }
 
 const LovableLogo = ({ className }: { className?: string }) => (
