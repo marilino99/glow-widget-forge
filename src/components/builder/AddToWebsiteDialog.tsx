@@ -113,7 +113,11 @@ const AddToWebsiteDialog = ({ widgetId, fullWidth }: AddToWebsiteDialogProps) =>
       const hasLauncherVisible = storeEvents.some(e => e.event_type === "launcher_visible");
       const hasLauncherHidden = storeEvents.some(e => e.event_type === "launcher_hidden");
       const launcherChecked = hasLauncherVisible || hasLauncherHidden;
-      const hasLoaderBoot = (recentEvents || []).some(e => e.event_type === "loader_boot");
+      // Filter loader_boot by connected store domain too
+      const hasLoaderBoot = connectedDomain
+        ? storeEvents.some(e => e.event_type === "loader_boot")
+        : (recentEvents || []).some(e => e.event_type === "loader_boot");
+      const hasLoaderBootAnyDomain = (recentEvents || []).some(e => e.event_type === "loader_boot");
 
       // Check if there are events from other domains (mismatch warning)
       const otherDomainUrl = otherDomainEvents.length > 0 ? otherDomainEvents[0]?.page_url : undefined;
@@ -306,15 +310,17 @@ useEffect(() => {
     }
   };
 
-  const handleShopifyReinstall = async () => {
+  const handleShopifyReinstall = async (force = false) => {
     setIsInstallingShopify(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      // First uninstall
-      await supabase.functions.invoke("shopify-uninstall-widget", {
-        headers: { Authorization: `Bearer ${session?.access_token}` },
-      });
-      // Then reinstall with force flag
+      if (force) {
+        // Force: uninstall first to clear old cached snippet
+        await supabase.functions.invoke("shopify-uninstall-widget", {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+      }
+      // Reinstall with force flag — generates new cache-bust URL
       const res = await supabase.functions.invoke("shopify-install-widget", {
         headers: { Authorization: `Bearer ${session?.access_token}` },
         body: { forceReinstall: true },
@@ -341,9 +347,9 @@ useEffect(() => {
         const title = result.storefrontVerified ? "Verified!" : "Reinstalled in admin";
         const desc = result.storefrontVerified 
           ? "Widget installed and verified on your Shopify store." 
-          : result.storefrontError || "Installed but not yet confirmed on live storefront.";
+          : result.storefrontError || "Installed but not yet confirmed on live storefront. Clear browser cache and refresh your store.";
         toast({ title, description: desc });
-        setTimeout(() => fetchDiagnostics(), 2000);
+        setTimeout(() => fetchDiagnostics(), 3000);
       }
     } catch (e: any) {
       console.error("Shopify reinstall error:", e);
@@ -613,22 +619,35 @@ useEffect(() => {
                          </p>
                        </div>
                     </div>
-                    <Button 
-                      onClick={handleShopifyReinstall} 
-                      disabled={isInstallingShopify}
-                      variant="outline"
-                      className="gap-2 w-full"
-                      size="sm"
-                    >
-                      {isInstallingShopify ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Reinstalling...
-                        </>
-                      ) : (
-                        "Reinstall widget"
+                    <div className="space-y-2">
+                      <Button 
+                        onClick={() => handleShopifyReinstall(false)} 
+                        disabled={isInstallingShopify}
+                        variant="outline"
+                        className="gap-2 w-full"
+                        size="sm"
+                      >
+                        {isInstallingShopify ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Reinstalling...
+                          </>
+                        ) : (
+                          "Reinstall widget"
+                        )}
+                      </Button>
+                      {diagnostics && diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
+                        <Button 
+                          onClick={() => handleShopifyReinstall(true)} 
+                          disabled={isInstallingShopify}
+                          variant="destructive"
+                          className="gap-2 w-full"
+                          size="sm"
+                        >
+                          Force reinstall (clear cache)
+                        </Button>
                       )}
-                    </Button>
+                    </div>
                   </div>
                 ) : (
                   <>
