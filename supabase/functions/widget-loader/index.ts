@@ -1502,27 +1502,7 @@ Deno.serve(async (req) => {
       scroll.appendChild(prodCont);
     }
 
-    // Instagram posts
-    if (igEnabled && igPosts.length > 0) {
-      var igCont = d.createElement('div');
-      igCont.id = 'wj-ig';
-      igCont.innerHTML = '<div id="wj-ig-head"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r="1.5"/></svg><span>' + esc(tr.followIg) + '</span></div>';
-      var igList = d.createElement('div');
-      igList.id = 'wj-ig-list';
-      igPosts.forEach(function(post) {
-        var item = d.createElement('a');
-        item.className = 'wj-ig-item';
-        item.href = post.url;
-        item.target = '_blank';
-        item.rel = 'noopener';
-        if (post.thumbnail_url) {
-          item.innerHTML = '<img src="' + esc(post.thumbnail_url) + '" alt=""/>';
-        }
-        igList.appendChild(item);
-      });
-      igCont.appendChild(igList);
-      scroll.appendChild(igCont);
-    }
+    // Instagram UGC section removed
 
     // FAQ
     if (faqEnabled && faqs.length > 0) {
