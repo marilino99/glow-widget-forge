@@ -124,6 +124,9 @@ interface AppearancePanelProps {
   // Store products for linking to Inspire videos (from connected store)
   inspireStoreProducts: ProductCardData[];
   hasStoreConnection: boolean;
+  // Home section order
+  homeSectionOrder: string[];
+  onHomeSectionOrderChange: (order: string[]) => void;
 }
 
 const presetColors = [
@@ -213,6 +216,8 @@ const AppearancePanel = ({
   onUpdateInspireLinkedProducts,
   inspireStoreProducts,
   hasStoreConnection,
+  homeSectionOrder,
+  onHomeSectionOrderChange,
 }: AppearancePanelProps) => {
   const inspireFileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
