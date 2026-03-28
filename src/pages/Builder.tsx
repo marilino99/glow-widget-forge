@@ -866,6 +866,8 @@ const Builder = () => {
                   onUpdateInspireLinkedProducts={updateInspireLinkedProducts}
                   inspireStoreProducts={rawProductCards}
                   hasStoreConnection={!!shopifyConnection}
+                  homeSectionOrder={config.homeSectionOrder}
+                  onHomeSectionOrderChange={(order) => saveConfig({ homeSectionOrder: order })}
                 />
               </div>
             </div>
