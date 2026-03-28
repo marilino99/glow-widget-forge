@@ -223,6 +223,7 @@ const AppearancePanel = ({
   const [isUploadingInspire, setIsUploadingInspire] = useState(false);
   const [expandedInspireVideoId, setExpandedInspireVideoId] = useState<string | null>(null);
   const [inspireProductSearch, setInspireProductSearch] = useState("");
+  const [dragSectionIdx, setDragSectionIdx] = useState<number | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarTab, setAvatarTab] = useState("gallery");
@@ -1368,20 +1369,31 @@ const AppearancePanel = ({
                 return (
                   <div
                     key={sectionKey}
-                    className="relative"
-                    draggable
+                    className="relative transition-transform duration-150"
+                    draggable={dragSectionIdx === idx}
                     onDragStart={(e) => {
                       e.dataTransfer.setData("section-idx", String(idx));
                       e.dataTransfer.effectAllowed = "move";
+                      (e.currentTarget as HTMLElement).style.opacity = "0.5";
                     }}
-                    onDragOver={(e) => e.preventDefault()}
+                    onDragEnd={(e) => {
+                      (e.currentTarget as HTMLElement).style.opacity = "1";
+                      setDragSectionIdx(null);
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                    }}
                     onDrop={(e) => {
-                      // Ignore inner FAQ/link drags
                       if (e.dataTransfer.types.includes("faq-idx") || e.dataTransfer.types.includes("link-idx")) return;
                       handleSectionDrop(e, idx);
                     }}
                   >
-                    <div className="absolute -left-6 top-2.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors z-10 pointer-events-none">
+                    <div
+                      className="absolute -left-6 top-2.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors z-10"
+                      onMouseDown={() => setDragSectionIdx(idx)}
+                      onMouseUp={() => setDragSectionIdx(null)}
+                    >
                       <GripVertical className="h-4 w-4" />
                     </div>
                     {renderer()}
