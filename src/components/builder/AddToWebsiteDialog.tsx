@@ -214,16 +214,34 @@ useEffect(() => {
       });
 
       if (res.error) throw res.error;
-      const result = res.data as { success?: boolean; alreadyInstalled?: boolean; error?: string };
+      const result = res.data as { success?: boolean; alreadyInstalled?: boolean; error?: string; method?: string };
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
       } else if (result.alreadyInstalled) {
         setShopifyInstalled(true);
+        setDiagnostics(prev => ({
+          ...prev,
+          tagInstalled: true,
+          method: result.method || "theme_liquid",
+          recentImpressions: prev?.recentImpressions ?? 0,
+          launcherVisible: prev?.launcherVisible ?? null,
+          launcherChecked: prev?.launcherChecked ?? false,
+        }));
         toast({ title: "Already installed!", description: "The widget is already active on your Shopify store." });
       } else if (result.success) {
         setShopifyInstalled(true);
+        setDiagnostics(prev => ({
+          ...prev,
+          tagInstalled: true,
+          method: result.method || "theme_liquid",
+          recentImpressions: prev?.recentImpressions ?? 0,
+          launcherVisible: prev?.launcherVisible ?? null,
+          launcherChecked: prev?.launcherChecked ?? false,
+        }));
         toast({ title: "Installed!", description: "Widget is now live on your Shopify store." });
+        // Refresh diagnostics after a short delay
+        setTimeout(() => fetchDiagnostics(), 2000);
         if (user) {
           supabase.from("user_activity_logs").insert({
             user_id: user.id,
@@ -255,13 +273,22 @@ useEffect(() => {
       });
 
       if (res.error) throw res.error;
-      const result = res.data as { success?: boolean; error?: string };
+      const result = res.data as { success?: boolean; error?: string; method?: string };
 
       if (result.error) {
         toast({ title: "Error", description: result.error, variant: "destructive" });
       } else if (result.success) {
         setShopifyInstalled(true);
+        setDiagnostics(prev => ({
+          ...prev,
+          tagInstalled: true,
+          method: result.method || "theme_liquid",
+          recentImpressions: prev?.recentImpressions ?? 0,
+          launcherVisible: prev?.launcherVisible ?? null,
+          launcherChecked: prev?.launcherChecked ?? false,
+        }));
         toast({ title: "Reinstalled!", description: "Widget has been freshly installed on your Shopify store." });
+        setTimeout(() => fetchDiagnostics(), 2000);
       }
     } catch (e: any) {
       console.error("Shopify reinstall error:", e);
