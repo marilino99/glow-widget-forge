@@ -262,7 +262,7 @@ Deno.serve(async (req) => {
       #wj-whatsapp{width:100%;margin-top:8px;padding:10px;border:1px solid \${dark ? 'rgba(255,255,255,0.2)' : '#e2e8f0'};border-radius:8px;background:transparent;color:\${solid ? '#fff' : textMain};font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
       #wj-whatsapp:hover{background:\${dark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}}
       #wj-whatsapp svg{width:20px;height:20px}
-      #wj-products{padding:16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin-top:8px}
+      #wj-products{padding:16px 16px 0 16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;margin-top:16px}
       #wj-products::-webkit-scrollbar{display:none}
       .wj-prod{flex-shrink:0;width:calc(100% - 48px);border-radius:16px;overflow:hidden;background:\${dark ? '#1e293b' : '#fff'}}
       .wj-prod-img{aspect-ratio:4/3;background:\${dark ? '#cbd5e1' : '#e2e8f0'};display:flex;align-items:center;justify-content:center}
@@ -285,7 +285,7 @@ Deno.serve(async (req) => {
       #wj-ig-list::-webkit-scrollbar{display:none}
       .wj-ig-item{width:80px;height:80px;flex-shrink:0;border-radius:8px;overflow:hidden;background:\${dark ? '#374151' : '#e2e8f0'}}
       .wj-ig-item img{width:100%;height:100%;object-fit:cover}
-      #wj-faq{padding:0 16px 16px;margin-top:16px}
+      #wj-faq{padding:0 16px 0;margin-top:16px}
       #wj-faq-box{border-radius:16px;padding:16px;background:\${bgFaq}}
       #wj-faq-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
       #wj-faq-head svg{width:16px;height:16px;color:\${textSub}}
@@ -297,12 +297,12 @@ Deno.serve(async (req) => {
       .wj-faq-q.open svg{transform:rotate(180deg)}
       .wj-faq-a{padding:4px 12px 12px;font-size:14px;color:\${textSub};display:none}
       .wj-faq-a.open{display:block}
-      #wj-links{padding:0 16px 16px;margin-top:8px}
+      #wj-links{padding:0 16px 0;margin-top:16px}
       #wj-greview{padding:0 16px 16px}
       #wj-greview-box{border-radius:16px;padding:16px;background:\${bgFaq};cursor:pointer;transition:background .15s}
       #wj-greview-box:hover{background:\${dark ? '#2a2a2a' : '#f1f5f9'}}
       #wj-greview-stars{display:flex;align-items:center;gap:2px}
-      #wj-inspire-section{padding:0 16px 16px;margin-top:8px}
+      #wj-inspire-section{padding:0 16px 0;margin-top:16px}
       #wj-inspire-box{display:flex;align-items:center;gap:14px;padding:16px;border-radius:16px;background:\${bgFaq};cursor:pointer;transition:background .15s;overflow:hidden}
       #wj-inspire-box:hover{background:\${dark ? '#2a2a2a' : '#f1f5f9'}}
       #wj-inspire-box video{width:72px;height:96px;border-radius:12px;object-fit:cover;flex-shrink:0}
