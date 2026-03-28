@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     // Fetch widget configuration
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("user_id, widget_color, widget_theme, contact_name, offer_help, say_hello, selected_avatar, faq_enabled, instagram_enabled, background_type, background_image, logo, button_logo, language, whatsapp_enabled, whatsapp_country_code, whatsapp_number, show_branding, forward_email, chatbot_enabled, chatbot_instructions, ai_provider, custom_css, custom_js, widget_position, widget_type, google_reviews_enabled, google_business_name, google_business_rating, google_business_ratings_total, google_business_url, cta_text, product_carousel_enabled, inspire_enabled, home_section_order")
+      .select("user_id, widget_color, widget_theme, contact_name, offer_help, say_hello, selected_avatar, faq_enabled, instagram_enabled, background_type, background_image, logo, button_logo, language, whatsapp_enabled, whatsapp_country_code, whatsapp_number, show_branding, forward_email, chatbot_enabled, chatbot_instructions, ai_provider, custom_css, custom_js, widget_position, widget_type, google_reviews_enabled, google_business_name, google_business_rating, google_business_ratings_total, google_business_url, cta_text, product_carousel_enabled, inspire_enabled, home_section_order, custom_chips")
       .eq("id", widgetId)
       .single();
 
@@ -173,6 +173,7 @@ Deno.serve(async (req) => {
         inspire_enabled: config.inspire_enabled ?? false,
         inspire_videos: inspireVideos,
         home_section_order: config.home_section_order || ["product-carousel", "faq", "custom-links", "inspire-me"],
+        custom_chips: config.custom_chips || null,
       }),
       { headers: corsHeaders }
     );
