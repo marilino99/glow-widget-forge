@@ -1021,12 +1021,7 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">{faqItems.length} questions</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
-                    <button onClick={() => onNavigateToSection?.("faq")} className="p-1 rounded hover:bg-accent transition-colors">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </div>
+                  <Switch checked={faqEnabled} onCheckedChange={onFaqToggle} />
                 </div>
               </div>
             ),
@@ -1039,11 +1034,6 @@ const AppearancePanel = ({
                       <p className="text-sm font-medium text-foreground">Custom Links</p>
                       <p className="text-[11px] text-muted-foreground">{customLinks.length} links</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => onNavigateToSection?.("custom-links")} className="p-1 rounded hover:bg-accent transition-colors">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
                   </div>
                 </div>
               </div>
@@ -1058,12 +1048,7 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">{productCards.length} products</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
-                    <button onClick={() => onNavigateToSection?.("product-carousel")} className="p-1 rounded hover:bg-accent transition-colors">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </div>
+                  <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
                 </div>
               </div>
             ),
@@ -1077,12 +1062,7 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">{inspireVideos.length} videos</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
-                    <button onClick={() => onNavigateToSection?.("inspire-me")} className="p-1 rounded hover:bg-accent transition-colors">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </div>
+                  <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
                 </div>
               </div>
             ),
