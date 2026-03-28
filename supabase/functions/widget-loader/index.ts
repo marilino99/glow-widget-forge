@@ -1622,13 +1622,25 @@ Deno.serve(async (req) => {
       scroll.appendChild(inspireSec);
 
       if (hasVideos) {
+      var isMuted = true;
+
       // Build reels container
       var reelsScroll = d.createElement('div');
-      reelsScroll.style.cssText = 'flex:1;overflow-y:auto;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch';
+      reelsScroll.style.cssText = 'flex:1 !important;overflow-y:auto !important;scroll-snap-type:y mandatory !important;-webkit-overflow-scrolling:touch !important';
 
-      inspireVideos.forEach(function(vid) {
+      // Mute/unmute button
+      var muteBtn = d.createElement('button');
+      muteBtn.style.cssText = 'position:absolute !important;top:12px !important;left:12px !important;z-index:60 !important;display:flex !important;align-items:center !important;gap:6px !important;padding:0 12px !important;height:36px !important;border-radius:18px !important;border:none !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(8px) !important;color:#fff !important;font-size:12px !important;cursor:pointer !important;transition:background .15s !important';
+      muteBtn.innerHTML = '🔇 Tap to unmute';
+      muteBtn.addEventListener('click', function() {
+        isMuted = !isMuted;
+        muteBtn.innerHTML = isMuted ? '🔇 Tap to unmute' : '🔊 Playing';
+        reelsScroll.querySelectorAll('video').forEach(function(v) { v.muted = isMuted; });
+      });
+
+      inspireVideos.forEach(function(vid, vidIdx) {
         var slide = d.createElement('div');
-        slide.style.cssText = 'height:100%;scroll-snap-align:start;position:relative;flex-shrink:0';
+        slide.style.cssText = 'height:100% !important;scroll-snap-align:start !important;position:relative !important;flex-shrink:0 !important';
 
         var video = d.createElement('video');
         video.src = vid.video_url;
@@ -1636,9 +1648,30 @@ Deno.serve(async (req) => {
         video.loop = true;
         video.playsInline = true;
         video.setAttribute('playsinline', '');
-        video.style.cssText = 'width:100%;height:100%;object-fit:cover';
+        video.style.cssText = 'position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;object-fit:cover !important';
+        video.addEventListener('click', function() {
+          isMuted = !isMuted;
+          muteBtn.innerHTML = isMuted ? '🔇 Tap to unmute' : '🔊 Playing';
+          reelsScroll.querySelectorAll('video').forEach(function(v) { v.muted = isMuted; });
+        });
 
         slide.appendChild(video);
+
+        // Progress bar
+        var progressWrap = d.createElement('div');
+        progressWrap.style.cssText = 'position:absolute !important;bottom:0 !important;left:0 !important;right:0 !important;height:3px !important;background:rgba(255,255,255,0.2) !important;z-index:20 !important';
+        var progressBar = d.createElement('div');
+        progressBar.style.cssText = 'height:100% !important;background:#fff !important;width:0% !important;transition:width .2s linear !important;border-radius:2px !important';
+        progressWrap.appendChild(progressBar);
+        slide.appendChild(progressWrap);
+        video.addEventListener('timeupdate', function() {
+          if (video.duration) { progressBar.style.width = ((video.currentTime / video.duration) * 100) + '%'; }
+        });
+
+        // Gradient overlay at bottom
+        var gradOverlay = d.createElement('div');
+        gradOverlay.style.cssText = 'position:absolute !important;inset:auto 0 0 0 !important;height:180px !important;background:linear-gradient(transparent,rgba(0,0,0,0.85)) !important;pointer-events:none !important;z-index:5 !important';
+        slide.appendChild(gradOverlay);
 
         // Product overlay if linked products exist
         if (vid.linked_product_ids && vid.linked_product_ids.length > 0 && products.length > 0) {
@@ -1648,14 +1681,15 @@ Deno.serve(async (req) => {
 
           if (linkedProds.length > 0) {
             var overlay = d.createElement('div');
-            overlay.style.cssText = 'position:absolute;bottom:0;left:0;right:0;padding:12px;background:linear-gradient(transparent,rgba(0,0,0,0.7));display:flex;gap:8px;overflow-x:auto;scrollbar-width:none';
+            overlay.style.cssText = 'position:absolute !important;inset:auto 0 24px 0 !important;padding:0 12px !important;z-index:10 !important;display:flex !important;flex-direction:column !important;gap:8px !important';
 
             linkedProds.forEach(function(prod) {
               var card = d.createElement('div');
-              card.style.cssText = 'flex-shrink:0;width:140px;border-radius:12px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);overflow:hidden;cursor:pointer';
-              var imgHtml = prod.image_url ? '<img src="' + esc(prod.image_url) + '" style="width:100%;height:80px;object-fit:cover"/>' : '<div style="width:100%;height:80px;background:rgba(255,255,255,0.1)"></div>';
-              var priceHtml = prod.price ? '<span style="font-size:12px;font-weight:600;color:#fff">' + esc(prod.price) + '</span>' : '';
-              card.innerHTML = imgHtml + '<div style="padding:8px"><p style="font-size:11px;font-weight:600;color:#fff;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(prod.title) + '</p>' + priceHtml + '</div>';
+              card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;cursor:pointer !important;transition:background .15s !important';
+              var imgHtml = prod.image_url ? '<img src="' + esc(prod.image_url) + '" style="width:48px !important;height:48px !important;border-radius:8px !important;object-fit:cover !important;flex-shrink:0 !important"/>' : '<div style="width:48px !important;height:48px !important;border-radius:8px !important;background:rgba(255,255,255,0.1) !important;flex-shrink:0 !important"></div>';
+              var priceHtml = prod.price ? '<span style="font-size:14px !important;font-weight:700 !important;color:#fff !important">' + esc(prod.price) + '</span>' : '';
+              var oldPriceHtml = prod.old_price ? '<span style="font-size:12px !important;color:rgba(255,255,255,0.5) !important;text-decoration:line-through !important">' + esc(prod.old_price) + '</span>' : '';
+              card.innerHTML = imgHtml + '<div style="display:flex !important;flex-direction:column !important;gap:2px !important;min-width:0 !important;flex:1 !important"><span style="font-size:11px !important;font-weight:600 !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important">' + esc(prod.title) + '</span><div style="display:flex !important;align-items:center !important;gap:6px !important">' + priceHtml + oldPriceHtml + '</div></div><div style="flex-shrink:0 !important;width:36px !important;height:36px !important;border-radius:50% !important;background:rgba(255,255,255,0.2) !important;display:flex !important;align-items:center !important;justify-content:center !important"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>';
 
               card.addEventListener('click', function() {
                 if (shopifyDomain && prod.shopify_variant_id) {
@@ -1676,10 +1710,11 @@ Deno.serve(async (req) => {
 
       // Close button
       var inspireClose = d.createElement('button');
-      inspireClose.style.cssText = 'position:absolute;top:12px;right:12px;z-index:10;width:32px;height:32px;border-radius:50%;border:none;background:rgba(0,0,0,0.5);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center';
+      inspireClose.style.cssText = 'position:absolute !important;top:12px !important;right:12px !important;z-index:60 !important;width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(8px) !important;color:#fff !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important';
       inspireClose.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg>';
 
       inspireView.appendChild(reelsScroll);
+      inspireView.appendChild(muteBtn);
       inspireView.appendChild(inspireClose);
 
       // Event: open inspire (from box button or entire box)
