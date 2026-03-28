@@ -833,8 +833,10 @@ const AppearancePanel = ({
                       productCards.length > 0 ? "Products: " + productCards.map(p => p.title).join(", ") : "",
                     ].filter(Boolean).join(". ");
                     try {
+                      const promptText = "Based on this business context, generate 3 short quick-action button labels (max 6 words each) relevant to THIS business. Output ONLY a JSON array of 3 strings. Context: " + (context || "General business");
+                      if (!widgetId) { console.error("No widget ID for AI generation"); return; }
                       const { data } = await supabase.functions.invoke("chatbot-preview", {
-                        body: { message: "Based on this business context, generate 3 short quick-action button labels (max 6 words each) relevant to THIS business. Output ONLY a JSON array of 3 strings. Context: " + (context || "General business"), widgetId: null, systemPrompt: "Respond ONLY with a valid JSON array of 3 strings." },
+                        body: { messages: [{ sender: "user", text: promptText }], widgetId },
                       });
                       if (data?.reply) {
                         const match = data.reply.match(/\[[\s\S]*\]/);
