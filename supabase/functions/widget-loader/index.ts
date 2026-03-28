@@ -1709,7 +1709,7 @@ Deno.serve(async (req) => {
                   stack.style.cssText = 'display:flex !important;flex-direction:column !important;gap:8px !important';
                   linkedProds.forEach(function(prod, pIdx) {
                     var card = d.createElement('div');
-                    card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;cursor:pointer !important;transition:all .3s !important;animation:wjSlideUp 0.3s ease-out ' + (pIdx * 60) + 'ms both !important';
+                    card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(0,0,0,0.65) !important;backdrop-filter:blur(12px) !important;padding:10px 12px !important;cursor:pointer !important;transition:all .3s !important;animation:wjSlideUp 0.3s ease-out ' + (pIdx * 60) + 'ms both !important';
                     card.innerHTML = buildCardHtml(prod);
                     card.querySelector('div[style*="border-radius:50%"]').addEventListener('click', function(e) {
                       e.stopPropagation();
@@ -1725,10 +1725,10 @@ Deno.serve(async (req) => {
                 } else {
                   // Collapsed: stacked deck
                   var deck = d.createElement('div');
-                  deck.style.cssText = 'position:relative !important;height:56px !important;cursor:pointer !important';
+                  deck.style.cssText = 'position:relative !important;height:64px !important;cursor:pointer !important';
                   linkedProds.slice(0, 3).forEach(function(prod, pIdx) {
                     var card = d.createElement('div');
-                    card.style.cssText = 'position:absolute !important;left:0 !important;right:0 !important;display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;transition:all .3s !important;bottom:' + (pIdx * 5) + 'px !important;transform:scale(' + (1 - pIdx * 0.04) + ') !important;opacity:' + (pIdx === 0 ? 1 : 0.7 - pIdx * 0.2) + ' !important;z-index:' + (10 - pIdx) + ' !important';
+                    card.style.cssText = 'position:absolute !important;left:0 !important;right:0 !important;display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(0,0,0,0.65) !important;backdrop-filter:blur(12px) !important;padding:10px 12px !important;transition:all .3s !important;bottom:' + (pIdx * 5) + 'px !important;transform:scale(' + (1 - pIdx * 0.04) + ') !important;opacity:' + (pIdx === 0 ? 1 : 0.7 - pIdx * 0.2) + ' !important;z-index:' + (10 - pIdx) + ' !important';
                     card.innerHTML = buildCardHtml(prod);
                     deck.appendChild(card);
                   });
