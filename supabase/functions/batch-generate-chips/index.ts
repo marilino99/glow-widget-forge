@@ -62,11 +62,15 @@ Deno.serve(async (req) => {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-  // Get all widgets with null custom_chips
+  // Get widgets with null custom_chips (limit to 10 per invocation)
+  const url = new URL(req.url);
+  const limit = parseInt(url.searchParams.get("limit") || "10");
+
   const { data: widgets, error } = await supabase
     .from("widget_configurations")
     .select("id, user_id, language, chatbot_instructions")
-    .is("custom_chips", null);
+    .is("custom_chips", null)
+    .limit(limit);
 
   if (error) {
     console.error("Error fetching widgets:", error);
