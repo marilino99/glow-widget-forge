@@ -1032,7 +1032,7 @@ const AppearancePanel = ({
                           key={item.id}
                           className="rounded-xl border border-border bg-card p-4"
                           draggable
-                          onDragStart={(e) => { e.dataTransfer.setData("faq-idx", String(idx)); }}
+                          onDragStart={(e) => { e.stopPropagation(); e.dataTransfer.setData("faq-idx", String(idx)); }}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
@@ -1101,7 +1101,7 @@ const AppearancePanel = ({
                       key={link.id}
                       className="flex items-start gap-1.5 group"
                       draggable
-                      onDragStart={(e) => { e.dataTransfer.setData("link-idx", String(idx)); }}
+                      onDragStart={(e) => { e.stopPropagation(); e.dataTransfer.setData("link-idx", String(idx)); }}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => {
                         e.preventDefault();
