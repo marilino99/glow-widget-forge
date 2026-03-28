@@ -1,73 +1,101 @@
 
+## Piano: correggere il falso “installed” e far riapparire davvero il widget sullo store giusto
 
-## Piano: correggere il falso “installed” e ripristinare davvero il widget live
+### Do I know what the issue is?
+Sì.
 
-### Problema trovato
-Dai controlli fatti emerge un problema preciso:
+Il problema non è solo “il widget non si vede”: oggi il sistema sta mescolando **stato admin** e **stato live storefront**.
 
-- lo store **attualmente connesso** è `wkrgbz-jm.myshopify.com`
-- però gli **ultimi eventi live del widget** per questo widget arrivano da **un altro dominio**: `dalilly.myshopify.com`
-- quindi oggi il builder può mostrare uno stato fuorviante: sembra “installato”, ma in realtà sta leggendo attività di un altro storefront o di una vecchia installazione
+Dalle verifiche fatte emerge che:
+- lo store collegato in backend è `wkrgbz-jm.myshopify.com`
+- per questo widget gli eventi live arrivano invece da `dalilly.myshopify.com`
+- il controllo attuale considera “Installed (theme_liquid)” anche quando questo **non prova** che il widget stia davvero girando sullo storefront che ti aspetti di vedere
 
-In più, il flusso di reinstall attuale ha due punti deboli:
-1. `shopify-install-widget` considera riuscita l’installazione anche senza verificare davvero che lo snippet sia finito nel tema
-2. `checkOnly` controlla solo `theme.liquid`, ma non verifica bene anche la presenza reale del `ScriptTag`
+Quindi il builder ti mostra uno stato verde, ma in realtà manca una conferma reale che:
+1. lo script sia attivo sullo storefront pubblico corretto
+2. il loader parta davvero
+3. il render arrivi fino in fondo sul dominio giusto
 
 ### File da aggiornare
 - `src/components/builder/AddToWebsiteDialog.tsx`
 - `supabase/functions/shopify-install-widget/index.ts`
 - `supabase/functions/widget-loader/index.ts`
+- `supabase/functions/track-widget-event/index.ts`
 
 ### Modifiche da fare
 
-#### 1. Rendere i diagnostics affidabili nel builder
-In `AddToWebsiteDialog.tsx`:
-- filtrare i `widget_events` in base allo **store realmente connesso**
-- distinguere chiaramente:
-  - “widget visto sullo store connesso”
-  - “widget visto su un altro dominio”
-- mostrare un warning esplicito se c’è **mismatch di dominio**
-- non mostrare più uno stato rassicurante basato su eventi provenienti da altri siti
-
-#### 2. Rendere la reinstallazione realmente verificata
+#### 1. Separare “installato in admin” da “attivo sul sito live”
 In `shopify-install-widget/index.ts`:
-- dopo l’iniezione in `theme.liquid`, rileggere il file e verificare che lo snippet sia davvero presente
-- se il `replace("</body>", ...)` non inserisce nulla, restituire **errore esplicito**, non `success: true`
-- dopo la creazione del `ScriptTag`, fare una verifica reale che il tag esista e punti al `widgetId` corretto
-- fare in modo che `checkOnly` controlli **sia** `theme.liquid` **sia** `ScriptTag`
+- rendere `checkOnly` più rigoroso
+- distinguere chiaramente:
+  - `themeLiquidInstalled`
+  - `scriptTagInstalled`
+  - `adminInstalled`
+  - `liveConfirmed`
+- non usare più come prova sufficiente un semplice `alreadyInstalled=true`
 
-#### 3. Aggiungere diagnostica visiva anche per il popup live
-In `widget-loader/index.ts`:
-- aggiungere un controllo reale di visibilità del launcher popup dopo il mount
-- tracciare eventi tipo:
-  - `launcher_visible`
-  - `launcher_hidden`
-- così il builder potrà distinguere:
-  - script non caricato
-  - widget caricato ma nascosto/coperto
-  - widget visibile correttamente
+In pratica:
+- la verifica `theme.liquid` dovrà controllare la presenza del **loader atteso**, non solo marker/commenti generici
+- la verifica ScriptTag dovrà confermare che il tag punti al `widgetId` corretto
+- la response dovrà restituire diagnostica strutturata, non solo `method`
 
-#### 4. Migliorare il messaggio di stato nel builder
-Nel pannello Shopify:
-- se lo store connesso non ha eventi recenti, mostrare chiaramente che il widget **non sta girando su quello store**
-- se esistono eventi da un altro dominio, mostrarlo come informazione diagnostica
-- se la verifica post-install fallisce, mostrare “installazione non confermata” invece di “reinstalled”
+#### 2. Aggiungere una vera verifica storefront
+Sempre in `shopify-install-widget/index.ts`:
+- fare una fetch del storefront pubblico dello store collegato
+- raccogliere segnali diagnostici utili:
+  - URL/host effettivamente osservato
+  - eventuale mismatch di dominio
+  - presenza/assenza del loader nella pagina pubblica, quando rilevabile
+- se admin dice “installato” ma storefront non conferma, restituire stato tipo:
+  - `installed_in_admin_not_confirmed_live`
+  invece di successo pieno
+
+Questo elimina il falso positivo che oggi ti fa vedere “installed” anche se sul sito non appare nulla.
+
+#### 3. Tracciare un evento ancora più precoce del render
+In `widget-loader/index.ts` e `track-widget-event/index.ts`:
+- aggiungere un evento tipo `loader_boot`
+- inviarlo appena il loader parte, prima del render completo
+- mantenere `widget_rendered`, `launcher_visible`, `launcher_hidden`
+
+Così il builder potrà distinguere meglio:
+- loader mai eseguito
+- loader eseguito ma config/render falliti
+- render completato ma launcher nascosto/coperto
+- widget davvero visibile
+
+#### 4. Rendere il pannello Shopify onesto e diagnostico
+In `AddToWebsiteDialog.tsx`:
+- non mostrare più il box verde “Widget installed!” come stato rassicurante se manca conferma live
+- sostituirlo con stati più precisi, ad esempio:
+  - “Installato in admin, ma non confermato sul sito live”
+  - “Widget attivo su un altro dominio”
+  - “Loader avviato ma widget non renderizzato”
+  - “Widget renderizzato ma launcher nascosto”
+- mostrare il dominio collegato e il dominio dove il widget è stato davvero visto
+- se c’è mismatch (`wkrgbz...` vs `dalilly...`), evidenziarlo come problema principale
+
+#### 5. Rendere il reinstall coerente con la realtà
+Nel flusso reinstall:
+- usare i nuovi campi diagnostici per aggiornare il messaggio finale
+- se la post-verifica live fallisce, non dire più “Installed!” o “Verified!” in verde
+- mostrare invece un messaggio esplicito che l’installazione admin è presente ma il widget non è ancora confermato sullo storefront
 
 ### Risultato atteso
 Dopo queste modifiche:
-- il builder smetterà di dare falsi positivi
-- la reinstallazione dirà la verità sullo stato reale dello store connesso
-- sapremo se il problema è:
-  - installazione non applicata
-  - widget caricato ma nascosto
-  - mismatch tra store connesso e store controllato
-- il widget live potrà essere ripristinato con una diagnosi chiara, invece di continuare a risultare “installato” senza apparire davvero
+- il builder smetterà di mostrarti un “installed” ingannevole
+- sapremo se il widget:
+  - non viene caricato affatto
+  - parte ma crasha prima del render
+  - è attivo su un dominio diverso da quello collegato
+  - è renderizzato ma nascosto dal tema
+- il pannello Shopify ti dirà finalmente **la verità sullo stato live**
+- sarà molto più semplice ripristinare il widget sul sito corretto
 
-### Dettagli tecnici
-- Nessuna modifica al database
-- Nessuna modifica all’autenticazione
-- Il focus è su:
-  - verifica post-install
-  - diagnostica per-store
-  - telemetria di visibilità del launcher popup
-
+### Nota tecnica importante
+Non prevedo modifiche al database né all’autenticazione.
+Il fix è tutto su:
+- diagnostica installazione
+- conferma storefront reale
+- telemetria loader/render
+- UI di stato nel builder
