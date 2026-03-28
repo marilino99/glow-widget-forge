@@ -41,6 +41,8 @@ interface ShopifyDiagnostics {
   recentImpressions: number;
   launcherVisible: boolean | null;
   launcherChecked: boolean;
+  otherDomainUrl?: string;
+  otherDomainCount?: number;
 }
 
 const LovableLogo = ({ className }: { className?: string }) => (
@@ -515,13 +517,19 @@ useEffect(() => {
                     {diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
                         <AlertTriangle className="h-3 w-3" />
-                        Tag installed but no recent activity — try reinstalling
+                        Tag installed but no activity from connected store — try reinstalling
                       </div>
                     )}
                     {diagnostics.tagInstalled && diagnostics.recentImpressions > 0 && diagnostics.launcherChecked && !diagnostics.launcherVisible && (
                       <div className="flex items-center gap-1 text-xs text-amber-600">
                         <AlertTriangle className="h-3 w-3" />
                         Script loads but launcher is hidden — may be covered by theme CSS. Try reinstalling.
+                      </div>
+                    )}
+                    {diagnostics.otherDomainUrl && diagnostics.recentImpressions === 0 && (
+                      <div className="flex items-center gap-1 text-xs text-amber-600">
+                        <AlertTriangle className="h-3 w-3" />
+                        Widget seen on another domain ({diagnostics.otherDomainUrl}) but not on your connected store.
                       </div>
                     )}
                   </div>
