@@ -1588,6 +1588,211 @@ Deno.serve(async (req) => {
       var subText = hasVideos ? (inspireVideos.length + ' video' + (inspireVideos.length > 1 ? 's' : '')) : 'No videos yet';
       inspireSec.innerHTML = '<div id="wj-inspire-box">' + mediaHtml + '<div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + subText + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
       sectionElements['inspire-me'] = inspireSec;
+
+      if (hasVideos) {
+        var isMuted = true;
+
+        // Build reels container
+        var reelsScroll = d.createElement('div');
+        reelsScroll.style.cssText = 'flex:1 !important;overflow-y:auto !important;scroll-snap-type:y mandatory !important;-webkit-overflow-scrolling:touch !important';
+
+        // Mute/unmute button
+        var muteBtn = d.createElement('button');
+        muteBtn.style.cssText = 'position:absolute !important;top:12px !important;left:12px !important;z-index:60 !important;display:flex !important;align-items:center !important;gap:6px !important;padding:0 12px !important;height:36px !important;border-radius:18px !important;border:none !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(8px) !important;color:#fff !important;font-size:12px !important;cursor:pointer !important;transition:background .15s !important';
+        muteBtn.innerHTML = '🔇 Tap to unmute';
+        muteBtn.addEventListener('click', function() {
+          isMuted = !isMuted;
+          muteBtn.innerHTML = isMuted ? '🔇 Tap to unmute' : '🔊 Playing';
+          reelsScroll.querySelectorAll('video').forEach(function(v) { v.muted = isMuted; });
+        });
+
+        // Video counter dots
+        var dotsWrap = d.createElement('div');
+        dotsWrap.style.cssText = 'position:absolute !important;top:14px !important;left:50% !important;transform:translateX(-50%) !important;z-index:60 !important;display:flex !important;gap:4px !important';
+        var dots = [];
+        inspireVideos.forEach(function(_, i) {
+          var dot = d.createElement('div');
+          dot.style.cssText = 'height:4px !important;border-radius:2px !important;transition:all .2s !important;' + (i === 0 ? 'width:20px !important;background:#fff !important' : 'width:6px !important;background:rgba(255,255,255,0.4) !important');
+          dots.push(dot);
+          dotsWrap.appendChild(dot);
+        });
+
+        // Slide animation keyframes
+        var animStyle = d.createElement('style');
+        animStyle.textContent = '@keyframes wjSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}';
+        inspireView.appendChild(animStyle);
+
+        // Track expanded state per slide
+        var expandedSlides = {};
+
+        inspireVideos.forEach(function(vid, vidIdx) {
+          var slide = d.createElement('div');
+          slide.style.cssText = 'height:100% !important;scroll-snap-align:start !important;position:relative !important;flex-shrink:0 !important';
+
+          var video = d.createElement('video');
+          video.src = vid.video_url;
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          video.setAttribute('playsinline', '');
+          video.style.cssText = 'position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;object-fit:cover !important';
+          video.addEventListener('click', function() {
+            isMuted = !isMuted;
+            muteBtn.innerHTML = isMuted ? '🔇 Tap to unmute' : '🔊 Playing';
+            reelsScroll.querySelectorAll('video').forEach(function(v) { v.muted = isMuted; });
+          });
+
+          slide.appendChild(video);
+
+          // Progress bar
+          var progressWrap = d.createElement('div');
+          progressWrap.style.cssText = 'position:absolute !important;bottom:0 !important;left:0 !important;right:0 !important;height:3px !important;background:rgba(255,255,255,0.2) !important;z-index:20 !important';
+          var progressBar = d.createElement('div');
+          progressBar.style.cssText = 'height:100% !important;background:#fff !important;width:0% !important;transition:width .2s linear !important;border-radius:2px !important';
+          progressWrap.appendChild(progressBar);
+          slide.appendChild(progressWrap);
+          video.addEventListener('timeupdate', function() {
+            if (video.duration) { progressBar.style.width = ((video.currentTime / video.duration) * 100) + '%'; }
+          });
+
+          // Gradient overlay at bottom
+          var gradOverlay = d.createElement('div');
+          gradOverlay.style.cssText = 'position:absolute !important;inset:auto 0 0 0 !important;height:180px !important;background:linear-gradient(transparent,rgba(0,0,0,0.85)) !important;pointer-events:none !important;z-index:5 !important';
+          slide.appendChild(gradOverlay);
+
+          // Product overlay — stacked deck with expand/collapse
+          if (vid.linked_product_ids && vid.linked_product_ids.length > 0 && products.length > 0) {
+            var linkedProds = vid.linked_product_ids.map(function(pid) {
+              return products.find(function(p) { return p.id === pid; });
+            }).filter(Boolean);
+
+            if (linkedProds.length > 0) {
+              var overlay = d.createElement('div');
+              overlay.style.cssText = 'position:absolute !important;inset:auto 0 24px 0 !important;padding:0 12px !important;z-index:10 !important;animation:wjSlideUp 0.5s ease-out both !important';
+
+              function buildCardHtml(prod) {
+                var imgHtml = prod.image_url ? '<img src="' + esc(prod.image_url) + '" style="width:48px !important;height:48px !important;border-radius:8px !important;object-fit:cover !important;flex-shrink:0 !important"/>' : '<div style="width:48px !important;height:48px !important;border-radius:8px !important;background:rgba(255,255,255,0.1) !important;flex-shrink:0 !important"></div>';
+                var priceHtml = prod.price ? '<span style="font-size:14px !important;font-weight:700 !important;color:#fff !important">' + esc(prod.price) + '</span>' : '';
+                var oldPriceHtml = prod.old_price ? '<span style="font-size:12px !important;color:rgba(255,255,255,0.5) !important;text-decoration:line-through !important">' + esc(prod.old_price) + '</span>' : '';
+                return imgHtml + '<div style="display:flex !important;flex-direction:column !important;gap:2px !important;min-width:0 !important;flex:1 !important"><span style="font-size:11px !important;font-weight:600 !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important">' + esc(prod.title) + '</span><div style="display:flex !important;align-items:center !important;gap:6px !important">' + priceHtml + oldPriceHtml + '</div></div><div style="flex-shrink:0 !important;width:36px !important;height:36px !important;border-radius:50% !important;background:rgba(255,255,255,0.2) !important;display:flex !important;align-items:center !important;justify-content:center !important"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>';
+              }
+
+              function renderCards(isExpanded) {
+                overlay.innerHTML = '';
+                if (isExpanded) {
+                  // Expanded: vertical stack
+                  var stack = d.createElement('div');
+                  stack.style.cssText = 'display:flex !important;flex-direction:column !important;gap:8px !important';
+                  linkedProds.forEach(function(prod, pIdx) {
+                    var card = d.createElement('div');
+                    card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;cursor:pointer !important;transition:all .3s !important;animation:wjSlideUp 0.3s ease-out ' + (pIdx * 60) + 'ms both !important';
+                    card.innerHTML = buildCardHtml(prod);
+                    card.querySelector('div[style*="border-radius:50%"]').addEventListener('click', function(e) {
+                      e.stopPropagation();
+                      if (shopifyDomain && prod.shopify_variant_id) {
+                        addToShopifyCart(prod.shopify_variant_id, null);
+                      } else if (prod.product_url) {
+                        w.open(prod.product_url, '_blank');
+                      }
+                    });
+                    stack.appendChild(card);
+                  });
+                  overlay.appendChild(stack);
+                } else {
+                  // Collapsed: stacked deck
+                  var deck = d.createElement('div');
+                  deck.style.cssText = 'position:relative !important;height:56px !important;cursor:pointer !important';
+                  linkedProds.slice(0, 3).forEach(function(prod, pIdx) {
+                    var card = d.createElement('div');
+                    card.style.cssText = 'position:absolute !important;left:0 !important;right:0 !important;display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;transition:all .3s !important;bottom:' + (pIdx * 5) + 'px !important;transform:scale(' + (1 - pIdx * 0.04) + ') !important;opacity:' + (pIdx === 0 ? 1 : 0.7 - pIdx * 0.2) + ' !important;z-index:' + (10 - pIdx) + ' !important';
+                    card.innerHTML = buildCardHtml(prod);
+                    deck.appendChild(card);
+                  });
+                  if (linkedProds.length > 1) {
+                    var badge = d.createElement('div');
+                    badge.style.cssText = 'position:absolute !important;top:-8px !important;right:8px !important;z-index:20 !important;background:rgba(255,255,255,0.25) !important;backdrop-filter:blur(4px) !important;color:#fff !important;font-size:10px !important;font-weight:600 !important;padding:2px 8px !important;border-radius:10px !important';
+                    badge.textContent = linkedProds.length + ' products';
+                    deck.appendChild(badge);
+                  }
+                  overlay.appendChild(deck);
+                }
+              }
+
+              renderCards(false);
+              overlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                expandedSlides[vidIdx] = !expandedSlides[vidIdx];
+                renderCards(expandedSlides[vidIdx]);
+              });
+
+              slide.appendChild(overlay);
+            }
+          }
+
+          reelsScroll.appendChild(slide);
+        });
+
+        // Close button
+        var inspireClose = d.createElement('button');
+        inspireClose.style.cssText = 'position:absolute !important;top:12px !important;right:12px !important;z-index:60 !important;width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(8px) !important;color:#fff !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important';
+        inspireClose.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg>';
+
+        inspireView.appendChild(reelsScroll);
+        inspireView.appendChild(dotsWrap);
+        inspireView.appendChild(muteBtn);
+        inspireView.appendChild(inspireClose);
+
+        // Event: open inspire (from box button or entire box)
+        var openInspire = function() {
+          homeView.style.display = 'none';
+          inspireView.style.display = 'flex';
+          var firstVid = reelsScroll.querySelector('video');
+          if (firstVid) firstVid.play().catch(function(){});
+        };
+        inspireSec.querySelector('#wj-inspire-box-btn').addEventListener('click', function(e) { e.stopPropagation(); openInspire(); });
+        inspireSec.querySelector('#wj-inspire-box').addEventListener('click', openInspire);
+
+        // Event: close inspire
+        inspireClose.addEventListener('click', function() {
+          inspireView.style.display = 'none';
+          homeView.style.display = 'flex';
+          // Pause all videos
+          reelsScroll.querySelectorAll('video').forEach(function(v) { v.pause(); });
+        });
+
+        // Autoplay on scroll snap
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            var vid = entry.target.querySelector('video');
+            if (!vid) return;
+            if (entry.isIntersecting) {
+              vid.play().catch(function(){});
+              // Update dots
+              var slides = Array.from(reelsScroll.children);
+              var activeIdx = slides.indexOf(entry.target);
+              dots.forEach(function(dot, i) {
+                dot.style.cssText = 'height:4px !important;border-radius:2px !important;transition:all .2s !important;' + (i === activeIdx ? 'width:20px !important;background:#fff !important' : 'width:6px !important;background:rgba(255,255,255,0.4) !important');
+              });
+            } else {
+              vid.pause();
+            }
+          });
+        }, { root: reelsScroll, threshold: 0.6 });
+
+        reelsScroll.querySelectorAll('div[style*="scroll-snap-align"]').forEach(function(slide) {
+          observer.observe(slide);
+        });
+
+        // Tap to unmute/mute
+        reelsScroll.addEventListener('click', function(e) {
+          if (e.target.closest('div[style*="backdrop-filter"]')) return; // Don't toggle on product card click
+          var vid = e.target.closest('div[style*="scroll-snap-align"]');
+          if (vid) {
+            var v = vid.querySelector('video');
+            if (v) v.muted = !v.muted;
+          }
+        });
+      }
     }
 
     // Append sections in homeSectionOrder
@@ -1596,263 +1801,6 @@ Deno.serve(async (req) => {
         scroll.appendChild(sectionElements[key]);
       }
     });
-
-      if (inspireEnabled && hasVideos) {
-      var isMuted = true;
-
-      // Build reels container
-      var reelsScroll = d.createElement('div');
-      reelsScroll.style.cssText = 'flex:1 !important;overflow-y:auto !important;scroll-snap-type:y mandatory !important;-webkit-overflow-scrolling:touch !important';
-
-      // Mute/unmute button
-      var muteBtn = d.createElement('button');
-      muteBtn.style.cssText = 'position:absolute !important;top:12px !important;left:12px !important;z-index:60 !important;display:flex !important;align-items:center !important;gap:6px !important;padding:0 12px !important;height:36px !important;border-radius:18px !important;border:none !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(8px) !important;color:#fff !important;font-size:12px !important;cursor:pointer !important;transition:background .15s !important';
-      muteBtn.innerHTML = '🔇 Tap to unmute';
-      muteBtn.addEventListener('click', function() {
-        isMuted = !isMuted;
-        muteBtn.innerHTML = isMuted ? '🔇 Tap to unmute' : '🔊 Playing';
-        reelsScroll.querySelectorAll('video').forEach(function(v) { v.muted = isMuted; });
-      });
-
-      // Video counter dots
-      var dotsWrap = d.createElement('div');
-      dotsWrap.style.cssText = 'position:absolute !important;top:14px !important;left:50% !important;transform:translateX(-50%) !important;z-index:60 !important;display:flex !important;gap:4px !important';
-      var dots = [];
-      inspireVideos.forEach(function(_, i) {
-        var dot = d.createElement('div');
-        dot.style.cssText = 'height:4px !important;border-radius:2px !important;transition:all .2s !important;' + (i === 0 ? 'width:20px !important;background:#fff !important' : 'width:6px !important;background:rgba(255,255,255,0.4) !important');
-        dots.push(dot);
-        dotsWrap.appendChild(dot);
-      });
-
-      // Slide animation keyframes
-      var animStyle = d.createElement('style');
-      animStyle.textContent = '@keyframes wjSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}';
-      inspireView.appendChild(animStyle);
-
-      // Track expanded state per slide
-      var expandedSlides = {};
-
-      inspireVideos.forEach(function(vid, vidIdx) {
-        var slide = d.createElement('div');
-        slide.style.cssText = 'height:100% !important;scroll-snap-align:start !important;position:relative !important;flex-shrink:0 !important';
-
-        var video = d.createElement('video');
-        video.src = vid.video_url;
-        video.muted = true;
-        video.loop = true;
-        video.playsInline = true;
-        video.setAttribute('playsinline', '');
-        video.style.cssText = 'position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;object-fit:cover !important';
-        video.addEventListener('click', function() {
-          isMuted = !isMuted;
-          muteBtn.innerHTML = isMuted ? '🔇 Tap to unmute' : '🔊 Playing';
-          reelsScroll.querySelectorAll('video').forEach(function(v) { v.muted = isMuted; });
-        });
-
-        slide.appendChild(video);
-
-        // Progress bar
-        var progressWrap = d.createElement('div');
-        progressWrap.style.cssText = 'position:absolute !important;bottom:0 !important;left:0 !important;right:0 !important;height:3px !important;background:rgba(255,255,255,0.2) !important;z-index:20 !important';
-        var progressBar = d.createElement('div');
-        progressBar.style.cssText = 'height:100% !important;background:#fff !important;width:0% !important;transition:width .2s linear !important;border-radius:2px !important';
-        progressWrap.appendChild(progressBar);
-        slide.appendChild(progressWrap);
-        video.addEventListener('timeupdate', function() {
-          if (video.duration) { progressBar.style.width = ((video.currentTime / video.duration) * 100) + '%'; }
-        });
-
-        // Gradient overlay at bottom
-        var gradOverlay = d.createElement('div');
-        gradOverlay.style.cssText = 'position:absolute !important;inset:auto 0 0 0 !important;height:180px !important;background:linear-gradient(transparent,rgba(0,0,0,0.85)) !important;pointer-events:none !important;z-index:5 !important';
-        slide.appendChild(gradOverlay);
-
-        // Product overlay — stacked deck with expand/collapse
-        if (vid.linked_product_ids && vid.linked_product_ids.length > 0 && products.length > 0) {
-          var linkedProds = vid.linked_product_ids.map(function(pid) {
-            return products.find(function(p) { return p.id === pid; });
-          }).filter(Boolean);
-
-          if (linkedProds.length > 0) {
-            var overlay = d.createElement('div');
-            overlay.style.cssText = 'position:absolute !important;inset:auto 0 24px 0 !important;padding:0 12px !important;z-index:10 !important;animation:wjSlideUp 0.5s ease-out both !important';
-
-            function buildCardHtml(prod) {
-              var imgHtml = prod.image_url ? '<img src="' + esc(prod.image_url) + '" style="width:48px !important;height:48px !important;border-radius:8px !important;object-fit:cover !important;flex-shrink:0 !important"/>' : '<div style="width:48px !important;height:48px !important;border-radius:8px !important;background:rgba(255,255,255,0.1) !important;flex-shrink:0 !important"></div>';
-              var priceHtml = prod.price ? '<span style="font-size:14px !important;font-weight:700 !important;color:#fff !important">' + esc(prod.price) + '</span>' : '';
-              var oldPriceHtml = prod.old_price ? '<span style="font-size:12px !important;color:rgba(255,255,255,0.5) !important;text-decoration:line-through !important">' + esc(prod.old_price) + '</span>' : '';
-              return imgHtml + '<div style="display:flex !important;flex-direction:column !important;gap:2px !important;min-width:0 !important;flex:1 !important"><span style="font-size:11px !important;font-weight:600 !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important">' + esc(prod.title) + '</span><div style="display:flex !important;align-items:center !important;gap:6px !important">' + priceHtml + oldPriceHtml + '</div></div><div style="flex-shrink:0 !important;width:36px !important;height:36px !important;border-radius:50% !important;background:rgba(255,255,255,0.2) !important;display:flex !important;align-items:center !important;justify-content:center !important"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>';
-            }
-
-            function renderCards(isExpanded) {
-              overlay.innerHTML = '';
-              if (isExpanded) {
-                // Expanded: vertical stack
-                var stack = d.createElement('div');
-                stack.style.cssText = 'display:flex !important;flex-direction:column !important;gap:8px !important';
-                linkedProds.forEach(function(prod, pIdx) {
-                  var card = d.createElement('div');
-                  card.style.cssText = 'display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;cursor:pointer !important;transition:all .3s !important;animation:wjSlideUp 0.3s ease-out ' + (pIdx * 60) + 'ms both !important';
-                  card.innerHTML = buildCardHtml(prod);
-                  card.querySelector('div[style*="border-radius:50%"]').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (shopifyDomain && prod.shopify_variant_id) {
-                      addToShopifyCart(prod.shopify_variant_id, null);
-                    } else if (prod.product_url) {
-                      w.open(prod.product_url, '_blank');
-                    }
-                  });
-                  stack.appendChild(card);
-                });
-                overlay.appendChild(stack);
-              } else {
-                // Collapsed: stacked deck
-                var deck = d.createElement('div');
-                deck.style.cssText = 'position:relative !important;height:56px !important;cursor:pointer !important';
-                linkedProds.slice(0, 3).forEach(function(prod, pIdx) {
-                  var card = d.createElement('div');
-                  card.style.cssText = 'position:absolute !important;left:0 !important;right:0 !important;display:flex !important;align-items:center !important;gap:10px !important;border-radius:12px !important;background:rgba(255,255,255,0.15) !important;backdrop-filter:blur(8px) !important;padding:8px !important;transition:all .3s !important;bottom:' + (pIdx * 5) + 'px !important;transform:scale(' + (1 - pIdx * 0.04) + ') !important;opacity:' + (pIdx === 0 ? 1 : 0.7 - pIdx * 0.2) + ' !important;z-index:' + (10 - pIdx) + ' !important';
-                  card.innerHTML = buildCardHtml(prod);
-                  deck.appendChild(card);
-                });
-                if (linkedProds.length > 1) {
-                  var badge = d.createElement('div');
-                  badge.style.cssText = 'position:absolute !important;top:-8px !important;right:8px !important;z-index:20 !important;background:rgba(255,255,255,0.25) !important;backdrop-filter:blur(4px) !important;color:#fff !important;font-size:10px !important;font-weight:600 !important;padding:2px 8px !important;border-radius:10px !important';
-                  badge.textContent = linkedProds.length + ' products';
-                  deck.appendChild(badge);
-                }
-                overlay.appendChild(deck);
-              }
-            }
-
-            renderCards(false);
-            overlay.addEventListener('click', function(e) {
-              e.stopPropagation();
-              expandedSlides[vidIdx] = !expandedSlides[vidIdx];
-              renderCards(expandedSlides[vidIdx]);
-            });
-
-            slide.appendChild(overlay);
-          }
-        }
-
-        reelsScroll.appendChild(slide);
-      });
-
-      // Close button
-      var inspireClose = d.createElement('button');
-      inspireClose.style.cssText = 'position:absolute !important;top:12px !important;right:12px !important;z-index:60 !important;width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(8px) !important;color:#fff !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important';
-      inspireClose.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg>';
-
-      inspireView.appendChild(reelsScroll);
-      inspireView.appendChild(dotsWrap);
-      inspireView.appendChild(muteBtn);
-      inspireView.appendChild(inspireClose);
-
-      // Event: open inspire (from box button or entire box)
-      var openInspire = function() {
-        homeView.style.display = 'none';
-        inspireView.style.display = 'flex';
-        var firstVid = reelsScroll.querySelector('video');
-        if (firstVid) firstVid.play().catch(function(){});
-      };
-      inspireSec.querySelector('#wj-inspire-box-btn').addEventListener('click', function(e) { e.stopPropagation(); openInspire(); });
-      inspireSec.querySelector('#wj-inspire-box').addEventListener('click', openInspire);
-
-      // Event: close inspire
-      inspireClose.addEventListener('click', function() {
-        inspireView.style.display = 'none';
-        homeView.style.display = 'flex';
-        // Pause all videos
-        reelsScroll.querySelectorAll('video').forEach(function(v) { v.pause(); });
-      });
-
-      // Autoplay on scroll snap
-      var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          var vid = entry.target.querySelector('video');
-          if (!vid) return;
-          if (entry.isIntersecting) {
-            vid.play().catch(function(){});
-            // Update dots
-            var slides = Array.from(reelsScroll.children);
-            var activeIdx = slides.indexOf(entry.target);
-            dots.forEach(function(dot, i) {
-              dot.style.cssText = 'height:4px !important;border-radius:2px !important;transition:all .2s !important;' + (i === activeIdx ? 'width:20px !important;background:#fff !important' : 'width:6px !important;background:rgba(255,255,255,0.4) !important');
-            });
-          } else {
-            vid.pause();
-          }
-        });
-      }, { root: reelsScroll, threshold: 0.6 });
-
-      reelsScroll.querySelectorAll('div[style*="scroll-snap-align"]').forEach(function(slide) {
-        observer.observe(slide);
-      });
-
-      // Tap to unmute/mute
-      reelsScroll.addEventListener('click', function(e) {
-        if (e.target.closest('div[style*="backdrop-filter"]')) return; // Don't toggle on product card click
-        var vid = e.target.closest('div[style*="scroll-snap-align"]');
-        if (vid) {
-          var v = vid.querySelector('video');
-          if (v) v.muted = !v.muted;
-        }
-      });
-      } // end if (hasVideos)
-    }
-
-    // CHAT VIEW
-    var chatView = d.createElement('div');
-    chatView.id = 'wj-chat-view';
-    var emojis = ['😀','😂','😊','🥰','😍','🤔','😢','😭','😡','🥳','👍','👎','❤️','🔥','✨','🎉','💯','🙏','👋','🤝'];
-    var emojiHtml = emojis.map(function(e) { return '<button class="wj-emoji">' + e + '</button>'; }).join('');
-    var chatAvatarHtml = avatar 
-      ? '<img src="' + esc(avatar) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover"/>' 
-      : '<div id="wj-chat-avatar">' + esc(avatarInitial) + '</div>';
-    var bubbleAvatarHtml = avatar 
-      ? '<img src="' + esc(avatar) + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0"/>' 
-      : '<div id="wj-chat-bubble-avatar">' + esc(avatarInitial) + '</div>';
-    chatView.innerHTML = '<div id="wj-chat-header"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button><div id="wj-chat-title">' + chatAvatarHtml + '<div id="wj-chat-title-text"><span id="wj-chat-name">' + esc(name) + '</span><span id="wj-chat-subtitle">' + esc(help || tr.contactUs || 'Contact us') + '</span></div></div><div id="wj-chat-header-right"><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div id="wj-chat-menu"><button class="wj-menu-item" id="wj-menu-clear"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Clear chat</button><button class="wj-menu-item" id="wj-menu-download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download transcript</button></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div></div><div id="wj-chat-msgs"><div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div><div id="wj-chat-chips"><button class="wj-chat-chip">' + esc(tr.chipFind) + '</button><button class="wj-chat-chip">' + esc(tr.chipTrack) + '</button><button class="wj-chat-chip">' + esc(tr.chipInfo) + '</button></div></div><div id="wj-chat-input"><div id="wj-emoji-picker">' + emojiHtml + '</div><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div><div id="wj-chat-powered">' + poweredHtml + '</div>';
-
-    pop.appendChild(homeView);
-    if (inspireEnabled) { pop.appendChild(inspireView); }
-    pop.appendChild(chatView);
-
-    // Button
-    var btn = d.createElement('button');
-    btn.id = 'wj-btn';
-    btn.type = 'button';
-    btn.setAttribute('aria-label', 'Open Widjet');
-    btn.style.cssText = 'width:56px !important;height:56px !important;border-radius:9999px !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;color:#ffffff !important;box-shadow:0 6px 18px rgba(0,0,0,.22) !important;transition:transform .2s,box-shadow .2s,opacity .2s !important;background:' + color.bg + ' !important;overflow:hidden !important;position:relative !important;pointer-events:auto !important;visibility:visible !important;opacity:1 !important;-webkit-appearance:none !important;appearance:none !important;padding:0 !important;margin:0 !important;';
-    btn.innerHTML = buttonLogo 
-      ? '<img src="' + esc(buttonLogo) + '" alt=""/>' 
-      : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>';
-    // Analytics tracking helper
-    function trackEvent(eventType) {
-      try {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', u + '/functions/v1/track-widget-event', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({
-          widget_id: id,
-          event_type: eventType,
-          visitor_id: visitorId,
-          page_url: w.location.href
-        }));
-      } catch(e) {}
-    }
-
-    // Tracking deferred to after DOM append
-
-    function showLauncher(withPop) {
-      btn.classList.remove('hidden');
-      if (withPop) {
-        btn.classList.add('pop');
-        setTimeout(function() { btn.classList.remove('pop'); }, 400);
-      }
-    }
 
     function hideLauncher() {
       btn.classList.add('hidden');
