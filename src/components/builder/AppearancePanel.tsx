@@ -224,6 +224,7 @@ const AppearancePanel = ({
   const [expandedInspireVideoId, setExpandedInspireVideoId] = useState<string | null>(null);
   const [inspireProductSearch, setInspireProductSearch] = useState("");
   const [dragSectionIdx, setDragSectionIdx] = useState<number | null>(null);
+  const [dropTargetIdx, setDropTargetIdx] = useState<number | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const logoInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -1024,6 +1025,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <HelpCircle className="h-4 w-4 text-blue-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">FAQs</p>
@@ -1108,6 +1110,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <Link2 className="h-4 w-4 text-purple-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Custom Links</p>
@@ -1186,6 +1189,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <ShoppingBag className="h-4 w-4 text-orange-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Product Carousel</p>
@@ -1255,6 +1259,7 @@ const AppearancePanel = ({
                   })}
                 >
                   <div className="flex items-center gap-2.5">
+                    <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab active:cursor-grabbing shrink-0" />
                     <Film className="h-4 w-4 text-purple-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">Inspire Me</p>
@@ -1398,54 +1403,84 @@ const AppearancePanel = ({
             ),
           };
 
-          const handleSectionDrop = (e: React.DragEvent, toIdx: number) => {
+          const handleSectionDrop = (e: React.DragEvent, _toIdx: number) => {
             e.preventDefault();
             const fromIdx = parseInt(e.dataTransfer.getData("section-idx"), 10);
-            if (isNaN(fromIdx) || fromIdx === toIdx) return;
+            if (isNaN(fromIdx) || dropTargetIdx === null) return;
             const newOrder = [...homeSectionOrder];
             const [moved] = newOrder.splice(fromIdx, 1);
-            newOrder.splice(toIdx, 0, moved);
+            const insertIdx = dropTargetIdx > fromIdx ? dropTargetIdx - 1 : dropTargetIdx;
+            newOrder.splice(insertIdx, 0, moved);
             onHomeSectionOrderChange(newOrder);
+            setDropTargetIdx(null);
           };
 
           return (
-            <div className="max-w-xs mx-auto space-y-1">
+            <div className="max-w-xs mx-auto space-y-0">
               <p className="mb-3 text-xs text-muted-foreground">Drag to reorder sections on the widget home screen.</p>
 
               {homeSectionOrder.map((sectionKey, idx) => {
                 const renderer = sectionRenderers[sectionKey];
                 if (!renderer) return null;
                 return (
-                  <div
-                    key={sectionKey}
-                    className="relative transition-transform duration-150"
-                    draggable={dragSectionIdx === idx}
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("section-idx", String(idx));
-                      e.dataTransfer.effectAllowed = "move";
-                      (e.currentTarget as HTMLElement).style.opacity = "0.5";
-                    }}
-                    onDragEnd={(e) => {
-                      (e.currentTarget as HTMLElement).style.opacity = "1";
-                      setDragSectionIdx(null);
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.dataTransfer.dropEffect = "move";
-                    }}
-                    onDrop={(e) => {
-                      if (e.dataTransfer.types.includes("faq-idx") || e.dataTransfer.types.includes("link-idx")) return;
-                      handleSectionDrop(e, idx);
-                    }}
-                  >
+                  <div key={sectionKey}>
+                    {/* Drop indicator line above */}
+                    {dropTargetIdx === idx && (
+                      <div className="flex items-center gap-2 py-1 animate-in fade-in duration-150">
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                        <div className="h-0.5 flex-1 rounded-full bg-primary" />
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                      </div>
+                    )}
                     <div
-                      className="absolute -left-6 top-2.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors z-10"
-                      onMouseDown={() => setDragSectionIdx(idx)}
-                      onMouseUp={() => setDragSectionIdx(null)}
+                      className={`relative transition-all duration-150 my-0.5 ${dragSectionIdx === idx ? "opacity-40 border-dashed border border-primary rounded-lg" : ""}`}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("section-idx", String(idx));
+                        e.dataTransfer.effectAllowed = "move";
+                        setDragSectionIdx(idx);
+                      }}
+                      onDragEnd={() => {
+                        setDragSectionIdx(null);
+                        setDropTargetIdx(null);
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                        if (dragSectionIdx === null || dragSectionIdx === idx) {
+                          setDropTargetIdx(null);
+                          return;
+                        }
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const isAbove = e.clientY < rect.top + rect.height / 2;
+                        const targetIdx = isAbove ? idx : idx + 1;
+                        if (targetIdx !== dragSectionIdx && targetIdx !== dragSectionIdx + 1) {
+                          setDropTargetIdx(targetIdx);
+                        } else {
+                          setDropTargetIdx(null);
+                        }
+                      }}
+                      onDragLeave={(e) => {
+                        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                          setDropTargetIdx(null);
+                        }
+                      }}
+                      onDrop={(e) => {
+                        if (e.dataTransfer.types.includes("faq-idx") || e.dataTransfer.types.includes("link-idx")) return;
+                        setDropTargetIdx(null);
+                        handleSectionDrop(e, dropTargetIdx !== null && dropTargetIdx <= idx ? dropTargetIdx : idx);
+                      }}
                     >
-                      <GripVertical className="h-4 w-4" />
+                      {renderer()}
                     </div>
-                    {renderer()}
+                    {/* Drop indicator line below last item */}
+                    {dropTargetIdx === homeSectionOrder.length && idx === homeSectionOrder.length - 1 && (
+                      <div className="flex items-center gap-2 py-1 animate-in fade-in duration-150">
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                        <div className="h-0.5 flex-1 rounded-full bg-primary" />
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                      </div>
+                    )}
                   </div>
                 );
               })}
