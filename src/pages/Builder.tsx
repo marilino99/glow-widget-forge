@@ -868,6 +868,11 @@ const Builder = () => {
                   hasStoreConnection={!!shopifyConnection}
                   homeSectionOrder={config.homeSectionOrder}
                   onHomeSectionOrderChange={(order) => saveConfig({ homeSectionOrder: order })}
+                  onNavigateToSection={(sectionKey) => {
+                    setBuilderView("editor");
+                    setActiveWidget(sectionKey);
+                    setIsPanelOpen(true);
+                  }}
                 />
               </div>
             </div>
