@@ -984,6 +984,7 @@ const Builder = () => {
                 inspireEnabled={config.inspireEnabled}
                 inspireVideos={inspireVideos}
                 inspireStoreProducts={rawProductCards}
+                homeSectionOrder={config.homeSectionOrder}
               />
             </div>
           </>
