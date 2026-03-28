@@ -1,23 +1,34 @@
 
 
-## Piano: Fix errore `bgFaq is not defined` nel widget-loader
+## Piano: Riordino sezioni Home Screen con drag-and-drop
 
-### Causa
-Il `widget-loader` crasha alla riga 305 perché le righe 305-312 (sezione CSS "Inspire") usano interpolazioni non-escaped (`${bgFaq}`, `${dark}`, `${textMain}`, ecc.) dentro un template literal server-side. Deno prova a risolvere queste variabili a livello server dove non esistono. Le righe precedenti (es. 301) usano correttamente `\${bgFaq}` (con backslash).
+### Concetto
+Aggiungere un campo `homeSectionOrder` alla configurazione widget che definisce l'ordine delle 4 sezioni (FAQ, Custom Links, Product Carousel, Inspire Me). Nel pannello Home Screen, le sezioni diventano riordinabili tramite drag-and-drop. Il widget preview e il widget live rispettano lo stesso ordine.
 
-### Fix
+### Modifiche
 
-**File: `supabase/functions/widget-loader/index.ts`** (righe 305-312)
+**1. `src/hooks/useWidgetConfiguration.ts`**
+- Aggiungere `homeSectionOrder: string[]` all'interfaccia `WidgetConfiguration` con default `["product-carousel", "faq", "custom-links", "inspire-me"]`
+- Mappare il campo nel load/save della configurazione
 
-Aggiungere il backslash di escape a tutte le interpolazioni nelle righe della sezione "Inspire":
+**2. `src/components/builder/AppearancePanel.tsx`** (tab home-screen, righe 1007-1390)
+- Aggiungere prop `homeSectionOrder` + `onHomeSectionOrderChange`
+- Definire un array di sezioni con chiave/componente JSX, poi renderizzarle nell'ordine definito da `homeSectionOrder`
+- Ogni sezione mostra un GripVertical handle per il drag-and-drop tra sezioni (drag sulla riga header della sezione)
+- Usare HTML5 drag-and-drop nativo (già usato per FAQ items e custom links)
 
-- Riga 305: `${bgFaq}` → `\${bgFaq}`
-- Riga 306: `${dark ? ...}` → `\${dark ? ...}`
-- Riga 309: `${textMain}` → `\${textMain}`
-- Riga 310: `${textSub}` → `\${textSub}`
-- Riga 311: `${color.bg}`, `${btnText}` → `\${color.bg}`, `\${btnText}`
-- Riga 312: `${color.hover}` → `\${color.hover}`
+**3. `src/components/builder/WidgetPreviewPanel.tsx`** (righe 2644-2870)
+- Aggiungere prop `homeSectionOrder`
+- Invece di rendere le 4 sezioni in ordine fisso, iterare su `homeSectionOrder` e rendere ciascuna sezione condizionalmente
 
-### Risultato
-Il widget-loader non crasherà più e il widget sarà visibile sullo store Shopify.
+**4. `src/pages/Builder.tsx`**
+- Passare `homeSectionOrder` e `onHomeSectionOrderChange` ai componenti AppearancePanel e WidgetPreviewPanel
+
+**5. `supabase/functions/widget-loader/index.ts`**
+- Leggere `homeSectionOrder` dalla config e rendere le sezioni nell'ordine specificato
+
+### Dettagli tecnici
+- L'ordine viene salvato come array JSON nel campo config esistente (via `onSaveConfig`)
+- Il drag-and-drop usa lo stesso pattern HTML5 già presente nel codebase (dataTransfer con indice)
+- Le sezioni non abilitate vengono comunque mostrate nel pannello (con toggle off) ma skippate nel preview
 
