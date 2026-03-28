@@ -1099,7 +1099,14 @@ const AppearancePanel = ({
             ),
             "custom-links": () => (
               <div className="rounded-lg border border-border overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-2.5">
+                <div
+                  className="flex items-center justify-between px-3 py-2.5 cursor-pointer select-none"
+                  onClick={() => setExpandedSections(prev => {
+                    const next = new Set(prev);
+                    next.has("custom-links") ? next.delete("custom-links") : next.add("custom-links");
+                    return next;
+                  })}
+                >
                   <div className="flex items-center gap-2.5">
                     <Link2 className="h-4 w-4 text-purple-500" />
                     <div>
@@ -1107,65 +1114,77 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">External URL cards</p>
                     </div>
                   </div>
-                  <span className="text-[11px] text-muted-foreground">{customLinks.length} links</span>
+                  <div className="flex items-center gap-2">
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("custom-links") ? "rotate-180" : ""}`} />
+                    <span className="text-[11px] text-muted-foreground">{customLinks.length} links</span>
+                  </div>
                 </div>
-                <div className="border-t border-border px-3 py-2.5 space-y-2">
-                  {customLinks.map((link, idx) => (
-                    <div
-                      key={link.id}
-                      className="flex items-start gap-1.5 group"
-                      draggable
-                      onDragStart={(e) => { e.stopPropagation(); e.dataTransfer.setData("link-idx", String(idx)); }}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const fromIdx = parseInt(e.dataTransfer.getData("link-idx"), 10);
-                        if (!isNaN(fromIdx) && fromIdx !== idx) {
-                          const newLinks = [...customLinks];
-                          const [moved] = newLinks.splice(fromIdx, 1);
-                          newLinks.splice(idx, 0, moved);
-                          onReorderCustomLinks(newLinks);
-                        }
-                      }}
-                    >
-                      <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
-                        <GripVertical className="h-3.5 w-3.5" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <Input
-                          value={link.name}
-                          onChange={(e) => onUpdateCustomLink(link.id, { name: e.target.value })}
-                          placeholder="Link name"
-                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
-                        />
-                        <Input
-                          value={link.url}
-                          onChange={(e) => onUpdateCustomLink(link.id, { url: e.target.value })}
-                          placeholder="https://..."
-                          className="h-7 rounded-md border-border bg-muted/50 text-xs"
-                        />
-                      </div>
-                      <button
-                        onClick={() => onDeleteCustomLink(link.id)}
-                        className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                {expandedSections.has("custom-links") && (
+                  <div className="border-t border-border px-3 py-2.5 space-y-2">
+                    {customLinks.map((link, idx) => (
+                      <div
+                        key={link.id}
+                        className="flex items-start gap-1.5 group"
+                        draggable
+                        onDragStart={(e) => { e.stopPropagation(); e.dataTransfer.setData("link-idx", String(idx)); }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const fromIdx = parseInt(e.dataTransfer.getData("link-idx"), 10);
+                          if (!isNaN(fromIdx) && fromIdx !== idx) {
+                            const newLinks = [...customLinks];
+                            const [moved] = newLinks.splice(fromIdx, 1);
+                            newLinks.splice(idx, 0, moved);
+                            onReorderCustomLinks(newLinks);
+                          }
+                        }}
                       >
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => onAddCustomLink("", "")}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                  >
-                    <Plus className="h-3 w-3" />
-                    Add link
-                  </button>
-                </div>
+                        <div className="mt-2 cursor-grab text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
+                          <GripVertical className="h-3.5 w-3.5" />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <Input
+                            value={link.name}
+                            onChange={(e) => onUpdateCustomLink(link.id, { name: e.target.value })}
+                            placeholder="Link name"
+                            className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                          />
+                          <Input
+                            value={link.url}
+                            onChange={(e) => onUpdateCustomLink(link.id, { url: e.target.value })}
+                            placeholder="https://..."
+                            className="h-7 rounded-md border-border bg-muted/50 text-xs"
+                          />
+                        </div>
+                        <button
+                          onClick={() => onDeleteCustomLink(link.id)}
+                          className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => onAddCustomLink("", "")}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+                    >
+                      <Plus className="h-3 w-3" />
+                      Add link
+                    </button>
+                  </div>
+                )}
               </div>
             ),
             "product-carousel": () => (
               <div className="rounded-lg border border-border overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-2.5">
+                <div
+                  className="flex items-center justify-between px-3 py-2.5 cursor-pointer select-none"
+                  onClick={() => setExpandedSections(prev => {
+                    const next = new Set(prev);
+                    next.has("product-carousel") ? next.delete("product-carousel") : next.add("product-carousel");
+                    return next;
+                  })}
+                >
                   <div className="flex items-center gap-2.5">
                     <ShoppingBag className="h-4 w-4 text-orange-500" />
                     <div>
@@ -1173,9 +1192,14 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">Showcase products</p>
                     </div>
                   </div>
-                  <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
+                  <div className="flex items-center gap-2">
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("product-carousel") ? "rotate-180" : ""}`} />
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Switch checked={productCarouselEnabled} onCheckedChange={onProductCarouselToggle} />
+                    </div>
+                  </div>
                 </div>
-                {productCarouselEnabled && (
+                {expandedSections.has("product-carousel") && productCarouselEnabled && (
                   <div className="border-t border-border px-3 py-2.5 space-y-2">
                     {productCards.map((card) => (
                       <div key={card.id} className="flex items-start gap-1.5 group">
@@ -1222,7 +1246,14 @@ const AppearancePanel = ({
             ),
             "inspire-me": () => (
               <div className="rounded-lg border border-border overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-2.5">
+                <div
+                  className="flex items-center justify-between px-3 py-2.5 cursor-pointer select-none"
+                  onClick={() => setExpandedSections(prev => {
+                    const next = new Set(prev);
+                    next.has("inspire-me") ? next.delete("inspire-me") : next.add("inspire-me");
+                    return next;
+                  })}
+                >
                   <div className="flex items-center gap-2.5">
                     <Film className="h-4 w-4 text-purple-500" />
                     <div>
@@ -1230,9 +1261,14 @@ const AppearancePanel = ({
                       <p className="text-[11px] text-muted-foreground">Video reels with tagged products</p>
                     </div>
                   </div>
-                  <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                  <div className="flex items-center gap-2">
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expandedSections.has("inspire-me") ? "rotate-180" : ""}`} />
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Switch checked={inspireEnabled} onCheckedChange={onInspireToggle} />
+                    </div>
+                  </div>
                 </div>
-                {inspireEnabled && (
+                {expandedSections.has("inspire-me") && inspireEnabled && (
                   <div className="border-t border-border px-3 py-2.5 space-y-2">
                     <input
                       ref={inspireFileInputRef}
