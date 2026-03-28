@@ -218,6 +218,10 @@ Deno.serve(async (req) => {
     var logoUrl = 'https://jqvcafbrccpmygiihyry.supabase.co/storage/v1/object/public/brand-assets/widjet-logo-navbar.png';
     var poweredHtml = '<a href="https://getwidjet.com" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:4px;color:inherit;text-decoration:none;">Powered by <img src="' + logoUrl + '" alt="Widjet"/></a>';
 
+    var inspireView = d.createElement('div');
+    inspireView.id = 'wj-inspire-view';
+    inspireView.style.display = 'none';
+
 
     // Detect if running inside an iframe (Wix Embed element)
     // Exclude Lovable preview iframes and the project's own domain from iframe mode
@@ -1584,7 +1588,7 @@ Deno.serve(async (req) => {
       }
     });
 
-      if (hasVideos) {
+      if (inspireEnabled && hasVideos) {
       var isMuted = true;
 
       // Build reels container
@@ -1804,7 +1808,7 @@ Deno.serve(async (req) => {
     chatView.innerHTML = '<div id="wj-chat-header"><button id="wj-chat-back"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></button><div id="wj-chat-title">' + chatAvatarHtml + '<div id="wj-chat-title-text"><span id="wj-chat-name">' + esc(name) + '</span><span id="wj-chat-subtitle">' + esc(help || tr.contactUs || 'Contact us') + '</span></div></div><div id="wj-chat-header-right"><button id="wj-chat-more"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button><div id="wj-chat-menu"><button class="wj-menu-item" id="wj-menu-clear"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>Clear chat</button><button class="wj-menu-item" id="wj-menu-download"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Download transcript</button></div><button id="wj-chat-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div></div><div id="wj-chat-msgs"><div id="wj-chat-bubble">' + bubbleAvatarHtml + '<div id="wj-chat-bubble-text">' + esc(tr.welcomeMessage) + '</div></div><div id="wj-chat-chips"><button class="wj-chat-chip">' + esc(tr.chipFind) + '</button><button class="wj-chat-chip">' + esc(tr.chipTrack) + '</button><button class="wj-chat-chip">' + esc(tr.chipInfo) + '</button></div></div><div id="wj-chat-input"><div id="wj-emoji-picker">' + emojiHtml + '</div><div id="wj-chat-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-chat-emoji"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button><button id="wj-chat-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-chat-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div></div><div id="wj-chat-powered">' + poweredHtml + '</div>';
 
     pop.appendChild(homeView);
-    pop.appendChild(inspireView);
+    if (inspireEnabled) { pop.appendChild(inspireView); }
     pop.appendChild(chatView);
 
     // Button
