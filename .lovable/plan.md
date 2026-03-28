@@ -1,34 +1,29 @@
 
 
-## Piano: Riordino sezioni Home Screen con drag-and-drop
+## Piano: Sezioni collassabili nel pannello Home Screen
 
 ### Concetto
-Aggiungere un campo `homeSectionOrder` alla configurazione widget che definisce l'ordine delle 4 sezioni (FAQ, Custom Links, Product Carousel, Inspire Me). Nel pannello Home Screen, le sezioni diventano riordinabili tramite drag-and-drop. Il widget preview e il widget live rispettano lo stesso ordine.
+Ogni sezione (FAQ, Custom Links, Product Carousel, Inspire Me) diventa collassabile con una freccia (ChevronDown). Quando chiusa, mostra solo l'header compatto (icona + titolo + descrizione + toggle), come nello screenshot. Quando aperta, mostra il contenuto di configurazione sotto.
 
 ### Modifiche
 
-**1. `src/hooks/useWidgetConfiguration.ts`**
-- Aggiungere `homeSectionOrder: string[]` all'interfaccia `WidgetConfiguration` con default `["product-carousel", "faq", "custom-links", "inspire-me"]`
-- Mappare il campo nel load/save della configurazione
+**File: `src/components/builder/AppearancePanel.tsx`**
 
-**2. `src/components/builder/AppearancePanel.tsx`** (tab home-screen, righe 1007-1390)
-- Aggiungere prop `homeSectionOrder` + `onHomeSectionOrderChange`
-- Definire un array di sezioni con chiave/componente JSX, poi renderizzarle nell'ordine definito da `homeSectionOrder`
-- Ogni sezione mostra un GripVertical handle per il drag-and-drop tra sezioni (drag sulla riga header della sezione)
-- Usare HTML5 drag-and-drop nativo (già usato per FAQ items e custom links)
+1. Aggiungere uno stato `expandedSections: Set<string>` (default: tutte espanse, o tutte chiuse — meglio tutte chiuse per facilitare il riordino)
 
-**3. `src/components/builder/WidgetPreviewPanel.tsx`** (righe 2644-2870)
-- Aggiungere prop `homeSectionOrder`
-- Invece di rendere le 4 sezioni in ordine fisso, iterare su `homeSectionOrder` e rendere ciascuna sezione condizionalmente
+2. Separare ogni sezione in due parti:
+   - **Header** (sempre visibile): icona, titolo, descrizione, grip handle a sinistra, toggle/info a destra, **più una ChevronDown** che ruota quando espansa
+   - **Content** (visibile solo se la sezione è in `expandedSections`): il contenuto di configurazione attuale (FAQ items, link items, product cards, video)
 
-**4. `src/pages/Builder.tsx`**
-- Passare `homeSectionOrder` e `onHomeSectionOrderChange` ai componenti AppearancePanel e WidgetPreviewPanel
+3. Click sull'header (escluso toggle e grip) togga l'espansione della sezione
 
-**5. `supabase/functions/widget-loader/index.ts`**
-- Leggere `homeSectionOrder` dalla config e rendere le sezioni nell'ordine specificato
+4. Quando collassata, la sezione ha esattamente la forma dello screenshot: una riga compatta con icona, titolo, descrizione e toggle
+
+5. Aggiungere una `ChevronDown` nell'header che ruota a 180° quando espansa (transizione CSS `rotate-180`)
 
 ### Dettagli tecnici
-- L'ordine viene salvato come array JSON nel campo config esistente (via `onSaveConfig`)
-- Il drag-and-drop usa lo stesso pattern HTML5 già presente nel codebase (dataTransfer con indice)
-- Le sezioni non abilitate vengono comunque mostrate nel pannello (con toggle off) ma skippate nel preview
+- Stato locale `expandedSections` gestito con `useState<Set<string>>`
+- Il toggle Switch resta cliccabile indipendentemente dallo stato di espansione (stopPropagation sul click del toggle)
+- La ChevronDown va posizionata tra il testo e il toggle, o a sinistra del toggle
+- Transizione smooth sull'espansione con `overflow-hidden` e animazione altezza opzionale
 
