@@ -1042,7 +1042,7 @@ const AppearancePanel = ({
                         </button>
                       </div>
                     ))}
-                    <Button variant="outline" size="sm" className="w-full gap-1.5 text-xs" onClick={() => onAddFaqItem({ id: crypto.randomUUID(), question: "", answer: "", sort_order: faqItems.length } as FaqItemData)}>
+                    <Button variant="outline" size="sm" className="w-full gap-1.5 text-xs" onClick={() => onAddFaqItem({ id: crypto.randomUUID(), question: "", answer: "", sortOrder: faqItems.length } as FaqItemData)}>
                       <Plus className="h-3.5 w-3.5" /> Add question
                     </Button>
                   </div>
