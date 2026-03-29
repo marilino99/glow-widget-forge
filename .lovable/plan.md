@@ -1,37 +1,27 @@
 
 
-## Piano: Allineare la Voice View del widget live al preview
+## Piano: Uniformare gli spazi tra le sezioni nel widget live
 
-### Differenze trovate
+### Problema
+Lo spazio tra la box "Contact us on WhatsApp" e "Discover More" è ~32px (16px di padding-bottom della contact card + 16px di margin-top della sezione inspire), mentre lo spazio tra "Discover More" e "Quick Answers" è solo ~16px (margin-top del FAQ, senza padding-bottom sulla sezione inspire).
 
-| Elemento | Preview | Widget Live |
-|---|---|---|
-| Blob size | 160x160px | 280x280px |
-| Blob position | Flex centered | Absolute top:50% translate(-50%,-60%) |
-| Layout | Flex column justify-between | Mixed absolute positioning |
-| Close button | Top-right, 32px, bg-white/80, ChevronDown icon | Top-right, 40px, transparent bg, ChevronDown icon |
-| Controls gap | 24px (gap-6) | 20px |
-| Mic button color | #ef4444 (red-500) | #b45454 (darker red) |
-| Mic button border | none, shadow-md | none, custom shadow |
-| Status pill | rgba(255,255,255,0.7) bg | rgba(255,255,255,0.8) bg |
+### Soluzione
+Rendere tutti gli spazi tra le sezioni uniformi a 16px, come appare nel widget preview:
 
-### Modifiche
+**`supabase/functions/widget-loader/index.ts`**:
 
-**`supabase/functions/widget-loader/index.ts`** — aggiornare gli stili CSS della voice view per replicare il layout del preview:
+1. **Ridurre il padding-bottom della contact card** — cambiare `#wj-contact` da `padding:16px` a `padding:16px 16px 8px 16px` (meno spazio sotto il WhatsApp button)
+2. **Oppure (approccio più pulito)**: ridurre il `margin-top` delle sezioni che seguono immediatamente la contact card, o uniformare il padding di tutte le sezioni wrapper
 
-1. **Blob**: ridurre da 280px a 160px, rimuovere posizionamento assoluto, usare flex centering
-2. **Layout**: cambiare `#wj-voice-view` in flex-column con justify-content:space-between (come il preview)
-3. **Close button**: ridurre a 32px, aggiungere background `rgba(255,255,255,0.8)` e shadow-sm
-4. **Controls**: aggiornare gap a 24px, cambiare colore mic button a `#ef4444` (red-500) con hover `#dc2626` (red-600), shadow-md
-5. **Stop button**: allineare shadow e border style al preview
-6. **Status pill**: aggiornare background a `rgba(255,255,255,0.7)`
-7. **Powered by**: padding-bottom 12px come nel preview
+L'approccio più semplice e coerente:
+- `#wj-contact`: mantenere `padding:16px` ma aggiungere `margin-bottom:-8px` per compensare lo spazio visivo extra
+- Assicurarsi che `#wj-inspire-section`, `#wj-faq`, `#wj-links` abbiano tutti lo stesso `margin-top:16px` e `padding-bottom:0` nella versione popup
 
-Stesso aggiornamento nella sezione CSS duplicata per bottom-bar (righe ~600+).
+In pratica, modificare il CSS della contact card per avere padding-bottom più ridotto (es. `padding:16px 16px 8px`) così che il gap totale con la prima sezione sia ~24px, uguale allo spazio visivo tra le altre sezioni (16px margin + 8px di visual breathing).
 
 ### File coinvolto
-- `supabase/functions/widget-loader/index.ts`
+- `supabase/functions/widget-loader/index.ts` — riga 280 (popup CSS) e righe corrispondenti nel bottom-bar CSS
 
 ### Risultato
-La voice view nel widget live sarà identica a quella nel builder preview: blob più piccolo e centrato, pulsanti con gli stessi colori e dimensioni, layout coerente.
+Spazi uniformi tra tutte le sezioni della home del widget: Contact → Inspire → FAQ → Links.
 
