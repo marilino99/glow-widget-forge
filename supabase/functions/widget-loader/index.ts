@@ -2061,7 +2061,7 @@ Deno.serve(async (req) => {
           if (finalTranscript.trim()) {
             voiceStatus.textContent = 'Processing...';
             voiceView.classList.remove('listening');
-            sendMessageText(finalTranscript.trim());
+            sendMessageText(finalTranscript.trim(), true);
             finalTranscript = '';
             voiceTranscript.textContent = '';
             setTimeout(function() {
