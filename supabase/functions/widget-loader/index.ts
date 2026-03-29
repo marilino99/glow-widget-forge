@@ -2007,7 +2007,7 @@ Deno.serve(async (req) => {
       voiceMuteBtn.classList.remove('muted');
       startPolling();
       // AI speaks first with a greeting, then starts listening
-      var greeting = cfg.offer_help || cfg.say_hello || 'Hi! How can I help you?';
+      var greeting = 'Welcome! How can I help you?';
       if (w.speechSynthesis) {
         w.speechSynthesis.cancel();
         var utter = new SpeechSynthesisUtterance(greeting);
