@@ -413,7 +413,87 @@ const WidgetPreviewPanel = ({
     }
   };
 
-  // Close chat menu on outside click
+  // Voice session for voice view overlay
+  const startVoiceSession = () => {
+    setShowVoiceView(true);
+    setVoiceStatus("connecting");
+    setVoiceMuted(false);
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setVoiceStatus("listening");
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = language || "en";
+        recognition.interimResults = false;
+        recognition.continuous = true;
+        voiceRecognitionRef.current = recognition;
+
+        recognition.onresult = (event: any) => {
+          let transcript = "";
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+              transcript += event.results[i][0].transcript;
+            }
+          }
+          if (transcript.trim()) {
+            setVoiceStatus("processing");
+            handleSendChatMessage(transcript.trim());
+            setTimeout(() => {
+              if (voiceRecognitionRef.current) setVoiceStatus("listening");
+            }, 1500);
+          }
+        };
+
+        recognition.onend = () => {
+          // Restart if still in voice view and not muted
+          if (voiceRecognitionRef.current && !voiceMuted) {
+            try { recognition.start(); } catch(_) {}
+          }
+        };
+
+        recognition.onerror = (e: any) => {
+          console.error("Voice error:", e.error);
+          if (e.error !== 'no-speech' && e.error !== 'aborted') {
+            setVoiceStatus("listening");
+          }
+        };
+
+        setVoiceStatus("listening");
+        recognition.start();
+      } catch (e) {
+        console.error("Failed to start voice session:", e);
+        setVoiceStatus("listening");
+      }
+    }, 800);
+  };
+
+  const stopVoiceSession = () => {
+    if (voiceRecognitionRef.current) {
+      const ref = voiceRecognitionRef.current;
+      voiceRecognitionRef.current = null;
+      try { ref.stop(); } catch(_) {}
+    }
+    setShowVoiceView(false);
+    setShowChat(true);
+  };
+
+  const toggleVoiceMute = () => {
+    if (voiceMuted && voiceRecognitionRef.current) {
+      try { voiceRecognitionRef.current.start(); } catch(_) {}
+      setVoiceMuted(false);
+      setVoiceStatus("listening");
+    } else if (voiceRecognitionRef.current) {
+      try { voiceRecognitionRef.current.stop(); } catch(_) {}
+      setVoiceMuted(true);
+      setVoiceStatus("connecting");
+    }
+  };
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (chatMenuRef.current && !chatMenuRef.current.contains(e.target as Node)) {
