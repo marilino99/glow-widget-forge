@@ -600,7 +600,6 @@ const DataSourcesPanel = ({ onNavigateToFaq, chatbotInstructions, voiceInstructi
               ))
             )}
           </div>
-         </div>
         </div>
         </>
         )}
