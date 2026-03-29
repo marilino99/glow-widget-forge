@@ -28,6 +28,7 @@ export interface WidgetConfiguration {
   showBranding: boolean;
   chatbotEnabled: boolean;
   chatbotInstructions: string;
+  voiceInstructions: string;
   aiProvider: string;
   aiApiKey: string;
   aiTemperature: number;
@@ -74,6 +75,7 @@ const defaultConfig: WidgetConfiguration = {
   showBranding: true,
   chatbotEnabled: true,
   chatbotInstructions: "",
+  voiceInstructions: "",
   aiProvider: "google",
   aiApiKey: "",
   aiTemperature: 0.5,
@@ -147,6 +149,7 @@ export const useWidgetConfiguration = () => {
             showBranding: (data as any).show_branding ?? true,
             chatbotEnabled: (data as any).chatbot_enabled ?? true,
             chatbotInstructions: (data as any).chatbot_instructions || "",
+            voiceInstructions: (data as any).voice_instructions || "",
             aiProvider: (data as any).ai_provider || "google",
             aiApiKey: (data as any).ai_api_key || "",
             aiTemperature: (data as any).ai_temperature ?? 0.5,
@@ -215,6 +218,7 @@ export const useWidgetConfiguration = () => {
           show_branding: updatedConfig.showBranding,
           chatbot_enabled: updatedConfig.chatbotEnabled,
           chatbot_instructions: updatedConfig.chatbotInstructions,
+          voice_instructions: updatedConfig.voiceInstructions,
           ai_provider: updatedConfig.aiProvider,
           ai_api_key: updatedConfig.aiApiKey,
           ai_temperature: updatedConfig.aiTemperature,
