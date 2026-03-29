@@ -332,6 +332,7 @@ Language: Your default language is ${config.language || "en"}, but you MUST dete
 
 ${knowledgeBase}
 ${additionalInstructions}
+${voiceModeRules}
 
 STRICT RULES:
 - Use the knowledge base above to answer questions about the business, its products, services, and FAQ.
