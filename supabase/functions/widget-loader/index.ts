@@ -2391,9 +2391,11 @@ Deno.serve(async (req) => {
     }
 
     function speakText(text) {
-      if (!w.speechSynthesis || !voiceView || !voiceView.classList.contains('open')) return;
+      if (!w.speechSynthesis || !voiceView || !voiceView.classList.contains('open') || voiceMuted) return;
+      // Cancel any ongoing speech first
+      w.speechSynthesis.cancel();
       // Strip markdown chars
-      var clean = text.replace(/[*_#`]/g, '');
+      var clean = text.replace(/[*_#\\[\\]`]/g, '').replace(/\\n{2,}/g, '. ');
       // Pause mic while speaking
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
       voiceView.classList.remove('listening');
@@ -2403,14 +2405,14 @@ Deno.serve(async (req) => {
       utter.lang = langMap[lang] || 'en-US';
       utter.rate = 1.0;
       utter.onend = function() {
-        if (voiceRecognition) {
+        if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
           try { voiceRecognition.start(); } catch(e) {}
           voiceView.classList.add('listening');
           if (voiceStatus) voiceStatus.textContent = 'Listening...';
         }
       };
       utter.onerror = function() {
-        if (voiceRecognition) {
+        if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
           try { voiceRecognition.start(); } catch(e) {}
           voiceView.classList.add('listening');
           if (voiceStatus) voiceStatus.textContent = 'Listening...';
