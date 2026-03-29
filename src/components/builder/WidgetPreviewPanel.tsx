@@ -478,6 +478,10 @@ const WidgetPreviewPanel = ({
       voiceRecognitionRef.current = null;
       try { ref.stop(); } catch(_) {}
     }
+    // Cancel any ongoing TTS
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
     setShowVoiceView(false);
     setShowChat(true);
   };
@@ -489,6 +493,10 @@ const WidgetPreviewPanel = ({
       setVoiceStatus("listening");
     } else if (voiceRecognitionRef.current) {
       try { voiceRecognitionRef.current.stop(); } catch(_) {}
+      // Also stop TTS if speaking
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
       setVoiceMuted(true);
       setVoiceStatus("connecting");
     }
@@ -544,6 +552,32 @@ const WidgetPreviewPanel = ({
         }
       } else if (data?.reply) {
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
+        // TTS: read reply aloud if voice view is active
+        if (showVoiceView && window.speechSynthesis) {
+          // Pause mic while speaking
+          if (voiceRecognitionRef.current) {
+            try { voiceRecognitionRef.current.stop(); } catch(_) {}
+          }
+          setVoiceStatus("processing");
+          const utterance = new SpeechSynthesisUtterance(data.reply.replace(/[*_#`]/g, ''));
+          const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+          utterance.lang = langMap[language || 'en'] || 'en-US';
+          utterance.rate = 1.0;
+          utterance.onend = () => {
+            // Resume mic after TTS finishes
+            if (voiceRecognitionRef.current) {
+              try { voiceRecognitionRef.current.start(); } catch(_) {}
+              setVoiceStatus("listening");
+            }
+          };
+          utterance.onerror = () => {
+            if (voiceRecognitionRef.current) {
+              try { voiceRecognitionRef.current.start(); } catch(_) {}
+              setVoiceStatus("listening");
+            }
+          };
+          window.speechSynthesis.speak(utterance);
+        }
       }
     } catch (err) {
       console.error('Preview chatbot error:', err);
