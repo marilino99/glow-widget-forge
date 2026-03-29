@@ -1991,6 +1991,9 @@ Deno.serve(async (req) => {
     var voiceTranscript = voiceView.querySelector('#wj-voice-transcript');
     var voiceRecognition = null;
     var voiceMuted = false;
+    var lastSpokenText = '';
+    var noSpeechRetries = 0;
+    var MAX_NO_SPEECH = 3;
 
     function openVoiceView() {
       var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
