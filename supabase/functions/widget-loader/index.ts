@@ -2012,6 +2012,8 @@ Deno.serve(async (req) => {
     function closeVoiceView() {
       voiceView.classList.remove('open', 'listening');
       if (voiceRecognition) { try { voiceRecognition.abort(); } catch(e) {} voiceRecognition = null; }
+      // Cancel TTS when closing voice view
+      if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
       chatView.classList.add('open');
       homeView.classList.add('hidden');
     }
@@ -2387,6 +2389,35 @@ Deno.serve(async (req) => {
       if (el) el.remove();
     }
 
+    function speakText(text) {
+      if (!w.speechSynthesis || !voiceView || !voiceView.classList.contains('open')) return;
+      // Strip markdown chars
+      var clean = text.replace(/[*_#`]/g, '');
+      // Pause mic while speaking
+      if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
+      voiceView.classList.remove('listening');
+      if (voiceStatus) voiceStatus.textContent = 'Speaking...';
+      var utter = new SpeechSynthesisUtterance(clean);
+      var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+      utter.lang = langMap[lang] || 'en-US';
+      utter.rate = 1.0;
+      utter.onend = function() {
+        if (voiceRecognition) {
+          try { voiceRecognition.start(); } catch(e) {}
+          voiceView.classList.add('listening');
+          if (voiceStatus) voiceStatus.textContent = 'Listening...';
+        }
+      };
+      utter.onerror = function() {
+        if (voiceRecognition) {
+          try { voiceRecognition.start(); } catch(e) {}
+          voiceView.classList.add('listening');
+          if (voiceStatus) voiceStatus.textContent = 'Listening...';
+        }
+      };
+      w.speechSynthesis.speak(utter);
+    }
+
     function pollMessages() {
       var pollUrl = u + '/functions/v1/get-chat-messages?visitorId=' + encodeURIComponent(visitorId) + '&widgetId=' + encodeURIComponent(id) + '&visitorToken=' + encodeURIComponent(visitorToken);
       if (lastMessageId) {
@@ -2402,6 +2433,10 @@ Deno.serve(async (req) => {
             hideTypingIndicator();
             res.messages.forEach(function(msg) {
               renderMessage(msg);
+              // TTS for bot/owner messages when voice view is open
+              if (msg.sender_type !== 'visitor' && msg.content) {
+                speakText(msg.content);
+              }
             });
           }
         } catch(e) {
