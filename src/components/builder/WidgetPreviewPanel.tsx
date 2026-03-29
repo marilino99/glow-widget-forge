@@ -600,7 +600,7 @@ const WidgetPreviewPanel = ({
     try {
       const allMessages = [...chatMessages, userMsg].map(m => ({ text: m.text, sender: m.sender }));
       const { data, error } = await supabase.functions.invoke('chatbot-preview', {
-        body: { messages: allMessages, widgetId },
+        body: { messages: allMessages, widgetId, voiceMode: showVoiceViewRef.current },
       });
       if (error) {
         const status = (error as any)?.context?.status;
