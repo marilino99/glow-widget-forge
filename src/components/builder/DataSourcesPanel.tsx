@@ -65,6 +65,12 @@ const DataSourcesPanel = ({ onNavigateToFaq, chatbotInstructions, voiceInstructi
   const [uploadingFile, setUploadingFile] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [localChatInstructions, setLocalChatInstructions] = useState(chatbotInstructions || "");
+  const [localVoiceInstructions, setLocalVoiceInstructions] = useState(voiceInstructions || "");
+  const [showInstructionsPanel, setShowInstructionsPanel] = useState(false);
+
+  useEffect(() => { setLocalChatInstructions(chatbotInstructions || ""); }, [chatbotInstructions]);
+  useEffect(() => { setLocalVoiceInstructions(voiceInstructions || ""); }, [voiceInstructions]);
 
   // Load sources
   useEffect(() => {
