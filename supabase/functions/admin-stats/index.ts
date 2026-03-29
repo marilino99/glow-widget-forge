@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       sinceDate
         ? supabase.from("chat_messages").select("id", { count: "exact", head: true }).gte("created_at", sinceDate)
         : supabase.from("chat_messages").select("id", { count: "exact", head: true }),
-      supabase.from("widget_configurations").select("id, user_id, contact_name, website_url, chatbot_enabled"),
+      supabase.from("widget_configurations").select("id, user_id, contact_name, website_url, chatbot_enabled, chatbot_instructions, voice_instructions, language"),
       supabase.from("conversations").select("id, widget_owner_id, created_at, last_message_at").order("last_message_at", { ascending: false }).limit(5000),
       sinceDate
         ? supabase.from("chat_messages").select("conversation_id, is_ai_response, sender_type, created_at").gte("created_at", sinceDate).limit(10000)
