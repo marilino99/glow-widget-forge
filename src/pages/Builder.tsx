@@ -922,11 +922,17 @@ const Builder = () => {
               </div>
           </div>
         ) : builderView === "data-sources" ? (
-          <DataSourcesPanel onNavigateToFaq={() => {
-            setBuilderView("editor");
-            setActiveWidget("faq");
-            setIsPanelOpen(true);
-          }} />
+          <DataSourcesPanel
+            onNavigateToFaq={() => {
+              setBuilderView("editor");
+              setActiveWidget("faq");
+              setIsPanelOpen(true);
+            }}
+            chatbotInstructions={config.chatbotInstructions}
+            voiceInstructions={config.voiceInstructions}
+            onSaveChatInstructions={(val) => saveConfig({ chatbotInstructions: val })}
+            onSaveVoiceInstructions={(val) => saveConfig({ voiceInstructions: val })}
+          />
         ) : builderView === "integrations" ? (
           <IntegrationsPanel
             whatsappEnabled={config.whatsappEnabled ?? false}

@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { messages, widgetId } = await req.json();
+    const { messages, widgetId, voiceMode } = await req.json();
 
     if (!messages || !widgetId) {
       return new Response(
@@ -202,7 +202,7 @@ Deno.serve(async (req) => {
     // Get widget config
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, contact_name, language, user_id, forward_email")
+      .select("chatbot_enabled, chatbot_instructions, voice_instructions, contact_name, language, user_id, forward_email")
       .eq("id", widgetId)
       .single();
 
@@ -311,8 +311,20 @@ Deno.serve(async (req) => {
       }
     }
 
-    const additionalInstructions = config.chatbot_instructions
-      ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
+    const activeInstructions = voiceMode && config.voice_instructions
+      ? config.voice_instructions
+      : config.chatbot_instructions;
+    const additionalInstructions = activeInstructions
+      ? `\n\nThe site owner has provided these additional instructions:\n${activeInstructions}`
+      : "";
+
+    const voiceModeRules = voiceMode
+      ? `\n\nVOICE MODE RULES (the visitor is speaking via voice, your reply will be read aloud by TTS):
+- Keep responses very short: 1-2 sentences max
+- Use natural, conversational language
+- Avoid markdown formatting, bullet points, or lists
+- Do not use emojis
+- Be direct and concise`
       : "";
 
       const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
@@ -320,6 +332,7 @@ Language: Your default language is ${config.language || "en"}, but you MUST dete
 
 ${knowledgeBase}
 ${additionalInstructions}
+${voiceModeRules}
 
 STRICT RULES:
 - Use the knowledge base above to answer questions about the business, its products, services, and FAQ.

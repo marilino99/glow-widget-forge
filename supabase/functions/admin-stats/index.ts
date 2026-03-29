@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       sinceDate
         ? supabase.from("chat_messages").select("id", { count: "exact", head: true }).gte("created_at", sinceDate)
         : supabase.from("chat_messages").select("id", { count: "exact", head: true }),
-      supabase.from("widget_configurations").select("id, user_id, contact_name, website_url, chatbot_enabled"),
+      supabase.from("widget_configurations").select("id, user_id, contact_name, website_url, chatbot_enabled, chatbot_instructions, voice_instructions, language"),
       supabase.from("conversations").select("id, widget_owner_id, created_at, last_message_at").order("last_message_at", { ascending: false }).limit(5000),
       sinceDate
         ? supabase.from("chat_messages").select("conversation_id, is_ai_response, sender_type, created_at").gte("created_at", sinceDate).limit(10000)
@@ -226,6 +226,20 @@ Deno.serve(async (req) => {
       ? Math.round(totalMsgsInPeriod / activeUsersWithMsgs)
       : 0;
 
+    // Widget instructions overview
+    const widgetInstructions = widgets.map((w: any) => {
+      const au = authUsers.find((u: any) => u.id === w.user_id);
+      return {
+        widgetId: w.id,
+        email: au?.email || "unknown",
+        contactName: w.contact_name || "—",
+        websiteUrl: w.website_url || null,
+        language: w.language || "en",
+        chatInstructions: w.chatbot_instructions || null,
+        voiceInstructions: w.voice_instructions || null,
+      };
+    }).filter((w: any) => w.chatInstructions || w.voiceInstructions);
+
     const stats = {
       totalUsers: usersCountRes.count ?? 0,
       totalAuthUsers: authUsers.length,
@@ -242,6 +256,7 @@ Deno.serve(async (req) => {
       activeUsersInPeriod,
       usersWithConversationsInPeriod,
       activeWidgetUsers,
+      widgetInstructions,
     };
 
     return new Response(JSON.stringify(stats), {
