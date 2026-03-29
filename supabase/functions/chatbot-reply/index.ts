@@ -500,11 +500,20 @@ Deno.serve(async (req) => {
 
     const voiceModeRules = voiceMode
       ? `\n\nVOICE MODE RULES (the visitor is speaking via voice, your reply will be read aloud by TTS):
-- Keep responses very short: 1-2 sentences max
+- Keep responses very short: 1-3 sentences max
 - Use natural, conversational language
 - Avoid markdown formatting, bullet points, or lists
 - Do not use emojis
-- Be direct and concise`
+- Be direct and concise
+
+VOICE DISCOVERY RULES:
+- Do NOT use [CHIPS:] markers in voice mode. Instead, list the options naturally in your spoken reply.
+  Example: "What are you looking for? We have Skincare, Haircare, Clothing, and Shoes."
+- Follow the same category → goal → type discovery flow as text chat, but speak the options aloud.
+- Ask one question at a time and wait for the user's spoken answer before proceeding.
+- When recommending products, still use the [PRODUCTS:] marker so they appear visually in the chat, but also briefly mention 1-2 product names in your spoken reply.
+  Example: "I'd recommend the Hydrating Serum and the Daily Moisturizer — you can see them in the chat below."
+- Keep the conversational tone warm and guiding, like a real sales assistant.`
       : "";
 
     // Check if contact already exists for this conversation
