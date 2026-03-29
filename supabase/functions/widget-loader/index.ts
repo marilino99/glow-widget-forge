@@ -1933,6 +1933,12 @@ Deno.serve(async (req) => {
     if (inspireEnabled) { pop.appendChild(inspireView); }
     pop.appendChild(chatView);
 
+    // ====== VOICE VIEW ======
+    var voiceView = d.createElement('div');
+    voiceView.id = 'wj-voice-view';
+    voiceView.innerHTML = '<button id="wj-voice-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button><div id="wj-voice-blob-wrap"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path class="wj-blob-path wj-blob-p1" d="M 100 20 C 140 20, 180 40, 185 80 C 190 120, 175 160, 140 175 C 105 190, 60 185, 35 155 C 10 125, 15 70, 45 40 C 75 10, 100 20, 100 20 Z" opacity="0.6"/><path class="wj-blob-path wj-blob-p2" d="M 95 15 C 135 10, 175 35, 185 75 C 195 115, 180 155, 145 175 C 110 195, 65 190, 35 160 C 5 130, 10 80, 40 45 C 70 10, 95 15, 95 15 Z"/></svg></div><div id="wj-voice-status">Connecting...</div><div id="wj-voice-transcript"></div><div id="wj-voice-controls"><button id="wj-voice-mute"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-voice-stop"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div>' + (showBranding ? '<div id="wj-voice-powered">' + poweredHtml + '</div>' : '');
+    pop.appendChild(voiceView);
+
     function hideLauncher() {
       btn.classList.add('hidden');
     }
