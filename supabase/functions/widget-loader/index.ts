@@ -2041,9 +2041,10 @@ Deno.serve(async (req) => {
         var recognition = new SpeechRecognition();
         recognition.lang = lang || 'en';
         recognition.interimResults = true;
-        recognition.continuous = true;
+        recognition.continuous = false;
         voiceRecognition = recognition;
         var finalTranscript = '';
+        noSpeechRetries = 0;
 
         recognition.onstart = function() {
           voiceView.classList.add('listening');
@@ -2060,26 +2061,27 @@ Deno.serve(async (req) => {
             }
           }
           voiceTranscript.textContent = finalTranscript + interim;
-          // When final result is ready, send it
           if (finalTranscript.trim()) {
+            noSpeechRetries = 0;
+            lastSpokenText = '';
             voiceStatus.textContent = 'Processing...';
             voiceView.classList.remove('listening');
             sendMessageText(finalTranscript.trim(), true);
             finalTranscript = '';
             voiceTranscript.textContent = '';
-            setTimeout(function() {
-              if (voiceRecognition) {
-                voiceView.classList.add('listening');
-                voiceStatus.textContent = 'Listening...';
-              }
-            }, 1500);
           }
         };
 
         recognition.onend = function() {
-          // Auto-restart if still in voice mode and not muted
           if (voiceView.classList.contains('open') && !voiceMuted) {
-            try { recognition.start(); } catch(e) {}
+            if (noSpeechRetries < MAX_NO_SPEECH) {
+              noSpeechRetries++;
+              setTimeout(function() {
+                if (voiceView.classList.contains('open') && !voiceMuted && voiceRecognition) {
+                  try { recognition.start(); } catch(e) {}
+                }
+              }, 300);
+            }
           } else {
             voiceView.classList.remove('listening');
           }
@@ -2089,7 +2091,9 @@ Deno.serve(async (req) => {
           if (e.error === 'not-allowed') {
             voiceStatus.textContent = 'Microphone access denied';
             voiceView.classList.remove('listening');
-          } else if (e.error !== 'aborted' && e.error !== 'no-speech') {
+          } else if (e.error === 'no-speech') {
+            noSpeechRetries++;
+          } else if (e.error !== 'aborted') {
             voiceStatus.textContent = 'Error: ' + e.error;
           }
         };
