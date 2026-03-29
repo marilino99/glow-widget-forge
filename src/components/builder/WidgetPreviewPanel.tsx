@@ -2797,7 +2797,7 @@ const WidgetPreviewPanel = ({
                             </>
                           )}
                           <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                            <span className={`text-[15px] font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>✨ Inspire me</span>
+                            <span className={`text-[15px] font-semibold ${isLight ? "text-slate-900" : "text-white"}`}>✨ Discover & Shop</span>
                             
                             <button className="self-start inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium transition-colors"
                               style={{ backgroundColor: 'transparent', border: `1.5px solid ${actualHexColor}`, color: actualHexColor }}
