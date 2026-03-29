@@ -529,6 +529,7 @@ Language: Your default language is ${config.language || "en"}, but you MUST dete
 ${knowledgeBase}
 ${additionalInstructions}
 ${leadCollectionInstruction}
+${voiceModeRules}
 
 CRITICAL RULES — YOU MUST FOLLOW THESE:
 1. YOUR PRIMARY SOURCE OF TRUTH IS THE KNOWLEDGE BASE ABOVE. Before answering ANY question, search through the entire knowledge base for relevant information.

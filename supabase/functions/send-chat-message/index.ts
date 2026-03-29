@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { widgetId, visitorId, message, visitorName, visitorToken, visitorCountry, visitorRegion, visitorCity, visitorBrowser, visitorSystem } = await req.json();
+    const { widgetId, visitorId, message, visitorName, visitorToken, visitorCountry, visitorRegion, visitorCity, visitorBrowser, visitorSystem, voiceMode } = await req.json();
 
     // Use client-side detected geo/device info
     const detectedCountry: string | null = (visitorCountry && typeof visitorCountry === 'string' && visitorCountry.trim()) ? visitorCountry.trim() : null;
@@ -157,6 +157,7 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           conversationId: conversation.id,
           widgetId,
+          voiceMode: !!voiceMode,
         }),
       }).catch((err) => console.error("Failed to trigger chatbot:", err));
     }
