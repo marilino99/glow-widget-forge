@@ -600,7 +600,10 @@ const DataSourcesPanel = ({ onNavigateToFaq, chatbotInstructions, voiceInstructi
               ))
             )}
           </div>
+         </div>
         </div>
+        </>
+        )}
       </div>
 
       {/* Add knowledge picker dialog */}
