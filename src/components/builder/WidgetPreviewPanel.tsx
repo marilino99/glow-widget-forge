@@ -240,6 +240,7 @@ const WidgetPreviewPanel = ({
   const [showButtonPop, setShowButtonPop] = useState(false);
   const [showFaqPills, setShowFaqPills] = useState(false);
   const [isBottomBarExpanded, setIsBottomBarExpanded] = useState(false);
+  const [showVoiceView, setShowVoiceView] = useState(false);
 
   // Auto-show FAQ pills after delay when bottom bar is expanded
   useEffect(() => {
@@ -2608,7 +2609,9 @@ const WidgetPreviewPanel = ({
                       <p id="wj-cname" className={`text-xs ${isSolidMode ? "text-white/60" : widgetSubtext}`}>{contactName}</p>
                       <p id="wj-chelp" className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
                     </div>
-                    <button className={`flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-colors ${
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setShowVoiceView(true); }}
+                      className={`flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-colors ${
                       isLight ? "bg-black/5 hover:bg-black/10 text-slate-600" : "bg-white/10 hover:bg-white/20 text-white"
                     }`}>
                       <Mic className="h-[18px] w-[18px]" />
