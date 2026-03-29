@@ -244,6 +244,41 @@ const WidgetPreviewPanel = ({
   const [voiceStatus, setVoiceStatus] = useState<"connecting" | "listening" | "processing">("connecting");
   const [voiceMuted, setVoiceMuted] = useState(false);
   const voiceRecognitionRef = useRef<any>(null);
+  const showVoiceViewRef = useRef(false);
+  const voiceMutedRef = useRef(false);
+
+  // Sync refs with state so callbacks always see current values
+  useEffect(() => { showVoiceViewRef.current = showVoiceView; }, [showVoiceView]);
+  useEffect(() => { voiceMutedRef.current = voiceMuted; }, [voiceMuted]);
+
+  // Speak assistant reply using TTS (uses refs to avoid stale closures)
+  const speakAssistantReply = (text: string) => {
+    if (!showVoiceViewRef.current || voiceMutedRef.current || !window.speechSynthesis) return;
+    // Pause mic while speaking
+    if (voiceRecognitionRef.current) {
+      try { voiceRecognitionRef.current.stop(); } catch(_) {}
+    }
+    setVoiceStatus("processing");
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/[*_#`\[\]]/g, '').replace(/\n{2,}/g, '. ');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+    utterance.lang = langMap[language || 'en'] || 'en-US';
+    utterance.rate = 1.0;
+    utterance.onend = () => {
+      if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+        try { voiceRecognitionRef.current.start(); } catch(_) {}
+        setVoiceStatus("listening");
+      }
+    };
+    utterance.onerror = () => {
+      if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+        try { voiceRecognitionRef.current.start(); } catch(_) {}
+        setVoiceStatus("listening");
+      }
+    };
+    window.speechSynthesis.speak(utterance);
+  };
 
   // Auto-show FAQ pills after delay when bottom bar is expanded
   useEffect(() => {
@@ -450,8 +485,8 @@ const WidgetPreviewPanel = ({
         };
 
         recognition.onend = () => {
-          // Restart if still in voice view and not muted
-          if (voiceRecognitionRef.current && !voiceMuted) {
+          // Restart if still in voice view and not muted (use refs to avoid stale closure)
+          if (voiceRecognitionRef.current && !voiceMutedRef.current && showVoiceViewRef.current) {
             try { recognition.start(); } catch(_) {}
           }
         };
@@ -552,32 +587,8 @@ const WidgetPreviewPanel = ({
         }
       } else if (data?.reply) {
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
-        // TTS: read reply aloud if voice view is active
-        if (showVoiceView && window.speechSynthesis) {
-          // Pause mic while speaking
-          if (voiceRecognitionRef.current) {
-            try { voiceRecognitionRef.current.stop(); } catch(_) {}
-          }
-          setVoiceStatus("processing");
-          const utterance = new SpeechSynthesisUtterance(data.reply.replace(/[*_#`]/g, ''));
-          const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-          utterance.lang = langMap[language || 'en'] || 'en-US';
-          utterance.rate = 1.0;
-          utterance.onend = () => {
-            // Resume mic after TTS finishes
-            if (voiceRecognitionRef.current) {
-              try { voiceRecognitionRef.current.start(); } catch(_) {}
-              setVoiceStatus("listening");
-            }
-          };
-          utterance.onerror = () => {
-            if (voiceRecognitionRef.current) {
-              try { voiceRecognitionRef.current.start(); } catch(_) {}
-              setVoiceStatus("listening");
-            }
-          };
-          window.speechSynthesis.speak(utterance);
-        }
+        // TTS: read reply aloud if voice view is active (uses refs)
+        speakAssistantReply(data.reply);
       }
     } catch (err) {
       console.error('Preview chatbot error:', err);
