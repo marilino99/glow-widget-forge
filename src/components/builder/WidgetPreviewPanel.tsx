@@ -2693,7 +2693,7 @@ const WidgetPreviewPanel = ({
                       <p id="wj-chelp" className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
                     </div>
                     <button 
-                      onClick={(e) => { e.stopPropagation(); setShowVoiceView(true); }}
+                      onClick={(e) => { e.stopPropagation(); startVoiceSession(); }}
                       className="flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-transform hover:scale-105"
                       style={{ backgroundColor: actualHexColor }}
                     >
