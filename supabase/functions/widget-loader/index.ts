@@ -598,7 +598,7 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px !important;height:32px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:transparent !important;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff !important;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-      #wj-voice-btn{width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:${color.bg} !important;transition:transform .2s;flex-shrink:0 !important}
+      #wj-voice-btn{width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:\${color.bg} !important;transition:transform .2s;flex-shrink:0 !important}
       #wj-voice-btn:hover{transform:scale(1.05) !important}
       #wj-voice-btn svg{width:20px !important;height:20px !important}
       #wj-voice-view{display:none !important;flex-direction:column !important;align-items:center !important;position:absolute !important;inset:0 !important;z-index:100 !important;background:#ededee !important;overflow:hidden !important}
