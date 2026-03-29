@@ -241,6 +241,9 @@ const WidgetPreviewPanel = ({
   const [showFaqPills, setShowFaqPills] = useState(false);
   const [isBottomBarExpanded, setIsBottomBarExpanded] = useState(false);
   const [showVoiceView, setShowVoiceView] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState<"connecting" | "listening" | "processing">("connecting");
+  const [voiceMuted, setVoiceMuted] = useState(false);
+  const voiceRecognitionRef = useRef<any>(null);
 
   // Auto-show FAQ pills after delay when bottom bar is expanded
   useEffect(() => {
@@ -410,7 +413,87 @@ const WidgetPreviewPanel = ({
     }
   };
 
-  // Close chat menu on outside click
+  // Voice session for voice view overlay
+  const startVoiceSession = () => {
+    setShowVoiceView(true);
+    setVoiceStatus("connecting");
+    setVoiceMuted(false);
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setVoiceStatus("listening");
+      return;
+    }
+
+    setTimeout(() => {
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.lang = language || "en";
+        recognition.interimResults = false;
+        recognition.continuous = true;
+        voiceRecognitionRef.current = recognition;
+
+        recognition.onresult = (event: any) => {
+          let transcript = "";
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+              transcript += event.results[i][0].transcript;
+            }
+          }
+          if (transcript.trim()) {
+            setVoiceStatus("processing");
+            handleSendChatMessage(transcript.trim());
+            setTimeout(() => {
+              if (voiceRecognitionRef.current) setVoiceStatus("listening");
+            }, 1500);
+          }
+        };
+
+        recognition.onend = () => {
+          // Restart if still in voice view and not muted
+          if (voiceRecognitionRef.current && !voiceMuted) {
+            try { recognition.start(); } catch(_) {}
+          }
+        };
+
+        recognition.onerror = (e: any) => {
+          console.error("Voice error:", e.error);
+          if (e.error !== 'no-speech' && e.error !== 'aborted') {
+            setVoiceStatus("listening");
+          }
+        };
+
+        setVoiceStatus("listening");
+        recognition.start();
+      } catch (e) {
+        console.error("Failed to start voice session:", e);
+        setVoiceStatus("listening");
+      }
+    }, 800);
+  };
+
+  const stopVoiceSession = () => {
+    if (voiceRecognitionRef.current) {
+      const ref = voiceRecognitionRef.current;
+      voiceRecognitionRef.current = null;
+      try { ref.stop(); } catch(_) {}
+    }
+    setShowVoiceView(false);
+    setShowChat(true);
+  };
+
+  const toggleVoiceMute = () => {
+    if (voiceMuted && voiceRecognitionRef.current) {
+      try { voiceRecognitionRef.current.start(); } catch(_) {}
+      setVoiceMuted(false);
+      setVoiceStatus("listening");
+    } else if (voiceRecognitionRef.current) {
+      try { voiceRecognitionRef.current.stop(); } catch(_) {}
+      setVoiceMuted(true);
+      setVoiceStatus("connecting");
+    }
+  };
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (chatMenuRef.current && !chatMenuRef.current.contains(e.target as Node)) {
@@ -2610,7 +2693,7 @@ const WidgetPreviewPanel = ({
                       <p id="wj-chelp" className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
                     </div>
                     <button 
-                      onClick={(e) => { e.stopPropagation(); setShowVoiceView(true); }}
+                      onClick={(e) => { e.stopPropagation(); startVoiceSession(); }}
                       className="flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-transform hover:scale-105"
                       style={{ backgroundColor: actualHexColor }}
                     >
@@ -2891,20 +2974,17 @@ const WidgetPreviewPanel = ({
                 )}
               </div>)}
 
-              {/* Voice View Overlay */}
               {showVoiceView && (
                 <div className="absolute inset-0 z-50 flex flex-col items-center justify-between" style={{ backgroundColor: '#ededee', borderRadius: 'inherit' }}>
-                  {/* Close chevron top-right */}
                   <div className="w-full flex justify-end p-4">
                     <button 
-                      onClick={() => setShowVoiceView(false)}
+                      onClick={stopVoiceSession}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-600 hover:bg-white transition-colors shadow-sm"
                     >
                       <ChevronDown className="h-5 w-5" />
                     </button>
                   </div>
 
-                  {/* Blob + Status */}
                   <div className="flex-1 flex flex-col items-center justify-center gap-6">
                     <div className="relative" style={{ width: 160, height: 160 }}>
                       <svg viewBox="0 0 200 200" className="w-full h-full" style={{ filter: 'url(#wj-preview-goo)' }}>
@@ -2950,24 +3030,25 @@ const WidgetPreviewPanel = ({
                       </svg>
                     </div>
                     <div className="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)' }}>
-                      Listening...
+                      {voiceStatus === "connecting" ? "Connecting..." : voiceStatus === "processing" ? "Processing..." : "Listening..."}
                     </div>
                   </div>
 
-                  {/* Bottom controls */}
                   <div className="flex items-center gap-6 pb-6">
                     <button 
-                      onClick={() => setShowVoiceView(false)}
+                      onClick={stopVoiceSession}
                       className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-700 shadow-md hover:bg-slate-50 transition-colors"
                     >
                       <X className="h-6 w-6" />
                     </button>
-                    <button className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500 text-white shadow-md hover:bg-red-600 transition-colors">
+                    <button 
+                      onClick={toggleVoiceMute}
+                      className={`flex h-14 w-14 items-center justify-center rounded-full shadow-md transition-colors ${voiceMuted ? 'bg-slate-400 text-white' : 'bg-red-500 text-white hover:bg-red-600'}`}
+                    >
                       <Mic className="h-6 w-6" />
                     </button>
                   </div>
 
-                  {/* Branding */}
                   {showBranding && (
                     <div className="flex items-center justify-center gap-1 pb-3">
                       <span className="text-[10px] text-slate-400">Powered by</span>
