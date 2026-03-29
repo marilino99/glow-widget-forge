@@ -324,6 +324,15 @@ const DataSourcesPanel = ({ onNavigateToFaq, chatbotInstructions, voiceInstructi
             <HelpCircle className="h-4 w-4" />
             Unanswered questions
           </button>
+          <button
+            onClick={() => { setShowInstructionsPanel(true); setShowMobileSidebar(false); }}
+            className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+              showInstructionsPanel ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
+            }`}
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            AI Instructions
+          </button>
         </div>
 
         {folders.length > 0 && (
