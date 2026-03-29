@@ -393,6 +393,36 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+      #wj-voice-btn{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'};color:\${dark ? '#fff' : '#475569'};transition:all .2s;flex-shrink:0}
+      #wj-voice-btn:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}}
+      #wj-voice-btn svg{width:18px;height:18px}
+      #wj-voice-view{display:none;flex-direction:column;align-items:center;justify-content:center;position:absolute;inset:0;z-index:100;background:\${dark ? '#111' : '#f5f5f5'}}
+      #wj-voice-view.open{display:flex}
+      #wj-voice-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${dark ? 'rgba(255,255,255,0.1)' : '#fff'};color:\${dark ? '#fff' : '#333'};box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:background .15s}
+      #wj-voice-close:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e5e5e5'}}
+      #wj-voice-close svg{width:18px;height:18px}
+      #wj-voice-blob-wrap{width:200px;height:200px;position:relative;display:flex;align-items:center;justify-content:center}
+      #wj-voice-blob{width:100%;height:100%}
+      #wj-voice-blob svg{width:100%;height:100%}
+      .wj-blob-path{fill:\${color.bg};opacity:0.85;transition:d 0.5s ease}
+      #wj-voice-view.listening .wj-blob-path{animation:wjBlobPulse 2s ease-in-out infinite}
+      @keyframes wjBlobPulse{0%,100%{transform:scale(1);opacity:0.85}50%{transform:scale(1.08);opacity:1}}
+      @keyframes wjBlobMorph1{0%,100%{d:path("M 100 20 C 140 20, 180 40, 185 80 C 190 120, 175 160, 140 175 C 105 190, 60 185, 35 155 C 10 125, 15 70, 45 40 C 75 10, 100 20, 100 20 Z")}50%{d:path("M 110 25 C 155 15, 185 50, 180 90 C 175 130, 160 170, 120 180 C 80 190, 40 170, 25 135 C 10 100, 20 55, 55 30 C 90 5, 110 25, 110 25 Z")}}
+      @keyframes wjBlobMorph2{0%,100%{d:path("M 95 15 C 135 10, 175 35, 185 75 C 195 115, 180 155, 145 175 C 110 195, 65 190, 35 160 C 5 130, 10 80, 40 45 C 70 10, 95 15, 95 15 Z")}50%{d:path("M 105 20 C 150 10, 185 45, 190 85 C 195 125, 170 165, 130 180 C 90 195, 45 180, 20 145 C -5 110, 15 60, 50 35 C 85 10, 105 20, 105 20 Z")}}
+      #wj-voice-view.listening .wj-blob-p1{animation:wjBlobMorph1 4s ease-in-out infinite}
+      #wj-voice-view.listening .wj-blob-p2{animation:wjBlobMorph2 5s ease-in-out infinite}
+      #wj-voice-status{margin-top:24px;font-size:18px;font-weight:600;color:\${dark ? '#fff' : '#333'}}
+      #wj-voice-transcript{margin-top:8px;font-size:14px;color:\${dark ? 'rgba(255,255,255,0.6)' : '#666'};max-width:80%;text-align:center;min-height:20px}
+      #wj-voice-controls{display:flex;gap:16px;margin-top:32px}
+      #wj-voice-mute{width:48px;height:48px;border-radius:50%;border:2px solid \${dark ? 'rgba(255,255,255,0.2)' : '#ddd'};cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'};color:\${dark ? '#fff' : '#333'};transition:all .15s}
+      #wj-voice-mute:hover{background:\${dark ? 'rgba(255,255,255,0.15)' : '#eee'}}
+      #wj-voice-mute.muted{background:#ef4444;border-color:#ef4444;color:#fff}
+      #wj-voice-mute svg{width:20px;height:20px}
+      #wj-voice-stop{width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:#ef4444;color:#fff;transition:all .15s}
+      #wj-voice-stop:hover{background:#dc2626}
+      #wj-voice-stop svg{width:20px;height:20px}
+      #wj-voice-powered{position:absolute;bottom:16px;display:flex;align-items:center;justify-content:center;gap:4px;font-size:10px;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'}}
+      #wj-voice-powered img{height:16px;width:auto;margin-left:-6px;\${dark ? 'opacity:0.3;filter:invert(1)' : 'opacity:0.4'}}
       @-webkit-keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
       @keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
       #wj-typing{display:flex;align-items:flex-start;gap:12px;margin-top:12px}
@@ -562,6 +592,36 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px !important;height:32px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:transparent !important;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff !important;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+      #wj-voice-btn{width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:\${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'} !important;color:\${dark ? '#fff' : '#475569'} !important;transition:all .2s;flex-shrink:0 !important}
+      #wj-voice-btn:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'} !important}
+      #wj-voice-btn svg{width:18px !important;height:18px !important}
+      #wj-voice-view{display:none !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;position:absolute !important;inset:0 !important;z-index:100 !important;background:\${dark ? '#111' : '#f5f5f5'} !important}
+      #wj-voice-view.open{display:flex !important}
+      #wj-voice-close{position:absolute !important;top:16px !important;right:16px !important;width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:\${dark ? 'rgba(255,255,255,0.1)' : '#fff'} !important;color:\${dark ? '#fff' : '#333'} !important;box-shadow:0 2px 8px rgba(0,0,0,0.1) !important;transition:background .15s}
+      #wj-voice-close:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : '#e5e5e5'} !important}
+      #wj-voice-close svg{width:18px !important;height:18px !important}
+      #wj-voice-blob-wrap{width:200px !important;height:200px !important;position:relative !important;display:flex !important;align-items:center !important;justify-content:center !important}
+      #wj-voice-blob{width:100% !important;height:100% !important}
+      #wj-voice-blob svg{width:100% !important;height:100% !important}
+      .wj-blob-path{fill:\${color.bg} !important;opacity:0.85;transition:d 0.5s ease}
+      #wj-voice-view.listening .wj-blob-path{animation:wjBlobPulse 2s ease-in-out infinite}
+      @keyframes wjBlobPulse{0%,100%{transform:scale(1);opacity:0.85}50%{transform:scale(1.08);opacity:1}}
+      @keyframes wjBlobMorph1{0%,100%{d:path("M 100 20 C 140 20, 180 40, 185 80 C 190 120, 175 160, 140 175 C 105 190, 60 185, 35 155 C 10 125, 15 70, 45 40 C 75 10, 100 20, 100 20 Z")}50%{d:path("M 110 25 C 155 15, 185 50, 180 90 C 175 130, 160 170, 120 180 C 80 190, 40 170, 25 135 C 10 100, 20 55, 55 30 C 90 5, 110 25, 110 25 Z")}}
+      @keyframes wjBlobMorph2{0%,100%{d:path("M 95 15 C 135 10, 175 35, 185 75 C 195 115, 180 155, 145 175 C 110 195, 65 190, 35 160 C 5 130, 10 80, 40 45 C 70 10, 95 15, 95 15 Z")}50%{d:path("M 105 20 C 150 10, 185 45, 190 85 C 195 125, 170 165, 130 180 C 90 195, 45 180, 20 145 C -5 110, 15 60, 50 35 C 85 10, 105 20, 105 20 Z")}}
+      #wj-voice-view.listening .wj-blob-p1{animation:wjBlobMorph1 4s ease-in-out infinite}
+      #wj-voice-view.listening .wj-blob-p2{animation:wjBlobMorph2 5s ease-in-out infinite}
+      #wj-voice-status{margin-top:24px !important;font-size:18px !important;font-weight:600 !important;color:\${dark ? '#fff' : '#333'} !important}
+      #wj-voice-transcript{margin-top:8px !important;font-size:14px !important;color:\${dark ? 'rgba(255,255,255,0.6)' : '#666'} !important;max-width:80% !important;text-align:center !important;min-height:20px !important}
+      #wj-voice-controls{display:flex !important;gap:16px !important;margin-top:32px !important}
+      #wj-voice-mute{width:48px !important;height:48px !important;border-radius:50% !important;border:2px solid \${dark ? 'rgba(255,255,255,0.2)' : '#ddd'} !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:\${dark ? 'rgba(255,255,255,0.05)' : '#fff'} !important;color:\${dark ? '#fff' : '#333'} !important;transition:all .15s}
+      #wj-voice-mute:hover{background:\${dark ? 'rgba(255,255,255,0.15)' : '#eee'} !important}
+      #wj-voice-mute.muted{background:#ef4444 !important;border-color:#ef4444 !important;color:#fff !important}
+      #wj-voice-mute svg{width:20px !important;height:20px !important}
+      #wj-voice-stop{width:48px !important;height:48px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:#ef4444 !important;color:#fff !important;transition:all .15s}
+      #wj-voice-stop:hover{background:#dc2626 !important}
+      #wj-voice-stop svg{width:20px !important;height:20px !important}
+      #wj-voice-powered{position:absolute !important;bottom:16px !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:4px !important;font-size:10px !important;color:\${dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'} !important}
+      #wj-voice-powered img{height:16px !important;width:auto !important;margin-left:-6px !important;\${dark ? 'opacity:0.3 !important;filter:invert(1) !important' : 'opacity:0.4 !important'}}
       @-webkit-keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
       @keyframes wj-dot-bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:translateY(0);animation-timing-function:cubic-bezier(0,0,0.2,1)}}
       #wj-typing{display:flex !important;align-items:flex-start !important;gap:12px !important;margin-top:12px !important}
@@ -1349,7 +1409,7 @@ Deno.serve(async (req) => {
     var whatsappBtnHtml = (whatsappEnabled && whatsappNumber) 
       ? '<button id="wj-whatsapp" onclick="window.open(&quot;https://wa.me/' + esc(whatsappCountryCode + whatsappNumber) + '&quot;,&quot;_blank&quot;)"><svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' + esc(tr.contactWhatsApp || 'Contact us on WhatsApp') + '</button>'
       : '';
-    contact.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' + avatarHtml + '<div style="flex:1"><div id="wj-cname">' + esc(name) + '</div><div id="wj-chelp">' + esc(help) + '</div></div></div><button id="wj-cbtn">' + esc(ctaText || tr.contactUs) + '</button>' + whatsappBtnHtml;
+    contact.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' + avatarHtml + '<div style="flex:1"><div id="wj-cname">' + esc(name) + '</div><div id="wj-chelp">' + esc(help) + '</div></div><button id="wj-voice-btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button></div><button id="wj-cbtn">' + esc(ctaText || tr.contactUs) + '</button>' + whatsappBtnHtml;
 
     // Add gradient overlay element
     if (gradient) {
@@ -1873,6 +1933,12 @@ Deno.serve(async (req) => {
     if (inspireEnabled) { pop.appendChild(inspireView); }
     pop.appendChild(chatView);
 
+    // ====== VOICE VIEW ======
+    var voiceView = d.createElement('div');
+    voiceView.id = 'wj-voice-view';
+    voiceView.innerHTML = '<button id="wj-voice-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button><div id="wj-voice-blob-wrap"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path class="wj-blob-path wj-blob-p1" d="M 100 20 C 140 20, 180 40, 185 80 C 190 120, 175 160, 140 175 C 105 190, 60 185, 35 155 C 10 125, 15 70, 45 40 C 75 10, 100 20, 100 20 Z" opacity="0.6"/><path class="wj-blob-path wj-blob-p2" d="M 95 15 C 135 10, 175 35, 185 75 C 195 115, 180 155, 145 175 C 110 195, 65 190, 35 160 C 5 130, 10 80, 40 45 C 70 10, 95 15, 95 15 Z"/></svg></div><div id="wj-voice-status">Connecting...</div><div id="wj-voice-transcript"></div><div id="wj-voice-controls"><button id="wj-voice-mute"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-voice-stop"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div>' + (showBranding ? '<div id="wj-voice-powered">' + poweredHtml + '</div>' : '');
+    pop.appendChild(voiceView);
+
     function hideLauncher() {
       btn.classList.add('hidden');
     }
@@ -1909,6 +1975,141 @@ Deno.serve(async (req) => {
       chatView.classList.add('open');
       startPolling();
     };
+
+    // ====== VOICE VIEW LOGIC ======
+    var voiceCloseBtn = voiceView.querySelector('#wj-voice-close');
+    var voiceMuteBtn = voiceView.querySelector('#wj-voice-mute');
+    var voiceStopBtn = voiceView.querySelector('#wj-voice-stop');
+    var voiceStatus = voiceView.querySelector('#wj-voice-status');
+    var voiceTranscript = voiceView.querySelector('#wj-voice-transcript');
+    var voiceRecognition = null;
+    var voiceMuted = false;
+
+    function openVoiceView() {
+      var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert('Voice is not supported in this browser. Try Chrome or Safari.');
+        return;
+      }
+      voiceView.classList.add('open');
+      homeView.classList.add('hidden');
+      chatView.classList.remove('open');
+      voiceStatus.textContent = 'Connecting...';
+      voiceTranscript.textContent = '';
+      voiceMuted = false;
+      voiceMuteBtn.classList.remove('muted');
+      startPolling();
+      setTimeout(function() { startVoiceRecognition(); }, 500);
+    }
+
+    function closeVoiceView() {
+      voiceView.classList.remove('open', 'listening');
+      if (voiceRecognition) { try { voiceRecognition.abort(); } catch(e) {} voiceRecognition = null; }
+      chatView.classList.add('open');
+      homeView.classList.add('hidden');
+    }
+
+    function startVoiceRecognition() {
+      var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+      if (!SpeechRecognition) return;
+      try {
+        var recognition = new SpeechRecognition();
+        recognition.lang = lang || 'en';
+        recognition.interimResults = true;
+        recognition.continuous = true;
+        voiceRecognition = recognition;
+        var finalTranscript = '';
+
+        recognition.onstart = function() {
+          voiceView.classList.add('listening');
+          voiceStatus.textContent = 'Listening...';
+        };
+
+        recognition.onresult = function(ev) {
+          var interim = '';
+          for (var i = ev.resultIndex; i < ev.results.length; i++) {
+            if (ev.results[i].isFinal) {
+              finalTranscript += ev.results[i][0].transcript;
+            } else {
+              interim += ev.results[i][0].transcript;
+            }
+          }
+          voiceTranscript.textContent = finalTranscript + interim;
+          // When final result is ready, send it
+          if (finalTranscript.trim()) {
+            voiceStatus.textContent = 'Processing...';
+            voiceView.classList.remove('listening');
+            sendMessageText(finalTranscript.trim());
+            finalTranscript = '';
+            voiceTranscript.textContent = '';
+            setTimeout(function() {
+              if (voiceRecognition) {
+                voiceView.classList.add('listening');
+                voiceStatus.textContent = 'Listening...';
+              }
+            }, 1500);
+          }
+        };
+
+        recognition.onend = function() {
+          // Auto-restart if still in voice mode and not muted
+          if (voiceView.classList.contains('open') && !voiceMuted) {
+            try { recognition.start(); } catch(e) {}
+          } else {
+            voiceView.classList.remove('listening');
+          }
+        };
+
+        recognition.onerror = function(e) {
+          if (e.error === 'not-allowed') {
+            voiceStatus.textContent = 'Microphone access denied';
+            voiceView.classList.remove('listening');
+          } else if (e.error !== 'aborted' && e.error !== 'no-speech') {
+            voiceStatus.textContent = 'Error: ' + e.error;
+          }
+        };
+
+        recognition.start();
+      } catch(err) {
+        voiceStatus.textContent = 'Voice not available';
+        console.error('[Widjet] Voice error:', err);
+      }
+    }
+
+    // Voice button in contact card
+    var voiceBtn = pop.querySelector('#wj-voice-btn');
+    if (voiceBtn) {
+      voiceBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openVoiceView();
+      };
+    }
+
+    // Voice view close button
+    if (voiceCloseBtn) {
+      voiceCloseBtn.onclick = function() { closeVoiceView(); };
+    }
+
+    // Voice stop button (close)
+    if (voiceStopBtn) {
+      voiceStopBtn.onclick = function() { closeVoiceView(); };
+    }
+
+    // Voice mute button
+    if (voiceMuteBtn) {
+      voiceMuteBtn.onclick = function() {
+        voiceMuted = !voiceMuted;
+        voiceMuteBtn.classList.toggle('muted');
+        if (voiceMuted && voiceRecognition) {
+          try { voiceRecognition.stop(); } catch(e) {}
+          voiceStatus.textContent = 'Muted';
+          voiceView.classList.remove('listening');
+        } else if (!voiceMuted) {
+          startVoiceRecognition();
+        }
+      };
+    }
 
     // Chat back button - returns to home
     chatView.querySelector('#wj-chat-back').onclick = function() {
