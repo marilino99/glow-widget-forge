@@ -393,7 +393,7 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-      #wj-voice-btn{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:${color.bg};transition:transform .2s;flex-shrink:0}
+      #wj-voice-btn{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:\${color.bg};transition:transform .2s;flex-shrink:0}
       #wj-voice-btn:hover{transform:scale(1.05)}
       #wj-voice-btn svg{width:20px;height:20px}
       #wj-voice-view{display:none;flex-direction:column;align-items:center;position:absolute;inset:0;z-index:100;background:#ededee;overflow:hidden}
