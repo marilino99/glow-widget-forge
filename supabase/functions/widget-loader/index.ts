@@ -583,6 +583,7 @@ Deno.serve(async (req) => {
       #wj-pop button,#wj-pop a,#wj-pop input,#wj-pop .wj-nav-item,#wj-pop .wj-chat-chip,#wj-pop .wj-prod-btn,#wj-pop .wj-prod-cart-btn{pointer-events:auto !important;cursor:pointer !important}
       #wj-pop *{pointer-events:auto !important}
       @media (max-width: 640px){
+        body.wj-open{overflow:hidden !important;position:fixed !important;width:100% !important;height:100% !important;top:0 !important;left:0 !important}
         #wj-pop{position:fixed !important;top:0 !important;left:0 !important;right:0 !important;bottom:0 !important;width:100% !important;height:100% !important;border-radius:0 !important;max-width:none !important;max-height:none !important}
         #wj-pop.open{animation:none !important}
         #wj-btn{position:fixed !important;bottom:20px !important;right:20px !important}
@@ -1881,6 +1882,7 @@ Deno.serve(async (req) => {
     function closeWidget() {
       pop.classList.remove('open');
       pop.classList.add('closing');
+      if (window.innerWidth <= 640) { document.body.classList.remove('wj-open'); }
       setTimeout(function() {
         pop.classList.remove('closing');
         pop.style.display = 'none';
@@ -1892,6 +1894,7 @@ Deno.serve(async (req) => {
       if (pop.classList.contains('open') || pop.classList.contains('closing')) return;
       pop.style.display = 'flex';
       pop.classList.add('open');
+      if (window.innerWidth <= 640) { document.body.classList.add('wj-open'); }
       hideLauncher();
       trackEvent('click');
     };
