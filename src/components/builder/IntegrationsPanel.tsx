@@ -407,7 +407,7 @@ const IntegrationsPanel = ({
                   body: { email: shopEmail.trim(), shopifyStore: shopStore.trim() },
                 });
                 if (error) throw error;
-                toast.success("Request sent! We'll get back to you soon.");
+                toast.success("Request sent! The Widjet team will contact you soon to set up the integration.");
                 setShopifyRequestOpen(false);
                 setShopEmail("");
                 setShopStore("");
