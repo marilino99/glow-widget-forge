@@ -241,6 +241,9 @@ const WidgetPreviewPanel = ({
   const [showFaqPills, setShowFaqPills] = useState(false);
   const [isBottomBarExpanded, setIsBottomBarExpanded] = useState(false);
   const [showVoiceView, setShowVoiceView] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState<"connecting" | "listening" | "processing">("connecting");
+  const [voiceMuted, setVoiceMuted] = useState(false);
+  const voiceRecognitionRef = useRef<any>(null);
 
   // Auto-show FAQ pills after delay when bottom bar is expanded
   useEffect(() => {
