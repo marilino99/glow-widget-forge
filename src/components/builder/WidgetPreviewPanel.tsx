@@ -2611,10 +2611,15 @@ const WidgetPreviewPanel = ({
                     </div>
                     <button 
                       onClick={(e) => { e.stopPropagation(); setShowVoiceView(true); }}
-                      className={`flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-colors ${
-                      isLight ? "bg-black/5 hover:bg-black/10 text-slate-600" : "bg-white/10 hover:bg-white/20 text-white"
-                    }`}>
-                      <Mic className="h-[18px] w-[18px]" />
+                      className="flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-transform hover:scale-105"
+                      style={{ backgroundColor: actualHexColor }}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <rect x="4" y="8" width="2.5" height="8" rx="1.25" fill="white" opacity="0.9"/>
+                        <rect x="8.5" y="5" width="2.5" height="14" rx="1.25" fill="white"/>
+                        <rect x="13" y="7" width="2.5" height="10" rx="1.25" fill="white"/>
+                        <rect x="17.5" y="9" width="2.5" height="6" rx="1.25" fill="white" opacity="0.9"/>
+                      </svg>
                     </button>
                     </div>
                     <Button 
