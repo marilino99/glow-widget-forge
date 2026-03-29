@@ -508,8 +508,9 @@ const WidgetPreviewPanel = ({
       const recognition = new SpeechRecognition();
       recognition.lang = language || "en";
       recognition.interimResults = false;
-      recognition.continuous = true;
+      recognition.continuous = false;
       voiceRecognitionRef.current = recognition;
+      noSpeechRetryRef.current = 0;
 
       recognition.onresult = (event: any) => {
         let transcript = "";
@@ -519,23 +520,34 @@ const WidgetPreviewPanel = ({
           }
         }
         if (transcript.trim()) {
+          noSpeechRetryRef.current = 0;
+          lastSpokenTextRef.current = ""; // Reset so the next AI reply can be spoken
           setVoiceStatus("processing");
           handleSendChatMessage(transcript.trim());
-          setTimeout(() => {
-            if (voiceRecognitionRef.current) setVoiceStatus("listening");
-          }, 1500);
         }
       };
 
       recognition.onend = () => {
+        // Only auto-restart if voice view is open, not muted, and under retry limit
         if (voiceRecognitionRef.current && !voiceMutedRef.current && showVoiceViewRef.current) {
-          try { recognition.start(); } catch(_) {}
+          if (noSpeechRetryRef.current < MAX_NO_SPEECH_RETRIES) {
+            noSpeechRetryRef.current++;
+            setTimeout(() => {
+              if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+                try { recognition.start(); } catch(_) {}
+              }
+            }, 300);
+          }
+          // After max retries, just stay in "listening" state visually but don't loop
         }
       };
 
       recognition.onerror = (e: any) => {
         console.error("Voice error:", e.error);
-        if (e.error !== 'no-speech' && e.error !== 'aborted') {
+        if (e.error === 'no-speech') {
+          // Count as a retry
+          noSpeechRetryRef.current++;
+        } else if (e.error !== 'aborted') {
           setVoiceStatus("listening");
         }
       };
