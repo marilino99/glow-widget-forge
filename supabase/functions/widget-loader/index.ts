@@ -2006,7 +2006,20 @@ Deno.serve(async (req) => {
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
       startPolling();
-      setTimeout(function() { startVoiceRecognition(); }, 500);
+      // AI speaks first with a greeting, then starts listening
+      var greeting = cfg.offer_help || cfg.say_hello || 'Hi! How can I help you?';
+      if (w.speechSynthesis) {
+        w.speechSynthesis.cancel();
+        var utter = new SpeechSynthesisUtterance(greeting);
+        var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+        utter.lang = langMap[lang] || 'en-US';
+        utter.rate = 1.0;
+        utter.onend = function() { startVoiceRecognition(); };
+        utter.onerror = function() { startVoiceRecognition(); };
+        w.speechSynthesis.speak(utter);
+      } else {
+        setTimeout(function() { startVoiceRecognition(); }, 500);
+      }
     }
 
     function closeVoiceView() {
