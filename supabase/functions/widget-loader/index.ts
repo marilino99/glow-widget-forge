@@ -2112,6 +2112,7 @@ Deno.serve(async (req) => {
         voiceMuteBtn.classList.toggle('muted');
         if (voiceMuted && voiceRecognition) {
           try { voiceRecognition.stop(); } catch(e) {}
+          if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
           voiceStatus.textContent = 'Muted';
           voiceView.classList.remove('listening');
         } else if (!voiceMuted) {
