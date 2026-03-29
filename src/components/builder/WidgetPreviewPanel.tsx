@@ -460,51 +460,75 @@ const WidgetPreviewPanel = ({
       return;
     }
 
+    // AI speaks first with a greeting, then starts listening
+    const greeting = offerHelp || sayHello || "Hi! How can I help you?";
+
     setTimeout(() => {
-      try {
-        const recognition = new SpeechRecognition();
-        recognition.lang = language || "en";
-        recognition.interimResults = false;
-        recognition.continuous = true;
-        voiceRecognitionRef.current = recognition;
-
-        recognition.onresult = (event: any) => {
-          let transcript = "";
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            if (event.results[i].isFinal) {
-              transcript += event.results[i][0].transcript;
-            }
-          }
-          if (transcript.trim()) {
-            setVoiceStatus("processing");
-            handleSendChatMessage(transcript.trim());
-            setTimeout(() => {
-              if (voiceRecognitionRef.current) setVoiceStatus("listening");
-            }, 1500);
-          }
+      // Speak the greeting first
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        setVoiceStatus("processing");
+        const utterance = new SpeechSynthesisUtterance(greeting);
+        const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+        utterance.lang = langMap[language || 'en'] || 'en-US';
+        utterance.rate = 1.0;
+        utterance.onend = () => {
+          // After greeting, start listening
+          startVoiceRecognitionInternal(SpeechRecognition);
         };
-
-        recognition.onend = () => {
-          // Restart if still in voice view and not muted (use refs to avoid stale closure)
-          if (voiceRecognitionRef.current && !voiceMutedRef.current && showVoiceViewRef.current) {
-            try { recognition.start(); } catch(_) {}
-          }
+        utterance.onerror = () => {
+          startVoiceRecognitionInternal(SpeechRecognition);
         };
-
-        recognition.onerror = (e: any) => {
-          console.error("Voice error:", e.error);
-          if (e.error !== 'no-speech' && e.error !== 'aborted') {
-            setVoiceStatus("listening");
-          }
-        };
-
-        setVoiceStatus("listening");
-        recognition.start();
-      } catch (e) {
-        console.error("Failed to start voice session:", e);
-        setVoiceStatus("listening");
+        window.speechSynthesis.speak(utterance);
+      } else {
+        startVoiceRecognitionInternal(SpeechRecognition);
       }
-    }, 800);
+    }, 500);
+  };
+
+  const startVoiceRecognitionInternal = (SpeechRecognition: any) => {
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = language || "en";
+      recognition.interimResults = false;
+      recognition.continuous = true;
+      voiceRecognitionRef.current = recognition;
+
+      recognition.onresult = (event: any) => {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            transcript += event.results[i][0].transcript;
+          }
+        }
+        if (transcript.trim()) {
+          setVoiceStatus("processing");
+          handleSendChatMessage(transcript.trim());
+          setTimeout(() => {
+            if (voiceRecognitionRef.current) setVoiceStatus("listening");
+          }, 1500);
+        }
+      };
+
+      recognition.onend = () => {
+        if (voiceRecognitionRef.current && !voiceMutedRef.current && showVoiceViewRef.current) {
+          try { recognition.start(); } catch(_) {}
+        }
+      };
+
+      recognition.onerror = (e: any) => {
+        console.error("Voice error:", e.error);
+        if (e.error !== 'no-speech' && e.error !== 'aborted') {
+          setVoiceStatus("listening");
+        }
+      };
+
+      setVoiceStatus("listening");
+      recognition.start();
+    } catch (e) {
+      console.error("Failed to start voice session:", e);
+      setVoiceStatus("listening");
+    }
   };
 
   const stopVoiceSession = () => {
