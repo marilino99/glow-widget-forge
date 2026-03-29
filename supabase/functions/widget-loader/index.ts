@@ -2475,7 +2475,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    function sendMessageText(text) {
+    function sendMessageText(text, isVoice) {
       if (!text || !text.trim()) return;
       var msg = text.trim();
       var tempId = 'temp_' + Date.now();
@@ -2513,7 +2513,8 @@ Deno.serve(async (req) => {
         visitorRegion: visitorRegion,
         visitorCity: visitorCity,
         visitorBrowser: visitorBrowser,
-        visitorSystem: visitorSystem
+        visitorSystem: visitorSystem,
+        voiceMode: !!isVoice
       }));
     }
 
