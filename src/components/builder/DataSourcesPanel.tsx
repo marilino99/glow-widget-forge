@@ -366,6 +366,50 @@ const DataSourcesPanel = ({ onNavigateToFaq, chatbotInstructions, voiceInstructi
 
       {/* Main content - hidden on mobile when sidebar is showing */}
       <div className={`${showMobileSidebar ? "hidden" : "flex"} lg:flex flex-1 flex-col min-w-0`}>
+        {showInstructionsPanel ? (
+          <div className="flex-1 overflow-y-auto px-5 lg:px-8 pt-6 pb-8">
+            <div className="flex items-center gap-2 mb-1">
+              <button onClick={() => setShowInstructionsPanel(false)} className="lg:hidden rounded-md p-1 text-muted-foreground hover:bg-muted/50 transition-colors">
+                <FolderOpen className="h-5 w-5" />
+              </button>
+              <h1 className="text-2xl font-bold text-foreground">AI Instructions</h1>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">Configure how the AI responds in chat vs voice mode</p>
+            <div className="space-y-6 max-w-2xl">
+              {/* Chat Instructions */}
+              <div className="rounded-xl border border-border bg-card p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <MessageSquare className="h-4 w-4 text-primary" />
+                  <Label className="text-sm font-semibold text-foreground">Chat Instructions</Label>
+                </div>
+                <p className="text-xs text-muted-foreground mb-3">Instructions for when visitors interact via text chat</p>
+                <Textarea
+                  value={localChatInstructions}
+                  onChange={(e) => setLocalChatInstructions(e.target.value)}
+                  onBlur={() => onSaveChatInstructions?.(localChatInstructions)}
+                  placeholder="e.g. You are a friendly sales assistant for our e-commerce store. Always suggest products when relevant..."
+                  className="min-h-[120px] text-sm"
+                />
+              </div>
+              {/* Voice Instructions */}
+              <div className="rounded-xl border border-border bg-card p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Mic className="h-4 w-4 text-orange-500" />
+                  <Label className="text-sm font-semibold text-foreground">Voice Instructions</Label>
+                </div>
+                <p className="text-xs text-muted-foreground mb-3">Instructions for when visitors interact via voice. If empty, chat instructions are used as fallback.</p>
+                <Textarea
+                  value={localVoiceInstructions}
+                  onChange={(e) => setLocalVoiceInstructions(e.target.value)}
+                  onBlur={() => onSaveVoiceInstructions?.(localVoiceInstructions)}
+                  placeholder="e.g. Keep responses very short, max 2 sentences. Be conversational and natural, avoid lists or formatting..."
+                  className="min-h-[120px] text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+        <>
         {/* Header */}
         <div className="shrink-0 px-5 lg:px-8 pt-6 pb-4">
           <div className="flex items-start justify-between">
