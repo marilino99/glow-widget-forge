@@ -816,7 +816,7 @@ Deno.serve(async (req) => {
       bbBarWrap.id = 'wj-bb-wrap';
       var bbBar = d.createElement('div');
       bbBar.id = 'wj-bb-bar';
-      bbBar.innerHTML = '<input type="text" readonly placeholder="' + esc(hello) + '"/><div id="wj-bb-icons"><button id="wj-bb-bar-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-bb-bar-expand"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button><button id="wj-bb-bar-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+      bbBar.innerHTML = '<input type="text" readonly placeholder="' + esc(hello) + '"/><div id="wj-bb-icons"><button id="wj-bb-bar-mic"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="8" width="2.5" height="8" rx="1.25" fill="currentColor" opacity="0.9"/><rect x="8.5" y="5" width="2.5" height="14" rx="1.25" fill="currentColor"/><rect x="13" y="7" width="2.5" height="10" rx="1.25" fill="currentColor"/><rect x="17.5" y="9" width="2.5" height="6" rx="1.25" fill="currentColor" opacity="0.9"/></svg></button><button id="wj-bb-bar-expand"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button><button id="wj-bb-bar-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
       bbBarWrap.appendChild(bbBar);
       bbCollapsed.appendChild(bbBarWrap);
 
@@ -841,7 +841,7 @@ Deno.serve(async (req) => {
       // Input area
       var bbInputArea = d.createElement('div');
       bbInputArea.id = 'wj-bb-input';
-      bbInputArea.innerHTML = '<div id="wj-bb-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-bb-mic"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></button><button id="wj-bb-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div>';
+      bbInputArea.innerHTML = '<div id="wj-bb-input-box"><input type="text" placeholder="' + esc(tr.writeMessage) + '"/><button id="wj-bb-mic"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="8" width="2.5" height="8" rx="1.25" fill="currentColor" opacity="0.9"/><rect x="8.5" y="5" width="2.5" height="14" rx="1.25" fill="currentColor"/><rect x="13" y="7" width="2.5" height="10" rx="1.25" fill="currentColor"/><rect x="17.5" y="9" width="2.5" height="6" rx="1.25" fill="currentColor" opacity="0.9"/></svg></button><button id="wj-bb-send"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button></div>';
       bbChat.appendChild(bbInputArea);
 
       // Powered by
@@ -2418,7 +2418,7 @@ Deno.serve(async (req) => {
       // Cancel any ongoing speech first
       w.speechSynthesis.cancel();
       // Strip markdown chars
-      var clean = text.replace(/[*_#`]/g, '').split('[').join('').split(']').join('').replace(/\\n+/g, '. ');
+      var clean = text.replace(/[*_#]/g, '').replace(/\x60/g, '').split('[').join('').split(']').join('').split(String.fromCharCode(10)).join('. ');
       // Pause mic while speaking
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
       voiceView.classList.remove('listening');
