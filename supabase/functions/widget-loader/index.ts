@@ -277,7 +277,7 @@ Deno.serve(async (req) => {
       #wj-close{position:absolute;right:16px;top:16px;background:none;border:none;cursor:pointer;opacity:0.7;padding:4px}
       #wj-close:hover{opacity:1}
       #wj-close svg{width:16px;height:16px;stroke:\${(solid || bgImage) ? '#fff' : textSub}}
-      #wj-contact{margin:\${solid ? '16px 0 0 0' : '0 16px'};padding:16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
+      #wj-contact{margin:\${solid ? '16px 0 0 0' : '0 16px'};padding:16px 16px 8px 16px;border-radius:12px;position:relative;z-index:1;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
       #wj-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#0f172a;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
       #wj-cname{font-size:12px;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px;color:\${solid ? '#fff' : textMain}}
@@ -473,7 +473,7 @@ Deno.serve(async (req) => {
       #wj-close{position:absolute !important;right:16px !important;top:16px !important;background:none !important;border:none !important;cursor:pointer !important;opacity:0.7 !important;padding:4px !important}
       #wj-close:hover{opacity:1 !important}
       #wj-close svg{width:16px !important;height:16px !important;stroke:\${(solid || bgImage) ? '#fff' : textSub}}
-      #wj-contact{margin:\${solid ? '16px 0 0 0' : '0 16px'};padding:16px !important;border-radius:12px !important;position:relative !important;z-index:1 !important;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
+      #wj-contact{margin:\${solid ? '16px 0 0 0' : '0 16px'};padding:16px 16px 8px 16px !important;border-radius:12px !important;position:relative !important;z-index:1 !important;background:\${solid ? 'rgba(30,41,59,0.9)' : bgCard}}
       #wj-avatar{width:40px !important;height:40px !important;border-radius:50% !important;object-fit:cover !important;background:#0f172a !important;display:flex !important;align-items:center !important;justify-content:center !important;color:#fff !important;font-weight:700 !important;font-size:14px !important;flex-shrink:0 !important}
       #wj-cname{font-size:12px !important;color:\${solid ? 'rgba(255,255,255,0.6)' : textSub}}
       #wj-chelp{font-size:14px !important;color:\${solid ? '#fff' : textMain}}
