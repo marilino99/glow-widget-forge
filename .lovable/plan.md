@@ -1,36 +1,38 @@
 
 
-## Piano: Impedire la ripetizione vocale quando l'utente non parla
+## Piano: Voice chat segue la stessa logica di discovery della chat scritta
 
 ### Problema
-Quando l'utente non parla dopo una risposta vocale dell'AI, il widget continua a ripetere l'ultima frase. Questo succede perché:
-1. Il TTS finisce → riavvia il riconoscimento vocale
-2. Il riconoscimento non riceve input → si chiude (`onend`)
-3. `onend` riavvia il riconoscimento automaticamente (loop infinito)
-4. In alcuni browser, `continuous: true` può ri-triggerare `onresult` con risultati precedenti, causando il re-invio dello stesso messaggio e quindi la ri-lettura della stessa risposta
+In voice mode, l'AI segue lo stesso system prompt della chat scritta, ma i marker `[CHIPS:]` e `[PRODUCTS:]` generano bottoni cliccabili — inutili nella conversazione vocale. L'utente parla genericamente ("sto cercando un prodotto") e l'AI dovrebbe **elencare le categorie a voce** (es. "Stai cercando skincare, haircare, clothing o shoes?") invece di generare chip silenziosi.
+
+### Soluzione
+Aggiungere istruzioni specifiche nel **VOICE MODE RULES** del system prompt per dire all'AI di:
+1. **Elencare le opzioni nel testo** invece di usare `[CHIPS:]` — dire le categorie/goal a voce
+2. **Mantenere il flusso di discovery** (categoria → goal → tipo pelle/capelli → prodotti) ma in forma parlata
+3. **Per i prodotti**: usare comunque `[PRODUCTS:]` così vengono mostrati nella chat, ma **descriverli brevemente a voce** (es. "Ti consiglio il Serum X e la Crema Y, li trovi nella chat")
 
 ### Modifiche
 
-**File: `src/components/builder/WidgetPreviewPanel.tsx`**
+**File: `supabase/functions/chatbot-reply/index.ts`** e **`supabase/functions/chatbot-preview/index.ts`**
 
-1. **Aggiungere un ref `lastSpokenTextRef`** per tracciare l'ultima frase pronunciata dal TTS, evitando di ripeterla:
-   - In `speakAssistantReply`: salvare il testo nel ref prima di pronunciarlo
-   - Non pronunciare se il testo è identico all'ultimo già letto (reset del ref solo quando l'utente manda un nuovo messaggio)
+Espandere il blocco `voiceModeRules` aggiungendo:
 
-2. **Rimuovere `continuous: true`** dalla configurazione del recognition — usare singole sessioni che si riavviano solo su `onend`, con un contatore di tentativi a vuoto:
-   - Dopo 3 cicli senza input vocale, smettere di riavviare e restare in stato "listening" (microfono attivo visivamente ma senza loop aggressivo)
-   - Reset del contatore quando arriva un `onresult` valido
-
-3. **Aggiungere debounce nel restart** del recognition in `utterance.onend`: piccolo delay (300ms) prima di riavviare, per evitare race condition
-
-4. **Stessa logica nel widget-loader** (`supabase/functions/widget-loader/index.ts`): cercare nel template string la logica equivalente e applicare gli stessi guard (lastSpokenText, max retry senza input, no continuous)
+```
+VOICE DISCOVERY RULES:
+- Do NOT use [CHIPS:] markers. Instead, list the options naturally in your spoken reply.
+  Example: "What are you looking for? We have Skincare, Haircare, Clothing, and Shoes."
+- Follow the same category → goal → type discovery flow as text chat, but speak the options.
+- When recommending products, still use the [PRODUCTS:] marker so they appear in the chat,
+  but also briefly mention 1-2 product names in your spoken reply.
+- Keep the conversational flow: ask one question at a time, wait for the user's spoken answer.
+```
 
 ### File coinvolti
-- `src/components/builder/WidgetPreviewPanel.tsx`
-- `supabase/functions/widget-loader/index.ts`
+- `supabase/functions/chatbot-reply/index.ts` — aggiornare `voiceModeRules`
+- `supabase/functions/chatbot-preview/index.ts` — stessa modifica per parità preview/live
 
 ### Risultato
-- L'AI saluta e risponde a voce
-- Se l'utente non parla, il widget resta in ascolto silenzioso senza ripetere
-- Quando l'utente parla, il ciclo conversazionale riprende normalmente
+- Utente dice "cerco un prodotto" → AI risponde a voce: "Cosa stai cercando? Abbiamo Skincare, Haircare, Clothing e Shoes"
+- Utente dice "skincare" → AI: "Perfetto! Qual è il tuo obiettivo? Idratazione, anti-age, acne, luminosità, o vuoi che ti ispiri?"
+- Flusso identico alla chat, ma parlato naturalmente
 
