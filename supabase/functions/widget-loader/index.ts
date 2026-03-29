@@ -598,9 +598,9 @@ Deno.serve(async (req) => {
       #wj-chat-emoji,#wj-chat-mic,#wj-chat-send{width:32px !important;height:32px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:transparent !important;color:\${dark ? 'rgba(255,255,255,0.5)' : '#94a3b8'};transition:all .2s}
       #wj-chat-mic.listening{background:\${color.bg};color:#fff !important;animation:wj-pulse 1.5s ease-in-out infinite}
       @keyframes wj-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-      #wj-voice-btn{width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:\${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'} !important;color:\${dark ? '#fff' : '#475569'} !important;transition:all .2s;flex-shrink:0 !important}
-      #wj-voice-btn:hover{background:\${dark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'} !important}
-      #wj-voice-btn svg{width:18px !important;height:18px !important}
+      #wj-voice-btn{width:36px !important;height:36px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:${color.bg} !important;transition:transform .2s;flex-shrink:0 !important}
+      #wj-voice-btn:hover{transform:scale(1.05) !important}
+      #wj-voice-btn svg{width:20px !important;height:20px !important}
       #wj-voice-view{display:none !important;flex-direction:column !important;align-items:center !important;position:absolute !important;inset:0 !important;z-index:100 !important;background:#ededee !important;overflow:hidden !important}
       #wj-voice-view.open{display:flex !important}
       #wj-voice-close{position:absolute !important;top:16px !important;right:16px !important;width:40px !important;height:40px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:transparent !important;color:#6b7280 !important;transition:color .15s;z-index:2 !important}
