@@ -2418,7 +2418,7 @@ Deno.serve(async (req) => {
       // Cancel any ongoing speech first
       w.speechSynthesis.cancel();
       // Strip markdown chars
-      var clean = text.replace(/[*_#\\\[\\]`]/g, '').replace(/\\n{2,}/g, '. ');
+      var clean = text.replace(/[*_#`]/g, '').replace(/\[/g, '').replace(/\]/g, '').replace(/\n{2,}/g, '. ');
       // Pause mic while speaking
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
       voiceView.classList.remove('listening');
