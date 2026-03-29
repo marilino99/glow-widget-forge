@@ -1,39 +1,87 @@
 
+## Piano: fix reale del TTS che non legge le risposte AI
 
-## Piano: Risposte vocali con Text-to-Speech (TTS)
+### Problema individuato
+Il problema principale è nel **builder preview**: tu parli, il messaggio viene inviato, la risposta arriva in chat, ma non viene letta perché il callback del microfono usa una **versione vecchia di `handleSendChatMessage`**.
 
-### Problema
-La Voice AI attualmente trascrive la voce dell'utente e invia il testo al chatbot, ma la risposta arriva solo come testo nella chat. L'utente vuole che le risposte vengano **lette ad alta voce** dall'assistente, creando una conversazione vocale bidirezionale.
+In pratica:
+- `startVoiceSession()` fa `setShowVoiceView(true)`
+- subito dopo crea `recognition.onresult = () => handleSendChatMessage(...)`
+- però quella funzione resta legata al render precedente, quando `showVoiceView` era ancora `false`
+- quindi dentro `handleSendChatMessage` il blocco:
+```ts
+if (showVoiceView && window.speechSynthesis) { ... }
+```
+non parte mai, anche se la schermata vocale è aperta
 
-### Soluzione
-Usare la **Web Speech Synthesis API** (nativa nel browser, zero costi) per leggere ad alta voce le risposte AI mentre l'utente è nella voice view.
+Questo spiega perfettamente il comportamento che descrivi:
+- il bot **risponde in chat**
+- ma **non parla**
 
-### Modifiche
+### Cosa modificherei
 
-**`src/components/builder/WidgetPreviewPanel.tsx`**:
-1. Nella funzione `handleSendChatMessage`, dopo aver ricevuto `data.reply` (riga ~546), se `showVoiceView` è attiva:
-   - Usare `window.speechSynthesis.speak(new SpeechSynthesisUtterance(reply))` per leggere la risposta
-   - Impostare la lingua dell'utterance in base a `language` (en/it/es/fr/de/pt)
-   - Durante la lettura: `voiceStatus = "processing"`, al termine: riattivare il riconoscimento vocale (`voiceStatus = "listening"`)
-   - Mettere in pausa il riconoscimento vocale mentre l'assistente parla (per evitare che il microfono catturi la voce dell'assistente)
+#### 1) Rendere il controllo Voice/TTS stabile nel preview
+In `src/components/builder/WidgetPreviewPanel.tsx`:
+- introdurre ref stabili tipo:
+  - `showVoiceViewRef`
+  - `voiceMutedRef`
+  - opzionale `isSpeakingRef`
+- sincronizzarli con `useEffect`
 
-2. Nella funzione `stopVoiceSession`: cancellare anche `speechSynthesis.cancel()` per interrompere eventuali letture in corso
+Così la logica vocale non dipende da valori React “catturati” in closure vecchie.
 
-3. Nella funzione `toggleVoiceMute`: se si muta, fermare anche la sintesi vocale
+#### 2) Spostare il TTS in una funzione dedicata
+Creare una funzione tipo:
+```ts
+speakAssistantReply(text)
+```
+che:
+- controlla `showVoiceViewRef.current`
+- controlla `voiceMutedRef.current`
+- fa `speechSynthesis.cancel()` prima di parlare
+- pulisce il testo (`markdown`, newline inutili)
+- imposta `utterance.lang`
+- mette `voiceStatus = "processing"` o `"speaking"`
+- stoppa il microfono mentre parla
+- a fine audio riavvia il recognition e torna a `listening`
 
-**`supabase/functions/widget-loader/index.ts`**:
-4. Stessa logica TTS nel widget live: dopo aver ricevuto la risposta dal chatbot, se la voice view è aperta, leggere la risposta con `speechSynthesis`
+Questo evita che il TTS dipenda da stato React non aggiornato.
 
-### Flusso risultante
-1. Utente clicca mic → voice view si apre
-2. Utente parla → trascrizione → messaggio inviato
-3. AI risponde → risposta mostrata in chat + **letta ad alta voce**
-4. Durante la lettura il microfono è in pausa
-5. Fine lettura → microfono si riattiva → utente può parlare di nuovo
-6. Ciclo continuo come una conversazione naturale
+#### 3) Far usare ai callback del microfono la versione aggiornata della send logic
+Sempre nel preview:
+- evitare che `recognition.onresult` chiami una funzione con stato stale
+- soluzione più sicura: usare una ref anche per la funzione di invio, oppure far sì che `onresult` invochi una funzione che legge sempre dai ref correnti
 
-### Limitazioni
-- La voce sintetica dipende dalle voci installate nel browser/OS dell'utente
-- Supportata su Chrome, Safari, Edge (non Firefox mobile)
-- Zero costi: è un'API nativa del browser
+#### 4) Correggere anche la logica del mute
+Ora il mute cancella il parlato, ma il TTS non controlla davvero uno stato stabile.
+Va reso coerente:
+- se muted, non deve parlare
+- se sto parlando e l’utente muta, l’audio va fermato subito
+- il microfono non deve ripartire in automatico se siamo muted
 
+#### 5) Allineare anche il widget live
+Nel file `supabase/functions/widget-loader/index.ts` la base è già più corretta, ma la renderei più robusta per parità preview/live:
+- in `speakText()` aggiungere guardia anche su `voiceMuted`
+- fare `speechSynthesis.cancel()` prima di ogni nuovo `speak()`
+- evitare doppie letture se arrivano più poll consecutivi
+- lasciare il riavvio microfono solo quando la voice view è ancora aperta e non è muted
+
+### File coinvolti
+- `src/components/builder/WidgetPreviewPanel.tsx`
+- `supabase/functions/widget-loader/index.ts`
+
+### Risultato atteso
+Dopo il fix:
+1. apri la voice view nel builder
+2. parli
+3. il messaggio viene inviato
+4. il bot risponde in chat
+5. la risposta viene **letta davvero a voce**
+6. finito il parlato, il microfono torna in ascolto
+
+### Dettaglio tecnico
+La causa non sembra essere il chatbot né il backend: la risposta arriva correttamente. Il bug è molto probabilmente nel **flow client-side del preview**, dovuto a:
+- closure stale di React
+- check `showVoiceView` dentro una funzione creata nel render sbagliato
+
+Il fix corretto non è “aggiungere altro TTS”, ma **rendere persistente la state machine voice/TTS tramite refs**, così i callback Web Speech lavorano sempre con lo stato attuale.
