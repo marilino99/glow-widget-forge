@@ -41,9 +41,13 @@ type AddMode = "url" | "text" | "upload" | "picker" | null;
 
 interface DataSourcesPanelProps {
   onNavigateToFaq?: () => void;
+  chatbotInstructions?: string;
+  voiceInstructions?: string;
+  onSaveChatInstructions?: (val: string) => void;
+  onSaveVoiceInstructions?: (val: string) => void;
 }
 
-const DataSourcesPanel = ({ onNavigateToFaq }: DataSourcesPanelProps) => {
+const DataSourcesPanel = ({ onNavigateToFaq, chatbotInstructions, voiceInstructions, onSaveChatInstructions, onSaveVoiceInstructions }: DataSourcesPanelProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { plan } = useSubscription();
