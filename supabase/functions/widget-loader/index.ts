@@ -1681,9 +1681,17 @@ Deno.serve(async (req) => {
       var inspireSec = d.createElement('div');
       inspireSec.id = 'wj-inspire-section';
       var hasVideos = inspireVideos.length > 0;
-      var mediaHtml = hasVideos
-        ? '<video src="' + esc(inspireVideos[0].video_url || '') + '" muted autoplay loop playsinline></video>'
-        : '<div style="width:72px;height:96px;border-radius:12px;background:linear-gradient(135deg,#f97316,#ec4899,#8b5cf6);background-size:200% 200%;animation:wjInspirePh 3s ease infinite;flex-shrink:0"></div><style>@keyframes wjInspirePh{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}</style>';
+      var mediaHtml = '';
+      if (hasVideos) {
+        var thumbs = inspireVideos.slice(0, 3);
+        mediaHtml = '<div style="display:flex;gap:6px;flex-shrink:0">';
+        thumbs.forEach(function(v) {
+          mediaHtml += '<video src="' + esc(v.video_url || '') + '" muted autoplay loop playsinline style="width:72px;height:96px;border-radius:12px;object-fit:cover;flex-shrink:0"></video>';
+        });
+        mediaHtml += '</div>';
+      } else {
+        mediaHtml = '<div style="width:72px;height:96px;border-radius:12px;background:linear-gradient(135deg,#f97316,#ec4899,#8b5cf6);background-size:200% 200%;animation:wjInspirePh 3s ease infinite;flex-shrink:0"></div><style>@keyframes wjInspirePh{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}</style>';
+      }
       inspireSec.innerHTML = '<div id="wj-inspire-box">' + mediaHtml + '<div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Discover more</div><button id="wj-inspire-box-btn">Inspire Me</button></div></div>';
       sectionElements['inspire-me'] = inspireSec;
 
