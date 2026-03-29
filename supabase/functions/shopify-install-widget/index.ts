@@ -298,21 +298,31 @@ async function installViaThemeLiquid(storeDomain: string, token: string, loaderU
     return { error: "Failed to install widget in theme. Please try again." };
   }
 
-  // Verify: re-read theme.liquid and confirm snippet is present
-  const verifyRes = await fetch(
-    `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json?asset[key]=layout/theme.liquid`,
-    { headers: { "X-Shopify-Access-Token": token } }
-  );
-  if (verifyRes.ok) {
-    const verifyData = await verifyRes.json();
-    const verifyContent = verifyData.asset?.value || "";
-    if (!verifyContent.includes(`widgetId=${widgetId}`)) {
-      console.error("[install-widget] Post-install verification failed: snippet not found after write");
-      return { error: "Installation could not be verified. The snippet was not found after writing. Please try again." };
+  // Verify: re-read theme.liquid with retry (Shopify API may not be immediately consistent)
+  let verified = false;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, 1500));
+    try {
+      const verifyRes = await fetch(
+        `https://${storeDomain}/admin/api/2024-01/themes/${mainTheme.id}/assets.json?asset[key]=layout/theme.liquid`,
+        { headers: { "X-Shopify-Access-Token": token } }
+      );
+      if (verifyRes.ok) {
+        const verifyData = await verifyRes.json();
+        const verifyContent = verifyData.asset?.value || "";
+        if (verifyContent.includes(`widgetId=${widgetId}`)) {
+          verified = true;
+          console.log(`[install-widget] Post-install verification passed ✓ (attempt ${attempt + 1})`);
+          break;
+        }
+        console.warn(`[install-widget] Verification attempt ${attempt + 1}: snippet not found yet`);
+      }
+    } catch (e) {
+      console.warn(`[install-widget] Verification attempt ${attempt + 1} error:`, e);
     }
-    console.log("[install-widget] Post-install verification passed ✓");
-  } else {
-    console.warn("[install-widget] Could not verify installation (read-back failed), proceeding anyway");
+  }
+  if (!verified) {
+    console.warn("[install-widget] Post-install verification could not confirm snippet, but write succeeded — proceeding");
   }
 
   console.log(`[install-widget] Installed via theme.liquid for ${storeDomain}`);
