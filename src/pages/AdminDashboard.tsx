@@ -15,7 +15,7 @@ import {
 import {
   ArrowLeft, Users, MessageCircle, Bot, BarChart3,
   Globe, Loader2, RefreshCw, UserCheck, Mail,
-  TrendingUp, ArrowUpDown, Search, Contact,
+  TrendingUp, ArrowUpDown, Search, Contact, Mic, MessageSquare,
 } from "lucide-react";
 
 interface TopUser {
@@ -39,6 +39,16 @@ interface ActiveWidgetUser {
   widgetId: string;
 }
 
+interface WidgetInstruction {
+  widgetId: string;
+  email: string;
+  contactName: string;
+  websiteUrl: string | null;
+  language: string;
+  chatInstructions: string | null;
+  voiceInstructions: string | null;
+}
+
 interface AdminStats {
   totalUsers: number;
   totalAuthUsers: number;
@@ -55,6 +65,7 @@ interface AdminStats {
   activeUsersInPeriod: number;
   usersWithConversationsInPeriod: number;
   activeWidgetUsers: ActiveWidgetUser[];
+  widgetInstructions: WidgetInstruction[];
 }
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
