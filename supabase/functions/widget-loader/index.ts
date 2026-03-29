@@ -1617,8 +1617,7 @@ Deno.serve(async (req) => {
       var mediaHtml = hasVideos
         ? '<video src="' + esc(inspireVideos[0].video_url || '') + '" muted autoplay loop playsinline></video>'
         : '<div style="width:72px;height:96px;border-radius:12px;background:linear-gradient(135deg,#f97316,#ec4899,#8b5cf6);background-size:200% 200%;animation:wjInspirePh 3s ease infinite;flex-shrink:0"></div><style>@keyframes wjInspirePh{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}</style>';
-      var subText = hasVideos ? (inspireVideos.length + ' video' + (inspireVideos.length > 1 ? 's' : '')) : 'No videos yet';
-      inspireSec.innerHTML = '<div id="wj-inspire-box">' + mediaHtml + '<div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Inspire me</div><div id="wj-inspire-box-sub">' + subText + '</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
+      inspireSec.innerHTML = '<div id="wj-inspire-box">' + mediaHtml + '<div id="wj-inspire-box-right"><div id="wj-inspire-box-title">✨ Discover & Shop</div><button id="wj-inspire-box-btn">Inspire Me ✨</button></div></div>';
       sectionElements['inspire-me'] = inspireSec;
 
       if (hasVideos) {
