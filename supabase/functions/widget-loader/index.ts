@@ -1976,6 +1976,141 @@ Deno.serve(async (req) => {
       startPolling();
     };
 
+    // ====== VOICE VIEW LOGIC ======
+    var voiceCloseBtn = voiceView.querySelector('#wj-voice-close');
+    var voiceMuteBtn = voiceView.querySelector('#wj-voice-mute');
+    var voiceStopBtn = voiceView.querySelector('#wj-voice-stop');
+    var voiceStatus = voiceView.querySelector('#wj-voice-status');
+    var voiceTranscript = voiceView.querySelector('#wj-voice-transcript');
+    var voiceRecognition = null;
+    var voiceMuted = false;
+
+    function openVoiceView() {
+      var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert('Voice is not supported in this browser. Try Chrome or Safari.');
+        return;
+      }
+      voiceView.classList.add('open');
+      homeView.classList.add('hidden');
+      chatView.classList.remove('open');
+      voiceStatus.textContent = 'Connecting...';
+      voiceTranscript.textContent = '';
+      voiceMuted = false;
+      voiceMuteBtn.classList.remove('muted');
+      startPolling();
+      setTimeout(function() { startVoiceRecognition(); }, 500);
+    }
+
+    function closeVoiceView() {
+      voiceView.classList.remove('open', 'listening');
+      if (voiceRecognition) { try { voiceRecognition.abort(); } catch(e) {} voiceRecognition = null; }
+      chatView.classList.add('open');
+      homeView.classList.add('hidden');
+    }
+
+    function startVoiceRecognition() {
+      var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
+      if (!SpeechRecognition) return;
+      try {
+        var recognition = new SpeechRecognition();
+        recognition.lang = lang || 'en';
+        recognition.interimResults = true;
+        recognition.continuous = true;
+        voiceRecognition = recognition;
+        var finalTranscript = '';
+
+        recognition.onstart = function() {
+          voiceView.classList.add('listening');
+          voiceStatus.textContent = 'Listening...';
+        };
+
+        recognition.onresult = function(ev) {
+          var interim = '';
+          for (var i = ev.resultIndex; i < ev.results.length; i++) {
+            if (ev.results[i].isFinal) {
+              finalTranscript += ev.results[i][0].transcript;
+            } else {
+              interim += ev.results[i][0].transcript;
+            }
+          }
+          voiceTranscript.textContent = finalTranscript + interim;
+          // When final result is ready, send it
+          if (finalTranscript.trim()) {
+            voiceStatus.textContent = 'Processing...';
+            voiceView.classList.remove('listening');
+            sendMessageText(finalTranscript.trim());
+            finalTranscript = '';
+            voiceTranscript.textContent = '';
+            setTimeout(function() {
+              if (voiceRecognition) {
+                voiceView.classList.add('listening');
+                voiceStatus.textContent = 'Listening...';
+              }
+            }, 1500);
+          }
+        };
+
+        recognition.onend = function() {
+          // Auto-restart if still in voice mode and not muted
+          if (voiceView.classList.contains('open') && !voiceMuted) {
+            try { recognition.start(); } catch(e) {}
+          } else {
+            voiceView.classList.remove('listening');
+          }
+        };
+
+        recognition.onerror = function(e) {
+          if (e.error === 'not-allowed') {
+            voiceStatus.textContent = 'Microphone access denied';
+            voiceView.classList.remove('listening');
+          } else if (e.error !== 'aborted' && e.error !== 'no-speech') {
+            voiceStatus.textContent = 'Error: ' + e.error;
+          }
+        };
+
+        recognition.start();
+      } catch(err) {
+        voiceStatus.textContent = 'Voice not available';
+        console.error('[Widjet] Voice error:', err);
+      }
+    }
+
+    // Voice button in contact card
+    var voiceBtn = pop.querySelector('#wj-voice-btn');
+    if (voiceBtn) {
+      voiceBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openVoiceView();
+      };
+    }
+
+    // Voice view close button
+    if (voiceCloseBtn) {
+      voiceCloseBtn.onclick = function() { closeVoiceView(); };
+    }
+
+    // Voice stop button (close)
+    if (voiceStopBtn) {
+      voiceStopBtn.onclick = function() { closeVoiceView(); };
+    }
+
+    // Voice mute button
+    if (voiceMuteBtn) {
+      voiceMuteBtn.onclick = function() {
+        voiceMuted = !voiceMuted;
+        voiceMuteBtn.classList.toggle('muted');
+        if (voiceMuted && voiceRecognition) {
+          try { voiceRecognition.stop(); } catch(e) {}
+          voiceStatus.textContent = 'Muted';
+          voiceView.classList.remove('listening');
+        } else if (!voiceMuted) {
+          startVoiceRecognition();
+        }
+      };
+    }
+
     // Chat back button - returns to home
     chatView.querySelector('#wj-chat-back').onclick = function() {
       chatView.classList.remove('open');
