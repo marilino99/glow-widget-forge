@@ -2608,6 +2608,11 @@ const WidgetPreviewPanel = ({
                       <p id="wj-cname" className={`text-xs ${isSolidMode ? "text-white/60" : widgetSubtext}`}>{contactName}</p>
                       <p id="wj-chelp" className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
                     </div>
+                    <button className={`flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-colors ${
+                      isLight ? "bg-black/5 hover:bg-black/10 text-slate-600" : "bg-white/10 hover:bg-white/20 text-white"
+                    }`}>
+                      <Mic className="h-[18px] w-[18px]" />
+                    </button>
                     </div>
                     <Button 
                       className={`mt-3 w-full ${buttonClass}`} 
