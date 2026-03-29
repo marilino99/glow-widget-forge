@@ -172,18 +172,10 @@ const IntegrationsPanel = ({
                 </>
               ) : (
                 <button
-                  onClick={() => setDialogOpen(true)}
-                  disabled={isConnecting}
+                  onClick={() => setShopifyRequestOpen(true)}
                   className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
                 >
-                  {isConnecting ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Connecting…
-                    </>
-                  ) : (
-                    "Connect"
-                  )}
+                  Connect
                 </button>
               )}
               <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
