@@ -2982,7 +2982,11 @@ const WidgetPreviewPanel = ({
                           onClick={() => inspireVideos.length > 0 && setShowInspireReels(true)}
                         >
                           {inspireVideos.length > 0 ? (
-                            <video src={inspireVideos[0].videoUrl} muted autoPlay loop playsInline className="w-[72px] h-[96px] rounded-xl object-cover flex-shrink-0" />
+                            <div className="flex gap-1.5 flex-shrink-0">
+                              {inspireVideos.slice(0, 3).map((vid, idx) => (
+                                <video key={vid.id} src={vid.videoUrl} muted autoPlay loop playsInline className="w-[72px] h-[96px] rounded-xl object-cover flex-shrink-0" />
+                              ))}
+                            </div>
                           ) : (
                             <>
                               <div className="w-[72px] h-[96px] rounded-xl flex-shrink-0 overflow-hidden"
