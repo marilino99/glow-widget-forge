@@ -406,7 +406,56 @@ const AdminDashboard = () => {
           )}
         </div>
       </ScrollArea>
-
+              {/* Chat vs Voice Instructions Panel */}
+              {stats?.widgetInstructions && stats.widgetInstructions.length > 0 && (
+                <div className="rounded-xl border border-border bg-card">
+                  <div className="border-b border-border px-6 py-4">
+                    <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                      <Bot className="h-4 w-4 text-primary" />
+                      AI Instructions — Chat vs Voice ({stats.widgetInstructions.length})
+                    </h2>
+                  </div>
+                  <div className="divide-y divide-border">
+                    {stats.widgetInstructions.map((wi) => (
+                      <div key={wi.widgetId} className="px-6 py-4 space-y-3">
+                        <div className="flex items-center gap-3 text-xs">
+                          <span className="font-medium text-foreground">{wi.contactName}</span>
+                          <span className="text-muted-foreground">{wi.email}</span>
+                          {wi.websiteUrl && (
+                            <a href={wi.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                              {wi.websiteUrl.replace(/^https?:\/\//, "").slice(0, 30)}
+                            </a>
+                          )}
+                          <span className="ml-auto rounded bg-muted px-2 py-0.5 text-[10px] uppercase text-muted-foreground">{wi.language}</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                          {/* Chat Instructions */}
+                          <div className="rounded-lg border border-border bg-background p-3">
+                            <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-foreground">
+                              <MessageSquare className="h-3.5 w-3.5 text-blue-500" />
+                              Chat Instructions
+                            </div>
+                            <p className="text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                              {wi.chatInstructions || <span className="italic">No chat instructions set</span>}
+                            </p>
+                          </div>
+                          {/* Voice Instructions */}
+                          <div className="rounded-lg border border-border bg-background p-3">
+                            <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-foreground">
+                              <Mic className="h-3.5 w-3.5 text-orange-500" />
+                              Voice Instructions
+                            </div>
+                            <p className="text-xs leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                              {wi.voiceInstructions || <span className="italic">No voice instructions set — uses chat instructions as fallback</span>}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            
       {/* Active Widgets Dialog */}
       {showActiveWidgets && stats && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowActiveWidgets(false)}>
