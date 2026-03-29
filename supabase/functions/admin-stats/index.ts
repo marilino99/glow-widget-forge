@@ -226,6 +226,20 @@ Deno.serve(async (req) => {
       ? Math.round(totalMsgsInPeriod / activeUsersWithMsgs)
       : 0;
 
+    // Widget instructions overview
+    const widgetInstructions = widgets.map((w: any) => {
+      const au = authUsers.find((u: any) => u.id === w.user_id);
+      return {
+        widgetId: w.id,
+        email: au?.email || "unknown",
+        contactName: w.contact_name || "—",
+        websiteUrl: w.website_url || null,
+        language: w.language || "en",
+        chatInstructions: w.chatbot_instructions || null,
+        voiceInstructions: w.voice_instructions || null,
+      };
+    }).filter((w: any) => w.chatInstructions || w.voiceInstructions);
+
     const stats = {
       totalUsers: usersCountRes.count ?? 0,
       totalAuthUsers: authUsers.length,
@@ -242,6 +256,7 @@ Deno.serve(async (req) => {
       activeUsersInPeriod,
       usersWithConversationsInPeriod,
       activeWidgetUsers,
+      widgetInstructions,
     };
 
     return new Response(JSON.stringify(stats), {
