@@ -461,7 +461,7 @@ const WidgetPreviewPanel = ({
     }
 
     // AI speaks first with a greeting, then starts listening
-    const greeting = offerHelp || sayHello || "Hi! How can I help you?";
+    const greeting = "Welcome! How can I help you?";
 
     setTimeout(() => {
       // Speak the greeting first
