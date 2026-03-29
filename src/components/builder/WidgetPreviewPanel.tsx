@@ -246,6 +246,9 @@ const WidgetPreviewPanel = ({
   const voiceRecognitionRef = useRef<any>(null);
   const showVoiceViewRef = useRef(false);
   const voiceMutedRef = useRef(false);
+  const lastSpokenTextRef = useRef<string>("");
+  const noSpeechRetryRef = useRef(0);
+  const MAX_NO_SPEECH_RETRIES = 3;
 
   // Sync refs with state so callbacks always see current values
   useEffect(() => { showVoiceViewRef.current = showVoiceView; }, [showVoiceView]);
@@ -254,6 +257,9 @@ const WidgetPreviewPanel = ({
   // Speak assistant reply using TTS (uses refs to avoid stale closures)
   const speakAssistantReply = (text: string) => {
     if (!showVoiceViewRef.current || voiceMutedRef.current || !window.speechSynthesis) return;
+    // Prevent repeating the exact same text
+    if (text === lastSpokenTextRef.current) return;
+    lastSpokenTextRef.current = text;
     // Pause mic while speaking
     if (voiceRecognitionRef.current) {
       try { voiceRecognitionRef.current.stop(); } catch(_) {}
@@ -266,15 +272,26 @@ const WidgetPreviewPanel = ({
     utterance.lang = langMap[language || 'en'] || 'en-US';
     utterance.rate = 1.0;
     utterance.onend = () => {
-      if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
-        try { voiceRecognitionRef.current.start(); } catch(_) {}
-        setVoiceStatus("listening");
+      if (showVoiceViewRef.current && !voiceMutedRef.current) {
+        // Debounce restart by 300ms
+        setTimeout(() => {
+          if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+            noSpeechRetryRef.current = 0;
+            try { voiceRecognitionRef.current.start(); } catch(_) {}
+            setVoiceStatus("listening");
+          }
+        }, 300);
       }
     };
     utterance.onerror = () => {
-      if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
-        try { voiceRecognitionRef.current.start(); } catch(_) {}
-        setVoiceStatus("listening");
+      if (showVoiceViewRef.current && !voiceMutedRef.current) {
+        setTimeout(() => {
+          if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+            noSpeechRetryRef.current = 0;
+            try { voiceRecognitionRef.current.start(); } catch(_) {}
+            setVoiceStatus("listening");
+          }
+        }, 300);
       }
     };
     window.speechSynthesis.speak(utterance);
@@ -491,8 +508,9 @@ const WidgetPreviewPanel = ({
       const recognition = new SpeechRecognition();
       recognition.lang = language || "en";
       recognition.interimResults = false;
-      recognition.continuous = true;
+      recognition.continuous = false;
       voiceRecognitionRef.current = recognition;
+      noSpeechRetryRef.current = 0;
 
       recognition.onresult = (event: any) => {
         let transcript = "";
@@ -502,23 +520,34 @@ const WidgetPreviewPanel = ({
           }
         }
         if (transcript.trim()) {
+          noSpeechRetryRef.current = 0;
+          lastSpokenTextRef.current = ""; // Reset so the next AI reply can be spoken
           setVoiceStatus("processing");
           handleSendChatMessage(transcript.trim());
-          setTimeout(() => {
-            if (voiceRecognitionRef.current) setVoiceStatus("listening");
-          }, 1500);
         }
       };
 
       recognition.onend = () => {
+        // Only auto-restart if voice view is open, not muted, and under retry limit
         if (voiceRecognitionRef.current && !voiceMutedRef.current && showVoiceViewRef.current) {
-          try { recognition.start(); } catch(_) {}
+          if (noSpeechRetryRef.current < MAX_NO_SPEECH_RETRIES) {
+            noSpeechRetryRef.current++;
+            setTimeout(() => {
+              if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+                try { recognition.start(); } catch(_) {}
+              }
+            }, 300);
+          }
+          // After max retries, just stay in "listening" state visually but don't loop
         }
       };
 
       recognition.onerror = (e: any) => {
         console.error("Voice error:", e.error);
-        if (e.error !== 'no-speech' && e.error !== 'aborted') {
+        if (e.error === 'no-speech') {
+          // Count as a retry
+          noSpeechRetryRef.current++;
+        } else if (e.error !== 'aborted') {
           setVoiceStatus("listening");
         }
       };
