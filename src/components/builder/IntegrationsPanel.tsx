@@ -14,7 +14,7 @@ import instagramLogo from "@/assets/logo-instagram.png";
 import { useShopifyConnection } from "@/hooks/useShopifyConnection";
 import { useCalendlyConnection } from "@/hooks/useCalendlyConnection";
 import { useInstagramDMConnection } from "@/hooks/useInstagramDMConnection";
-import ShopifyConnectDialog from "./ShopifyConnectDialog";
+
 import { formatDistanceToNow } from "date-fns";
 import { useEffect, useRef } from "react";
 
@@ -42,6 +42,10 @@ const IntegrationsPanel = ({
   const instagram = useInstagramDMConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [shopifyRequestOpen, setShopifyRequestOpen] = useState(false);
+  const [shopEmail, setShopEmail] = useState("");
+  const [shopStore, setShopStore] = useState("");
+  const [shopSending, setShopSending] = useState(false);
   const [calendlyDisconnectOpen, setCalendlyDisconnectOpen] = useState(false);
   const [instagramDisconnectOpen, setInstagramDisconnectOpen] = useState(false);
   const [instagramRequestOpen, setInstagramRequestOpen] = useState(false);
@@ -168,18 +172,10 @@ const IntegrationsPanel = ({
                 </>
               ) : (
                 <button
-                  onClick={() => setDialogOpen(true)}
-                  disabled={isConnecting}
+                  onClick={() => setShopifyRequestOpen(true)}
                   className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
                 >
-                  {isConnecting ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Connecting…
-                    </>
-                  ) : (
-                    "Connect"
-                  )}
+                  Connect
                 </button>
               )}
               <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
@@ -392,11 +388,80 @@ const IntegrationsPanel = ({
         </div>
       </div>
 
-      <ShopifyConnectDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onConnect={connectOAuth}
-      />
+      {/* Shopify Request Dialog */}
+      <Dialog open={shopifyRequestOpen} onOpenChange={setShopifyRequestOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Connect Shopify</DialogTitle>
+            <DialogDescription>
+              Enter your details and we'll set up the Shopify integration for you.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!shopEmail.trim() || !shopStore.trim()) return;
+              setShopSending(true);
+              try {
+                const { data, error } = await supabase.functions.invoke("shopify-request", {
+                  body: { email: shopEmail.trim(), shopifyStore: shopStore.trim() },
+                });
+                if (error) throw error;
+                toast.success("Request sent! We'll get back to you soon.");
+                setShopifyRequestOpen(false);
+                setShopEmail("");
+                setShopStore("");
+              } catch (err) {
+                console.error(err);
+                toast.error("Failed to send request. Please try again.");
+              } finally {
+                setShopSending(false);
+              }
+            }}
+            className="flex flex-col gap-4 mt-2"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="shop-email">Your email</Label>
+              <Input
+                id="shop-email"
+                type="email"
+                placeholder="you@example.com"
+                value={shopEmail}
+                onChange={(e) => setShopEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="shop-store">Shopify store URL</Label>
+              <Input
+                id="shop-store"
+                type="text"
+                placeholder="mystore.myshopify.com"
+                value={shopStore}
+                onChange={(e) => setShopStore(e.target.value)}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={shopSending || !shopEmail.trim() || !shopStore.trim()}
+              className="w-full rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 inline-flex items-center justify-center gap-2"
+            >
+              {shopSending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending…
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Send Request
+                </>
+              )}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={disconnectDialogOpen} onOpenChange={setDisconnectDialogOpen}>
         <AlertDialogContent>
