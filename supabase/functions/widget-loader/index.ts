@@ -582,6 +582,11 @@ Deno.serve(async (req) => {
       #wj-chat-powered img{height:16px !important;width:auto !important;margin-left:-6px !important;\${dark ? 'opacity:0.3 !important;filter:invert(1) !important' : 'opacity:0.4 !important'}}
       #wj-pop button,#wj-pop a,#wj-pop input,#wj-pop .wj-nav-item,#wj-pop .wj-chat-chip,#wj-pop .wj-prod-btn,#wj-pop .wj-prod-cart-btn{pointer-events:auto !important;cursor:pointer !important}
       #wj-pop *{pointer-events:auto !important}
+      @media (max-width: 640px){
+        #wj-pop{position:fixed !important;top:0 !important;left:0 !important;right:0 !important;bottom:0 !important;width:100% !important;height:100% !important;border-radius:0 !important;max-width:none !important;max-height:none !important}
+        #wj-pop.open{animation:none !important}
+        #wj-btn{position:fixed !important;bottom:20px !important;right:20px !important}
+      }
     \`;
     d.head.appendChild(style);
 
