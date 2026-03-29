@@ -1,38 +1,33 @@
 
 
-## Piano: Voice chat segue la stessa logica di discovery della chat scritta
+## Piano: Mostrare fino a 3 anteprime video nella sezione Inspire Me
 
 ### Problema
-In voice mode, l'AI segue lo stesso system prompt della chat scritta, ma i marker `[CHIPS:]` e `[PRODUCTS:]` generano bottoni cliccabili — inutili nella conversazione vocale. L'utente parla genericamente ("sto cercando un prodotto") e l'AI dovrebbe **elencare le categorie a voce** (es. "Stai cercando skincare, haircare, clothing o shoes?") invece di generare chip silenziosi.
+Attualmente la sezione "Inspire Me" nella home del widget mostra solo il primo video come anteprima. L'utente vuole vedere tutti i video caricati (fino a un massimo di 3) affiancati.
 
 ### Soluzione
-Aggiungere istruzioni specifiche nel **VOICE MODE RULES** del system prompt per dire all'AI di:
-1. **Elencare le opzioni nel testo** invece di usare `[CHIPS:]` — dire le categorie/goal a voce
-2. **Mantenere il flusso di discovery** (categoria → goal → tipo pelle/capelli → prodotti) ma in forma parlata
-3. **Per i prodotti**: usare comunque `[PRODUCTS:]` così vengono mostrati nella chat, ma **descriverli brevemente a voce** (es. "Ti consiglio il Serum X e la Crema Y, li trovi nella chat")
+Sostituire il singolo video thumbnail con un layout che mostra fino a 3 video affiancati nella box "Inspire Me", sia nel builder preview che nel widget live.
 
 ### Modifiche
 
-**File: `supabase/functions/chatbot-reply/index.ts`** e **`supabase/functions/chatbot-preview/index.ts`**
+**1. Builder Preview** (`src/components/builder/WidgetPreviewPanel.tsx`)
+- Nella sezione `inspire-me` (riga ~2984), invece di mostrare solo `inspireVideos[0]`, fare un loop su `inspireVideos.slice(0, 3)` e renderizzare i video affiancati
+- Ogni video avrà dimensioni proporzionali (es. ~72px larghezza ciascuno) con `border-radius` e `object-fit: cover`
+- Layout flex con gap tra i video
 
-Espandere il blocco `voiceModeRules` aggiungendo:
+**2. Widget Live** (`supabase/functions/widget-loader/index.ts`)
+- Nella costruzione dell'HTML del box inspire (riga ~1684-1687), generare il `mediaHtml` con un loop sui primi 3 video
+- Aggiornare gli stili CSS per `#wj-inspire-box` per supportare video multipli affiancati
+- Ogni video mantiene le stesse dimensioni (72x96px) con bordi arrotondati
 
+### Layout visivo
+
+```text
+┌──────────────────────────────────┐
+│ [vid1] [vid2] [vid3]  ✨ Discover│
+│                       [Inspire] │
+└──────────────────────────────────┘
 ```
-VOICE DISCOVERY RULES:
-- Do NOT use [CHIPS:] markers. Instead, list the options naturally in your spoken reply.
-  Example: "What are you looking for? We have Skincare, Haircare, Clothing, and Shoes."
-- Follow the same category → goal → type discovery flow as text chat, but speak the options.
-- When recommending products, still use the [PRODUCTS:] marker so they appear in the chat,
-  but also briefly mention 1-2 product names in your spoken reply.
-- Keep the conversational flow: ask one question at a time, wait for the user's spoken answer.
-```
 
-### File coinvolti
-- `supabase/functions/chatbot-reply/index.ts` — aggiornare `voiceModeRules`
-- `supabase/functions/chatbot-preview/index.ts` — stessa modifica per parità preview/live
-
-### Risultato
-- Utente dice "cerco un prodotto" → AI risponde a voce: "Cosa stai cercando? Abbiamo Skincare, Haircare, Clothing e Shoes"
-- Utente dice "skincare" → AI: "Perfetto! Qual è il tuo obiettivo? Idratazione, anti-age, acne, luminosità, o vuoi che ti ispiri?"
-- Flusso identico alla chat, ma parlato naturalmente
+Se ci sono 1, 2 o 3 video, ne mostra esattamente quel numero. Oltre 3, ne mostra solo 3.
 
