@@ -1,28 +1,39 @@
 
 
-## Piano: Perché il pulsante microfono non fa nulla + fix
+## Piano: Risposte vocali con Text-to-Speech (TTS)
 
 ### Problema
-Il pulsante microfono che vedi nel builder preview (pannello destro) è solo un'icona decorativa. L'`onClick` fa solo `e.stopPropagation()` — non apre nulla.
-
-La Voice View con il blob 3D e la Web Speech API esiste solo nel **widget live** (il codice che gira sui siti dei clienti, dentro `widget-loader/index.ts`). Nel builder preview di React non è stata implementata nessuna schermata vocale.
-
-### Dove funziona
-- **Sito live con widget installato** (es. il tuo Shopify): lì il pulsante apre la voice view con blob + riconoscimento vocale
-- **Builder preview**: solo icona statica, nessuna azione
+La Voice AI attualmente trascrive la voce dell'utente e invia il testo al chatbot, ma la risposta arriva solo come testo nella chat. L'utente vuole che le risposte vengano **lette ad alta voce** dall'assistente, creando una conversazione vocale bidirezionale.
 
 ### Soluzione
-Aggiungere una voice view simulata nel builder preview (`WidgetPreviewPanel.tsx`):
+Usare la **Web Speech Synthesis API** (nativa nel browser, zero costi) per leggere ad alta voce le risposte AI mentre l'utente è nella voice view.
 
-1. **Stato React**: aggiungere `showVoiceView` state
-2. **Click handler**: il mic button setta `showVoiceView = true`
-3. **Voice View overlay**: rendering condizionale di un overlay con lo stesso design (sfondo `#ededee`, blob SVG animato arancione, status "Listening...", pulsanti stop/mute, chevron close)
-4. **Animazioni CSS**: le animazioni del blob e del pulse vengono aggiunte come classi Tailwind custom o inline styles
-5. **No logica audio**: nel preview non si attiva il microfono reale, si mostra solo l'interfaccia visiva come anteprima di come apparirà ai clienti
+### Modifiche
 
-### File coinvolti
-- `src/components/builder/WidgetPreviewPanel.tsx` — aggiungere stato, overlay voice view, animazioni blob
+**`src/components/builder/WidgetPreviewPanel.tsx`**:
+1. Nella funzione `handleSendChatMessage`, dopo aver ricevuto `data.reply` (riga ~546), se `showVoiceView` è attiva:
+   - Usare `window.speechSynthesis.speak(new SpeechSynthesisUtterance(reply))` per leggere la risposta
+   - Impostare la lingua dell'utterance in base a `language` (en/it/es/fr/de/pt)
+   - Durante la lettura: `voiceStatus = "processing"`, al termine: riattivare il riconoscimento vocale (`voiceStatus = "listening"`)
+   - Mettere in pausa il riconoscimento vocale mentre l'assistente parla (per evitare che il microfono catturi la voce dell'assistente)
 
-### Risultato
-Cliccando il mic nel preview del builder si vedrà esattamente la schermata con il blob arancione, come appare nel widget live. Per la funzionalità vocale reale, serve aprire il widget sul sito live.
+2. Nella funzione `stopVoiceSession`: cancellare anche `speechSynthesis.cancel()` per interrompere eventuali letture in corso
+
+3. Nella funzione `toggleVoiceMute`: se si muta, fermare anche la sintesi vocale
+
+**`supabase/functions/widget-loader/index.ts`**:
+4. Stessa logica TTS nel widget live: dopo aver ricevuto la risposta dal chatbot, se la voice view è aperta, leggere la risposta con `speechSynthesis`
+
+### Flusso risultante
+1. Utente clicca mic → voice view si apre
+2. Utente parla → trascrizione → messaggio inviato
+3. AI risponde → risposta mostrata in chat + **letta ad alta voce**
+4. Durante la lettura il microfono è in pausa
+5. Fine lettura → microfono si riattiva → utente può parlare di nuovo
+6. Ciclo continuo come una conversazione naturale
+
+### Limitazioni
+- La voce sintetica dipende dalle voci installate nel browser/OS dell'utente
+- Supportata su Chrome, Safari, Edge (non Firefox mobile)
+- Zero costi: è un'API nativa del browser
 
