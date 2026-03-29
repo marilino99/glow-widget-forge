@@ -1,0 +1,1 @@
+ALTER TABLE public.widget_configurations ADD COLUMN voice_instructions text DEFAULT NULL;
