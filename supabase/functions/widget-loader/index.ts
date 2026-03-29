@@ -2412,6 +2412,9 @@ Deno.serve(async (req) => {
 
     function speakText(text) {
       if (!w.speechSynthesis || !voiceView || !voiceView.classList.contains('open') || voiceMuted) return;
+      // Prevent repeating the same text
+      if (text === lastSpokenText) return;
+      lastSpokenText = text;
       // Cancel any ongoing speech first
       w.speechSynthesis.cancel();
       // Strip markdown chars
@@ -2425,17 +2428,27 @@ Deno.serve(async (req) => {
       utter.lang = langMap[lang] || 'en-US';
       utter.rate = 1.0;
       utter.onend = function() {
-        if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
-          try { voiceRecognition.start(); } catch(e) {}
-          voiceView.classList.add('listening');
-          if (voiceStatus) voiceStatus.textContent = 'Listening...';
+        if (voiceView.classList.contains('open') && !voiceMuted) {
+          setTimeout(function() {
+            if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
+              noSpeechRetries = 0;
+              try { voiceRecognition.start(); } catch(e) {}
+              voiceView.classList.add('listening');
+              if (voiceStatus) voiceStatus.textContent = 'Listening...';
+            }
+          }, 300);
         }
       };
       utter.onerror = function() {
-        if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
-          try { voiceRecognition.start(); } catch(e) {}
-          voiceView.classList.add('listening');
-          if (voiceStatus) voiceStatus.textContent = 'Listening...';
+        if (voiceView.classList.contains('open') && !voiceMuted) {
+          setTimeout(function() {
+            if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
+              noSpeechRetries = 0;
+              try { voiceRecognition.start(); } catch(e) {}
+              voiceView.classList.add('listening');
+              if (voiceStatus) voiceStatus.textContent = 'Listening...';
+            }
+          }, 300);
         }
       };
       w.speechSynthesis.speak(utter);
