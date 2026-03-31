@@ -21,7 +21,9 @@ const FAQs = lazy(() => import("@/components/landing/FAQs"));
 const Footer = lazy(() => import("@/components/landing/Footer"));
 
 const LandingContent = () => {
+  usePageMeta({ title: "Widjet — AI Chat Widget Builder for Websites | Free", description: "Build and embed a custom AI chat widget on your website in minutes. Free plan available." });
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const navigate = useNavigate();
   const { t } = useLandingLang();
 
