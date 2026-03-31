@@ -74,6 +74,7 @@ const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
 type SortKey = "aiResponses" | "visitorMessages" | "conversations" | "contacts" | "signupDate" | "lastActive";
 
 const AdminDashboard = () => {
+  usePageMeta({ title: "Admin — Widjet", noindex: true });
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);

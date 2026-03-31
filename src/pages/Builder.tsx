@@ -48,6 +48,7 @@ import { LocalLink } from "@/components/builder/CustomLinksPanel";
 import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
 
 const Builder = () => {
+  usePageMeta({ title: "Dashboard — Widjet", noindex: true });
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, signOut } = useAuth();
