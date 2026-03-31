@@ -17,6 +17,7 @@ import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 import widjetIcon from "@/assets/widjet-icon.png";
 
 import shopifyLogo from "@/assets/logo-shopify.png";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Button } from "@/components/ui/button";
 import BuilderSidebar from "@/components/builder/BuilderSidebar";
 import BuilderHome from "@/components/builder/BuilderHome";
@@ -47,6 +48,7 @@ import { LocalLink } from "@/components/builder/CustomLinksPanel";
 import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
 
 const Builder = () => {
+  usePageMeta({ title: "Dashboard — Widjet", noindex: true });
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, signOut } = useAuth();

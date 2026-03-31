@@ -1,6 +1,7 @@
 import { useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { supabase } from "@/integrations/supabase/client";
 import { LandingLanguageProvider } from "@/contexts/LandingLanguageContext";
 import Navbar from "@/components/landing/Navbar";
@@ -20,6 +21,7 @@ const FAQs = lazy(() => import("@/components/landing/FAQs"));
 const Footer = lazy(() => import("@/components/landing/Footer"));
 
 const LandingContent = () => {
+  usePageMeta({ title: "Widjet — AI Chat Widget Builder for Websites | Free", description: "Build and embed a custom AI chat widget on your website in minutes. Free plan available." });
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { t } = useLandingLang();
