@@ -24,7 +24,6 @@ const LandingContent = () => {
   usePageMeta({ title: "Widjet — AI Chat Widget Builder for Websites | Free", description: "Build and embed a custom AI chat widget on your website in minutes. Free plan available." });
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const navigate = useNavigate();
   const { t } = useLandingLang();
 
   // Load Widjet on the landing page only for non-authenticated visitors
