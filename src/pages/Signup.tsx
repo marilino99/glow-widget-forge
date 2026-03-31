@@ -10,8 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useToast } from "@/hooks/use-toast";
 import { isDisposableEmail } from "@/lib/disposableEmails";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const Signup = () => {
+  usePageMeta({ title: "Sign Up Free — Widjet", description: "Create your free account and build your AI chat widget in 2 minutes." });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

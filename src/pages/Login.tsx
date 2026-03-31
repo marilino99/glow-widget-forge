@@ -10,8 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
 import { useToast } from "@/hooks/use-toast";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const Login = () => {
+  usePageMeta({ title: "Log In — Widjet", description: "Access your Widjet dashboard." });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

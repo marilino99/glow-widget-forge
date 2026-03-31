@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { CheckCircle } from "lucide-react";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const CheckoutSuccess = () => {
+  usePageMeta({ title: "Payment Successful — Widjet", noindex: true });
   useEffect(() => {
     // Auto-close after 3 seconds
     const timer = setTimeout(() => window.close(), 3000);

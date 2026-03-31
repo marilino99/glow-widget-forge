@@ -8,8 +8,10 @@ import { Boxes, Loader2, Globe, ArrowRight, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const Onboarding = () => {
+  usePageMeta({ title: "Onboarding — Widjet", noindex: true });
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [extractingBranding, setExtractingBranding] = useState(false);

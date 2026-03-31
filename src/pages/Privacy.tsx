@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const Privacy = () => (
   <div className="min-h-screen bg-background px-6 py-16">
