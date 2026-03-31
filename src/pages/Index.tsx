@@ -1,6 +1,7 @@
 import { useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { supabase } from "@/integrations/supabase/client";
 import { LandingLanguageProvider } from "@/contexts/LandingLanguageContext";
 import Navbar from "@/components/landing/Navbar";
