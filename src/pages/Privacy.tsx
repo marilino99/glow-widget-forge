@@ -2,7 +2,9 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
 
-const Privacy = () => (
+const Privacy = () => {
+  usePageMeta({ title: "Privacy Policy — Widjet", description: "Widjet privacy policy." });
+  return (
   <div className="min-h-screen bg-background px-6 py-16">
     <div className="mx-auto max-w-3xl">
       <Link to="/" className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
