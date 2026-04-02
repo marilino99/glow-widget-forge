@@ -23,12 +23,12 @@ const categories: { value: "all" | TemplateCategory; label: string }[] = [
 
 interface AllChannelsOverlayProps {
   onClose: () => void;
-  isPro: boolean;
+  canChooseTemplate: boolean;
   onUpgrade: () => void;
   onApplyTemplate: (template: WidgetTemplate) => void;
 }
 
-const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
+const AllChannelsOverlay = ({ onClose, canChooseTemplate, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<WidgetTemplate | null>(null);
   const [filterMode, setFilterMode] = useState<"all" | "favorites" | "categories">("all");
