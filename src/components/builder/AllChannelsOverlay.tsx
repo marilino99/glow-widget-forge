@@ -83,15 +83,10 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
         {/* Sidebar */}
         <aside className="w-56 shrink-0 border-r border-border p-6 overflow-y-auto">
           {/* Favorites */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Favorites</p>
-                <p className="text-lg font-bold text-foreground">0</p>
-              </div>
-            </div>
-          </div>
+          <button className="flex justify-between w-full mb-4 py-4 px-6 rounded text-left bg-primary text-primary-foreground font-bold cursor-pointer hover:bg-primary/80 focus:bg-primary/80 focus:outline-none">
+            <span>FAVORITES</span>
+            <span className="text-primary-foreground/60">0</span>
+          </button>
 
           <Separator className="mb-5" />
 
