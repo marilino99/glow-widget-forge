@@ -103,11 +103,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
           {/* Favorites */}
           <button
             onClick={() => setActiveFilter(activeFilter === "favorites" ? "all" : "favorites")}
-            className={`flex justify-between w-full mb-4 py-4 px-6 rounded text-left font-bold cursor-pointer focus:outline-none transition-colors ${
-              activeFilter === "favorites"
-                ? "bg-primary text-primary-foreground hover:bg-primary/80"
-                : "bg-primary/90 text-primary-foreground hover:bg-primary/70"
-            }`}
+            className="flex justify-between w-full mb-4 py-4 px-6 rounded text-left font-bold cursor-pointer focus:outline-none transition-colors bg-[hsl(258,60%,52%)] text-white hover:bg-[hsl(258,60%,42%)]"
           >
             <span>FAVORITES</span>
             <span className="text-primary-foreground/60">{favorites.size}</span>
