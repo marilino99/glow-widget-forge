@@ -124,7 +124,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                 className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
               >
                 {/* Preview area */}
-                <div className={`relative flex items-center justify-center py-16 ${getCardBg(template)}`}>
+                <div className={`relative flex items-center justify-center aspect-[16/10] w-full rounded-t ${getCardBg(template)}`}>
                   <MessageSquare className="h-12 w-12 text-white/90 drop-shadow-md" />
                   {template.isPro && !isPro ? (
                     <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm">
