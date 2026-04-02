@@ -30,7 +30,7 @@ export const useSubscription = () => {
 
   const checkSubscription = useCallback(async () => {
     if (!user) {
-      setState({ plan: "free", subscribed: false, subscriptionEnd: null, aiResponsesThisMonth: 0, isLoading: false });
+      setState({ plan: "free", subscribed: false, subscriptionEnd: null, aiResponsesThisMonth: 0, widgetCount: 0, widgetLimit: 1, isLoading: false });
       return;
     }
 
