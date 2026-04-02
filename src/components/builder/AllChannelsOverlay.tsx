@@ -284,14 +284,61 @@ const AllChannelsOverlay = ({ onClose, canChooseTemplate, onUpgrade, onApplyTemp
               </div>
 
               {/* Mockup content */}
-              <div className="relative p-8 h-[calc(100%-44px)]">
-                <div className="space-y-4">
-                  <div className="h-6 bg-gray-100 rounded w-1/3" />
-                  <div className="h-4 bg-gray-100 rounded w-2/3" />
-                  <div className="h-4 bg-gray-100 rounded w-1/2" />
-                  <div className="h-32 bg-gray-50 rounded-lg mt-6" />
-                  <div className="h-4 bg-gray-100 rounded w-3/4" />
-                  <div className="h-4 bg-gray-100 rounded w-1/2" />
+              <div className="relative p-0 h-[calc(100%-44px)] overflow-hidden">
+                {/* Navbar */}
+                <div className="flex items-center justify-between px-8 py-4 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gray-200" />
+                    <div className="h-4 w-24 bg-gray-200 rounded" />
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="h-3 w-14 bg-gray-100 rounded" />
+                    <div className="h-3 w-14 bg-gray-100 rounded" />
+                    <div className="h-3 w-14 bg-gray-100 rounded" />
+                    <div className="h-3 w-14 bg-gray-100 rounded" />
+                    <div className="h-8 w-20 bg-gray-200 rounded-md" />
+                  </div>
+                </div>
+
+                {/* Hero section */}
+                <div className="px-8 pt-10 pb-8">
+                  <div className="max-w-lg">
+                    <div className="h-8 w-72 bg-gray-200 rounded mb-3" />
+                    <div className="h-8 w-48 bg-gray-200 rounded mb-5" />
+                    <div className="h-3 w-96 bg-gray-100 rounded mb-2" />
+                    <div className="h-3 w-80 bg-gray-100 rounded mb-6" />
+                    <div className="flex gap-3">
+                      <div className="h-10 w-28 bg-gray-300 rounded-lg" />
+                      <div className="h-10 w-28 bg-gray-100 rounded-lg border border-gray-200" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats row */}
+                <div className="px-8 pb-6">
+                  <div className="flex gap-8">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="flex-1 text-center">
+                        <div className="h-6 w-16 bg-gray-200 rounded mx-auto mb-1" />
+                        <div className="h-3 w-20 bg-gray-100 rounded mx-auto" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Card grid */}
+                <div className="px-8 pb-8">
+                  <div className="grid grid-cols-3 gap-4">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="rounded-xl border border-gray-100 overflow-hidden">
+                        <div className="h-24 bg-gray-50" />
+                        <div className="p-3 space-y-2">
+                          <div className="h-3 w-3/4 bg-gray-200 rounded" />
+                          <div className="h-3 w-1/2 bg-gray-100 rounded" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Widget bubble */}
