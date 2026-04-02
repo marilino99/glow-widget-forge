@@ -152,15 +152,23 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                 <div className={`relative flex items-center justify-center aspect-[16/9] w-full rounded-t ${getCardBg(template)}`}>
                   <MessageSquare className="h-10 w-10 text-white/90 drop-shadow-md" />
                   {template.isPro && !isPro ? (
-                    <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm">
+                    <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm">
                       <Lock className="h-3 w-3" />
                       Pro
                     </span>
                   ) : (
-                    <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
+                    <span className="absolute top-3 left-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
                       Free
                     </span>
                   )}
+                  <button
+                    onClick={(e) => toggleFavorite(template.id, e)}
+                    className={`absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-200 hover:bg-white ${
+                      favorites.has(template.id) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    }`}
+                  >
+                    <Heart className={`h-4 w-4 transition-colors ${favorites.has(template.id) ? "text-red-500 fill-red-500" : "text-muted-foreground"}`} />
+                  </button>
                 </div>
 
                 <div className="border-t border-border bg-muted/50 p-3">
