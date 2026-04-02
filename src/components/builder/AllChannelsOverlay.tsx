@@ -169,9 +169,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                   <MessageSquare className="h-10 w-10 text-white/90 drop-shadow-md" />
                   <button
                     onClick={(e) => toggleFavorite(template.id, e)}
-                    className={`absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-200 hover:bg-white ${
-                      favorites.has(template.id) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                    }`}
+                    className={`absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-200 hover:bg-white opacity-0 group-hover:opacity-100`}
                   >
                     <Heart className={`h-4 w-4 transition-colors ${favorites.has(template.id) ? "text-red-500 fill-red-500" : "text-muted-foreground"}`} />
                   </button>
