@@ -171,6 +171,7 @@ export const useWidgetConfiguration = () => {
             inspireEnabled: (data as any).inspire_enabled ?? false,
             homeSectionOrder: (data as any).home_section_order || defaultConfig.homeSectionOrder,
             customChips: (data as any).custom_chips || [],
+            voiceEnabled: (data as any).voice_enabled ?? false,
           });
         }
       } catch (error) {
