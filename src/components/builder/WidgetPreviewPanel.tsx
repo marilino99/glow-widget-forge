@@ -211,6 +211,7 @@ const WidgetPreviewPanel = ({
   localPreviewLinks = [],
   reportBugsEnabled = false,
   shareFeedbackEnabled = false,
+  voiceEnabled = false,
   widgetId,
   googleBusiness,
   activeWidget,
