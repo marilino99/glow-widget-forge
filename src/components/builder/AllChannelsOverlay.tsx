@@ -110,7 +110,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
             }`}
           >
             <span>FAVORITES</span>
-            <span className={activeFilter === "favorites" ? "text-primary-foreground/60" : "text-muted-foreground"}>{favorites.size}</span>
+            <span className="text-primary-foreground/60">{favorites.size}</span>
           </button>
 
           {/* Filter by category */}
