@@ -81,14 +81,12 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
 
       <div className="flex flex-1 overflow-hidden max-w-6xl mx-auto w-full">
         {/* Sidebar */}
-        <aside className="w-56 shrink-0 border-r border-border p-6 overflow-y-auto">
+        <aside className="w-56 shrink-0 p-6 overflow-y-auto">
           {/* Favorites */}
           <button className="flex justify-between w-full mb-4 py-4 px-6 rounded text-left bg-primary text-primary-foreground font-bold cursor-pointer hover:bg-primary/80 focus:bg-primary/80 focus:outline-none">
             <span>FAVORITES</span>
             <span className="text-primary-foreground/60">0</span>
           </button>
-
-          <Separator className="mb-5" />
 
           {/* Filter by category */}
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
