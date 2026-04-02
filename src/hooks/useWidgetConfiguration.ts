@@ -96,6 +96,7 @@ const defaultConfig: WidgetConfiguration = {
   inspireEnabled: false,
   homeSectionOrder: ["product-carousel", "faq", "custom-links", "inspire-me"],
   customChips: [],
+  voiceEnabled: false,
 };
 
 export const useWidgetConfiguration = () => {
