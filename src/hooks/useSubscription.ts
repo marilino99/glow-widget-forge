@@ -11,6 +11,8 @@ interface SubscriptionState {
   subscribed: boolean;
   subscriptionEnd: string | null;
   aiResponsesThisMonth: number;
+  widgetCount: number;
+  widgetLimit: number;
   isLoading: boolean;
 }
 
