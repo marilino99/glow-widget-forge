@@ -248,53 +248,93 @@ const WidgetPreviewPanel = ({
   const voiceMutedRef = useRef(false);
   const lastSpokenTextRef = useRef<string>("");
   const noSpeechRetryRef = useRef(0);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const MAX_NO_SPEECH_RETRIES = 3;
 
   // Sync refs with state so callbacks always see current values
   useEffect(() => { showVoiceViewRef.current = showVoiceView; }, [showVoiceView]);
   useEffect(() => { voiceMutedRef.current = voiceMuted; }, [voiceMuted]);
 
-  // Speak assistant reply using TTS (uses refs to avoid stale closures)
+  // ElevenLabs TTS helpers
+  const stopElevenLabsAudio = () => {
+    if (currentAudioRef.current) {
+      try { currentAudioRef.current.pause(); currentAudioRef.current.currentTime = 0; } catch(_) {}
+      currentAudioRef.current = null;
+    }
+  };
+
+  const resumeListening = () => {
+    if (showVoiceViewRef.current && !voiceMutedRef.current) {
+      setTimeout(() => {
+        if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+          noSpeechRetryRef.current = 0;
+          try { voiceRecognitionRef.current.start(); } catch(_) {}
+          setVoiceStatus("listening");
+        }
+      }, 300);
+    }
+  };
+
+  const speakWithElevenLabs = async (text: string, onDone?: () => void) => {
+    if (!text) { if (onDone) onDone(); return; }
+    stopElevenLabsAudio();
+    if (voiceRecognitionRef.current) { try { voiceRecognitionRef.current.stop(); } catch(_) {} }
+    setVoiceStatus("processing");
+    const cleanText = text.replace(/[*_#`\[\]]/g, '').replace(/\n{2,}/g, '. ');
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: cleanText, widgetId }),
+        }
+      );
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        const audio = new Audio(audioUrl);
+        currentAudioRef.current = audio;
+        audio.onended = () => {
+          stopElevenLabsAudio();
+          URL.revokeObjectURL(audioUrl);
+          if (onDone) onDone();
+          else resumeListening();
+        };
+        audio.onerror = () => {
+          stopElevenLabsAudio();
+          URL.revokeObjectURL(audioUrl);
+          if (onDone) onDone();
+          else resumeListening();
+        };
+        await audio.play();
+        return;
+      }
+    } catch(_) {}
+
+    // Fallback to Web Speech API
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+      utterance.lang = langMap[language || 'en'] || 'en-US';
+      utterance.rate = 1.0;
+      utterance.onend = () => { if (onDone) onDone(); else resumeListening(); };
+      utterance.onerror = () => { if (onDone) onDone(); else resumeListening(); };
+      window.speechSynthesis.speak(utterance);
+    } else {
+      if (onDone) onDone(); else resumeListening();
+    }
+  };
+
+  // Speak assistant reply using ElevenLabs TTS
   const speakAssistantReply = (text: string) => {
-    if (!showVoiceViewRef.current || voiceMutedRef.current || !window.speechSynthesis) return;
-    // Prevent repeating the exact same text
+    if (!showVoiceViewRef.current || voiceMutedRef.current) return;
     if (text === lastSpokenTextRef.current) return;
     lastSpokenTextRef.current = text;
-    // Pause mic while speaking
-    if (voiceRecognitionRef.current) {
-      try { voiceRecognitionRef.current.stop(); } catch(_) {}
-    }
-    setVoiceStatus("processing");
-    window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[*_#`\[\]]/g, '').replace(/\n{2,}/g, '. ');
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-    utterance.lang = langMap[language || 'en'] || 'en-US';
-    utterance.rate = 1.0;
-    utterance.onend = () => {
-      if (showVoiceViewRef.current && !voiceMutedRef.current) {
-        // Debounce restart by 300ms
-        setTimeout(() => {
-          if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
-            noSpeechRetryRef.current = 0;
-            try { voiceRecognitionRef.current.start(); } catch(_) {}
-            setVoiceStatus("listening");
-          }
-        }, 300);
-      }
-    };
-    utterance.onerror = () => {
-      if (showVoiceViewRef.current && !voiceMutedRef.current) {
-        setTimeout(() => {
-          if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
-            noSpeechRetryRef.current = 0;
-            try { voiceRecognitionRef.current.start(); } catch(_) {}
-            setVoiceStatus("listening");
-          }
-        }, 300);
-      }
-    };
-    window.speechSynthesis.speak(utterance);
+    speakWithElevenLabs(text);
   };
 
   // Auto-show FAQ pills after delay when bottom bar is expanded
@@ -481,25 +521,9 @@ const WidgetPreviewPanel = ({
     const greeting = "Welcome! How can I help you?";
 
     setTimeout(() => {
-      // Speak the greeting first
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        setVoiceStatus("processing");
-        const utterance = new SpeechSynthesisUtterance(greeting);
-        const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-        utterance.lang = langMap[language || 'en'] || 'en-US';
-        utterance.rate = 1.0;
-        utterance.onend = () => {
-          // After greeting, start listening
-          startVoiceRecognitionInternal(SpeechRecognition);
-        };
-        utterance.onerror = () => {
-          startVoiceRecognitionInternal(SpeechRecognition);
-        };
-        window.speechSynthesis.speak(utterance);
-      } else {
+      speakWithElevenLabs(greeting, () => {
         startVoiceRecognitionInternal(SpeechRecognition);
-      }
+      });
     }, 500);
   };
 
@@ -567,9 +591,8 @@ const WidgetPreviewPanel = ({
       try { ref.stop(); } catch(_) {}
     }
     // Cancel any ongoing TTS
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    stopElevenLabsAudio();
+    if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
     setShowVoiceView(false);
     setShowChat(true);
   };
@@ -582,9 +605,8 @@ const WidgetPreviewPanel = ({
     } else if (voiceRecognitionRef.current) {
       try { voiceRecognitionRef.current.stop(); } catch(_) {}
       // Also stop TTS if speaking
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopElevenLabsAudio();
+      if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
       setVoiceMuted(true);
       setVoiceStatus("connecting");
     }
