@@ -2026,7 +2026,7 @@ Deno.serve(async (req) => {
       voiceView.classList.remove('open', 'listening');
       if (voiceRecognition) { try { voiceRecognition.abort(); } catch(e) {} voiceRecognition = null; }
       // Cancel TTS when closing voice view
-      if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
+      stopElevenLabsAudio();
       chatView.classList.add('open');
       homeView.classList.add('hidden');
     }
