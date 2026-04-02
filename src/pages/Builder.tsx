@@ -1127,7 +1127,25 @@ const Builder = () => {
         onNameChange={setUserDisplayName}
       />
       {showAllChannels && (
-        <AllChannelsOverlay onClose={() => setShowAllChannels(false)} />
+        <AllChannelsOverlay
+          onClose={() => setShowAllChannels(false)}
+          isPro={plan === "pro"}
+          onUpgrade={() => setShowUpgradeOverlay(true)}
+          onApplyTemplate={(template) => {
+            saveConfig({
+              widgetTheme: template.theme,
+              widgetColor: template.color,
+              backgroundType: template.backgroundType,
+              sayHello: template.sayHello,
+            });
+            updateConfig({
+              widgetTheme: template.theme,
+              widgetColor: template.color,
+              backgroundType: template.backgroundType,
+              sayHello: template.sayHello,
+            });
+          }}
+        />
       )}
 
       {/* Mobile bottom navigation bar */}
