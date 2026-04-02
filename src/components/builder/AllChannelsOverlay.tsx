@@ -131,7 +131,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
 
           {/* Filter by category */}
           <div className="w-[110%] rounded-lg border border-border bg-card overflow-hidden">
-            <div className="px-5 py-3 border-b border-border">
+            <div className="px-5 py-3 border-b border-border bg-[#f7f7f7]">
               <p className="text-xs font-semibold uppercase tracking-wider text-[hsl(258,60%,52%)]">
                 Filter by Category
               </p>
