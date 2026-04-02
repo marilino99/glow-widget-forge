@@ -139,12 +139,12 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                 className="flex items-center gap-2.5 cursor-pointer group"
               >
                 <Checkbox
-                  checked={activeFilter === cat.value}
-                  onCheckedChange={() => setActiveFilter(cat.value)}
+                  checked={cat.value === "all" ? filterMode === "all" : selectedCategories.has(cat.value)}
+                  onCheckedChange={() => cat.value === "all" ? selectAll() : toggleCategory(cat.value)}
                   className="h-4 w-4 border-[hsl(258,60%,52%)] data-[state=checked]:bg-[hsl(258,60%,52%)] data-[state=checked]:text-white"
                 />
                 <span className={`text-sm transition-colors ${
-                  activeFilter === cat.value
+                  (cat.value === "all" ? filterMode === "all" : selectedCategories.has(cat.value))
                     ? "font-medium text-foreground"
                     : "text-muted-foreground group-hover:text-foreground"
                 }`}>
