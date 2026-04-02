@@ -11,6 +11,8 @@ interface SubscriptionState {
   subscribed: boolean;
   subscriptionEnd: string | null;
   aiResponsesThisMonth: number;
+  widgetCount: number;
+  widgetLimit: number;
   isLoading: boolean;
 }
 
@@ -21,12 +23,14 @@ export const useSubscription = () => {
     subscribed: false,
     subscriptionEnd: null,
     aiResponsesThisMonth: 0,
+    widgetCount: 0,
+    widgetLimit: 1,
     isLoading: true,
   });
 
   const checkSubscription = useCallback(async () => {
     if (!user) {
-      setState({ plan: "free", subscribed: false, subscriptionEnd: null, aiResponsesThisMonth: 0, isLoading: false });
+      setState({ plan: "free", subscribed: false, subscriptionEnd: null, aiResponsesThisMonth: 0, widgetCount: 0, widgetLimit: 1, isLoading: false });
       return;
     }
 
@@ -39,6 +43,8 @@ export const useSubscription = () => {
         subscribed: data.subscribed || false,
         subscriptionEnd: data.subscription_end || null,
         aiResponsesThisMonth: data.ai_responses_this_month ?? 0,
+        widgetCount: data.widget_count ?? 0,
+        widgetLimit: data.widget_limit ?? 1,
         isLoading: false,
       });
     } catch (err) {
@@ -70,12 +76,15 @@ export const useSubscription = () => {
     }
   };
 
+  const canCreateWidget = state.widgetCount < state.widgetLimit;
+
   return {
     ...state,
     aiResponseLimit,
     usagePercent,
     isApproachingLimit,
     isAtLimit,
+    canCreateWidget,
     startCheckout,
     refreshSubscription: checkSubscription,
   };
