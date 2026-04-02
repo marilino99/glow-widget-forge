@@ -216,6 +216,7 @@ Deno.serve(async (req) => {
      var inspireEnabled = cfg.inspire_enabled || false;
      var inspireVideos = cfg.inspire_videos || [];
      var homeSectionOrder = cfg.home_section_order || ['product-carousel', 'faq', 'custom-links', 'inspire-me'];
+     var voiceEnabled = cfg.voice_enabled || false;
      var customChips = cfg.custom_chips;
      var chipLabels = (Array.isArray(customChips) && customChips.length >= 3) ? customChips : [tr.chipFind, tr.chipTrack, tr.chipInfo];
 
