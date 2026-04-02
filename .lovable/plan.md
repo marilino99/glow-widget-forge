@@ -1,36 +1,62 @@
 
 
-## Piano: Sostituire "All Widgets" con pagina Templates
+## Piano: Redesign pagina Templates stile screenshot
 
-### Idea
-La pagina "All widgets" attuale (screenshot) mostra canali come Help page, Email, Slack, WordPress — tutti "Coming soon". Non aggiunge valore reale. Meglio sostituirla con una **galleria di template** visiva dove l'utente può vedere e applicare i vari stili del widget.
+### Layout
+Riprodurre il layout dello screenshot: sidebar filtri a sinistra + griglia 2 colonne di card a destra.
 
-### Cosa cambia
+### Cosa cambia in `AllChannelsOverlay.tsx`
 
-**1. Riscrivere `AllChannelsOverlay.tsx`** come galleria template
-- Mantenere lo stesso layout a card (stile screenshot) ma ogni card rappresenta un template
-- Ogni card mostra: sfondo colorato con mini-preview del widget, nome del template, breve descrizione, badge "Free" o "Pro"
-- Click su una card → dialog di conferma → applica il template (riusa la logica già presente in `TemplatesPanel`)
+**1. Aggiungere categorie ai template**
+Estendere `WidgetTemplate` con un campo `category` (es. "sales", "support", "lead-gen", "branding"). Aggiungere la categoria a ciascun template esistente.
 
-**2. Template cards (basati sugli 8 template esistenti)**
-- Minimal Light, Ocean Blue, Sunset Vibes (Free)
-- Black Friday, Luxury Gold, Nature Green, Neon Purple, Coral Pink (Pro)
-- Ogni card ha il gradiente/colore del template come sfondo, con un'icona widget al centro
+**2. Sidebar filtri (sinistra)**
+- Titolo "FILTER BY CATEGORY" in stile screenshot
+- Checkbox list: All Templates, Sales, Support, Lead Generation, Branding
+- Badge "FAVORITES" in alto (contatore, per futuro uso)
+- Stato filtro: selezionando una categoria si filtrano le card a destra
 
-**3. Mantenere la struttura**
-- Header "Templates" con freccia Back (come ora)
-- Grid 2 colonne per le card grandi, 3 colonne per le piccole
-- Card Pro mostrano lucchetto se l'utente non è Pro
+**3. Griglia template (destra)**
+- Layout a 2 colonne (come screenshot)
+- Ogni card: area preview grande con sfondo colorato/gradiente + icona widget, sotto il nome del template, poi due bottoni "Preview" e "Choose"
+- "Preview" apre un dialog con anteprima più grande
+- "Choose" apre il dialog di conferma esistente per applicare il template
+- Badge Free/Pro nell'angolo della card
 
-**4. Eliminare i canali "Coming soon"**
-- Help page, Email, Slack, WordPress vengono rimossi da questa vista
-- Se in futuro servono, si crea una sezione separata
+**4. Header**
+- Titolo centrato "Choose your template" (grande, bold)
+- Linea separatrice sotto
+- Pulsante Back in alto a sinistra
+
+### Struttura visiva
+
+```text
+┌─────────────────────────────────────────────────┐
+│  ← Back         Choose your template            │
+│─────────────────────────────────────────────────│
+│                                                  │
+│  ┌──────────┐  ┌────────────┐  ┌────────────┐  │
+│  │FAVORITES │  │  Template   │  │  Template   │  │
+│  │    0     │  │  preview    │  │  preview    │  │
+│  ├──────────┤  │            │  │            │  │
+│  │FILTER BY │  │  Name      │  │  Name      │  │
+│  │CATEGORY  │  │ [Preview]  │  │ [Preview]  │  │
+│  │☑ All     │  │ [Choose]   │  │ [Choose]   │  │
+│  │☐ Sales   │  ├────────────┤  ├────────────┤  │
+│  │☐ Support │  │  Template   │  │  Template   │  │
+│  │☐ Lead Gen│  │  ...       │  │  ...       │  │
+│  └──────────┘  └────────────┘  └────────────┘  │
+└─────────────────────────────────────────────────┘
+```
 
 ### File coinvolti
-- `src/components/builder/AllChannelsOverlay.tsx` — riscrittura completa come TemplatesGallery
-- `src/components/builder/TemplatesPanel.tsx` — esportare l'array `templates` e i color/gradient map per riuso
-- File che importano `AllChannelsOverlay` — aggiornare props se necessario
+- `src/components/builder/TemplatesPanel.tsx` — aggiungere campo `category` all'interfaccia e ai dati
+- `src/components/builder/AllChannelsOverlay.tsx` — riscrittura completa con sidebar filtri + griglia 2 colonne + bottoni Preview/Choose
 
-### Risultato
-L'overlay "All widgets" diventa una galleria template visiva e funzionale, coerente con lo stile dello screenshot ma con contenuto utile.
+### Dettagli tecnici
+- Categorie definite come array costante con label e valore
+- Stato filtro gestito con `useState<string>("all")`
+- Filtro "All Templates" mostra tutti, le altre categorie filtrano per match
+- Card più alte con area preview prominente (simile allo screenshot)
+- Bottoni "Preview" (outline) e "Choose" (filled, blu/nero) sotto ogni card
 
