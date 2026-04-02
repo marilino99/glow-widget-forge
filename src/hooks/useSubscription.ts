@@ -76,12 +76,15 @@ export const useSubscription = () => {
     }
   };
 
+  const canCreateWidget = state.widgetCount < state.widgetLimit;
+
   return {
     ...state,
     aiResponseLimit,
     usagePercent,
     isApproachingLimit,
     isAtLimit,
+    canCreateWidget,
     startCheckout,
     refreshSubscription: checkSubscription,
   };

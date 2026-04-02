@@ -126,11 +126,20 @@ serve(async (req) => {
       .eq("conversations.widget_owner_id", userId)
       .gte("created_at", startOfMonth);
 
+    const { count: widgetCount } = await supabaseClient
+      .from("widget_configurations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    const widgetLimit = plan === "pro" ? 10 : plan === "starter" ? 3 : 1;
+
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       plan: plan,
       subscription_end: subscriptionEnd,
       ai_responses_this_month: aiCount ?? 0,
+      widget_count: widgetCount ?? 0,
+      widget_limit: widgetLimit,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

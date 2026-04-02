@@ -1129,7 +1129,7 @@ const Builder = () => {
       {showAllChannels && (
         <AllChannelsOverlay
           onClose={() => setShowAllChannels(false)}
-          isPro={plan === "pro"}
+          canChooseTemplate={canCreateWidget}
           onUpgrade={() => setShowUpgradeOverlay(true)}
           onApplyTemplate={(template) => {
             saveConfig({
