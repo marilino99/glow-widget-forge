@@ -241,6 +241,7 @@ export const useWidgetConfiguration = () => {
           inspire_enabled: updatedConfig.inspireEnabled,
           home_section_order: updatedConfig.homeSectionOrder,
           custom_chips: updatedConfig.customChips.length > 0 ? updatedConfig.customChips : null,
+          voice_enabled: updatedConfig.voiceEnabled,
         }, {
           onConflict: "user_id"
         })
