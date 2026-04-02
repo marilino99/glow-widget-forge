@@ -122,7 +122,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
         <aside className="w-64 shrink-0 p-6 overflow-y-auto">
           {/* Favorites */}
           <button
-            onClick={() => setFilterMode(filterMode === "favorites" ? "all" : "favorites")}
+            onClick={() => { if (filterMode !== "favorites") setFilterMode("favorites"); }}
             className="flex justify-between w-[110%] mb-6 py-4 px-8 rounded-lg text-left text-base font-bold cursor-pointer focus:outline-none transition-colors bg-[hsl(258,60%,52%)] text-white hover:bg-[hsl(258,60%,42%)]"
           >
             <span>FAVORITES</span>
