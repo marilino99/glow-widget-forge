@@ -1,18 +1,26 @@
 
 
-## Piano: Ridurre dimensioni card template
+## Piano: Icona cuore Favorites sulle card template
 
-### Problema
-Le card template attuali sono troppo grandi. Nello screenshot di riferimento (ConvertKit), le card sono più compatte con meno spazio e un layout più denso.
+### Cosa cambia
 
-### Modifiche in `src/components/builder/AllChannelsOverlay.tsx`
+**1. Stato favorites** — Aggiungere `useState<Set<string>>` per tracciare gli ID dei template preferiti. Quando si clicca il cuore, l'ID viene aggiunto/rimosso dal Set.
 
-1. **Griglia**: cambiare `gap-6` a `gap-5` e ridurre `max-w-4xl` a `max-w-3xl`
-2. **Area preview**: cambiare aspect ratio da `aspect-[16/10]` a `aspect-[16/9]` per renderla meno alta
-3. **Card footer**: ridurre padding da `p-4` a `p-3`, ridurre `mb-4` dei bottoni a `mb-3`, e ridurre dimensione testo/spaziatura
-4. **Icona preview**: ridurre da `h-12 w-12` a `h-10 w-10`
-5. **Padding griglia**: ridurre `p-8` a `p-6`
+**2. Icona cuore su hover** — Nell'area preview di ogni card (div con il colore/gradiente), aggiungere un bottone con l'icona `Heart` in alto a destra. Visibile solo su hover del gruppo (`opacity-0 group-hover:opacity-100`), stile simile allo screenshot: sfondo grigio chiaro arrotondato con cuore scuro. Se il template è nei favorites, il cuore è riempito (`fill-current`) e sempre visibile.
 
-### Risultato
-Card più compatte e proporzionate, simili allo screenshot di riferimento ConvertKit.
+**3. Badge Pro/Free spostato** — Il badge Pro/Free attualmente occupa `top-3 right-3`. Il cuore andrà in `top-3 right-3` e il badge Pro/Free si sposta a `top-3 left-3`.
+
+**4. Filtro Favorites** — Il bottone "FAVORITES" nella sidebar filtra i template mostrando solo quelli nel Set. Il contatore mostra `favorites.size`.
+
+**5. Persistenza locale** — I favorites vengono salvati in `localStorage` per mantenerli tra sessioni.
+
+### File coinvolti
+- `src/components/builder/AllChannelsOverlay.tsx` — tutte le modifiche
+
+### Dettagli tecnici
+- `useState<Set<string>>` inizializzato da `localStorage.getItem("widget-template-favorites")`
+- Toggle: crea nuovo Set, add/delete, salva in localStorage
+- Cuore: `<button onClick={toggleFav} className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity ...">`
+- Se è favorito: `opacity-100` sempre (override hover), `Heart` con `fill="currentColor"`
+- Filtro sidebar: quando si clicca FAVORITES, setta `activeFilter` a `"favorites"` (aggiungere come valore possibile)
 
