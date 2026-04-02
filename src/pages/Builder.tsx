@@ -85,7 +85,7 @@ const Builder = () => {
     checkIfAlreadyCompleted();
   }, [isLoading, user, config?.id]);
   const { hasUnread } = useUnreadMessages();
-  const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit } = useSubscription();
+  const { plan, subscriptionEnd, startCheckout, aiResponsesThisMonth, aiResponseLimit, isApproachingLimit, isAtLimit, canCreateWidget } = useSubscription();
   const { 
     productCards: rawProductCards, 
     isLoading: isLoadingCards, 
