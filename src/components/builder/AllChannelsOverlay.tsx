@@ -119,21 +119,21 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
 
       <div className="flex flex-1 overflow-hidden max-w-6xl mx-auto w-full">
         {/* Sidebar */}
-        <aside className="w-56 shrink-0 p-6 overflow-y-auto">
+        <aside className="w-64 shrink-0 p-6 overflow-y-auto">
           {/* Favorites */}
           <button
             onClick={() => setFilterMode(filterMode === "favorites" ? "all" : "favorites")}
-            className="flex justify-between w-full mb-4 py-4 px-6 rounded text-left font-bold cursor-pointer focus:outline-none transition-colors bg-[hsl(258,60%,52%)] text-white hover:bg-[hsl(258,60%,42%)]"
+            className="flex justify-between w-full mb-6 py-4 px-6 rounded-lg text-left font-bold cursor-pointer focus:outline-none transition-colors bg-[hsl(258,60%,52%)] text-white hover:bg-[hsl(258,60%,42%)]"
           >
             <span>FAVORITES</span>
             <span className="text-white/60">{favorites.size}</span>
           </button>
 
           {/* Filter by category */}
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-[hsl(258,60%,52%)]">
             Filter by Category
           </p>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {categories.map((cat) => (
               <label
                 key={cat.value}
