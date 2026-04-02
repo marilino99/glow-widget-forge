@@ -95,7 +95,7 @@ export const templates: WidgetTemplate[] = [
   },
 ];
 
-const colorMap: Record<string, string> = {
+export const colorMap: Record<string, string> = {
   gray: "bg-gray-400",
   blue: "bg-blue-500",
   orange: "bg-orange-500",
