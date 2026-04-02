@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, Lock, MessageSquare } from "lucide-react";
+import { ArrowLeft, Lock, MessageSquare, Heart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +11,15 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { templates, gradientMap, colorMap, type WidgetTemplate } from "./TemplatesPanel";
+import { templates, gradientMap, colorMap, type WidgetTemplate, type TemplateCategory } from "./TemplatesPanel";
+
+const categories: { value: "all" | TemplateCategory; label: string }[] = [
+  { value: "all", label: "All Templates" },
+  { value: "sales", label: "Sales" },
+  { value: "support", label: "Support" },
+  { value: "lead-gen", label: "Lead Generation" },
+  { value: "branding", label: "Branding" },
+];
 
 interface AllChannelsOverlayProps {
   onClose: () => void;
@@ -20,8 +30,14 @@ interface AllChannelsOverlayProps {
 
 const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
+  const [previewTemplate, setPreviewTemplate] = useState<WidgetTemplate | null>(null);
+  const [activeFilter, setActiveFilter] = useState<"all" | TemplateCategory>("all");
 
-  const handleClick = (template: WidgetTemplate) => {
+  const filtered = activeFilter === "all"
+    ? templates
+    : templates.filter((t) => t.category === activeFilter);
+
+  const handleChoose = (template: WidgetTemplate) => {
     if (template.isPro && !isPro) {
       onUpgrade();
       return;
@@ -37,9 +53,6 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
     }
   };
 
-  const freeTemplates = templates.filter((t) => !t.isPro);
-  const proTemplates = templates.filter((t) => t.isPro);
-
   const getCardBg = (template: WidgetTemplate) => {
     if (template.backgroundType === "gradient") {
       return `bg-gradient-to-br ${gradientMap[template.color] || "from-gray-300 to-gray-500"}`;
@@ -47,69 +60,160 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
     return colorMap[template.color] || "bg-gray-400";
   };
 
-  const renderCard = (template: WidgetTemplate, large = false) => (
-    <button
-      key={template.id}
-      onClick={() => handleClick(template)}
-      className={`group relative rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col text-left transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 ${
-        template.isPro && !isPro ? "cursor-pointer" : "cursor-pointer"
-      }`}
-    >
-      <div
-        className={`relative flex items-center justify-center ${large ? "py-14" : "py-10"} ${getCardBg(template)}`}
-      >
-        <MessageSquare className={`${large ? "h-12 w-12" : "h-10 w-10"} text-white/90 drop-shadow-md`} />
-        {template.isPro && !isPro && (
-          <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#8a8fa8] shadow-sm">
-            <Lock className="h-3 w-3" />
-            Pro
-          </span>
-        )}
-        {!template.isPro && (
-          <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
-            Free
-          </span>
-        )}
-      </div>
-      <div className="px-5 py-4 flex-1 flex flex-col">
-        <h3 className="text-base font-semibold text-[#1a1a2e] mb-1">{template.name}</h3>
-        <p className="text-sm text-[#8a8fa8] leading-relaxed line-clamp-2">{template.sayHello}</p>
-      </div>
-    </button>
-  );
-
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col overflow-hidden"
-      style={{
-        background: "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
-      }}
+      className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-background"
     >
-      <div className="flex-1 overflow-y-auto px-12 pb-10 pt-3">
-        <div className="flex items-center mb-4">
-          <button
-            onClick={onClose}
-            className="flex items-center gap-2 rounded-xl border border-[#e0e3ef] bg-white px-5 py-2.5 text-sm font-medium text-[#1a1a2e] transition-colors hover:bg-[#f8f9fc]"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </button>
-          <h1 className="text-3xl font-bold text-[#1a1a2e] ml-16">Templates</h1>
-        </div>
-        <div className="px-16 max-w-5xl mx-auto">
-          {/* Free templates - 2 columns */}
-          <p className="text-sm font-medium text-[#8a8fa8] uppercase tracking-wider mb-3">Free</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {freeTemplates.map((t) => renderCard(t, true))}
+      {/* Header */}
+      <div className="flex items-center px-8 py-5 border-b border-border">
+        <button
+          onClick={onClose}
+          className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </button>
+        <h1 className="flex-1 text-center text-2xl font-bold text-foreground">
+          Choose your template
+        </h1>
+        <div className="w-[88px]" /> {/* spacer to center title */}
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-56 shrink-0 border-r border-border p-6 overflow-y-auto">
+          {/* Favorites */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3">
+              <Heart className="h-4 w-4 text-muted-foreground" />
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Favorites</p>
+                <p className="text-lg font-bold text-foreground">0</p>
+              </div>
+            </div>
           </div>
 
-          {/* Pro templates - 3 columns */}
-          <p className="text-sm font-medium text-[#8a8fa8] uppercase tracking-wider mb-3">Pro</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {proTemplates.map((t) => renderCard(t))}
+          <Separator className="mb-5" />
+
+          {/* Filter by category */}
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Filter by Category
+          </p>
+          <div className="space-y-3">
+            {categories.map((cat) => (
+              <label
+                key={cat.value}
+                className="flex items-center gap-2.5 cursor-pointer group"
+              >
+                <Checkbox
+                  checked={activeFilter === cat.value}
+                  onCheckedChange={() => setActiveFilter(cat.value)}
+                  className="h-4 w-4"
+                />
+                <span className={`text-sm transition-colors ${
+                  activeFilter === cat.value
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground group-hover:text-foreground"
+                }`}>
+                  {cat.label}
+                </span>
+              </label>
+            ))}
           </div>
-        </div>
+        </aside>
+
+        {/* Grid */}
+        <main className="flex-1 overflow-y-auto p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+            {filtered.map((template) => (
+              <div
+                key={template.id}
+                className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                {/* Preview area */}
+                <div className={`relative flex items-center justify-center py-16 ${getCardBg(template)}`}>
+                  <MessageSquare className="h-12 w-12 text-white/90 drop-shadow-md" />
+                  {template.isPro && !isPro ? (
+                    <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm">
+                      <Lock className="h-3 w-3" />
+                      Pro
+                    </span>
+                  ) : (
+                    <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
+                      Free
+                    </span>
+                  )}
+                </div>
+
+                {/* Info + actions */}
+                <div className="px-5 py-4 flex flex-col gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">{template.name}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-1 mt-0.5">
+                      {template.sayHello}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 rounded-full"
+                      onClick={() => setPreviewTemplate(template)}
+                    >
+                      <Eye className="h-3.5 w-3.5 mr-1" />
+                      Preview
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="flex-1 rounded-full"
+                      onClick={() => handleChoose(template)}
+                    >
+                      Choose
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filtered.length === 0 && (
+            <p className="text-center text-muted-foreground mt-16">No templates in this category yet.</p>
+          )}
+        </main>
       </div>
+
+      {/* Preview dialog */}
+      <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
+        <DialogContent className="max-w-md rounded-3xl p-0 overflow-hidden border-0 shadow-xl [&>button]:hidden" overlayClassName="bg-black/10 backdrop-blur-sm">
+          <div className={`flex items-center justify-center py-20 ${previewTemplate ? getCardBg(previewTemplate) : ""}`}>
+            <MessageSquare className="h-16 w-16 text-white/90 drop-shadow-lg" />
+          </div>
+          <div className="px-8 py-6 text-center space-y-2">
+            <h3 className="text-xl font-semibold text-foreground">{previewTemplate?.name}</h3>
+            <p className="text-sm text-muted-foreground">{previewTemplate?.sayHello}</p>
+            <div className="flex gap-2 pt-3">
+              <Button
+                variant="outline"
+                className="flex-1 rounded-full py-5"
+                onClick={() => setPreviewTemplate(null)}
+              >
+                Close
+              </Button>
+              <Button
+                className="flex-1 rounded-full py-5"
+                onClick={() => {
+                  if (previewTemplate) {
+                    handleChoose(previewTemplate);
+                    setPreviewTemplate(null);
+                  }
+                }}
+              >
+                Choose this template
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmation dialog */}
       <Dialog open={!!confirmTemplate} onOpenChange={() => setConfirmTemplate(null)}>

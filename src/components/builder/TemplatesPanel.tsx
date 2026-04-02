@@ -10,6 +10,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+export type TemplateCategory = "sales" | "support" | "lead-gen" | "branding";
+
 export interface WidgetTemplate {
   id: string;
   name: string;
@@ -18,6 +20,7 @@ export interface WidgetTemplate {
   color: string;
   backgroundType: "solid" | "gradient" | "image";
   sayHello: string;
+  category: TemplateCategory;
 }
 
 export const templates: WidgetTemplate[] = [
@@ -29,6 +32,7 @@ export const templates: WidgetTemplate[] = [
     color: "gray",
     backgroundType: "solid",
     sayHello: "Hi there! How can we help?",
+    category: "support",
   },
   {
     id: "ocean-blue",
@@ -38,6 +42,7 @@ export const templates: WidgetTemplate[] = [
     color: "blue",
     backgroundType: "gradient",
     sayHello: "Welcome aboard! 🚀",
+    category: "branding",
   },
   {
     id: "sunset-vibes",
@@ -47,6 +52,7 @@ export const templates: WidgetTemplate[] = [
     color: "orange",
     backgroundType: "gradient",
     sayHello: "Hey! What can we do for you? 🌅",
+    category: "support",
   },
   {
     id: "black-friday",
@@ -56,6 +62,7 @@ export const templates: WidgetTemplate[] = [
     color: "red",
     backgroundType: "solid",
     sayHello: "Don't miss our deals! 🔥",
+    category: "sales",
   },
   {
     id: "luxury-gold",
@@ -65,6 +72,7 @@ export const templates: WidgetTemplate[] = [
     color: "yellow",
     backgroundType: "solid",
     sayHello: "Welcome to our exclusive store ✨",
+    category: "sales",
   },
   {
     id: "nature-green",
@@ -74,6 +82,7 @@ export const templates: WidgetTemplate[] = [
     color: "green",
     backgroundType: "gradient",
     sayHello: "Hello! We're here to help 🌿",
+    category: "branding",
   },
   {
     id: "neon-purple",
@@ -83,6 +92,7 @@ export const templates: WidgetTemplate[] = [
     color: "purple",
     backgroundType: "gradient",
     sayHello: "Hey! Let's chat 💜",
+    category: "lead-gen",
   },
   {
     id: "coral-pink",
@@ -92,9 +102,9 @@ export const templates: WidgetTemplate[] = [
     color: "pink",
     backgroundType: "gradient",
     sayHello: "Hi! Ask us anything 🌸",
+    category: "lead-gen",
   },
 ];
-
 export const colorMap: Record<string, string> = {
   gray: "bg-gray-400",
   blue: "bg-blue-500",
