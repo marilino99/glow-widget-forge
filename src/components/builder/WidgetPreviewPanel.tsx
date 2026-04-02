@@ -521,25 +521,9 @@ const WidgetPreviewPanel = ({
     const greeting = "Welcome! How can I help you?";
 
     setTimeout(() => {
-      // Speak the greeting first
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        setVoiceStatus("processing");
-        const utterance = new SpeechSynthesisUtterance(greeting);
-        const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-        utterance.lang = langMap[language || 'en'] || 'en-US';
-        utterance.rate = 1.0;
-        utterance.onend = () => {
-          // After greeting, start listening
-          startVoiceRecognitionInternal(SpeechRecognition);
-        };
-        utterance.onerror = () => {
-          startVoiceRecognitionInternal(SpeechRecognition);
-        };
-        window.speechSynthesis.speak(utterance);
-      } else {
+      speakWithElevenLabs(greeting, () => {
         startVoiceRecognitionInternal(SpeechRecognition);
-      }
+      });
     }, 500);
   };
 
