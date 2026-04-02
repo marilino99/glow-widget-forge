@@ -20,7 +20,7 @@ export interface WidgetTemplate {
   sayHello: string;
 }
 
-const templates: WidgetTemplate[] = [
+export const templates: WidgetTemplate[] = [
   {
     id: "minimal-light",
     name: "Minimal Light",
@@ -95,7 +95,7 @@ const templates: WidgetTemplate[] = [
   },
 ];
 
-const colorMap: Record<string, string> = {
+export const colorMap: Record<string, string> = {
   gray: "bg-gray-400",
   blue: "bg-blue-500",
   orange: "bg-orange-500",
@@ -106,7 +106,7 @@ const colorMap: Record<string, string> = {
   pink: "bg-pink-500",
 };
 
-const gradientMap: Record<string, string> = {
+export const gradientMap: Record<string, string> = {
   gray: "from-gray-300 to-gray-500",
   blue: "from-blue-400 to-blue-700",
   orange: "from-orange-400 to-red-500",

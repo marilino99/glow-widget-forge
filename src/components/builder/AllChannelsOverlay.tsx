@@ -1,54 +1,82 @@
-import { ArrowLeft, Monitor, MessageSquare } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Lock, MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { templates, gradientMap, colorMap, type WidgetTemplate } from "./TemplatesPanel";
 
 interface AllChannelsOverlayProps {
   onClose: () => void;
+  isPro: boolean;
+  onUpgrade: () => void;
+  onApplyTemplate: (template: WidgetTemplate) => void;
 }
 
-const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
-  const channels = [
-    {
-      type: "featured" as const,
-      title: "Chat widget",
-      description: "Add a floating chat window to your site.",
-      gradient: "linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%)",
-      icon: "💬",
-      enabled: true,
-      comingSoon: false,
-    },
-    {
-      type: "featured" as const,
-      title: "Help page",
-      description: "ChatGPT-style help page, deployed standalone or under a path on your site (/help).",
-      gradient: "linear-gradient(135deg, #fde68a 0%, #fbbf24 100%)",
-      icon: "📖",
-      enabled: false,
-      comingSoon: true,
-    },
-  ];
+const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
+  const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
 
-  const integrations = [
-    {
-      title: "Email",
-      description: "Connect your agent to an email address and let it respond to messages from your customers.",
-      icon: "📧",
-      iconBg: "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
-      comingSoon: true,
-    },
-    {
-      title: "Slack",
-      description: "Connect your agent to Slack, mention it, and have it reply to any message.",
-      icon: "💬",
-      iconBg: "linear-gradient(135deg, #fef9c3 0%, #fde68a 100%)",
-      comingSoon: true,
-    },
-    {
-      title: "WordPress",
-      description: "Use the official plugin for WordPress to add the chat widget to your website.",
-      icon: "🌐",
-      iconBg: "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)",
-      comingSoon: true,
-    },
-  ];
+  const handleClick = (template: WidgetTemplate) => {
+    if (template.isPro && !isPro) {
+      onUpgrade();
+      return;
+    }
+    setConfirmTemplate(template);
+  };
+
+  const handleConfirm = () => {
+    if (confirmTemplate) {
+      onApplyTemplate(confirmTemplate);
+      setConfirmTemplate(null);
+      onClose();
+    }
+  };
+
+  const freeTemplates = templates.filter((t) => !t.isPro);
+  const proTemplates = templates.filter((t) => t.isPro);
+
+  const getCardBg = (template: WidgetTemplate) => {
+    if (template.backgroundType === "gradient") {
+      return `bg-gradient-to-br ${gradientMap[template.color] || "from-gray-300 to-gray-500"}`;
+    }
+    return colorMap[template.color] || "bg-gray-400";
+  };
+
+  const renderCard = (template: WidgetTemplate, large = false) => (
+    <button
+      key={template.id}
+      onClick={() => handleClick(template)}
+      className={`group relative rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col text-left transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 ${
+        template.isPro && !isPro ? "cursor-pointer" : "cursor-pointer"
+      }`}
+    >
+      <div
+        className={`relative flex items-center justify-center ${large ? "py-14" : "py-10"} ${getCardBg(template)}`}
+      >
+        <MessageSquare className={`${large ? "h-12 w-12" : "h-10 w-10"} text-white/90 drop-shadow-md`} />
+        {template.isPro && !isPro && (
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#8a8fa8] shadow-sm">
+            <Lock className="h-3 w-3" />
+            Pro
+          </span>
+        )}
+        {!template.isPro && (
+          <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
+            Free
+          </span>
+        )}
+      </div>
+      <div className="px-5 py-4 flex-1 flex flex-col">
+        <h3 className="text-base font-semibold text-[#1a1a2e] mb-1">{template.name}</h3>
+        <p className="text-sm text-[#8a8fa8] leading-relaxed line-clamp-2">{template.sayHello}</p>
+      </div>
+    </button>
+  );
 
   return (
     <div
@@ -57,7 +85,6 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
         background: "linear-gradient(180deg, #ffffff 0%, #f0f2ff 60%, #e8ecff 100%)",
       }}
     >
-      {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto px-12 pb-10 pt-3">
         <div className="flex items-center mb-4">
           <button
@@ -67,66 +94,51 @@ const AllChannelsOverlay = ({ onClose }: AllChannelsOverlayProps) => {
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
-          <h1 className="text-3xl font-bold text-[#1a1a2e] ml-16">All widgets</h1>
+          <h1 className="text-3xl font-bold text-[#1a1a2e] ml-16">Templates</h1>
         </div>
         <div className="px-16 max-w-5xl mx-auto">
-        {/* Featured channels - 2 columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {channels.map((channel) => (
-            <div
-              key={channel.title}
-              className={`rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col ${channel.comingSoon ? "opacity-60" : ""}`}
-            >
-              <div
-                className="relative flex items-center justify-center py-10"
-                style={{ background: channel.gradient }}
-              >
-                <span className="text-5xl drop-shadow-md">{channel.icon}</span>
-                {channel.enabled && (
-                  <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    Active
-                  </span>
-                )}
-                {channel.comingSoon && (
-                  <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#8a8fa8] shadow-sm">
-                    Coming soon
-                  </span>
-                )}
-              </div>
-              <div className="px-5 py-4 flex-1 flex flex-col">
-                <h3 className="text-base font-semibold text-[#1a1a2e] mb-1.5">{channel.title}</h3>
-                <p className="text-sm text-[#8a8fa8] leading-relaxed">{channel.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+          {/* Free templates - 2 columns */}
+          <p className="text-sm font-medium text-[#8a8fa8] uppercase tracking-wider mb-3">Free</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {freeTemplates.map((t) => renderCard(t, true))}
+          </div>
 
-        {/* Integration channels */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {integrations.map((integration) => (
-            <div
-              key={integration.title}
-              className="rounded-2xl border border-[#e0e3ef] bg-white overflow-hidden flex flex-col opacity-60"
-            >
-              <div
-                className="relative flex items-center justify-center py-10"
-                style={{ background: integration.iconBg }}
-              >
-                <span className="text-5xl drop-shadow-md">{integration.icon}</span>
-                <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-[#8a8fa8] shadow-sm">
-                  Coming soon
-                </span>
-              </div>
-              <div className="px-5 py-4 flex-1 flex flex-col">
-                <h3 className="text-base font-semibold text-[#1a1a2e] mb-1.5">{integration.title}</h3>
-                <p className="text-sm text-[#8a8fa8] leading-relaxed">{integration.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+          {/* Pro templates - 3 columns */}
+          <p className="text-sm font-medium text-[#8a8fa8] uppercase tracking-wider mb-3">Pro</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {proTemplates.map((t) => renderCard(t))}
+          </div>
         </div>
       </div>
+
+      {/* Confirmation dialog */}
+      <Dialog open={!!confirmTemplate} onOpenChange={() => setConfirmTemplate(null)}>
+        <DialogContent className="max-w-sm rounded-3xl p-8 text-center [&>button]:hidden border-0 shadow-xl" overlayClassName="bg-black/10 backdrop-blur-sm">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-xl font-medium text-center text-foreground">
+              Apply "{confirmTemplate?.name}"?
+            </DialogTitle>
+            <DialogDescription className="text-center text-sm text-muted-foreground">
+              This will override your current theme, color, background, and welcome message.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col sm:space-x-0 mt-2">
+            <Button
+              onClick={handleConfirm}
+              className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 py-6 text-base font-normal"
+            >
+              Apply template
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmTemplate(null)}
+              className="w-full rounded-full py-6 text-base font-normal sm:mt-0"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
