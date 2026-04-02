@@ -49,11 +49,30 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
     });
   };
 
-  const filtered = activeFilter === "all"
+  const toggleCategory = (cat: TemplateCategory) => {
+    if (filterMode !== "categories") {
+      setFilterMode("categories");
+      setSelectedCategories(new Set([cat]));
+    } else {
+      setSelectedCategories(prev => {
+        const next = new Set(prev);
+        if (next.has(cat)) next.delete(cat); else next.add(cat);
+        if (next.size === 0) { setFilterMode("all"); return new Set(); }
+        return next;
+      });
+    }
+  };
+
+  const selectAll = () => {
+    setFilterMode("all");
+    setSelectedCategories(new Set());
+  };
+
+  const filtered = filterMode === "all"
     ? templates
-    : activeFilter === "favorites"
+    : filterMode === "favorites"
     ? templates.filter((t) => favorites.has(t.id))
-    : templates.filter((t) => t.category === activeFilter);
+    : templates.filter((t) => selectedCategories.has(t.category));
 
   const handleChoose = (template: WidgetTemplate) => {
     if (template.isPro && !isPro) {
