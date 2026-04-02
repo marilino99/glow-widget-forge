@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Lock, MessageSquare, Heart, Eye } from "lucide-react";
+import { ArrowLeft, Lock, MessageSquare, Heart, Eye, Monitor, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
@@ -13,6 +13,16 @@ import {
 } from "@/components/ui/dialog";
 import { templates, gradientMap, colorMap, type WidgetTemplate, type TemplateCategory } from "./TemplatesPanel";
 
+const colorHexMap: Record<string, string> = {
+  gray: "#9ca3af",
+  blue: "#3b82f6",
+  orange: "#f97316",
+  red: "#dc2626",
+  yellow: "#eab308",
+  green: "#22c55e",
+  purple: "#a855f7",
+  pink: "#ec4899",
+};
 const categories: { value: "all" | TemplateCategory; label: string }[] = [
   { value: "all", label: "All Templates" },
   { value: "sales", label: "Sales" },
