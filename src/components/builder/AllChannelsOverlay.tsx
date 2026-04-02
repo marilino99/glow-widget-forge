@@ -51,6 +51,8 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
 
   const filtered = activeFilter === "all"
     ? templates
+    : activeFilter === "favorites"
+    ? templates.filter((t) => favorites.has(t.id))
     : templates.filter((t) => t.category === activeFilter);
 
   const handleChoose = (template: WidgetTemplate) => {
