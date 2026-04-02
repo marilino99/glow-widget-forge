@@ -803,10 +803,12 @@ const Builder = () => {
                   onUpdateFaqItem={updateFaqItem}
                   onDeleteFaqItem={deleteFaqItem}
                   onReorderFaqItems={reorderFaqItems}
-                  reportBugsEnabled={reportBugsEnabled}
-                  onReportBugsChange={setReportBugsEnabled}
-                  shareFeedbackEnabled={shareFeedbackEnabled}
-                  onShareFeedbackChange={setShareFeedbackEnabled}
+                   voiceEnabled={config.voiceEnabled}
+                   onVoiceChange={(enabled) => saveConfig({ voiceEnabled: enabled })}
+                   reportBugsEnabled={reportBugsEnabled}
+                   onReportBugsChange={setReportBugsEnabled}
+                   shareFeedbackEnabled={shareFeedbackEnabled}
+                   onShareFeedbackChange={setShareFeedbackEnabled}
                   forwardEmail={config.forwardEmail}
                   onForwardEmailChange={(email: string) => updateConfig({ forwardEmail: email })}
                   customLinks={customLinks}
