@@ -20,7 +20,7 @@ export interface WidgetTemplate {
   sayHello: string;
 }
 
-const templates: WidgetTemplate[] = [
+export const templates: WidgetTemplate[] = [
   {
     id: "minimal-light",
     name: "Minimal Light",
