@@ -43,6 +43,8 @@ export const useSubscription = () => {
         subscribed: data.subscribed || false,
         subscriptionEnd: data.subscription_end || null,
         aiResponsesThisMonth: data.ai_responses_this_month ?? 0,
+        widgetCount: data.widget_count ?? 0,
+        widgetLimit: data.widget_limit ?? 1,
         isLoading: false,
       });
     } catch (err) {
