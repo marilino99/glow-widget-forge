@@ -41,6 +41,7 @@ interface AllChannelsOverlayProps {
 const AllChannelsOverlay = ({ onClose, canChooseTemplate, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<WidgetTemplate | null>(null);
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const [filterMode, setFilterMode] = useState<"all" | "favorites" | "categories">("all");
   const [selectedCategories, setSelectedCategories] = useState<Set<TemplateCategory>>(new Set());
   const [favorites, setFavorites] = useState<Set<string>>(() => {
