@@ -1,0 +1,1 @@
+UPDATE public.widget_configurations SET voice_enabled = true WHERE user_id = (SELECT id FROM auth.users WHERE email = 'a@gmail.com' LIMIT 1);
