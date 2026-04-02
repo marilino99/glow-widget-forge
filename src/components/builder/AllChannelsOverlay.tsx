@@ -116,16 +116,16 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
         </aside>
 
         {/* Grid */}
-        <main className="flex-1 overflow-y-auto p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl">
             {filtered.map((template) => (
               <div
                 key={template.id}
                 className="group rounded-2xl border border-border bg-card overflow-hidden flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
               >
                 {/* Preview area */}
-                <div className={`relative flex items-center justify-center aspect-[16/10] w-full rounded-t ${getCardBg(template)}`}>
-                  <MessageSquare className="h-12 w-12 text-white/90 drop-shadow-md" />
+                <div className={`relative flex items-center justify-center aspect-[16/9] w-full rounded-t ${getCardBg(template)}`}>
+                  <MessageSquare className="h-10 w-10 text-white/90 drop-shadow-md" />
                   {template.isPro && !isPro ? (
                     <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm">
                       <Lock className="h-3 w-3" />
@@ -138,9 +138,9 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                   )}
                 </div>
 
-                <div className="border-t border-border bg-muted/50 p-4">
+                <div className="border-t border-border bg-muted/50 p-3">
                   <h4 className="font-semibold mb-1 text-foreground break-all leading-normal">{template.name}</h4>
-                  <p className="text-sm text-muted-foreground line-clamp-1 mb-4">{template.sayHello}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-1 mb-3">{template.sayHello}</p>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => setPreviewTemplate(template)}
