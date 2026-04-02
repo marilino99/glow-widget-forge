@@ -130,29 +130,33 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
           </button>
 
           {/* Filter by category */}
-          <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-[hsl(258,60%,52%)]">
-            Filter by Category
-          </p>
-          <div className="space-y-4">
-            {categories.map((cat) => (
-              <label
-                key={cat.value}
-                className="flex items-center gap-2.5 cursor-pointer group"
-              >
-                <Checkbox
-                  checked={cat.value === "all" ? filterMode === "all" : selectedCategories.has(cat.value)}
-                  onCheckedChange={() => cat.value === "all" ? selectAll() : toggleCategory(cat.value)}
-                  className="h-4 w-4 border-[hsl(258,60%,52%)] data-[state=checked]:bg-[hsl(258,60%,52%)] data-[state=checked]:text-white"
-                />
-                <span className={`text-base transition-colors ${
-                  (cat.value === "all" ? filterMode === "all" : selectedCategories.has(cat.value))
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground group-hover:text-foreground"
-                }`}>
-                  {cat.label}
-                </span>
-              </label>
-            ))}
+          <div className="rounded-lg border border-border bg-card overflow-hidden">
+            <div className="px-5 py-3 border-b border-border">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[hsl(258,60%,52%)]">
+                Filter by Category
+              </p>
+            </div>
+            <div className="px-5 py-4 space-y-4">
+              {categories.map((cat) => (
+                <label
+                  key={cat.value}
+                  className="flex items-center gap-2.5 cursor-pointer group"
+                >
+                  <Checkbox
+                    checked={cat.value === "all" ? filterMode === "all" : selectedCategories.has(cat.value)}
+                    onCheckedChange={() => cat.value === "all" ? selectAll() : toggleCategory(cat.value)}
+                    className="h-4 w-4 border-[hsl(258,60%,52%)] data-[state=checked]:bg-[hsl(258,60%,52%)] data-[state=checked]:text-white"
+                  />
+                  <span className={`text-base transition-colors ${
+                    (cat.value === "all" ? filterMode === "all" : selectedCategories.has(cat.value))
+                      ? "font-medium text-foreground"
+                      : "text-muted-foreground group-hover:text-foreground"
+                  }`}>
+                    {cat.label}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
         </aside>
 
