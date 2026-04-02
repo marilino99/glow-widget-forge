@@ -122,7 +122,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                 <Checkbox
                   checked={activeFilter === cat.value}
                   onCheckedChange={() => setActiveFilter(cat.value)}
-                  className="h-4 w-4"
+                  className="h-4 w-4 border-[hsl(258,60%,52%)] data-[state=checked]:bg-[hsl(258,60%,52%)] data-[state=checked]:text-white"
                 />
                 <span className={`text-sm transition-colors ${
                   activeFilter === cat.value
