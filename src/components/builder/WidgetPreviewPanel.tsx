@@ -2814,6 +2814,7 @@ const WidgetPreviewPanel = ({
                       <p id="wj-cname" className={`text-xs ${isSolidMode ? "text-white/60" : widgetSubtext}`}>{contactName}</p>
                       <p id="wj-chelp" className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
                     </div>
+                    {voiceEnabled && (
                     <button 
                       onClick={(e) => { e.stopPropagation(); startVoiceSession(); }}
                       className="flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-transform hover:scale-105"
@@ -2826,6 +2827,7 @@ const WidgetPreviewPanel = ({
                         <rect x="17.5" y="9" width="2.5" height="6" rx="1.25" fill="white" opacity="0.9"/>
                       </svg>
                     </button>
+                    )}
                     </div>
                     <Button 
                       className={`mt-3 w-full ${buttonClass}`} 
