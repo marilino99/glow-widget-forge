@@ -138,9 +138,9 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                   )}
                 </div>
 
-                <div className="border-t border-border bg-muted/50 p-4">
+                <div className="border-t border-border bg-muted/50 p-3">
                   <h4 className="font-semibold mb-1 text-foreground break-all leading-normal">{template.name}</h4>
-                  <p className="text-sm text-muted-foreground line-clamp-1 mb-4">{template.sayHello}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-1 mb-3">{template.sayHello}</p>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => setPreviewTemplate(template)}
