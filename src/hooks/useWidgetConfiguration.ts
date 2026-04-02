@@ -48,6 +48,7 @@ export interface WidgetConfiguration {
   inspireEnabled: boolean;
   homeSectionOrder: string[];
   customChips: string[];
+  voiceEnabled: boolean;
 }
 
 const defaultConfig: WidgetConfiguration = {
