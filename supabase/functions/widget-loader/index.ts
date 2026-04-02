@@ -2017,20 +2017,9 @@ Deno.serve(async (req) => {
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
       startPolling();
-      // AI speaks first with a greeting, then starts listening
+      // AI speaks first with a greeting using ElevenLabs TTS
       var greeting = 'Welcome! How can I help you?';
-      if (w.speechSynthesis) {
-        w.speechSynthesis.cancel();
-        var utter = new SpeechSynthesisUtterance(greeting);
-        var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-        utter.lang = langMap[lang] || 'en-US';
-        utter.rate = 1.0;
-        utter.onend = function() { startVoiceRecognition(); };
-        utter.onerror = function() { startVoiceRecognition(); };
-        w.speechSynthesis.speak(utter);
-      } else {
-        setTimeout(function() { startVoiceRecognition(); }, 500);
-      }
+      speakWithElevenLabs(greeting, function() { startVoiceRecognition(); });
     }
 
     function closeVoiceView() {
