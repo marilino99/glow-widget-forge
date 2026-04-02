@@ -106,7 +106,7 @@ export const colorMap: Record<string, string> = {
   pink: "bg-pink-500",
 };
 
-const gradientMap: Record<string, string> = {
+export const gradientMap: Record<string, string> = {
   gray: "from-gray-300 to-gray-500",
   blue: "from-blue-400 to-blue-700",
   orange: "from-orange-400 to-red-500",
