@@ -1,19 +1,37 @@
 
 
-## Piano: Allineare sidebar al design di riferimento
+## Piano: Limite widget per piano con conteggio
 
-### Problema
-La sidebar attuale (Favorites + Filter by Category) appare troppo stretta e compressa rispetto al riferimento (screenshot 1). Il bottone Favorites e le label non hanno le proporzioni giuste.
+### Contesto
+Dalla pagina pricing:
+- **Free**: 1 widget
+- **Starter (Plus)**: 3 widget  
+- **Business (Pro)**: 10 widget
 
-### Modifiche in `src/components/builder/AllChannelsOverlay.tsx`
+Attualmente esiste una sola riga `widget_configurations` per utente. Per supportare il limite, il sistema deve contare quanti widget ha l'utente e bloccare la creazione di nuovi se il limite del piano è raggiunto.
 
-1. **Sidebar width**: aumentare da `w-56` a `w-64` per dare più respiro
-2. **Bottone Favorites**: aggiungere `rounded-lg` (invece di `rounded`) e aumentare leggermente il padding per matchare il riferimento
-3. **Label "Filter by Category"**: aumentare dimensione da `text-[11px]` a `text-xs`, aggiungere colore viola `text-[hsl(258,60%,52%)]` come nel riferimento, e aumentare `mb-3` a `mb-4`
-4. **Checkbox labels**: aumentare da `text-sm` a `text-base` per matchare la dimensione del riferimento
-5. **Spacing categorie**: aumentare `space-y-3` a `space-y-4` per più aria tra le voci
-6. **Gap tra Favorites e Filter**: aggiungere più margine sotto Favorites (`mb-4` → `mb-6`)
+### Modifiche
 
-### File coinvolto
+**1. `check-subscription` edge function** — Aggiungere il conteggio dei widget dell'utente nella risposta, insieme al limite del piano:
+- Query: `widget_configurations` count dove `user_id = userId`
+- Aggiungere `widget_count` e `widget_limit` alla risposta JSON
+- Limiti: free=1, starter=3, pro=10
+
+**2. `useSubscription` hook** — Esporre `widgetCount` e `widgetLimit` dal risultato della edge function. Aggiungere `canCreateWidget` (boolean: `widgetCount < widgetLimit`).
+
+**3. `Builder.tsx`** — Passare `canCreateWidget` e `plan` alla `AllChannelsOverlay` invece del semplice `isPro`. La logica diventa: se `!canCreateWidget`, mostra upgrade overlay.
+
+**4. `AllChannelsOverlay.tsx`** — Cambiare la prop `isPro` in qualcosa come `canChooseTemplate` (boolean). In `handleChoose`, se `!canChooseTemplate` → chiama `onUpgrade()`.
+
+### Risultato
+- Utente Free con 1 widget: bloccato, deve fare upgrade
+- Utente Starter con <3 widget: può scegliere
+- Utente Starter con 3 widget: bloccato
+- Utente Business con <10 widget: può scegliere
+
+### File coinvolti
+- `supabase/functions/check-subscription/index.ts`
+- `src/hooks/useSubscription.ts`
+- `src/pages/Builder.tsx`
 - `src/components/builder/AllChannelsOverlay.tsx`
 
