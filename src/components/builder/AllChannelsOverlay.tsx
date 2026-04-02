@@ -79,7 +79,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
         <div className="w-[88px]" /> {/* spacer to center title */}
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden max-w-6xl mx-auto w-full">
         {/* Sidebar */}
         <aside className="w-56 shrink-0 border-r border-border p-6 overflow-y-auto">
           {/* Favorites */}
