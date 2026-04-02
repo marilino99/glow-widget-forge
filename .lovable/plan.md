@@ -1,18 +1,16 @@
 
 
-## Piano: Sostituire la favicon Lovable con il logo Widjet
+## Piano: Voce ElevenLabs nel widget live
 
 ### Problema
-Il file `public/favicon.png` è ancora il logo di Lovable. Tutti i riferimenti in `index.html` puntano a `/favicon.png`, quindi Google e i browser mostrano l'icona sbagliata.
+Il codice del `widget-loader` contiene già l'integrazione ElevenLabs TTS (`speakWithElevenLabs` alla riga 2421, chiamata alla riga 2022 per il greeting e alla riga 2501 per le risposte AI). Tuttavia la versione **deployata** dell'edge function potrebbe non essere aggiornata — il widget live sta ancora usando il fallback Web Speech API (voce robotica).
 
 ### Soluzione
+Nessuna modifica al codice necessaria. Serve solo un **redeploy** della edge function `widget-loader` per aggiornare la versione live con il codice che già include ElevenLabs TTS.
 
-1. **Copiare `src/assets/widjet-icon.png` → `public/favicon.png`** — sovrascrivere il file esistente con l'icona Widjet
-2. Nessuna modifica a `index.html` necessaria — i riferimenti `<link rel="icon" href="/favicon.png">` e `<link rel="apple-touch-icon" href="/favicon.png">` restano corretti
-
-### File coinvolto
-- `public/favicon.png` — sostituito con `widjet-icon.png`
+### Azione
+- Deploy della edge function `widget-loader`
 
 ### Risultato
-Dopo il deploy, browser e Google mostreranno il logo Widjet al posto di quello Lovable. I browser con cache potrebbero impiegare qualche giorno ad aggiornarsi.
+Dopo il deploy, il widget live userà la voce ElevenLabs (Laura, modello `eleven_turbo_v2_5`) identica a quella del preview nel builder.
 
