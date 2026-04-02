@@ -31,10 +31,28 @@ interface AllChannelsOverlayProps {
 const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<WidgetTemplate | null>(null);
-  const [activeFilter, setActiveFilter] = useState<"all" | TemplateCategory>("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "favorites" | TemplateCategory>("all");
+  const [favorites, setFavorites] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem("widget-template-favorites");
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  const toggleFavorite = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      localStorage.setItem("widget-template-favorites", JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   const filtered = activeFilter === "all"
     ? templates
+    : activeFilter === "favorites"
+    ? templates.filter((t) => favorites.has(t.id))
     : templates.filter((t) => t.category === activeFilter);
 
   const handleChoose = (template: WidgetTemplate) => {
@@ -83,9 +101,16 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
         {/* Sidebar */}
         <aside className="w-56 shrink-0 p-6 overflow-y-auto">
           {/* Favorites */}
-          <button className="flex justify-between w-full mb-4 py-4 px-6 rounded text-left bg-primary text-primary-foreground font-bold cursor-pointer hover:bg-primary/80 focus:bg-primary/80 focus:outline-none">
+          <button
+            onClick={() => setActiveFilter(activeFilter === "favorites" ? "all" : "favorites")}
+            className={`flex justify-between w-full mb-4 py-4 px-6 rounded text-left font-bold cursor-pointer focus:outline-none transition-colors ${
+              activeFilter === "favorites"
+                ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                : "bg-muted text-foreground hover:bg-muted/80"
+            }`}
+          >
             <span>FAVORITES</span>
-            <span className="text-primary-foreground/60">0</span>
+            <span className={activeFilter === "favorites" ? "text-primary-foreground/60" : "text-muted-foreground"}>{favorites.size}</span>
           </button>
 
           {/* Filter by category */}
@@ -127,15 +152,23 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                 <div className={`relative flex items-center justify-center aspect-[16/9] w-full rounded-t ${getCardBg(template)}`}>
                   <MessageSquare className="h-10 w-10 text-white/90 drop-shadow-md" />
                   {template.isPro && !isPro ? (
-                    <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm">
+                    <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-muted-foreground shadow-sm">
                       <Lock className="h-3 w-3" />
                       Pro
                     </span>
                   ) : (
-                    <span className="absolute top-3 right-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
+                    <span className="absolute top-3 left-3 inline-flex items-center rounded-full bg-white/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-emerald-600 shadow-sm">
                       Free
                     </span>
                   )}
+                  <button
+                    onClick={(e) => toggleFavorite(template.id, e)}
+                    className={`absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-200 hover:bg-white ${
+                      favorites.has(template.id) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    }`}
+                  >
+                    <Heart className={`h-4 w-4 transition-colors ${favorites.has(template.id) ? "text-red-500 fill-red-500" : "text-muted-foreground"}`} />
+                  </button>
                 </div>
 
                 <div className="border-t border-border bg-muted/50 p-3">
