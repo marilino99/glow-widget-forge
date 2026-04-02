@@ -248,6 +248,7 @@ const WidgetPreviewPanel = ({
   const voiceMutedRef = useRef(false);
   const lastSpokenTextRef = useRef<string>("");
   const noSpeechRetryRef = useRef(0);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const MAX_NO_SPEECH_RETRIES = 3;
 
   // Sync refs with state so callbacks always see current values
