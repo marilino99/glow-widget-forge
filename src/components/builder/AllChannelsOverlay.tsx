@@ -218,38 +218,102 @@ const AllChannelsOverlay = ({ onClose, canChooseTemplate, onUpgrade, onApplyTemp
         </main>
       </div>
 
-      {/* Preview dialog */}
-      <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
-        <DialogContent className="max-w-md rounded-3xl p-0 overflow-hidden border-0 shadow-xl [&>button]:hidden" overlayClassName="bg-black/10 backdrop-blur-sm">
-          <div className={`flex items-center justify-center py-20 ${previewTemplate ? getCardBg(previewTemplate) : ""}`}>
-            <MessageSquare className="h-16 w-16 text-white/90 drop-shadow-lg" />
-          </div>
-          <div className="px-8 py-6 text-center space-y-2">
-            <h3 className="text-xl font-semibold text-foreground">{previewTemplate?.name}</h3>
-            <p className="text-sm text-muted-foreground">{previewTemplate?.sayHello}</p>
-            <div className="flex gap-2 pt-3">
-              <Button
-                variant="outline"
-                className="flex-1 rounded-full py-5"
-                onClick={() => setPreviewTemplate(null)}
+      {/* Fullscreen Preview */}
+      {previewTemplate && (
+        <div className="fixed inset-0 z-[60] flex flex-col bg-background">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <button
+              onClick={() => setPreviewTemplate(null)}
+              className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {previewTemplate.name}
+            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={(e) => toggleFavorite(previewTemplate.id, e)}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card transition-colors hover:bg-muted"
               >
-                Close
-              </Button>
-              <Button
-                className="flex-1 rounded-full py-5"
+                <Heart className={`h-4 w-4 ${favorites.has(previewTemplate.id) ? "text-red-500 fill-red-500" : "text-muted-foreground"}`} />
+              </button>
+              <div className="flex rounded-lg border border-border bg-card overflow-hidden">
+                <button
+                  onClick={() => setPreviewDevice("desktop")}
+                  className={`flex h-9 w-9 items-center justify-center transition-colors ${previewDevice === "desktop" ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted"}`}
+                >
+                  <Monitor className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setPreviewDevice("mobile")}
+                  className={`flex h-9 w-9 items-center justify-center transition-colors ${previewDevice === "mobile" ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted"}`}
+                >
+                  <Smartphone className="h-4 w-4" />
+                </button>
+              </div>
+              <button
                 onClick={() => {
-                  if (previewTemplate) {
-                    handleChoose(previewTemplate);
-                    setPreviewTemplate(null);
-                  }
+                  handleChoose(previewTemplate);
+                  setPreviewTemplate(null);
                 }}
+                className="inline-flex items-center justify-center h-9 px-5 rounded-lg bg-foreground text-background text-sm font-semibold transition-colors hover:bg-foreground/90"
               >
-                Choose this template
-              </Button>
+                Choose
+              </button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          {/* Body */}
+          <div className="flex-1 flex items-center justify-center bg-[#f5f5f5] p-8 overflow-hidden">
+            <div
+              className="relative bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 h-full"
+              style={{ width: previewDevice === "desktop" ? "100%" : 375, maxWidth: previewDevice === "desktop" ? 900 : 375 }}
+            >
+              {/* Browser bar */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-[#f0f0f0] border-b border-gray-200">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                  <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+                  <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+                </div>
+                <div className="flex-1 mx-4">
+                  <div className="bg-white rounded-md px-3 py-1.5 text-xs text-gray-400 text-center border border-gray-200">
+                    example.com
+                  </div>
+                </div>
+              </div>
+
+              {/* Mockup content */}
+              <div className="relative p-8 h-[calc(100%-44px)]">
+                <div className="space-y-4">
+                  <div className="h-6 bg-gray-100 rounded w-1/3" />
+                  <div className="h-4 bg-gray-100 rounded w-2/3" />
+                  <div className="h-4 bg-gray-100 rounded w-1/2" />
+                  <div className="h-32 bg-gray-50 rounded-lg mt-6" />
+                  <div className="h-4 bg-gray-100 rounded w-3/4" />
+                  <div className="h-4 bg-gray-100 rounded w-1/2" />
+                </div>
+
+                {/* Widget bubble */}
+                <div className="absolute bottom-6 right-6 flex flex-col items-end gap-3">
+                  <div
+                    className="rounded-2xl rounded-br-sm px-4 py-3 text-white text-sm shadow-lg max-w-[220px]"
+                    style={{ backgroundColor: colorHexMap[previewTemplate.color] || "#6b7280" }}
+                  >
+                    {previewTemplate.sayHello}
+                  </div>
+                  <div
+                    className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+                    style={{ backgroundColor: colorHexMap[previewTemplate.color] || "#6b7280" }}
+                  >
+                    <MessageSquare className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation dialog */}
       <Dialog open={!!confirmTemplate} onOpenChange={() => setConfirmTemplate(null)}>
