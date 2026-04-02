@@ -605,9 +605,8 @@ const WidgetPreviewPanel = ({
     } else if (voiceRecognitionRef.current) {
       try { voiceRecognitionRef.current.stop(); } catch(_) {}
       // Also stop TTS if speaking
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopElevenLabsAudio();
+      if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
       setVoiceMuted(true);
       setVoiceStatus("connecting");
     }
