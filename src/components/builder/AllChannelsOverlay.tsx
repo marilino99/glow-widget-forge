@@ -31,7 +31,8 @@ interface AllChannelsOverlayProps {
 const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<WidgetTemplate | null>(null);
-  const [activeFilter, setActiveFilter] = useState<"all" | "favorites" | TemplateCategory>("all");
+  const [filterMode, setFilterMode] = useState<"all" | "favorites" | "categories">("all");
+  const [selectedCategories, setSelectedCategories] = useState<Set<TemplateCategory>>(new Set());
   const [favorites, setFavorites] = useState<Set<string>>(() => {
     try {
       const saved = localStorage.getItem("widget-template-favorites");
