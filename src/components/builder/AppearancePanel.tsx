@@ -180,6 +180,8 @@ const AppearancePanel = ({
   onUpdateFaqItem,
   onDeleteFaqItem,
   onReorderFaqItems,
+  voiceEnabled,
+  onVoiceChange,
   reportBugsEnabled,
   onReportBugsChange,
   shareFeedbackEnabled,
