@@ -2407,48 +2407,98 @@ Deno.serve(async (req) => {
       if (el) el.remove();
     }
 
+    // ElevenLabs TTS helpers
+    var currentAudio = null;
+
+    function stopElevenLabsAudio() {
+      if (currentAudio) {
+        try { currentAudio.pause(); currentAudio.currentTime = 0; } catch(e) {}
+        if (currentAudio._objectUrl) { try { URL.revokeObjectURL(currentAudio._objectUrl); } catch(e) {} }
+        currentAudio = null;
+      }
+    }
+
+    function speakWithElevenLabs(text, onDone) {
+      if (!text) { if (onDone) onDone(); return; }
+      stopElevenLabsAudio();
+      // Pause mic while speaking
+      if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
+      if (voiceView) voiceView.classList.remove('listening');
+      if (voiceStatus) voiceStatus.textContent = 'Speaking...';
+
+      var clean = text.replace(/[*_#]/g, '').replace(/\x60/g, '').split('[').join('').split(']').join('').split(String.fromCharCode(10)).join('. ');
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', u + '/functions/v1/elevenlabs-tts', true);
+      xhr.responseType = 'blob';
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function() {
+        if (xhr.status === 200 && xhr.response) {
+          var audioUrl = URL.createObjectURL(xhr.response);
+          var audio = new Audio(audioUrl);
+          audio._objectUrl = audioUrl;
+          currentAudio = audio;
+          audio.onended = function() {
+            stopElevenLabsAudio();
+            if (onDone) { onDone(); }
+            else { resumeListening(); }
+          };
+          audio.onerror = function() {
+            stopElevenLabsAudio();
+            if (onDone) { onDone(); }
+            else { resumeListening(); }
+          };
+          audio.play().catch(function() {
+            stopElevenLabsAudio();
+            // Fallback to Web Speech API if autoplay blocked
+            fallbackSpeak(clean, onDone);
+          });
+        } else {
+          // Fallback to Web Speech API on error
+          fallbackSpeak(clean, onDone);
+        }
+      };
+      xhr.onerror = function() {
+        fallbackSpeak(clean, onDone);
+      };
+      xhr.send(JSON.stringify({ text: clean, widgetId: id }));
+    }
+
+    function fallbackSpeak(text, onDone) {
+      if (w.speechSynthesis) {
+        w.speechSynthesis.cancel();
+        var utter = new SpeechSynthesisUtterance(text);
+        var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+        utter.lang = langMap[lang] || 'en-US';
+        utter.rate = 1.0;
+        utter.onend = function() { if (onDone) { onDone(); } else { resumeListening(); } };
+        utter.onerror = function() { if (onDone) { onDone(); } else { resumeListening(); } };
+        w.speechSynthesis.speak(utter);
+      } else {
+        if (onDone) onDone();
+        else resumeListening();
+      }
+    }
+
+    function resumeListening() {
+      if (voiceView && voiceView.classList.contains('open') && !voiceMuted) {
+        setTimeout(function() {
+          if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
+            noSpeechRetries = 0;
+            try { voiceRecognition.start(); } catch(e) {}
+            voiceView.classList.add('listening');
+            if (voiceStatus) voiceStatus.textContent = 'Listening...';
+          }
+        }, 300);
+      }
+    }
+
     function speakText(text) {
-      if (!w.speechSynthesis || !voiceView || !voiceView.classList.contains('open') || voiceMuted) return;
+      if (!voiceView || !voiceView.classList.contains('open') || voiceMuted) return;
       // Prevent repeating the same text
       if (text === lastSpokenText) return;
       lastSpokenText = text;
-      // Cancel any ongoing speech first
-      w.speechSynthesis.cancel();
-      // Strip markdown chars
-      var clean = text.replace(/[*_#]/g, '').replace(/\x60/g, '').split('[').join('').split(']').join('').split(String.fromCharCode(10)).join('. ');
-      // Pause mic while speaking
-      if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
-      voiceView.classList.remove('listening');
-      if (voiceStatus) voiceStatus.textContent = 'Speaking...';
-      var utter = new SpeechSynthesisUtterance(clean);
-      var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-      utter.lang = langMap[lang] || 'en-US';
-      utter.rate = 1.0;
-      utter.onend = function() {
-        if (voiceView.classList.contains('open') && !voiceMuted) {
-          setTimeout(function() {
-            if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
-              noSpeechRetries = 0;
-              try { voiceRecognition.start(); } catch(e) {}
-              voiceView.classList.add('listening');
-              if (voiceStatus) voiceStatus.textContent = 'Listening...';
-            }
-          }, 300);
-        }
-      };
-      utter.onerror = function() {
-        if (voiceView.classList.contains('open') && !voiceMuted) {
-          setTimeout(function() {
-            if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
-              noSpeechRetries = 0;
-              try { voiceRecognition.start(); } catch(e) {}
-              voiceView.classList.add('listening');
-              if (voiceStatus) voiceStatus.textContent = 'Listening...';
-            }
-          }, 300);
-        }
-      };
-      w.speechSynthesis.speak(utter);
+      speakWithElevenLabs(text, null);
     }
 
     function pollMessages() {
