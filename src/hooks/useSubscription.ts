@@ -23,6 +23,8 @@ export const useSubscription = () => {
     subscribed: false,
     subscriptionEnd: null,
     aiResponsesThisMonth: 0,
+    widgetCount: 0,
+    widgetLimit: 1,
     isLoading: true,
   });
 
