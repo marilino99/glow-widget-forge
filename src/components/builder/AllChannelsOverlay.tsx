@@ -144,7 +144,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                   onCheckedChange={() => cat.value === "all" ? selectAll() : toggleCategory(cat.value)}
                   className="h-4 w-4 border-[hsl(258,60%,52%)] data-[state=checked]:bg-[hsl(258,60%,52%)] data-[state=checked]:text-white"
                 />
-                <span className={`text-sm transition-colors ${
+                <span className={`text-base transition-colors ${
                   (cat.value === "all" ? filterMode === "all" : selectedCategories.has(cat.value))
                     ? "font-medium text-foreground"
                     : "text-muted-foreground group-hover:text-foreground"
