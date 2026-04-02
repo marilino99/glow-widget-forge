@@ -1573,6 +1573,18 @@ const AppearancePanel = ({
                 );
               })}
 
+              {/* Voice */}
+              <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <AudioWaveform className="h-4 w-4 text-violet-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Voice</p>
+                    <p className="text-[11px] text-muted-foreground">AI voice conversations</p>
+                  </div>
+                </div>
+                <Switch checked={voiceEnabled} onCheckedChange={onVoiceChange} />
+              </div>
+
               {/* Report Bugs */}
               <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
                 <div className="flex items-center gap-2.5">
