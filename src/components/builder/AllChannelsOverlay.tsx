@@ -76,7 +76,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
     : templates.filter((t) => selectedCategories.has(t.category));
 
   const handleChoose = (template: WidgetTemplate) => {
-    if (template.isPro && !isPro) {
+    if (!isPro) {
       onUpgrade();
       return;
     }
