@@ -138,31 +138,22 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                   )}
                 </div>
 
-                {/* Info + actions */}
-                <div className="px-5 py-4 flex flex-col gap-3">
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground">{template.name}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-1 mt-0.5">
-                      {template.sayHello}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 rounded-full"
+                <div className="border-t border-border bg-muted/50 p-4">
+                  <h4 className="font-semibold mb-1 text-foreground break-all leading-normal">{template.name}</h4>
+                  <p className="text-sm text-muted-foreground line-clamp-1 mb-4">{template.sayHello}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
                       onClick={() => setPreviewTemplate(template)}
+                      className="inline-flex items-center justify-center text-sm font-semibold h-10 rounded bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.12] transition-colors"
                     >
-                      <Eye className="h-3.5 w-3.5 mr-1" />
                       Preview
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="flex-1 rounded-full"
+                    </button>
+                    <button
                       onClick={() => handleChoose(template)}
+                      className="inline-flex items-center justify-center text-sm font-semibold h-10 rounded bg-foreground text-background hover:bg-foreground/90 transition-colors"
                     >
                       Choose
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>
