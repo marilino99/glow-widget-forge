@@ -591,9 +591,8 @@ const WidgetPreviewPanel = ({
       try { ref.stop(); } catch(_) {}
     }
     // Cancel any ongoing TTS
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    stopElevenLabsAudio();
+    if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
     setShowVoiceView(false);
     setShowChat(true);
   };
