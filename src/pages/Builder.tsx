@@ -566,6 +566,8 @@ const Builder = () => {
             onDeleteInstagramPost={deleteInstagramPost}
             onReorderInstagramPosts={reorderInstagramPosts}
             onLocalLinksChange={handleLocalLinksChange}
+            voiceEnabled={config.voiceEnabled}
+            onVoiceChange={(enabled) => saveConfig({ voiceEnabled: enabled })}
             reportBugsEnabled={reportBugsEnabled}
             onReportBugsChange={setReportBugsEnabled}
             shareFeedbackEnabled={shareFeedbackEnabled}
@@ -801,10 +803,12 @@ const Builder = () => {
                   onUpdateFaqItem={updateFaqItem}
                   onDeleteFaqItem={deleteFaqItem}
                   onReorderFaqItems={reorderFaqItems}
-                  reportBugsEnabled={reportBugsEnabled}
-                  onReportBugsChange={setReportBugsEnabled}
-                  shareFeedbackEnabled={shareFeedbackEnabled}
-                  onShareFeedbackChange={setShareFeedbackEnabled}
+                   voiceEnabled={config.voiceEnabled}
+                   onVoiceChange={(enabled) => saveConfig({ voiceEnabled: enabled })}
+                   reportBugsEnabled={reportBugsEnabled}
+                   onReportBugsChange={setReportBugsEnabled}
+                   shareFeedbackEnabled={shareFeedbackEnabled}
+                   onShareFeedbackChange={setShareFeedbackEnabled}
                   forwardEmail={config.forwardEmail}
                   onForwardEmailChange={(email: string) => updateConfig({ forwardEmail: email })}
                   customLinks={customLinks}
@@ -905,8 +909,9 @@ const Builder = () => {
                   whatsappNumber={config.whatsappNumber}
                   customLinks={customLinks}
                   localPreviewLinks={localPreviewLinks}
-                  reportBugsEnabled={reportBugsEnabled}
-                  shareFeedbackEnabled={shareFeedbackEnabled}
+                   reportBugsEnabled={reportBugsEnabled}
+                   shareFeedbackEnabled={shareFeedbackEnabled}
+                   voiceEnabled={config.voiceEnabled}
                   widgetId={config.id || undefined}
                   googleBusiness={googleBusiness}
                   customCss={livePreviewCss ?? config.customCss}

@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight, ChevronDown, Eye, Clock, Search, MapPin, Film } from "lucide-react";
+import { ImagePlus, Upload, Loader2, Sparkles, Check, Pipette, MessageCircle, Bug, Star, HelpCircle, Link2, ShoppingBag, Plus, Trash2, GripVertical, ExternalLink, Instagram, ChevronRight, ChevronDown, Eye, Clock, Search, MapPin, Film, AudioWaveform } from "lucide-react";
 import { GoogleBusinessData } from "@/components/builder/GoogleReviewsPanel";
 import { FaqItemData } from "@/types/faqItem";
 import { CustomLinkData } from "@/types/customLink";
@@ -73,6 +73,8 @@ interface AppearancePanelProps {
   onUpdateFaqItem: (id: string, updates: Partial<FaqItemData>) => void;
   onDeleteFaqItem: (id: string) => void;
   onReorderFaqItems: (fromIndex: number, toIndex: number) => void;
+  voiceEnabled: boolean;
+  onVoiceChange: (enabled: boolean) => void;
   reportBugsEnabled: boolean;
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
@@ -178,6 +180,8 @@ const AppearancePanel = ({
   onUpdateFaqItem,
   onDeleteFaqItem,
   onReorderFaqItems,
+  voiceEnabled,
+  onVoiceChange,
   reportBugsEnabled,
   onReportBugsChange,
   shareFeedbackEnabled,
@@ -1568,6 +1572,18 @@ const AppearancePanel = ({
                   </div>
                 );
               })}
+
+              {/* Voice */}
+              <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <AudioWaveform className="h-4 w-4 text-violet-500" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Voice</p>
+                    <p className="text-[11px] text-muted-foreground">AI voice conversations</p>
+                  </div>
+                </div>
+                <Switch checked={voiceEnabled} onCheckedChange={onVoiceChange} />
+              </div>
 
               {/* Report Bugs */}
               <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">

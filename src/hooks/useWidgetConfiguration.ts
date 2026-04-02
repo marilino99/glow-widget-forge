@@ -48,6 +48,7 @@ export interface WidgetConfiguration {
   inspireEnabled: boolean;
   homeSectionOrder: string[];
   customChips: string[];
+  voiceEnabled: boolean;
 }
 
 const defaultConfig: WidgetConfiguration = {
@@ -95,6 +96,7 @@ const defaultConfig: WidgetConfiguration = {
   inspireEnabled: false,
   homeSectionOrder: ["product-carousel", "faq", "custom-links", "inspire-me"],
   customChips: [],
+  voiceEnabled: false,
 };
 
 export const useWidgetConfiguration = () => {
@@ -169,6 +171,7 @@ export const useWidgetConfiguration = () => {
             inspireEnabled: (data as any).inspire_enabled ?? false,
             homeSectionOrder: (data as any).home_section_order || defaultConfig.homeSectionOrder,
             customChips: (data as any).custom_chips || [],
+            voiceEnabled: (data as any).voice_enabled ?? false,
           });
         }
       } catch (error) {
@@ -238,6 +241,7 @@ export const useWidgetConfiguration = () => {
           inspire_enabled: updatedConfig.inspireEnabled,
           home_section_order: updatedConfig.homeSectionOrder,
           custom_chips: updatedConfig.customChips.length > 0 ? updatedConfig.customChips : null,
+          voice_enabled: updatedConfig.voiceEnabled,
         }, {
           onConflict: "user_id"
         })

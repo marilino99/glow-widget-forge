@@ -120,6 +120,8 @@ interface BuilderSidebarProps {
   onDeleteInstagramPost: (postId: string) => void;
   onReorderInstagramPosts: (fromIndex: number, toIndex: number) => void;
   onLocalLinksChange?: (links: LocalLink[]) => void;
+  voiceEnabled: boolean;
+  onVoiceChange: (enabled: boolean) => void;
   reportBugsEnabled: boolean;
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
@@ -211,6 +213,8 @@ const BuilderSidebar = ({
   onDeleteInstagramPost,
   onReorderInstagramPosts,
   onLocalLinksChange,
+  voiceEnabled,
+  onVoiceChange,
   reportBugsEnabled,
   onReportBugsChange,
   shareFeedbackEnabled,

@@ -688,6 +688,7 @@ export type Database = {
           show_branding: boolean
           updated_at: string
           user_id: string
+          voice_enabled: boolean
           voice_instructions: string | null
           website_url: string | null
           whatsapp_country_code: string | null
@@ -738,6 +739,7 @@ export type Database = {
           show_branding?: boolean
           updated_at?: string
           user_id: string
+          voice_enabled?: boolean
           voice_instructions?: string | null
           website_url?: string | null
           whatsapp_country_code?: string | null
@@ -788,6 +790,7 @@ export type Database = {
           show_branding?: boolean
           updated_at?: string
           user_id?: string
+          voice_enabled?: boolean
           voice_instructions?: string | null
           website_url?: string | null
           whatsapp_country_code?: string | null
