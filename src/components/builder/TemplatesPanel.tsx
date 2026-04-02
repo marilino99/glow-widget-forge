@@ -10,6 +10,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+export type TemplateCategory = "sales" | "support" | "lead-gen" | "branding";
+
 export interface WidgetTemplate {
   id: string;
   name: string;
@@ -18,6 +20,7 @@ export interface WidgetTemplate {
   color: string;
   backgroundType: "solid" | "gradient" | "image";
   sayHello: string;
+  category: TemplateCategory;
 }
 
 export const templates: WidgetTemplate[] = [
