@@ -41,6 +41,7 @@ interface WidgetPreviewPanelProps {
   localPreviewLinks?: { id: string; name: string; url: string }[];
   reportBugsEnabled?: boolean;
   shareFeedbackEnabled?: boolean;
+  voiceEnabled?: boolean;
   widgetId?: string;
   googleBusiness?: GoogleBusinessData | null;
   customCss?: string;
