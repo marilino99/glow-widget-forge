@@ -179,7 +179,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
                   </button>
                 </div>
 
-                <div className="border-t border-border bg-muted/50 p-3">
+                <div className="border-t border-border bg-[#f7f7f7] p-3">
                   <h4 className="font-semibold mb-3 text-foreground break-all leading-normal">{template.name}</h4>
                   
                   <div className="grid grid-cols-2 gap-4">
