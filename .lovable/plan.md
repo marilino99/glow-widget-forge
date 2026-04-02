@@ -1,30 +1,19 @@
 
 
-## Piano: Multi-select categorie con logica "All Templates"
+## Piano: Allineare sidebar al design di riferimento
 
-### Logica
-- Cambiare `activeFilter` da singolo valore a `Set<TemplateCategory>` per le categorie, più un booleano/flag per "all" e "favorites"
-- Se clicco "Sales", "Support", "Lead Generation" → tutti e tre selezionati, filtro mostra template di tutte e tre le categorie
-- Se clicco "All Templates" → deseleziona tutte le altre categorie, rimane solo "All Templates"
-- Se "All Templates" è attivo e clicco una categoria specifica → "All Templates" si deseleziona, rimane solo quella categoria
-- Se deselezioni l'ultima categoria rimasta → torna automaticamente a "All Templates"
+### Problema
+La sidebar attuale (Favorites + Filter by Category) appare troppo stretta e compressa rispetto al riferimento (screenshot 1). Il bottone Favorites e le label non hanno le proporzioni giuste.
 
 ### Modifiche in `src/components/builder/AllChannelsOverlay.tsx`
 
-**1. Stato** — Sostituire `activeFilter: "all" | "favorites" | TemplateCategory` con:
-- `filterMode: "all" | "favorites" | "categories"` 
-- `selectedCategories: Set<TemplateCategory>`
+1. **Sidebar width**: aumentare da `w-56` a `w-64` per dare più respiro
+2. **Bottone Favorites**: aggiungere `rounded-lg` (invece di `rounded`) e aumentare leggermente il padding per matchare il riferimento
+3. **Label "Filter by Category"**: aumentare dimensione da `text-[11px]` a `text-xs`, aggiungere colore viola `text-[hsl(258,60%,52%)]` come nel riferimento, e aumentare `mb-3` a `mb-4`
+4. **Checkbox labels**: aumentare da `text-sm` a `text-base` per matchare la dimensione del riferimento
+5. **Spacing categorie**: aumentare `space-y-3` a `space-y-4` per più aria tra le voci
+6. **Gap tra Favorites e Filter**: aggiungere più margine sotto Favorites (`mb-4` → `mb-6`)
 
-**2. Logica toggle categoria** — Quando clicco una categoria:
-- Se `filterMode` è `"all"` o `"favorites"`: passa a `"categories"`, set contiene solo quella categoria
-- Se `filterMode` è `"categories"`: toggle la categoria nel set. Se il set diventa vuoto, torna a `"all"`
-
-**3. Logica "All Templates"** — Quando clicco "All Templates": `filterMode = "all"`, svuota `selectedCategories`
-
-**4. Checkbox checked** — "All Templates" checked se `filterMode === "all"`. Categorie specifiche checked se presenti nel `selectedCategories` set
-
-**5. Filtro template** — Se `filterMode === "all"`: mostra tutti. Se `"favorites"`: filtra per favorites. Se `"categories"`: filtra `t.category in selectedCategories`
-
-### File coinvolti
+### File coinvolto
 - `src/components/builder/AllChannelsOverlay.tsx`
 
