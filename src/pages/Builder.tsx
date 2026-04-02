@@ -909,8 +909,9 @@ const Builder = () => {
                   whatsappNumber={config.whatsappNumber}
                   customLinks={customLinks}
                   localPreviewLinks={localPreviewLinks}
-                  reportBugsEnabled={reportBugsEnabled}
-                  shareFeedbackEnabled={shareFeedbackEnabled}
+                   reportBugsEnabled={reportBugsEnabled}
+                   shareFeedbackEnabled={shareFeedbackEnabled}
+                   voiceEnabled={config.voiceEnabled}
                   widgetId={config.id || undefined}
                   googleBusiness={googleBusiness}
                   customCss={livePreviewCss ?? config.customCss}
