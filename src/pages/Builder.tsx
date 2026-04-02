@@ -566,6 +566,8 @@ const Builder = () => {
             onDeleteInstagramPost={deleteInstagramPost}
             onReorderInstagramPosts={reorderInstagramPosts}
             onLocalLinksChange={handleLocalLinksChange}
+            voiceEnabled={config.voiceEnabled}
+            onVoiceChange={(enabled) => saveConfig({ voiceEnabled: enabled })}
             reportBugsEnabled={reportBugsEnabled}
             onReportBugsChange={setReportBugsEnabled}
             shareFeedbackEnabled={shareFeedbackEnabled}
