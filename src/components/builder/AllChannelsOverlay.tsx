@@ -123,7 +123,7 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
           {/* Favorites */}
           <button
             onClick={() => setFilterMode(filterMode === "favorites" ? "all" : "favorites")}
-            className="flex justify-between w-full mb-6 py-4 px-6 rounded-lg text-left font-bold cursor-pointer focus:outline-none transition-colors bg-[hsl(258,60%,52%)] text-white hover:bg-[hsl(258,60%,42%)]"
+            className="flex justify-between w-full mb-6 py-5 px-7 rounded-lg text-left text-base font-bold cursor-pointer focus:outline-none transition-colors bg-[hsl(258,60%,52%)] text-white hover:bg-[hsl(258,60%,42%)]"
           >
             <span>FAVORITES</span>
             <span className="text-white/60">{favorites.size}</span>
