@@ -73,6 +73,8 @@ interface AppearancePanelProps {
   onUpdateFaqItem: (id: string, updates: Partial<FaqItemData>) => void;
   onDeleteFaqItem: (id: string) => void;
   onReorderFaqItems: (fromIndex: number, toIndex: number) => void;
+  voiceEnabled: boolean;
+  onVoiceChange: (enabled: boolean) => void;
   reportBugsEnabled: boolean;
   onReportBugsChange: (enabled: boolean) => void;
   shareFeedbackEnabled: boolean;
