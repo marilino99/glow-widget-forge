@@ -1,37 +1,44 @@
 
 
-## Piano: Limite widget per piano con conteggio
+## Piano: Pagina Preview fullscreen per template
 
-### Contesto
-Dalla pagina pricing:
-- **Free**: 1 widget
-- **Starter (Plus)**: 3 widget  
-- **Business (Pro)**: 10 widget
+### Cosa si vuole
+Quando l'utente clicca "Preview" su una card template, invece del dialog attuale, si apre una pagina fullscreen con:
+- **Header** in alto: nome template a sinistra, icona cuore + toggle device (desktop/mobile) + bottone "CHOOSE" a destra (come nello screenshot di riferimento)
+- **Body**: sfondo grigio chiaro (`#f5f5f5`) con un sito mockup al centro e il widget del template sovrapposto in basso a destra
 
-Attualmente esiste una sola riga `widget_configurations` per utente. Per supportare il limite, il sistema deve contare quanti widget ha l'utente e bloccare la creazione di nuovi se il limite del piano è raggiunto.
+### Modifiche in `src/components/builder/AllChannelsOverlay.tsx`
 
-### Modifiche
+1. **Sostituire il Dialog di preview** con una vista fullscreen condizionale (simile alla overlay stessa)
+2. Quando `previewTemplate` è settato, renderizzare un `div fixed inset-0 z-[60]` che copre tutto:
+   - **Header**: bordo inferiore, contiene:
+     - Bottone back (freccia + nome template)
+     - A destra: icona Heart (toggle favorite), toggle Desktop/Mobile, bottone "CHOOSE" nero
+   - **Body**: sfondo `bg-[#f5f5f5]`, al centro un mockup browser (rettangolo bianco con barra indirizzi finta) che simula un sito web generico
+   - **Widget preview**: in basso a destra del mockup, un widget stilizzato con i colori/tema del template selezionato (bolla chat con il `sayHello` del template e il colore corrispondente)
 
-**1. `check-subscription` edge function** — Aggiungere il conteggio dei widget dell'utente nella risposta, insieme al limite del piano:
-- Query: `widget_configurations` count dove `user_id = userId`
-- Aggiungere `widget_count` e `widget_limit` alla risposta JSON
-- Limiti: free=1, starter=3, pro=10
+3. **Device toggle**: stato `previewDevice` ("desktop" | "mobile") che cambia la larghezza del mockup (desktop: largo, mobile: ~375px centrato)
 
-**2. `useSubscription` hook** — Esporre `widgetCount` e `widgetLimit` dal risultato della edge function. Aggiungere `canCreateWidget` (boolean: `widgetCount < widgetLimit`).
+4. **Bottone CHOOSE**: chiama `handleChoose(previewTemplate)` esistente
 
-**3. `Builder.tsx`** — Passare `canCreateWidget` e `plan` alla `AllChannelsOverlay` invece del semplice `isPro`. La logica diventa: se `!canCreateWidget`, mostra upgrade overlay.
+### Struttura UI del preview
 
-**4. `AllChannelsOverlay.tsx`** — Cambiare la prop `isPro` in qualcosa come `canChooseTemplate` (boolean). In `handleChoose`, se `!canChooseTemplate` → chiama `onUpgrade()`.
+```text
+┌─────────────────────────────────────────────────┐
+│  < Template Name        ♡  📱 💻  OPEN ↗  CHOOSE│
+├─────────────────────────────────────────────────┤
+│                                                 │
+│         ┌──────────────────────────┐            │
+│         │  ● ● ●   example.com    │            │
+│         │                         │            │
+│         │   (mockup website)      │            │
+│         │                         │            │
+│         │                    [💬] │            │
+│         └──────────────────────────┘            │
+│                                                 │
+└─────────────────────────────────────────────────┘
+```
 
-### Risultato
-- Utente Free con 1 widget: bloccato, deve fare upgrade
-- Utente Starter con <3 widget: può scegliere
-- Utente Starter con 3 widget: bloccato
-- Utente Business con <10 widget: può scegliere
-
-### File coinvolti
-- `supabase/functions/check-subscription/index.ts`
-- `src/hooks/useSubscription.ts`
-- `src/pages/Builder.tsx`
-- `src/components/builder/AllChannelsOverlay.tsx`
+### File coinvolto
+- `src/components/builder/AllChannelsOverlay.tsx` — rimuovere il Dialog preview, aggiungere la vista fullscreen con mockup
 
