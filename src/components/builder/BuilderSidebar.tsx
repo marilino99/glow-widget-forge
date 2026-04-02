@@ -213,6 +213,8 @@ const BuilderSidebar = ({
   onDeleteInstagramPost,
   onReorderInstagramPosts,
   onLocalLinksChange,
+  voiceEnabled,
+  onVoiceChange,
   reportBugsEnabled,
   onReportBugsChange,
   shareFeedbackEnabled,
