@@ -101,9 +101,16 @@ const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllC
         {/* Sidebar */}
         <aside className="w-56 shrink-0 p-6 overflow-y-auto">
           {/* Favorites */}
-          <button className="flex justify-between w-full mb-4 py-4 px-6 rounded text-left bg-primary text-primary-foreground font-bold cursor-pointer hover:bg-primary/80 focus:bg-primary/80 focus:outline-none">
+          <button
+            onClick={() => setActiveFilter(activeFilter === "favorites" ? "all" : "favorites")}
+            className={`flex justify-between w-full mb-4 py-4 px-6 rounded text-left font-bold cursor-pointer focus:outline-none transition-colors ${
+              activeFilter === "favorites"
+                ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                : "bg-muted text-foreground hover:bg-muted/80"
+            }`}
+          >
             <span>FAVORITES</span>
-            <span className="text-primary-foreground/60">0</span>
+            <span className={activeFilter === "favorites" ? "text-primary-foreground/60" : "text-muted-foreground"}>{favorites.size}</span>
           </button>
 
           {/* Filter by category */}
