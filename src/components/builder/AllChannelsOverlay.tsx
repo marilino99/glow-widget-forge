@@ -31,7 +31,23 @@ interface AllChannelsOverlayProps {
 const AllChannelsOverlay = ({ onClose, isPro, onUpgrade, onApplyTemplate }: AllChannelsOverlayProps) => {
   const [confirmTemplate, setConfirmTemplate] = useState<WidgetTemplate | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<WidgetTemplate | null>(null);
-  const [activeFilter, setActiveFilter] = useState<"all" | TemplateCategory>("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "favorites" | TemplateCategory>("all");
+  const [favorites, setFavorites] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem("widget-template-favorites");
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  const toggleFavorite = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      localStorage.setItem("widget-template-favorites", JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   const filtered = activeFilter === "all"
     ? templates
