@@ -63,6 +63,7 @@ export const templates: WidgetTemplate[] = [
     backgroundType: "solid",
     sayHello: "Don't miss our deals! 🔥",
     category: "sales",
+  },
 ];
 export const colorMap: Record<string, string> = {
   gray: "bg-gray-400",
