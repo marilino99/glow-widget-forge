@@ -1,36 +1,38 @@
 
 
-## Piano: Blob 3D liquido e cromato
+## Piano: Blob metallico pulsante con morphing fluido
 
-### Cosa cambia
-Migliorare il `VoiceBlob3D` esistente per ottenere un effetto **metallo liquido cromato** con movimenti più fluidi e organici.
+### Differenze dal video vs attuale
+Il video mostra un blob metallico su **sfondo nero** che:
+- Ha deformazioni molto più **ampie e fluide** — il blob cambia forma drasticamente, non solo piccole ondulazioni
+- **Pulsa** — si espande e contrae ritmicamente
+- Superficie altamente **riflettente/speculare** con riflessi che si muovono
+- Movimenti di morphing **lenti e pesanti** — effetto viscoso marcato
 
-### Modifiche al fragment shader
-- Sostituire il gradiente arancio piatto con un **environment map riflettente** simulato via shader (cubemap fake con colori ambiente)
-- Aggiungere **riflessi Fresnel** più pronunciati — i bordi della sfera riflettono più luce, dando l'effetto cromato
-- Calcolare una **normal perturbata** dal noise per riflessi che si muovono con la deformazione
-- Palette: toni metallici argento/grigio con riflessi arancio del brand (#FF8C42) come accento caldo
+### Modifiche a `VoiceBlob3D.tsx`
 
-### Modifiche al vertex shader
-- Aggiungere un **4° livello di noise** a frequenza molto bassa per movimenti lenti e "pesanti" — effetto liquido viscoso
-- Smoothare le transizioni tra stati con un lerp più lento (delta * 1.5 invece di delta * 3)
-- Aumentare la risoluzione della sfera da 128 a 256 segmenti per superficie più liscia
+**Sfondo nero**: Cambiare il Canvas background da trasparente a `#000000`
 
-### Dettagli tecnici
-**File**: `src/components/builder/VoiceBlob3D.tsx` (unico file da modificare)
+**Vertex shader — morphing più aggressivo**:
+- Aumentare l'ampiezza del noise layer 0 (da 1.4 a 2.0+) per deformazioni molto più ampie
+- Aggiungere una **pulsazione sinusoidale** globale: `sin(uTime * 0.5) * 0.15` che espande/contrae l'intera sfera ritmicamente
+- Ridurre le frequenze del noise per movimenti più larghi e lenti (0.3 invece di 0.4, 0.8 invece di 1.2)
+- Mantenere i layer di dettaglio fine per la texture superficiale
 
-Fragment shader nuovo:
-- Calcolo `reflect` direction dalla normal perturbata e view direction
-- Matcap-style shading: mappa la normal a colori metallici (grigio chiaro → grigio scuro con riflessi)
-- Fresnel edge glow con tinta arancio sottile
-- Specular highlight mobile basato su `uTime`
+**Fragment shader — riflessi più intensi**:
+- Aumentare la riflessività dell'environment map (mix factor da 0.6 a 0.8)
+- Environment map più contrastata: bande luminose più forti, più variazione
+- Specular highlights più brillanti e ampi
+- Fresnel più pronunciato per bordi ultra-luminosi
 
-Vertex shader:
-- Noise aggiuntivo a frequenza 0.4 con peso 0.7 per ondulazioni grandi e lente
-- Passare `vViewPosition` al fragment per calcolo riflessi
+**Animazione**:
+- Aumentare i target di intensità per ogni stato (listening: 0.25, processing: 0.45)
+- Rotazione leggermente più veloce per far muovere i riflessi
+- Aggiungere leggero "breathing" scale con `sin(uTime)`
 
-Nessuna dipendenza aggiuntiva — tutto via shader custom GLSL esistente.
+### File coinvolto
+`src/components/builder/VoiceBlob3D.tsx` — unico file
 
-### Risultato atteso
-Un blob che sembra **mercurio liquido** / cromo fuso, con riflessi che scivolano sulla superficie mentre si deforma organicamente. Movimento più lento e viscoso, meno "rumoroso".
+### Risultato
+Un blob che sembra mercurio liquido che fluttua nel buio, con morphing ampio e pulsazioni ritmiche, molto più vicino al video di riferimento.
 
