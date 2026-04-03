@@ -1,44 +1,39 @@
 
 
-## Piano: Pagina Preview fullscreen per template
+## Piano: Blob 3D con React Three Fiber
 
-### Cosa si vuole
-Quando l'utente clicca "Preview" su una card template, invece del dialog attuale, si apre una pagina fullscreen con:
-- **Header** in alto: nome template a sinistra, icona cuore + toggle device (desktop/mobile) + bottone "CHOOSE" a destra (come nello screenshot di riferimento)
-- **Body**: sfondo grigio chiaro (`#f5f5f5`) con un sito mockup al centro e il widget del template sovrapposto in basso a destra
+### Situazione attuale
+Il blob vocale attuale è fatto con SVG animati (3 path con `<animate>`) — è piatto, 2D, e poco impressionante.
 
-### Modifiche in `src/components/builder/AllChannelsOverlay.tsx`
+### Soluzione
+Creare un componente `VoiceBlob3D` usando **@react-three/fiber** + **@react-three/drei** che renderizza una sfera 3D deformata con shader personalizzati, simile ai blob che si vedono su Siri/ChatGPT voice mode.
 
-1. **Sostituire il Dialog di preview** con una vista fullscreen condizionale (simile alla overlay stessa)
-2. Quando `previewTemplate` è settato, renderizzare un `div fixed inset-0 z-[60]` che copre tutto:
-   - **Header**: bordo inferiore, contiene:
-     - Bottone back (freccia + nome template)
-     - A destra: icona Heart (toggle favorite), toggle Desktop/Mobile, bottone "CHOOSE" nero
-   - **Body**: sfondo `bg-[#f5f5f5]`, al centro un mockup browser (rettangolo bianco con barra indirizzi finta) che simula un sito web generico
-   - **Widget preview**: in basso a destra del mockup, un widget stilizzato con i colori/tema del template selezionato (bolla chat con il `sayHello` del template e il colore corrispondente)
+### Come funziona
+- Una `SphereGeometry` con vertex shader che deforma i vertici usando **noise** (simplex/perlin) basato sul tempo
+- Il blob pulsa e si muove organicamente
+- Gradiente di colore arancio (come l'attuale) applicato via fragment shader
+- Lo stato `voiceStatus` (connecting/listening/processing) controlla l'intensità dell'animazione:
+  - **connecting**: movimento lento e piccolo
+  - **listening**: movimento medio, reattivo
+  - **processing**: movimento più intenso e veloce
 
-3. **Device toggle**: stato `previewDevice` ("desktop" | "mobile") che cambia la larghezza del mockup (desktop: largo, mobile: ~375px centrato)
+### Modifiche
 
-4. **Bottone CHOOSE**: chiama `handleChoose(previewTemplate)` esistente
+1. **Installare dipendenze**: `@react-three/fiber@^8.18` + `@react-three/drei@^9.122.0` + `three@^0.160`
 
-### Struttura UI del preview
+2. **Nuovo file `src/components/builder/VoiceBlob3D.tsx`**:
+   - Componente con `<Canvas>` di R3F
+   - Sfera con custom shader material (vertex displacement con noise)
+   - Colori gradient arancio (#FF8C42 → #FF6B35)
+   - Props: `status` ("connecting" | "listening" | "processing"), `muted` (boolean)
+   - Animazione fluida con `useFrame`
 
-```text
-┌─────────────────────────────────────────────────┐
-│  < Template Name        ♡  📱 💻  OPEN ↗  CHOOSE│
-├─────────────────────────────────────────────────┤
-│                                                 │
-│         ┌──────────────────────────┐            │
-│         │  ● ● ●   example.com    │            │
-│         │                         │            │
-│         │   (mockup website)      │            │
-│         │                         │            │
-│         │                    [💬] │            │
-│         └──────────────────────────┘            │
-│                                                 │
-└─────────────────────────────────────────────────┘
-```
+3. **Aggiornare `WidgetPreviewPanel.tsx`** (righe 3117-3158):
+   - Sostituire il blocco SVG con `<VoiceBlob3D status={voiceStatus} muted={voiceMuted} />`
+   - Mantenere stesso contenitore (160x160)
 
-### File coinvolto
-- `src/components/builder/AllChannelsOverlay.tsx` — rimuovere il Dialog preview, aggiungere la vista fullscreen con mockup
+### File coinvolti
+- `package.json` — nuove dipendenze
+- `src/components/builder/VoiceBlob3D.tsx` — nuovo componente
+- `src/components/builder/WidgetPreviewPanel.tsx` — sostituire SVG con componente 3D
 
