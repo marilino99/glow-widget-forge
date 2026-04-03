@@ -3115,49 +3115,7 @@ const WidgetPreviewPanel = ({
                   </div>
 
                   <div className="flex-1 flex flex-col items-center justify-center gap-6">
-                    <div className="relative" style={{ width: 160, height: 160 }}>
-                      <svg viewBox="0 0 200 200" className="w-full h-full" style={{ filter: 'url(#wj-preview-goo)' }}>
-                        <defs>
-                          <filter id="wj-preview-goo">
-                            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-                            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
-                          </filter>
-                          <radialGradient id="wj-preview-grad1" cx="30%" cy="30%">
-                            <stop offset="0%" stopColor="#FF8C42" />
-                            <stop offset="100%" stopColor="#FF6B35" />
-                          </radialGradient>
-                          <radialGradient id="wj-preview-grad2" cx="70%" cy="40%">
-                            <stop offset="0%" stopColor="#FF6B35" />
-                            <stop offset="100%" stopColor="#E85D26" />
-                          </radialGradient>
-                          <radialGradient id="wj-preview-grad3" cx="50%" cy="60%">
-                            <stop offset="0%" stopColor="#FF9A5C" />
-                            <stop offset="100%" stopColor="#FF7043" />
-                          </radialGradient>
-                        </defs>
-                        <path fill="url(#wj-preview-grad1)" opacity="0.9">
-                          <animate attributeName="d" dur="4s" repeatCount="indefinite" values="
-                            M100,40 C130,40 160,60 160,100 C160,140 130,160 100,160 C70,160 40,140 40,100 C40,60 70,40 100,40Z;
-                            M100,35 C140,45 165,65 155,105 C145,145 120,165 90,155 C60,145 35,125 45,85 C55,45 60,25 100,35Z;
-                            M100,40 C130,40 160,60 160,100 C160,140 130,160 100,160 C70,160 40,140 40,100 C40,60 70,40 100,40Z
-                          " />
-                        </path>
-                        <path fill="url(#wj-preview-grad2)" opacity="0.8">
-                          <animate attributeName="d" dur="5s" repeatCount="indefinite" values="
-                            M105,45 C135,50 155,70 150,105 C145,140 125,155 95,150 C65,145 45,125 50,90 C55,55 75,40 105,45Z;
-                            M95,42 C125,38 158,58 158,98 C158,138 128,162 98,158 C68,154 38,138 42,98 C46,58 65,46 95,42Z;
-                            M105,45 C135,50 155,70 150,105 C145,140 125,155 95,150 C65,145 45,125 50,90 C55,55 75,40 105,45Z
-                          " />
-                        </path>
-                        <path fill="url(#wj-preview-grad3)" opacity="0.7">
-                          <animate attributeName="d" dur="6s" repeatCount="indefinite" values="
-                            M100,48 C128,48 152,68 148,100 C144,132 124,152 96,148 C68,144 48,124 52,96 C56,68 72,48 100,48Z;
-                            M104,44 C136,52 152,72 144,104 C136,136 116,156 88,148 C60,140 44,116 52,88 C60,60 72,36 104,44Z;
-                            M100,48 C128,48 152,68 148,100 C144,132 124,152 96,148 C68,144 48,124 52,96 C56,68 72,48 100,48Z
-                          " />
-                        </path>
-                      </svg>
-                    </div>
+                    <VoiceBlob3D status={voiceStatus as 'connecting' | 'listening' | 'processing'} muted={voiceMuted} />
                     <div className="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)' }}>
                       {voiceStatus === "connecting" ? "Connecting..." : voiceStatus === "processing" ? "Processing..." : "Listening..."}
                     </div>
