@@ -1,39 +1,36 @@
 
 
-## Piano: Blob 3D con React Three Fiber
+## Piano: Blob 3D liquido e cromato
 
-### Situazione attuale
-Il blob vocale attuale è fatto con SVG animati (3 path con `<animate>`) — è piatto, 2D, e poco impressionante.
+### Cosa cambia
+Migliorare il `VoiceBlob3D` esistente per ottenere un effetto **metallo liquido cromato** con movimenti più fluidi e organici.
 
-### Soluzione
-Creare un componente `VoiceBlob3D` usando **@react-three/fiber** + **@react-three/drei** che renderizza una sfera 3D deformata con shader personalizzati, simile ai blob che si vedono su Siri/ChatGPT voice mode.
+### Modifiche al fragment shader
+- Sostituire il gradiente arancio piatto con un **environment map riflettente** simulato via shader (cubemap fake con colori ambiente)
+- Aggiungere **riflessi Fresnel** più pronunciati — i bordi della sfera riflettono più luce, dando l'effetto cromato
+- Calcolare una **normal perturbata** dal noise per riflessi che si muovono con la deformazione
+- Palette: toni metallici argento/grigio con riflessi arancio del brand (#FF8C42) come accento caldo
 
-### Come funziona
-- Una `SphereGeometry` con vertex shader che deforma i vertici usando **noise** (simplex/perlin) basato sul tempo
-- Il blob pulsa e si muove organicamente
-- Gradiente di colore arancio (come l'attuale) applicato via fragment shader
-- Lo stato `voiceStatus` (connecting/listening/processing) controlla l'intensità dell'animazione:
-  - **connecting**: movimento lento e piccolo
-  - **listening**: movimento medio, reattivo
-  - **processing**: movimento più intenso e veloce
+### Modifiche al vertex shader
+- Aggiungere un **4° livello di noise** a frequenza molto bassa per movimenti lenti e "pesanti" — effetto liquido viscoso
+- Smoothare le transizioni tra stati con un lerp più lento (delta * 1.5 invece di delta * 3)
+- Aumentare la risoluzione della sfera da 128 a 256 segmenti per superficie più liscia
 
-### Modifiche
+### Dettagli tecnici
+**File**: `src/components/builder/VoiceBlob3D.tsx` (unico file da modificare)
 
-1. **Installare dipendenze**: `@react-three/fiber@^8.18` + `@react-three/drei@^9.122.0` + `three@^0.160`
+Fragment shader nuovo:
+- Calcolo `reflect` direction dalla normal perturbata e view direction
+- Matcap-style shading: mappa la normal a colori metallici (grigio chiaro → grigio scuro con riflessi)
+- Fresnel edge glow con tinta arancio sottile
+- Specular highlight mobile basato su `uTime`
 
-2. **Nuovo file `src/components/builder/VoiceBlob3D.tsx`**:
-   - Componente con `<Canvas>` di R3F
-   - Sfera con custom shader material (vertex displacement con noise)
-   - Colori gradient arancio (#FF8C42 → #FF6B35)
-   - Props: `status` ("connecting" | "listening" | "processing"), `muted` (boolean)
-   - Animazione fluida con `useFrame`
+Vertex shader:
+- Noise aggiuntivo a frequenza 0.4 con peso 0.7 per ondulazioni grandi e lente
+- Passare `vViewPosition` al fragment per calcolo riflessi
 
-3. **Aggiornare `WidgetPreviewPanel.tsx`** (righe 3117-3158):
-   - Sostituire il blocco SVG con `<VoiceBlob3D status={voiceStatus} muted={voiceMuted} />`
-   - Mantenere stesso contenitore (160x160)
+Nessuna dipendenza aggiuntiva — tutto via shader custom GLSL esistente.
 
-### File coinvolti
-- `package.json` — nuove dipendenze
-- `src/components/builder/VoiceBlob3D.tsx` — nuovo componente
-- `src/components/builder/WidgetPreviewPanel.tsx` — sostituire SVG con componente 3D
+### Risultato atteso
+Un blob che sembra **mercurio liquido** / cromo fuso, con riflessi che scivolano sulla superficie mentre si deforma organicamente. Movimento più lento e viscoso, meno "rumoroso".
 
