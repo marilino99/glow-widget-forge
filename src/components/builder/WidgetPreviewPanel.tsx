@@ -12,6 +12,7 @@ import { GoogleBusinessData } from "./GoogleReviewsPanel";
 import { getTranslations } from "@/lib/translations";
 import TypewriterText from "./TypewriterText";
 import SocialProofTooltip from "./SocialProofTooltip";
+import VoiceBlob3D from "./VoiceBlob3D";
 import widjetLogoNavbar from "@/assets/widjet-logo-navbar.png";
 
 interface WidgetPreviewPanelProps {
