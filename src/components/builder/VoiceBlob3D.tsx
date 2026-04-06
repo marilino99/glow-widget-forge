@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -22,7 +22,6 @@ const noiseGLSL = `
   vec4 mod289(vec4 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
   vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
   vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-  
   float snoise(vec3 v) {
     const vec2 C = vec2(1.0/6.0, 1.0/3.0);
     const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
@@ -69,164 +68,119 @@ const noiseGLSL = `
 
 const vertexShader = `
   uniform float uTime;
-  uniform float uIntensity;
-  uniform float uSpeed;
+  uniform float uReactivity;
   varying vec3 vNormal;
-  varying vec3 vPosition;
-  varying float vDisplacement;
   varying vec3 vViewPosition;
-  varying vec3 vWorldNormal;
-  
+  varying float vDisplacement;
+
   ${noiseGLSL}
-  
+
   void main() {
-    vNormal = normalize(normalMatrix * normal);
-    vPosition = position;
-    
-    // Slow deep breathing pulse
-    float pulse = sin(uTime * 0.3) * 0.15;
-    
-    // Layer 0: large slow undulations
-    float noise0 = snoise(position * 0.15 + uTime * uSpeed * 0.04) * uIntensity * 1.8;
-    // Layer 1: medium organic forms
-    float noise1 = snoise(position * 0.4 + uTime * uSpeed * 0.1) * uIntensity * 0.7;
-    // Layer 2: subtle surface detail
-    float noise2 = snoise(position * 1.0 + uTime * uSpeed * 0.25) * uIntensity * 0.15;
-    
-    // Directional asymmetry — stretches differently along Y axis
-    float dirFactor = 1.0 + 0.15 * sin(position.y * 2.0 + uTime * 0.15);
-    
-    float displacement = (noise0 + noise1 + noise2) * dirFactor + pulse;
+    float pulse = sin(uTime * 0.5) * 0.08;
+
+    float n0 = snoise(position * 0.6 + uTime * 0.15 * uReactivity) * 1.2 * uReactivity;
+    float n1 = snoise(position * 1.5 + uTime * 0.3 * uReactivity) * 0.4 * uReactivity;
+    float n2 = snoise(position * 3.0 + uTime * 0.5 * uReactivity) * 0.1 * uReactivity;
+
+    float displacement = (n0 + n1 + n2) + pulse;
     vDisplacement = displacement;
-    
+
     vec3 newPosition = position + normal * displacement;
-    
-    // Smooth normal perturbation for clean reflections
-    float eps = 0.01;
-    float dx = snoise((position + vec3(eps,0,0)) * 0.4 + uTime * uSpeed * 0.1) - snoise((position - vec3(eps,0,0)) * 0.4 + uTime * uSpeed * 0.1);
-    float dy = snoise((position + vec3(0,eps,0)) * 0.4 + uTime * uSpeed * 0.1) - snoise((position - vec3(0,eps,0)) * 0.4 + uTime * uSpeed * 0.1);
-    float dz = snoise((position + vec3(0,0,eps)) * 0.4 + uTime * uSpeed * 0.1) - snoise((position - vec3(0,0,eps)) * 0.4 + uTime * uSpeed * 0.1);
-    vec3 perturbedNormal = normalize(normal + vec3(dx, dy, dz) * uIntensity * 2.0);
-    vWorldNormal = normalize(normalMatrix * perturbedNormal);
-    
+
     vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
     vViewPosition = -mvPosition.xyz;
-    
+
+    float eps = 0.01;
+    float dx = snoise((position + vec3(eps,0,0)) * 1.5 + uTime * 0.3 * uReactivity)
+             - snoise((position - vec3(eps,0,0)) * 1.5 + uTime * 0.3 * uReactivity);
+    float dy = snoise((position + vec3(0,eps,0)) * 1.5 + uTime * 0.3 * uReactivity)
+             - snoise((position - vec3(0,eps,0)) * 1.5 + uTime * 0.3 * uReactivity);
+    float dz = snoise((position + vec3(0,0,eps)) * 1.5 + uTime * 0.3 * uReactivity)
+             - snoise((position - vec3(0,0,eps)) * 1.5 + uTime * 0.3 * uReactivity);
+    vec3 perturbedNormal = normalize(normal + vec3(dx, dy, dz) * uReactivity * 1.5);
+    vNormal = normalize(normalMatrix * perturbedNormal);
+
     gl_Position = projectionMatrix * mvPosition;
   }
 `;
 
 const fragmentShader = `
   varying vec3 vNormal;
-  varying vec3 vPosition;
-  varying float vDisplacement;
   varying vec3 vViewPosition;
-  varying vec3 vWorldNormal;
-  uniform float uTime;
+  varying float vDisplacement;
   uniform vec3 uBaseColor;
-  
-  vec3 envMap(vec3 dir) {
-    float y = dir.y * 0.5 + 0.5;
-    // Soft gradient environment — smooth transitions
-    vec3 sky = mix(vec3(0.02, 0.02, 0.04), vec3(0.9, 0.92, 0.95), pow(y, 2.0));
-    
-    // Warm accent from below
-    float warmth = smoothstep(-0.2, -0.9, dir.y);
-    sky = mix(sky, vec3(0.9, 0.5, 0.2), warmth * 0.4);
-    
-    // Single soft specular band
-    float band = smoothstep(0.88, 1.0, cos(dir.x * 2.0 + uTime * 0.3) * sin(dir.z * 1.5 + uTime * 0.2));
-    sky += vec3(1.0, 0.98, 0.95) * band * 0.7;
-    
-    return sky;
-  }
-  
+  uniform float uTime;
+
   void main() {
     vec3 viewDir = normalize(vViewPosition);
-    vec3 normal = normalize(vWorldNormal);
-    
-    vec3 reflectDir = reflect(-viewDir, normal);
-    vec3 rawEnv = envMap(reflectDir);
-    vec3 envColor = mix(rawEnv, rawEnv * uBaseColor, 0.7);
-    
-    // Strong Fresnel for bright edges
-    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 4.0);
-    
-    // Rich saturated base
-    vec3 baseChrome = uBaseColor * 0.85;
-    
-    // Base color dominant — env only for reflective sheen
-    vec3 color = mix(baseChrome, envColor, 0.2 + fresnel * 0.25);
-    
-    // Strongly tinted Fresnel rim
-    vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.8);
-    color = mix(color, rimColor, fresnel * 0.85);
-    
-    // Tinted specular highlight
-    vec3 lightDir = normalize(vec3(sin(uTime * 0.3) * 2.0, 2.0, cos(uTime * 0.2) * 2.0));
-    float spec = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 30.0);
-    color += mix(vec3(1.0), uBaseColor, 0.5) * spec * 0.6;
-    
-    // Secondary warm specular
-    vec3 lightDir2 = normalize(vec3(-1.5, -0.5, 1.0));
-    float spec2 = pow(max(dot(reflect(-lightDir2, normal), viewDir), 0.0), 20.0);
-    color += vec3(1.0, 0.6, 0.3) * spec2 * 0.35;
-    
-    // Gentle valley darkening
-    float valley = smoothstep(-0.15, 0.15, vDisplacement);
-    color *= mix(0.65, 1.0, valley);
-    
+    vec3 normal = normalize(vNormal);
+
+    // Fresnel — glossy white edge
+    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 3.5);
+
+    // Base color is dominant
+    vec3 color = uBaseColor * 0.9;
+
+    // Subtle shading from light direction
+    vec3 lightDir = normalize(vec3(1.0, 2.0, 1.5));
+    float diffuse = max(dot(normal, lightDir), 0.0) * 0.3 + 0.7;
+    color *= diffuse;
+
+    // Single white specular highlight
+    float spec = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 40.0);
+    color += vec3(1.0) * spec * 0.5;
+
+    // Secondary soft spec
+    vec3 lightDir2 = normalize(vec3(-1.0, 0.5, -1.0));
+    float spec2 = pow(max(dot(reflect(-lightDir2, normal), viewDir), 0.0), 25.0);
+    color += vec3(1.0) * spec2 * 0.15;
+
+    // White glossy rim from fresnel
+    color = mix(color, vec3(1.0), fresnel * 0.4);
+
+    // Valley darkening for depth
+    float valley = smoothstep(-0.1, 0.15, vDisplacement);
+    color *= mix(0.7, 1.0, valley);
+
     gl_FragColor = vec4(color, 1.0);
   }
 `;
 
 function BlobMesh({ status, muted, baseColor }: VoiceBlob3DProps) {
   const meshRef = useRef<THREE.Mesh>(null);
-  
+
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
-    uIntensity: { value: 0.15 },
-    uSpeed: { value: 1.0 },
-    uBaseColor: { value: new THREE.Vector3(0.12, 0.12, 0.15) },
+    uReactivity: { value: 0.3 },
+    uBaseColor: { value: new THREE.Vector3(0.23, 0.51, 0.96) },
   }), []);
 
   useFrame((_, delta) => {
     if (!meshRef.current) return;
-    
     uniforms.uTime.value += delta;
-    
+
     if (baseColor) {
       const [r, g, b] = hexToRgb(baseColor);
       uniforms.uBaseColor.value.set(r, g, b);
     }
-    
-    const targetIntensity = muted ? 0.03 : 
-      status === 'connecting' ? 0.08 :
-      status === 'processing' ? 0.35 :
-      0.15; // listening
-    
-    const targetSpeed = muted ? 0.1 :
-      status === 'connecting' ? 0.2 :
-      status === 'processing' ? 0.7 :
-      0.35; // listening
-    
-    // Very slow lerp for viscous transitions
-    uniforms.uIntensity.value += (targetIntensity - uniforms.uIntensity.value) * delta * 0.6;
-    uniforms.uSpeed.value += (targetSpeed - uniforms.uSpeed.value) * delta * 0.6;
-    
-    // Slow rotation
-    meshRef.current.rotation.y += delta * 0.06;
-    meshRef.current.rotation.x = Math.sin(uniforms.uTime.value * 0.2) * 0.1;
-    meshRef.current.rotation.z = Math.sin(uniforms.uTime.value * 0.15) * 0.08;
-    
-    // Subtle breathing scale
-    const breathe = 1.0 + Math.sin(uniforms.uTime.value * 0.4) * 0.03;
+
+    const targetReactivity = muted ? 0.05 :
+      status === 'connecting' ? 0.1 :
+      status === 'processing' ? 0.8 :
+      0.35;
+
+    uniforms.uReactivity.value += (targetReactivity - uniforms.uReactivity.value) * delta * 1.5;
+
+    meshRef.current.rotation.y += delta * 0.08;
+    meshRef.current.rotation.x = Math.sin(uniforms.uTime.value * 0.2) * 0.05;
+
+    const breathe = 1.0 + Math.sin(uniforms.uTime.value * 0.5) * 0.02;
     meshRef.current.scale.setScalar(breathe);
   });
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[0.7, 256, 256]} />
+      <sphereGeometry args={[0.55, 128, 128]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
@@ -236,13 +190,58 @@ function BlobMesh({ status, muted, baseColor }: VoiceBlob3DProps) {
   );
 }
 
-const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false, baseColor }) => {
+function useGlowIntensity(status: string, muted: boolean) {
+  const [intensity, setIntensity] = useState(0.3);
+  const targetRef = useRef(0.3);
+
+  React.useEffect(() => {
+    targetRef.current = muted ? 0.1 :
+      status === 'connecting' ? 0.15 :
+      status === 'processing' ? 0.7 :
+      0.3;
+  }, [status, muted]);
+
+  React.useEffect(() => {
+    let raf: number;
+    const animate = () => {
+      setIntensity(prev => {
+        const diff = targetRef.current - prev;
+        if (Math.abs(diff) < 0.001) return targetRef.current;
+        return prev + diff * 0.05;
+      });
+      raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return intensity;
+}
+
+const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false, baseColor = '#3B82F6' }) => {
+  const glowIntensity = useGlowIntensity(status, muted);
+  const glowSize = 30 + glowIntensity * 40;
+  const glowOpacity = 0.3 + glowIntensity * 0.4;
+
   return (
-    <div style={{ width: 160, height: 160 }}>
+    <div style={{ width: 160, height: 160, position: 'relative' }}>
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: '50%',
+          background: baseColor,
+          opacity: glowOpacity,
+          filter: `blur(${glowSize}px)`,
+          transform: 'scale(0.6)',
+          transition: 'opacity 0.3s ease',
+          pointerEvents: 'none',
+        }}
+      />
       <Canvas
-        camera={{ position: [0, 0, 3.5], fov: 45 }}
+        camera={{ position: [0, 0, 2.8], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
-        style={{ background: 'transparent' }}
+        style={{ background: 'transparent', position: 'relative', zIndex: 1 }}
       >
         <BlobMesh status={status} muted={muted} baseColor={baseColor} />
       </Canvas>
