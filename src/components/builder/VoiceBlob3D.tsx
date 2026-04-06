@@ -223,8 +223,8 @@ const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
     <div style={{ width: 160, height: 160 }}>
       <Canvas
         camera={{ position: [0, 0, 2.8], fov: 45 }}
-        gl={{ antialias: true, alpha: false }}
-        style={{ background: '#000000', borderRadius: '12px' }}
+        gl={{ antialias: true, alpha: true }}
+        style={{ background: 'transparent' }}
       >
         <BlobMesh status={status} muted={muted} />
       </Canvas>
