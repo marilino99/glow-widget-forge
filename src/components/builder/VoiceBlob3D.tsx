@@ -147,25 +147,25 @@ const fragmentShader = `
     
     vec3 reflectDir = reflect(-viewDir, normal);
     vec3 rawEnv = envMap(reflectDir);
-    vec3 envColor = mix(rawEnv, rawEnv * uBaseColor, 0.4);
+    vec3 envColor = mix(rawEnv, rawEnv * uBaseColor, 0.7);
     
     // Strong Fresnel for bright edges
     float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 4.0);
     
-    // Saturated chrome base
-    vec3 baseChrome = uBaseColor * 0.6;
+    // Rich saturated base
+    vec3 baseChrome = uBaseColor * 0.85;
     
-    // Balanced reflectivity — more base color visible
-    vec3 color = mix(baseChrome, envColor, 0.45 + fresnel * 0.3);
+    // Base color dominant — env only for reflective sheen
+    vec3 color = mix(baseChrome, envColor, 0.2 + fresnel * 0.25);
     
     // Strongly tinted Fresnel rim
-    vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.65);
+    vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.8);
     color = mix(color, rimColor, fresnel * 0.85);
     
     // Tinted specular highlight
     vec3 lightDir = normalize(vec3(sin(uTime * 0.3) * 2.0, 2.0, cos(uTime * 0.2) * 2.0));
     float spec = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 30.0);
-    color += mix(vec3(1.0), uBaseColor, 0.3) * spec * 0.8;
+    color += mix(vec3(1.0), uBaseColor, 0.5) * spec * 0.6;
     
     // Secondary warm specular
     vec3 lightDir2 = normalize(vec3(-1.5, -0.5, 1.0));
