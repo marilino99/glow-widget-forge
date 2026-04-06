@@ -74,17 +74,17 @@ const vertexShader = `
     vPosition = position;
     
     // Slow deep breathing pulse
-    float pulse = sin(uTime * 0.3) * 0.25;
+    float pulse = sin(uTime * 0.3) * 0.15;
     
-    // Layer 0: enormous slow undulations — creates big asymmetric protrusions
-    float noise0 = snoise(position * 0.15 + uTime * uSpeed * 0.04) * uIntensity * 3.0;
+    // Layer 0: large slow undulations
+    float noise0 = snoise(position * 0.15 + uTime * uSpeed * 0.04) * uIntensity * 1.8;
     // Layer 1: medium organic forms
-    float noise1 = snoise(position * 0.4 + uTime * uSpeed * 0.1) * uIntensity * 1.2;
+    float noise1 = snoise(position * 0.4 + uTime * uSpeed * 0.1) * uIntensity * 0.7;
     // Layer 2: subtle surface detail
     float noise2 = snoise(position * 1.0 + uTime * uSpeed * 0.25) * uIntensity * 0.15;
     
     // Directional asymmetry — stretches differently along Y axis
-    float dirFactor = 1.0 + 0.3 * sin(position.y * 2.0 + uTime * 0.15);
+    float dirFactor = 1.0 + 0.15 * sin(position.y * 2.0 + uTime * 0.15);
     
     float displacement = (noise0 + noise1 + noise2) * dirFactor + pulse;
     vDisplacement = displacement;
@@ -184,8 +184,8 @@ function BlobMesh({ status, muted }: VoiceBlob3DProps) {
     
     const targetIntensity = muted ? 0.03 : 
       status === 'connecting' ? 0.08 :
-      status === 'processing' ? 0.5 :
-      0.2; // listening
+      status === 'processing' ? 0.35 :
+      0.15; // listening
     
     const targetSpeed = muted ? 0.1 :
       status === 'connecting' ? 0.2 :
@@ -201,14 +201,14 @@ function BlobMesh({ status, muted }: VoiceBlob3DProps) {
     meshRef.current.rotation.x = Math.sin(uniforms.uTime.value * 0.2) * 0.1;
     meshRef.current.rotation.z = Math.sin(uniforms.uTime.value * 0.15) * 0.08;
     
-    // Deep breathing scale
-    const breathe = 1.0 + Math.sin(uniforms.uTime.value * 0.4) * 0.06;
+    // Subtle breathing scale
+    const breathe = 1.0 + Math.sin(uniforms.uTime.value * 0.4) * 0.03;
     meshRef.current.scale.setScalar(breathe);
   });
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[1, 256, 256]} />
+      <sphereGeometry args={[0.7, 256, 256]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
@@ -222,7 +222,7 @@ const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
   return (
     <div style={{ width: 160, height: 160 }}>
       <Canvas
-        camera={{ position: [0, 0, 2.8], fov: 45 }}
+        camera={{ position: [0, 0, 3.5], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
