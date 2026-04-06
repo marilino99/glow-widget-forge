@@ -1,47 +1,46 @@
 
 
-## Piano: Colore del blob più intenso e marcato
+## Piano: Nuovo Blob 3D con colore utente e reattività vocale
 
-### Problema
-Il colore scelto dall'utente è quasi invisibile perché:
-- Il colore base viene moltiplicato per 0.3 (troppo scuro)
-- L'environment map contribuisce per l'80% al colore finale ed è grigio fisso
-- I riflessi specular sono bianchi fissi, non tintati
+### Cosa viene fatto
+Riscrivere completamente `VoiceBlob3D.tsx` con un nuovo blob 3D che:
+1. Prende il colore scelto dall'utente come colore dominante e solido
+2. Reagisce in tempo reale alla voce tramite gli stati (`connecting`, `listening`, `processing`)
+3. Ha un aspetto moderno, pulito, con effetto glossy/vetroso
 
-### Modifiche a `VoiceBlob3D.tsx` — solo fragment shader
+### Approccio: Blob sferico con distorsione noise + effetto glossy colorato
 
-**1. Base più satura**
-```glsl
-vec3 baseChrome = uBaseColor * 0.6;  // era 0.3
-```
+Invece dell'attuale approccio "cromo metallico grigio", il nuovo blob sarà:
+- **Colore solido saturo** dell'utente come base dominante (~90%)
+- **Effetto glossy/vetro** con riflessi bianchi sottili (non cromo grigio)
+- **Deformazioni organiche** tramite simplex noise (mantenute, funzionano bene)
+- **Reattività vocale più marcata**: `processing` causa deformazioni molto più evidenti e veloci, `listening` è calmo con breathing, `connecting` è quasi fermo
+- **Glow esterno** con un alone colorato attorno al blob che pulsa con lo stato
 
-**2. Ridurre il peso dell'environment map grigio**
-```glsl
-vec3 color = mix(baseChrome, envColor, 0.45 + fresnel * 0.3);  // era 0.8 + fresnel * 0.2
-```
-Così il colore base contribuisce per ~55% invece del 20%.
+### Dettaglio tecnico
 
-**3. Tintare l'environment map**
-Nella funzione `envMap`, mixare il risultato con `uBaseColor`:
-```glsl
-vec3 env = envMap(reflectDir);
-vec3 envColor = mix(env, env * uBaseColor, 0.4);
-```
+**Fragment shader — nuovo approccio colore:**
+- `baseColor` usato direttamente come colore principale (~85-90% del colore finale)
+- Fresnel bianco puro per effetto vetro/glossy sui bordi
+- Un singolo specular highlight bianco per il riflesso lucido
+- Darkening nelle valli per profondità 3D
+- Nessun environment map grigio — il colore è il protagonista
 
-**4. Rim Fresnel più tintato**
-```glsl
-vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.65);  // era 0.4
-```
+**Vertex shader — reattività migliorata:**
+- Aggiungere uniform `uAudioReactivity` (0-1) che varia con lo stato
+- `processing`: reactivity alta (0.8) → deformazioni ampie e veloci
+- `listening`: reactivity media (0.4) → movimento calmo organico
+- `connecting`: reactivity bassa (0.1) → quasi sferico, leggero breathing
 
-**5. Specular tintati**
-Il primo specular highlight prende una leggera tinta dal colore:
-```glsl
-color += mix(vec3(1.0), uBaseColor, 0.3) * spec * 0.8;
-```
+**Wrapper — glow effect:**
+- Aggiungere un `div` dietro il Canvas con `box-shadow` radiale colorato che pulsa
+- Il colore del glow segue `baseColor`
+- L'intensità del glow segue lo stato vocale
 
-### Risultato
-Il blob avrà il colore scelto dall'utente chiaramente visibile sulla superficie metallica, mantenendo l'effetto cromato e i riflessi ma con una forte identità cromatica.
+### File coinvolti
+- `src/components/builder/VoiceBlob3D.tsx` — riscrittura completa
+- `src/components/builder/WidgetPreviewPanel.tsx` — nessuna modifica (già passa `baseColor` e `status`)
 
-### File coinvolto
-`src/components/builder/VoiceBlob3D.tsx` — solo modifiche al fragment shader (righe 144-179)
+### Risultato atteso
+Un blob 3D sferico con il colore forte e saturo scelto dall'utente, aspetto glossy/vetroso moderno, che si deforma visibilmente quando riceve e processa la voce, con un alone luminoso colorato che pulsa.
 
