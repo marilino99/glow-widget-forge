@@ -1,24 +1,40 @@
 
 
-## Piano: Ridurre dimensioni blob e prevenire clipping
+## Piano: Passare il colore del widget al blob 3D
 
-### Problema
-Il blob con le deformazioni ampie (noise layer 0 con peso 3.0) si espande oltre i bordi del contenitore 160x160, causando un effetto "tagliato". La sfera base ha raggio 1 ma le deformazioni aggiungono fino a ~3.0+ unità di displacement.
+### Cosa cambia
+Il blob 3D userà il colore scelto dall'utente per il widget come tinta base dei riflessi e dell'illuminazione, invece del grigio cromato fisso.
 
-### Modifiche a `VoiceBlob3D.tsx`
+### Modifiche
 
-1. **Ridurre il raggio base della sfera** da 1.0 a 0.7 — lascia più margine per le deformazioni
-2. **Allontanare la camera** da 2.8 a 3.5 — inquadra il blob con più spazio attorno
-3. **Ridurre i pesi del noise** per contenere l'espansione massima:
-   - Layer 0: da 3.0 a 1.8
-   - Layer 1: da 1.2 a 0.7
-   - Pulse breathing: da 0.25 a 0.15
-4. **Ridurre il fattore direzionale** da 0.3 a 0.15 — meno allungamento estremo
-5. **Ridurre targetIntensity** per ogni stato (~60% dei valori attuali):
-   - listening: 0.15 (era 0.2)
-   - processing: 0.35 (era 0.5)
-6. **Breathing scale** ridotto: da 0.06 a 0.03
+**1. `VoiceBlob3D.tsx`**
+- Aggiungere prop `baseColor?: string` all'interfaccia `VoiceBlob3DProps`
+- Aggiungere uniform `uBaseColor` (vec3) allo shader material
+- Nel `useFrame`, convertire l'hex in RGB normalizzato (0-1) e aggiornare `uBaseColor`
+- **Fragment shader**: usare `uBaseColor` come tinta per:
+  - `baseChrome` — il colore base della superficie (attualmente `vec3(0.12, 0.12, 0.15)`)
+  - `rimColor` — il colore dei bordi Fresnel
+  - Environment map — aggiungere una leggera tinta del colore base ai riflessi
+- Il blob mantiene l'aspetto metallico/cromato ma con la tonalità del colore scelto
 
-### Risultato
-Il blob mantiene le stesse forme organiche e movimenti viscosi ma resta sempre contenuto nel riquadro senza clipping ai bordi.
+**2. `WidgetPreviewPanel.tsx`** (riga ~3118)
+- Passare `actualHexColor` come prop `baseColor` al componente:
+  ```tsx
+  <VoiceBlob3D status={...} muted={...} baseColor={actualHexColor} />
+  ```
+
+### Dettaglio tecnico shader
+Nel fragment shader, il colore base viene usato così:
+```glsl
+uniform vec3 uBaseColor;
+// ...
+vec3 baseChrome = uBaseColor * 0.3; // tinta scura del colore scelto
+vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.4); // rim con tinta
+```
+
+Questo dà al blob una identità cromatica coerente con il widget mantenendo l'effetto metallico.
+
+### File coinvolti
+- `src/components/builder/VoiceBlob3D.tsx`
+- `src/components/builder/WidgetPreviewPanel.tsx`
 
