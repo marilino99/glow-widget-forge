@@ -73,29 +73,30 @@ const vertexShader = `
     vNormal = normalize(normalMatrix * normal);
     vPosition = position;
     
-    // Global sinusoidal pulse — breathing expansion/contraction
-    float pulse = sin(uTime * 0.5) * 0.15;
+    // Slow deep breathing pulse
+    float pulse = sin(uTime * 0.3) * 0.25;
     
-    // Layer 1: very large slow undulations (heavy viscous morphing)
-    float noise0 = snoise(position * 0.3 + uTime * uSpeed * 0.08) * uIntensity * 2.2;
-    // Layer 2: medium organic movement
-    float noise1 = snoise(position * 0.8 + uTime * uSpeed * 0.2) * uIntensity * 1.0;
-    // Layer 3: detail ripples
-    float noise2 = snoise(position * 2.0 + uTime * uSpeed * 0.4) * uIntensity * 0.35;
-    // Layer 4: fine surface detail
-    float noise3 = snoise(position * 4.0 + uTime * uSpeed * 0.6) * uIntensity * 0.12;
+    // Layer 0: enormous slow undulations — creates big asymmetric protrusions
+    float noise0 = snoise(position * 0.15 + uTime * uSpeed * 0.04) * uIntensity * 3.0;
+    // Layer 1: medium organic forms
+    float noise1 = snoise(position * 0.4 + uTime * uSpeed * 0.1) * uIntensity * 1.2;
+    // Layer 2: subtle surface detail
+    float noise2 = snoise(position * 1.0 + uTime * uSpeed * 0.25) * uIntensity * 0.15;
     
-    float displacement = noise0 + noise1 + noise2 + noise3 + pulse;
+    // Directional asymmetry — stretches differently along Y axis
+    float dirFactor = 1.0 + 0.3 * sin(position.y * 2.0 + uTime * 0.15);
+    
+    float displacement = (noise0 + noise1 + noise2) * dirFactor + pulse;
     vDisplacement = displacement;
     
     vec3 newPosition = position + normal * displacement;
     
-    // Perturbed normal for reflections
+    // Smooth normal perturbation for clean reflections
     float eps = 0.01;
-    float dx = snoise((position + vec3(eps,0,0)) * 0.8 + uTime * uSpeed * 0.2) - snoise((position - vec3(eps,0,0)) * 0.8 + uTime * uSpeed * 0.2);
-    float dy = snoise((position + vec3(0,eps,0)) * 0.8 + uTime * uSpeed * 0.2) - snoise((position - vec3(0,eps,0)) * 0.8 + uTime * uSpeed * 0.2);
-    float dz = snoise((position + vec3(0,0,eps)) * 0.8 + uTime * uSpeed * 0.2) - snoise((position - vec3(0,0,eps)) * 0.8 + uTime * uSpeed * 0.2);
-    vec3 perturbedNormal = normalize(normal + vec3(dx, dy, dz) * uIntensity * 4.0);
+    float dx = snoise((position + vec3(eps,0,0)) * 0.4 + uTime * uSpeed * 0.1) - snoise((position - vec3(eps,0,0)) * 0.4 + uTime * uSpeed * 0.1);
+    float dy = snoise((position + vec3(0,eps,0)) * 0.4 + uTime * uSpeed * 0.1) - snoise((position - vec3(0,eps,0)) * 0.4 + uTime * uSpeed * 0.1);
+    float dz = snoise((position + vec3(0,0,eps)) * 0.4 + uTime * uSpeed * 0.1) - snoise((position - vec3(0,0,eps)) * 0.4 + uTime * uSpeed * 0.1);
+    vec3 perturbedNormal = normalize(normal + vec3(dx, dy, dz) * uIntensity * 2.0);
     vWorldNormal = normalize(normalMatrix * perturbedNormal);
     
     vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
@@ -115,18 +116,16 @@ const fragmentShader = `
   
   vec3 envMap(vec3 dir) {
     float y = dir.y * 0.5 + 0.5;
-    // High contrast environment — dark base with bright bands
-    vec3 sky = mix(vec3(0.03, 0.03, 0.05), vec3(0.95, 0.97, 1.0), pow(y, 1.5));
+    // Soft gradient environment — smooth transitions
+    vec3 sky = mix(vec3(0.02, 0.02, 0.04), vec3(0.9, 0.92, 0.95), pow(y, 2.0));
     
     // Warm accent from below
     float warmth = smoothstep(-0.2, -0.9, dir.y);
-    sky = mix(sky, vec3(1.0, 0.55, 0.26), warmth * 0.5);
+    sky = mix(sky, vec3(0.9, 0.5, 0.2), warmth * 0.4);
     
-    // Multiple bright specular bands for richer reflections
-    float band1 = smoothstep(0.92, 1.0, cos(dir.x * 3.0 + uTime * 0.4) * sin(dir.z * 2.0 + uTime * 0.25));
-    float band2 = smoothstep(0.94, 1.0, sin(dir.x * 5.0 - uTime * 0.3) * cos(dir.y * 4.0 + uTime * 0.2));
-    sky += vec3(1.0, 1.0, 1.0) * band1 * 0.9;
-    sky += vec3(0.9, 0.85, 0.8) * band2 * 0.6;
+    // Single soft specular band
+    float band = smoothstep(0.88, 1.0, cos(dir.x * 2.0 + uTime * 0.3) * sin(dir.z * 1.5 + uTime * 0.2));
+    sky += vec3(1.0, 0.98, 0.95) * band * 0.7;
     
     return sky;
   }
@@ -138,32 +137,32 @@ const fragmentShader = `
     vec3 reflectDir = reflect(-viewDir, normal);
     vec3 envColor = envMap(reflectDir);
     
-    // Stronger Fresnel for ultra-bright edges
+    // Strong Fresnel for bright edges
     float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 4.0);
     
     // Dark chrome base
-    vec3 baseChrome = vec3(0.15, 0.15, 0.18);
+    vec3 baseChrome = vec3(0.12, 0.12, 0.15);
     
-    // Higher reflectivity mix
+    // High reflectivity
     vec3 color = mix(baseChrome, envColor, 0.8 + fresnel * 0.2);
     
     // Bright Fresnel rim
     vec3 rimColor = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 0.65, 0.35), 0.15);
     color = mix(color, rimColor, fresnel * 0.85);
     
-    // Primary moving specular
-    vec3 lightDir = normalize(vec3(sin(uTime * 0.4) * 2.0, 2.0, cos(uTime * 0.3) * 2.0));
-    float spec = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 80.0);
-    color += vec3(1.0, 0.98, 0.95) * spec * 1.2;
+    // Soft wide specular highlight
+    vec3 lightDir = normalize(vec3(sin(uTime * 0.3) * 2.0, 2.0, cos(uTime * 0.2) * 2.0));
+    float spec = pow(max(dot(reflect(-lightDir, normal), viewDir), 0.0), 30.0);
+    color += vec3(1.0, 0.98, 0.95) * spec * 1.0;
     
-    // Secondary specular
+    // Secondary warm specular
     vec3 lightDir2 = normalize(vec3(-1.5, -0.5, 1.0));
-    float spec2 = pow(max(dot(reflect(-lightDir2, normal), viewDir), 0.0), 40.0);
-    color += vec3(1.0, 0.6, 0.3) * spec2 * 0.5;
+    float spec2 = pow(max(dot(reflect(-lightDir2, normal), viewDir), 0.0), 20.0);
+    color += vec3(1.0, 0.6, 0.3) * spec2 * 0.35;
     
-    // Valley darkening
+    // Gentle valley darkening
     float valley = smoothstep(-0.15, 0.15, vDisplacement);
-    color *= mix(0.5, 1.0, valley);
+    color *= mix(0.65, 1.0, valley);
     
     gl_FragColor = vec4(color, 1.0);
   }
@@ -183,25 +182,27 @@ function BlobMesh({ status, muted }: VoiceBlob3DProps) {
     
     uniforms.uTime.value += delta;
     
-    const targetIntensity = muted ? 0.05 : 
-      status === 'connecting' ? 0.1 :
-      status === 'processing' ? 0.45 :
-      0.25; // listening
+    const targetIntensity = muted ? 0.03 : 
+      status === 'connecting' ? 0.08 :
+      status === 'processing' ? 0.5 :
+      0.2; // listening
     
-    const targetSpeed = muted ? 0.2 :
-      status === 'connecting' ? 0.4 :
-      status === 'processing' ? 1.5 :
-      0.8; // listening
+    const targetSpeed = muted ? 0.1 :
+      status === 'connecting' ? 0.2 :
+      status === 'processing' ? 0.7 :
+      0.35; // listening
     
-    uniforms.uIntensity.value += (targetIntensity - uniforms.uIntensity.value) * delta * 1.5;
-    uniforms.uSpeed.value += (targetSpeed - uniforms.uSpeed.value) * delta * 1.5;
+    // Very slow lerp for viscous transitions
+    uniforms.uIntensity.value += (targetIntensity - uniforms.uIntensity.value) * delta * 0.6;
+    uniforms.uSpeed.value += (targetSpeed - uniforms.uSpeed.value) * delta * 0.6;
     
-    // Slightly faster rotation for moving reflections
-    meshRef.current.rotation.y += delta * 0.15;
+    // Slow rotation
+    meshRef.current.rotation.y += delta * 0.06;
     meshRef.current.rotation.x = Math.sin(uniforms.uTime.value * 0.2) * 0.1;
+    meshRef.current.rotation.z = Math.sin(uniforms.uTime.value * 0.15) * 0.08;
     
-    // Breathing scale
-    const breathe = 1.0 + Math.sin(uniforms.uTime.value * 0.6) * 0.03;
+    // Deep breathing scale
+    const breathe = 1.0 + Math.sin(uniforms.uTime.value * 0.4) * 0.06;
     meshRef.current.scale.setScalar(breathe);
   });
 
