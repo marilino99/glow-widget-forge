@@ -1,40 +1,47 @@
 
 
-## Piano: Passare il colore del widget al blob 3D
+## Piano: Colore del blob più intenso e marcato
 
-### Cosa cambia
-Il blob 3D userà il colore scelto dall'utente per il widget come tinta base dei riflessi e dell'illuminazione, invece del grigio cromato fisso.
+### Problema
+Il colore scelto dall'utente è quasi invisibile perché:
+- Il colore base viene moltiplicato per 0.3 (troppo scuro)
+- L'environment map contribuisce per l'80% al colore finale ed è grigio fisso
+- I riflessi specular sono bianchi fissi, non tintati
 
-### Modifiche
+### Modifiche a `VoiceBlob3D.tsx` — solo fragment shader
 
-**1. `VoiceBlob3D.tsx`**
-- Aggiungere prop `baseColor?: string` all'interfaccia `VoiceBlob3DProps`
-- Aggiungere uniform `uBaseColor` (vec3) allo shader material
-- Nel `useFrame`, convertire l'hex in RGB normalizzato (0-1) e aggiornare `uBaseColor`
-- **Fragment shader**: usare `uBaseColor` come tinta per:
-  - `baseChrome` — il colore base della superficie (attualmente `vec3(0.12, 0.12, 0.15)`)
-  - `rimColor` — il colore dei bordi Fresnel
-  - Environment map — aggiungere una leggera tinta del colore base ai riflessi
-- Il blob mantiene l'aspetto metallico/cromato ma con la tonalità del colore scelto
-
-**2. `WidgetPreviewPanel.tsx`** (riga ~3118)
-- Passare `actualHexColor` come prop `baseColor` al componente:
-  ```tsx
-  <VoiceBlob3D status={...} muted={...} baseColor={actualHexColor} />
-  ```
-
-### Dettaglio tecnico shader
-Nel fragment shader, il colore base viene usato così:
+**1. Base più satura**
 ```glsl
-uniform vec3 uBaseColor;
-// ...
-vec3 baseChrome = uBaseColor * 0.3; // tinta scura del colore scelto
-vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.4); // rim con tinta
+vec3 baseChrome = uBaseColor * 0.6;  // era 0.3
 ```
 
-Questo dà al blob una identità cromatica coerente con il widget mantenendo l'effetto metallico.
+**2. Ridurre il peso dell'environment map grigio**
+```glsl
+vec3 color = mix(baseChrome, envColor, 0.45 + fresnel * 0.3);  // era 0.8 + fresnel * 0.2
+```
+Così il colore base contribuisce per ~55% invece del 20%.
 
-### File coinvolti
-- `src/components/builder/VoiceBlob3D.tsx`
-- `src/components/builder/WidgetPreviewPanel.tsx`
+**3. Tintare l'environment map**
+Nella funzione `envMap`, mixare il risultato con `uBaseColor`:
+```glsl
+vec3 env = envMap(reflectDir);
+vec3 envColor = mix(env, env * uBaseColor, 0.4);
+```
+
+**4. Rim Fresnel più tintato**
+```glsl
+vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.65);  // era 0.4
+```
+
+**5. Specular tintati**
+Il primo specular highlight prende una leggera tinta dal colore:
+```glsl
+color += mix(vec3(1.0), uBaseColor, 0.3) * spec * 0.8;
+```
+
+### Risultato
+Il blob avrà il colore scelto dall'utente chiaramente visibile sulla superficie metallica, mantenendo l'effetto cromato e i riflessi ma con una forte identità cromatica.
+
+### File coinvolto
+`src/components/builder/VoiceBlob3D.tsx` — solo modifiche al fragment shader (righe 144-179)
 
