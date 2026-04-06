@@ -5,6 +5,16 @@ import * as THREE from 'three';
 interface VoiceBlob3DProps {
   status: 'connecting' | 'listening' | 'processing';
   muted?: boolean;
+  baseColor?: string;
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace('#', '');
+  return [
+    parseInt(h.substring(0, 2), 16) / 255,
+    parseInt(h.substring(2, 4), 16) / 255,
+    parseInt(h.substring(4, 6), 16) / 255,
+  ];
 }
 
 const noiseGLSL = `
@@ -113,6 +123,7 @@ const fragmentShader = `
   varying vec3 vViewPosition;
   varying vec3 vWorldNormal;
   uniform float uTime;
+  uniform vec3 uBaseColor;
   
   vec3 envMap(vec3 dir) {
     float y = dir.y * 0.5 + 0.5;
@@ -140,14 +151,14 @@ const fragmentShader = `
     // Strong Fresnel for bright edges
     float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 4.0);
     
-    // Dark chrome base
-    vec3 baseChrome = vec3(0.12, 0.12, 0.15);
+    // Tinted chrome base
+    vec3 baseChrome = uBaseColor * 0.3;
     
     // High reflectivity
     vec3 color = mix(baseChrome, envColor, 0.8 + fresnel * 0.2);
     
-    // Bright Fresnel rim
-    vec3 rimColor = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 0.65, 0.35), 0.15);
+    // Tinted Fresnel rim
+    vec3 rimColor = mix(vec3(1.0), uBaseColor, 0.4);
     color = mix(color, rimColor, fresnel * 0.85);
     
     // Soft wide specular highlight
@@ -168,19 +179,25 @@ const fragmentShader = `
   }
 `;
 
-function BlobMesh({ status, muted }: VoiceBlob3DProps) {
+function BlobMesh({ status, muted, baseColor }: VoiceBlob3DProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
     uIntensity: { value: 0.15 },
     uSpeed: { value: 1.0 },
+    uBaseColor: { value: new THREE.Vector3(0.12, 0.12, 0.15) },
   }), []);
 
   useFrame((_, delta) => {
     if (!meshRef.current) return;
     
     uniforms.uTime.value += delta;
+    
+    if (baseColor) {
+      const [r, g, b] = hexToRgb(baseColor);
+      uniforms.uBaseColor.value.set(r, g, b);
+    }
     
     const targetIntensity = muted ? 0.03 : 
       status === 'connecting' ? 0.08 :
@@ -218,7 +235,7 @@ function BlobMesh({ status, muted }: VoiceBlob3DProps) {
   );
 }
 
-const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
+const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false, baseColor }) => {
   return (
     <div style={{ width: 160, height: 160 }}>
       <Canvas
@@ -226,7 +243,7 @@ const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
-        <BlobMesh status={status} muted={muted} />
+        <BlobMesh status={status} muted={muted} baseColor={baseColor} />
       </Canvas>
     </div>
   );

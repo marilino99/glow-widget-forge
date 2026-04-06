@@ -3115,7 +3115,7 @@ const WidgetPreviewPanel = ({
                   </div>
 
                   <div className="flex-1 flex flex-col items-center justify-center gap-6">
-                    <VoiceBlob3D status={voiceStatus as 'connecting' | 'listening' | 'processing'} muted={voiceMuted} />
+                    <VoiceBlob3D status={voiceStatus as 'connecting' | 'listening' | 'processing'} muted={voiceMuted} baseColor={actualHexColor} />
                     <div className="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)' }}>
                       {voiceStatus === "connecting" ? "Connecting..." : voiceStatus === "processing" ? "Processing..." : "Listening..."}
                     </div>
