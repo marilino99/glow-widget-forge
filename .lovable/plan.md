@@ -1,49 +1,24 @@
 
 
-## Piano: Blob 3D ultra-fluido stile video di riferimento
+## Piano: Ridurre dimensioni blob e prevenire clipping
 
-### Analisi del video
-Il video mostra un blob metallico astratto su sfondo nero con:
-- **Forme molto ampie e asimmetriche** — non è una sfera leggermente deformata, ma si allunga e contorce in forme quasi organiche/ameboidi
-- **Movimenti lentissimi e viscosi** — come mercurio pesante che si muove nello spazio zero-G
-- **Pulsazione ritmica** — espansione e contrazione lenta e marcata
-- **Superficie ultra-riflettente** con forti contrasti luce/ombra
-
-### Differenze dal blob attuale
-Il blob attuale ha noise troppo uniforme e veloce. Sembra una sfera "tremolante", non un fluido che si deforma pesantemente. Serve:
-1. Deformazioni **molto più ampie** (il blob deve perdere la forma sferica)
-2. Movimenti **più lenti** e pesanti
-3. **Asimmetria** — diverse direzioni di deformazione con noise separati
-4. Breathing più **marcato e lento**
+### Problema
+Il blob con le deformazioni ampie (noise layer 0 con peso 3.0) si espande oltre i bordi del contenitore 160x160, causando un effetto "tagliato". La sfera base ha raggio 1 ma le deformazioni aggiungono fino a ~3.0+ unità di displacement.
 
 ### Modifiche a `VoiceBlob3D.tsx`
 
-**Vertex shader**:
-- Layer 0: frequenza bassissima (0.15), peso enorme (3.0+), velocità lentissima (0.04) — crea le grandi protuberanze asimmetriche
-- Layer 1: frequenza 0.4, peso 1.2, velocità 0.1 — forme organiche secondarie
-- Layer 2: frequenza 1.0, peso 0.15 — appena un accenno di dettaglio superficiale
-- Rimuovere layer 3 e 4 — troppo rumore
-- Aggiungere **deformazione direzionale**: moltiplicare il displacement per `(1.0 + 0.3 * sin(position.y * 2.0 + uTime * 0.15))` per creare allungamenti asimmetrici
-- Pulsazione breathing più ampia: `sin(uTime * 0.3) * 0.25` (era 0.15 a 0.5)
-- Ridurre perturbazione normali (fattore 2.0) per riflessi più lisci
+1. **Ridurre il raggio base della sfera** da 1.0 a 0.7 — lascia più margine per le deformazioni
+2. **Allontanare la camera** da 2.8 a 3.5 — inquadra il blob con più spazio attorno
+3. **Ridurre i pesi del noise** per contenere l'espansione massima:
+   - Layer 0: da 3.0 a 1.8
+   - Layer 1: da 1.2 a 0.7
+   - Pulse breathing: da 0.25 a 0.15
+4. **Ridurre il fattore direzionale** da 0.3 a 0.15 — meno allungamento estremo
+5. **Ridurre targetIntensity** per ogni stato (~60% dei valori attuali):
+   - listening: 0.15 (era 0.2)
+   - processing: 0.35 (era 0.5)
+6. **Breathing scale** ridotto: da 0.06 a 0.03
 
-**Fragment shader**:
-- Environment map più morbida con transizioni graduali
-- Una sola banda specular larga e soft
-- Valley darkening più morbido (0.65-1.0)
-- Specular highlight primario con esponente 30 (era 80) — più largo e diffuso
-
-**Animazione (useFrame)**:
-- Target intensity: muted 0.03, connecting 0.08, listening 0.2, processing 0.5
-- Target speed: muted 0.1, connecting 0.2, listening 0.35, processing 0.7
-- Lerp lentissimo: `delta * 0.6` (era 1.5) per transizioni graduali
-- Rotazione ridotta: 0.06 (era 0.15)
-- Breathing scale: `sin(uTime * 0.4) * 0.06` (era 0.03)
-- Aggiungere oscillazione asse Z: `meshRef.current.rotation.z = sin(uTime * 0.15) * 0.08`
-
-### File coinvolto
-`src/components/builder/VoiceBlob3D.tsx` — unico file
-
-### Risultato atteso
-Un blob che si deforma in forme ampie e asimmetriche, come una goccia di mercurio che fluttua in assenza di gravità — lento, pesante, viscoso, con riflessi cromati che scivolano sulla superficie.
+### Risultato
+Il blob mantiene le stesse forme organiche e movimenti viscosi ma resta sempre contenuto nel riquadro senza clipping ai bordi.
 
