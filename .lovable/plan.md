@@ -1,38 +1,49 @@
 
 
-## Piano: Blob metallico pulsante con morphing fluido
+## Piano: Blob 3D ultra-fluido stile video di riferimento
 
-### Differenze dal video vs attuale
-Il video mostra un blob metallico su **sfondo nero** che:
-- Ha deformazioni molto più **ampie e fluide** — il blob cambia forma drasticamente, non solo piccole ondulazioni
-- **Pulsa** — si espande e contrae ritmicamente
-- Superficie altamente **riflettente/speculare** con riflessi che si muovono
-- Movimenti di morphing **lenti e pesanti** — effetto viscoso marcato
+### Analisi del video
+Il video mostra un blob metallico astratto su sfondo nero con:
+- **Forme molto ampie e asimmetriche** — non è una sfera leggermente deformata, ma si allunga e contorce in forme quasi organiche/ameboidi
+- **Movimenti lentissimi e viscosi** — come mercurio pesante che si muove nello spazio zero-G
+- **Pulsazione ritmica** — espansione e contrazione lenta e marcata
+- **Superficie ultra-riflettente** con forti contrasti luce/ombra
+
+### Differenze dal blob attuale
+Il blob attuale ha noise troppo uniforme e veloce. Sembra una sfera "tremolante", non un fluido che si deforma pesantemente. Serve:
+1. Deformazioni **molto più ampie** (il blob deve perdere la forma sferica)
+2. Movimenti **più lenti** e pesanti
+3. **Asimmetria** — diverse direzioni di deformazione con noise separati
+4. Breathing più **marcato e lento**
 
 ### Modifiche a `VoiceBlob3D.tsx`
 
-**Sfondo nero**: Cambiare il Canvas background da trasparente a `#000000`
+**Vertex shader**:
+- Layer 0: frequenza bassissima (0.15), peso enorme (3.0+), velocità lentissima (0.04) — crea le grandi protuberanze asimmetriche
+- Layer 1: frequenza 0.4, peso 1.2, velocità 0.1 — forme organiche secondarie
+- Layer 2: frequenza 1.0, peso 0.15 — appena un accenno di dettaglio superficiale
+- Rimuovere layer 3 e 4 — troppo rumore
+- Aggiungere **deformazione direzionale**: moltiplicare il displacement per `(1.0 + 0.3 * sin(position.y * 2.0 + uTime * 0.15))` per creare allungamenti asimmetrici
+- Pulsazione breathing più ampia: `sin(uTime * 0.3) * 0.25` (era 0.15 a 0.5)
+- Ridurre perturbazione normali (fattore 2.0) per riflessi più lisci
 
-**Vertex shader — morphing più aggressivo**:
-- Aumentare l'ampiezza del noise layer 0 (da 1.4 a 2.0+) per deformazioni molto più ampie
-- Aggiungere una **pulsazione sinusoidale** globale: `sin(uTime * 0.5) * 0.15` che espande/contrae l'intera sfera ritmicamente
-- Ridurre le frequenze del noise per movimenti più larghi e lenti (0.3 invece di 0.4, 0.8 invece di 1.2)
-- Mantenere i layer di dettaglio fine per la texture superficiale
+**Fragment shader**:
+- Environment map più morbida con transizioni graduali
+- Una sola banda specular larga e soft
+- Valley darkening più morbido (0.65-1.0)
+- Specular highlight primario con esponente 30 (era 80) — più largo e diffuso
 
-**Fragment shader — riflessi più intensi**:
-- Aumentare la riflessività dell'environment map (mix factor da 0.6 a 0.8)
-- Environment map più contrastata: bande luminose più forti, più variazione
-- Specular highlights più brillanti e ampi
-- Fresnel più pronunciato per bordi ultra-luminosi
-
-**Animazione**:
-- Aumentare i target di intensità per ogni stato (listening: 0.25, processing: 0.45)
-- Rotazione leggermente più veloce per far muovere i riflessi
-- Aggiungere leggero "breathing" scale con `sin(uTime)`
+**Animazione (useFrame)**:
+- Target intensity: muted 0.03, connecting 0.08, listening 0.2, processing 0.5
+- Target speed: muted 0.1, connecting 0.2, listening 0.35, processing 0.7
+- Lerp lentissimo: `delta * 0.6` (era 1.5) per transizioni graduali
+- Rotazione ridotta: 0.06 (era 0.15)
+- Breathing scale: `sin(uTime * 0.4) * 0.06` (era 0.03)
+- Aggiungere oscillazione asse Z: `meshRef.current.rotation.z = sin(uTime * 0.15) * 0.08`
 
 ### File coinvolto
 `src/components/builder/VoiceBlob3D.tsx` — unico file
 
-### Risultato
-Un blob che sembra mercurio liquido che fluttua nel buio, con morphing ampio e pulsazioni ritmiche, molto più vicino al video di riferimento.
+### Risultato atteso
+Un blob che si deforma in forme ampie e asimmetriche, come una goccia di mercurio che fluttua in assenza di gravità — lento, pesante, viscoso, con riflessi cromati che scivolano sulla superficie.
 
