@@ -1,72 +1,40 @@
 
 
-## Piano: Blob vocale creato in After Effects
+## Piano: Sostituzione del blob 3D Three.js con il video .mov di After Effects
 
-### Formato richiesto: Lottie (JSON)
+### Cosa viene fatto
+Sostituire l'attuale blob Three.js (`VoiceBlob3D.tsx`) con il video `.mov` esportato da After Effects, convertendolo prima in formato **WebM con canale alpha** (trasparenza) per il web.
 
-Lottie è il formato ideale perché:
-- Leggero (JSON vettoriale, pochi KB)
-- Controllabile via codice (velocità, segmenti, direzione)
-- Qualità perfetta a qualsiasi risoluzione
-- Supporto nativo React con `lottie-react`
+### Passaggi
 
-### Guida passo passo in After Effects
+1. **Convertire il file `.mov` in WebM con trasparenza**
+   - Copiare il file `.mov` uploadato nel sandbox
+   - Usare `ffmpeg` per convertirlo in WebM VP9 con canale alpha: `ffmpeg -i input.mov -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 1M -auto-alt-ref 0 -an voice-blob.webm`
+   - Verificare dimensione e qualità del file risultante
 
-**1. Installa il plugin Bodymovin**
-- Vai su Window → Extensions → Bodymovin (se non l'hai, scaricalo da [aescripts.com/bodymovin](https://aescripts.com/bodymovin/) o cercalo su Adobe Exchange)
+2. **Aggiungere il file WebM al progetto**
+   - Copiare `voice-blob.webm` in `public/videos/`
 
-**2. Crea la composizione**
-- Dimensioni: **400×400 px** (quadrato)
-- Frame rate: **30 fps**
-- Sfondo: **trasparente** (NO sfondo nero)
+3. **Riscrivere `VoiceBlob3D.tsx`**
+   - Rimuovere tutto il codice Three.js (Canvas, shader, geometria)
+   - Sostituire con un semplice elemento `<video>` HTML che:
+     - Carica il file WebM da `/videos/voice-blob.webm`
+     - Riproduce in loop automatico, senza audio, inline
+     - Ha sfondo trasparente (garantito dal canale alpha del WebM)
+     - Mantiene la stessa interfaccia props (`status`, `muted`, `baseColor`)
+   - Mantenere l'effetto glow colorato attorno al video (già presente)
+   - Regolare velocità di riproduzione (`playbackRate`) in base allo stato vocale
 
-**3. Crea 3 animazioni (segmenti) nella stessa composizione**
-Dividi la timeline in 3 segmenti consecutivi:
+4. **Nessuna modifica a `WidgetPreviewPanel.tsx`**
+   - L'interfaccia del componente resta identica
 
-```text
-Frame 0–90 (3s)    → "connecting"  — blob quasi fermo, leggero respiro
-Frame 91–180 (3s)  → "listening"   — movimento calmo, organico
-Frame 181–270 (3s) → "processing"  — deformazioni intense, rapide
-```
+### Dettaglio tecnico
+- **Formato WebM VP9 con alpha**: supportato da Chrome, Edge, Firefox — i browser principali per i widget
+- **Fallback Safari**: Safari non supporta WebM con alpha; se necessario in futuro si può aggiungere un video HEVC `.mov` come fallback
+- **Playback rate per stato**: `connecting` = 0.5x, `listening` = 1x, `processing` = 2x — per dare dinamicità in base allo stato vocale
+- **Rimozione dipendenze**: si possono rimuovere `@react-three/fiber` e `three` se non usati altrove
 
-Ogni segmento deve essere **loopabile** (ultimo frame = primo frame del segmento).
-
-**4. Regole per compatibilità Lottie**
-- Usa SOLO shape layers (no immagini raster, no video)
-- NO effetti After Effects (blur, glow, ecc.) — non supportati
-- Usa gradienti, maschere, e trasformazioni (posizione, scala, rotazione, opacità)
-- Per l'effetto glossy/lucido: usa gradienti radiali bianchi semitrasparenti sopra la forma
-- Per il colore: usa un colore placeholder (es. `#3B82F6`) — lo sostituiremo via codice con il colore scelto dall'utente
-
-**5. Esporta con Bodymovin**
-- Window → Extensions → Bodymovin
-- Seleziona la composizione
-- Settings: Standard, NO assets
-- Clicca Render → ottieni un file `.json`
-
-**6. Testa l'animazione**
-- Vai su [lottiefiles.com](https://lottiefiles.com) e trascina il JSON per verificare che funzioni
-
-### Cosa farò io dopo
-
-Una volta che carichi il file `.json` su Lovable:
-
-1. Installo `lottie-react` nel progetto
-2. Riscrivo `VoiceBlob3D.tsx` → `VoiceBlobLottie.tsx`
-3. Implemento il cambio segmento in base allo stato vocale (`connecting`/`listening`/`processing`)
-4. Sostituisco il colore placeholder con il colore scelto dall'utente (modificando il JSON a runtime)
-5. Rimuovo le dipendenze Three.js non più necessarie
-
-### Riepilogo formati
-
-| Cosa | Valore |
-|------|--------|
-| Formato export | Lottie JSON (Bodymovin) |
-| Dimensioni comp | 400×400 px |
-| Frame rate | 30 fps |
-| Sfondo | Trasparente |
-| Segmenti | 3 (connecting, listening, processing) |
-| Durata per segmento | 3 secondi (90 frame) |
-| Solo shape layers | Sì |
-| Colore base placeholder | #3B82F6 |
+### File coinvolti
+- `public/videos/voice-blob.webm` — nuovo file video (convertito da .mov)
+- `src/components/builder/VoiceBlob3D.tsx` — riscrittura completa (video HTML al posto di Three.js)
 
