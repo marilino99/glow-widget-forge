@@ -240,6 +240,7 @@ Deno.serve(async (req) => {
         inspire_videos: inspireVideos,
         home_section_order: config.home_section_order || ["product-carousel", "faq", "custom-links", "inspire-me"],
         custom_chips: customChips || null,
+        voice_enabled: config.voice_enabled ?? false,
       }),
       { headers: corsHeaders }
     );
