@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface VoiceBlob3DProps {
   status: 'connecting' | 'listening' | 'processing';
@@ -6,39 +6,8 @@ interface VoiceBlob3DProps {
   baseColor?: string;
 }
 
-function useGlowIntensity(status: string, muted: boolean) {
-  const [intensity, setIntensity] = useState(0.3);
-  const targetRef = useRef(0.3);
-
-  useEffect(() => {
-    targetRef.current = muted ? 0.1 :
-      status === 'connecting' ? 0.15 :
-      status === 'processing' ? 0.7 :
-      0.3;
-  }, [status, muted]);
-
-  useEffect(() => {
-    let raf: number;
-    const animate = () => {
-      setIntensity(prev => {
-        const diff = targetRef.current - prev;
-        if (Math.abs(diff) < 0.001) return targetRef.current;
-        return prev + diff * 0.05;
-      });
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  return intensity;
-}
-
-const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false, baseColor = '#3B82F6' }) => {
+const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const glowIntensity = useGlowIntensity(status, muted);
-  const glowSize = 30 + glowIntensity * 40;
-  const glowOpacity = 0.3 + glowIntensity * 0.4;
 
   useEffect(() => {
     if (!videoRef.current) return;
