@@ -1983,11 +1983,13 @@ Deno.serve(async (req) => {
     var voiceStopBtn = voiceView.querySelector('#wj-voice-stop');
     var voiceStatus = voiceView.querySelector('#wj-voice-status');
     var voiceTranscript = voiceView.querySelector('#wj-voice-transcript');
+    var voiceBlobVideo = voiceView.querySelector('#wj-voice-blob-video');
     var voiceRecognition = null;
     var voiceMuted = false;
     var lastSpokenText = '';
     var noSpeechRetries = 0;
     var MAX_NO_SPEECH = 3;
+    function setVoiceVideoRate(rate) { if (voiceBlobVideo) try { voiceBlobVideo.playbackRate = rate; } catch(e) {} }
 
     function openVoiceView() {
       var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
