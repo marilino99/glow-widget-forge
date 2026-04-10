@@ -2053,6 +2053,7 @@ Deno.serve(async (req) => {
             lastSpokenText = '';
             voiceStatus.textContent = 'Processing...';
             voiceView.classList.remove('listening');
+            setVoiceVideoRate(2.0);
             sendMessageText(finalTranscript.trim(), true);
             finalTranscript = '';
             voiceTranscript.textContent = '';
