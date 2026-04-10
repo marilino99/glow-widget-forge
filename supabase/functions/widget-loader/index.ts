@@ -402,21 +402,10 @@ Deno.serve(async (req) => {
       #wj-voice-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.8);color:#6b7280;transition:color .15s;z-index:2;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
       #wj-voice-close:hover{color:#374151}
       #wj-voice-close svg{width:20px;height:20px}
-      #wj-voice-blob-wrap{width:160px;height:160px;margin-top:auto;margin-bottom:auto}
-      #wj-voice-blob{width:100%;height:100%;filter:url(#wj-blob-goo)}
-      #wj-voice-blob svg{width:100%;height:100%}
-      .wj-blob-path{transition:d 0.8s ease}
-      .wj-blob-p1{fill:url(#wj-blob-grad1);opacity:0.7}
-      .wj-blob-p2{fill:url(#wj-blob-grad2);opacity:0.9}
-      .wj-blob-p3{fill:url(#wj-blob-grad3);opacity:0.5}
-      #wj-voice-view.listening .wj-blob-p1{animation:wjBlobMorph1 6s ease-in-out infinite}
-      #wj-voice-view.listening .wj-blob-p2{animation:wjBlobMorph2 7s ease-in-out infinite}
-      #wj-voice-view.listening .wj-blob-p3{animation:wjBlobMorph3 8s ease-in-out infinite}
-      @keyframes wjBlobPulse{0%,100%{transform:translate(-50%,-60%) scale(1)}50%{transform:translate(-50%,-60%) scale(1.06)}}
-      #wj-voice-view.listening #wj-voice-blob-wrap{animation:wjBlobPulse 3s ease-in-out infinite}
-      @keyframes wjBlobMorph1{0%,100%{d:path("M 100 15 C 145 10, 185 40, 190 85 C 195 130, 170 170, 130 185 C 90 200, 40 185, 15 150 C -10 115, 5 60, 40 30 C 75 0, 100 15, 100 15 Z")}33%{d:path("M 110 20 C 155 5, 190 45, 195 90 C 200 135, 175 175, 135 190 C 95 205, 45 190, 20 155 C -5 120, 10 65, 45 35 C 80 5, 110 20, 110 20 Z")}66%{d:path("M 95 10 C 140 0, 180 35, 188 80 C 196 125, 178 168, 138 183 C 98 198, 48 188, 22 153 C -4 118, 8 63, 43 33 C 78 3, 95 10, 95 10 Z")}}
-      @keyframes wjBlobMorph2{0%,100%{d:path("M 105 20 C 150 15, 188 48, 192 88 C 196 128, 178 165, 140 178 C 102 191, 55 182, 28 150 C 1 118, 12 68, 48 38 C 84 8, 105 20, 105 20 Z")}33%{d:path("M 98 12 C 142 5, 182 42, 188 82 C 194 122, 180 162, 142 178 C 104 194, 52 186, 25 152 C -2 118, 8 62, 45 32 C 82 2, 98 12, 98 12 Z")}66%{d:path("M 108 18 C 152 8, 190 50, 194 92 C 198 134, 176 168, 136 182 C 96 196, 48 184, 22 148 C -4 112, 14 65, 52 35 C 90 5, 108 18, 108 18 Z")}}
-      @keyframes wjBlobMorph3{0%,100%{d:path("M 95 25 C 138 18, 178 50, 185 90 C 192 130, 175 168, 138 182 C 101 196, 55 188, 30 155 C 5 122, 12 72, 48 42 C 84 12, 95 25, 95 25 Z")}50%{d:path("M 108 15 C 148 8, 185 45, 190 85 C 195 125, 180 165, 142 180 C 104 195, 52 185, 25 150 C -2 115, 10 65, 48 35 C 86 5, 108 15, 108 15 Z")}}
+      #wj-voice-blob-wrap{width:160px;height:160px;margin-top:auto;margin-bottom:auto;position:relative}
+      #wj-voice-blob-glow{position:absolute;inset:0;border-radius:50%;background:\${color.bg};opacity:0.3;filter:blur(30px);transform:scale(0.6);transition:opacity 0.3s ease,filter 0.3s ease;pointer-events:none}
+      #wj-voice-view.listening #wj-voice-blob-glow{opacity:0.5;filter:blur(45px)}
+      #wj-voice-blob-video{width:100%;height:100%;object-fit:contain;position:relative;z-index:1;background:transparent}
       #wj-voice-bottom{display:flex;flex-direction:column;align-items:center;padding-bottom:12px}
       #wj-voice-status{font-size:16px;font-weight:500;color:#6b7280;background:rgba(255,255,255,0.7);padding:6px 20px;border-radius:20px;backdrop-filter:blur(8px)}
       #wj-voice-transcript{margin-top:6px;font-size:13px;color:#9ca3af;max-width:80%;text-align:center;min-height:18px}
@@ -607,16 +596,10 @@ Deno.serve(async (req) => {
       #wj-voice-close{position:absolute !important;top:16px !important;right:16px !important;width:32px !important;height:32px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:rgba(255,255,255,0.8) !important;color:#6b7280 !important;transition:color .15s;z-index:2 !important;box-shadow:0 1px 2px rgba(0,0,0,0.05) !important}
       #wj-voice-close:hover{color:#374151 !important}
       #wj-voice-close svg{width:20px !important;height:20px !important}
-      #wj-voice-blob-wrap{width:160px !important;height:160px !important;margin-top:auto !important;margin-bottom:auto !important}
-      #wj-voice-blob{width:100% !important;height:100% !important;filter:url(#wj-blob-goo) !important}
-      #wj-voice-blob svg{width:100% !important;height:100% !important}
-      .wj-blob-p1{fill:url(#wj-blob-grad1) !important;opacity:0.7 !important}
-      .wj-blob-p2{fill:url(#wj-blob-grad2) !important;opacity:0.9 !important}
-      .wj-blob-p3{fill:url(#wj-blob-grad3) !important;opacity:0.5 !important}
-      #wj-voice-view.listening .wj-blob-p1{animation:wjBlobMorph1 6s ease-in-out infinite !important}
-      #wj-voice-view.listening .wj-blob-p2{animation:wjBlobMorph2 7s ease-in-out infinite !important}
-      #wj-voice-view.listening .wj-blob-p3{animation:wjBlobMorph3 8s ease-in-out infinite !important}
-      #wj-voice-view.listening #wj-voice-blob-wrap{animation:wjBlobPulse 3s ease-in-out infinite !important}
+      #wj-voice-blob-wrap{width:160px !important;height:160px !important;margin-top:auto !important;margin-bottom:auto !important;position:relative !important}
+      #wj-voice-blob-glow{position:absolute !important;inset:0 !important;border-radius:50% !important;background:\${color.bg} !important;opacity:0.3 !important;filter:blur(30px) !important;transform:scale(0.6) !important;transition:opacity 0.3s ease,filter 0.3s ease !important;pointer-events:none !important}
+      #wj-voice-view.listening #wj-voice-blob-glow{opacity:0.5 !important;filter:blur(45px) !important}
+      #wj-voice-blob-video{width:100% !important;height:100% !important;object-fit:contain !important;position:relative !important;z-index:1 !important;background:transparent !important}
       #wj-voice-bottom{display:flex !important;flex-direction:column !important;align-items:center !important;padding-bottom:12px !important}
       #wj-voice-status{font-size:16px !important;font-weight:500 !important;color:#6b7280 !important;background:rgba(255,255,255,0.7) !important;padding:6px 20px !important;border-radius:20px !important;backdrop-filter:blur(8px) !important}
       #wj-voice-transcript{margin-top:6px !important;font-size:13px !important;color:#9ca3af !important;max-width:80% !important;text-align:center !important;min-height:18px !important}
@@ -1954,7 +1937,7 @@ Deno.serve(async (req) => {
     // ====== VOICE VIEW ======
     var voiceView = d.createElement('div');
     voiceView.id = 'wj-voice-view';
-    voiceView.innerHTML = '<button id="wj-voice-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button><div id="wj-voice-blob-wrap"><div id="wj-voice-blob"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><filter id="wj-blob-goo"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo"/><feComposite in="SourceGraphic" in2="goo" operator="atop"/></filter><radialGradient id="wj-blob-grad1" cx="30%" cy="30%"><stop offset="0%" stop-color="#ffb088"/><stop offset="100%" stop-color="#e8825c"/></radialGradient><radialGradient id="wj-blob-grad2" cx="60%" cy="40%"><stop offset="0%" stop-color="#f4a27a"/><stop offset="50%" stop-color="#e07850"/><stop offset="100%" stop-color="#c96040"/></radialGradient><radialGradient id="wj-blob-grad3" cx="50%" cy="60%"><stop offset="0%" stop-color="#ffc8a8"/><stop offset="100%" stop-color="#e89070"/></radialGradient></defs><path class="wj-blob-path wj-blob-p3" d="M 95 25 C 138 18, 178 50, 185 90 C 192 130, 175 168, 138 182 C 101 196, 55 188, 30 155 C 5 122, 12 72, 48 42 C 84 12, 95 25, 95 25 Z"/><path class="wj-blob-path wj-blob-p1" d="M 100 15 C 145 10, 185 40, 190 85 C 195 130, 170 170, 130 185 C 90 200, 40 185, 15 150 C -10 115, 5 60, 40 30 C 75 0, 100 15, 100 15 Z"/><path class="wj-blob-path wj-blob-p2" d="M 105 20 C 150 15, 188 48, 192 88 C 196 128, 178 165, 140 178 C 102 191, 55 182, 28 150 C 1 118, 12 68, 48 38 C 84 8, 105 20, 105 20 Z"/></svg></div></div><div id="wj-voice-bottom"><div id="wj-voice-status">Connecting</div><div id="wj-voice-transcript"></div><div id="wj-voice-controls"><button id="wj-voice-stop"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button><button id="wj-voice-mute"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="2" x2="22" y2="22"/></svg></button></div>' + (showBranding ? '<div id="wj-voice-powered">' + poweredHtml + '</div>' : '') + '</div>';
+    voiceView.innerHTML = '<button id="wj-voice-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button><div id="wj-voice-blob-wrap"><div id="wj-voice-blob-glow"></div><video id="wj-voice-blob-video" src="https://widjett.lovable.app/videos/voice-blob.webm" autoplay loop muted playsinline></video></div><div id="wj-voice-bottom"><div id="wj-voice-status">Connecting</div><div id="wj-voice-transcript"></div><div id="wj-voice-controls"><button id="wj-voice-stop"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button><button id="wj-voice-mute"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="2" x2="22" y2="22"/></svg></button></div>' + (showBranding ? '<div id="wj-voice-powered">' + poweredHtml + '</div>' : '') + '</div>';
     pop.appendChild(voiceView);
 
     function hideLauncher() {
@@ -2000,11 +1983,13 @@ Deno.serve(async (req) => {
     var voiceStopBtn = voiceView.querySelector('#wj-voice-stop');
     var voiceStatus = voiceView.querySelector('#wj-voice-status');
     var voiceTranscript = voiceView.querySelector('#wj-voice-transcript');
+    var voiceBlobVideo = voiceView.querySelector('#wj-voice-blob-video');
     var voiceRecognition = null;
     var voiceMuted = false;
     var lastSpokenText = '';
     var noSpeechRetries = 0;
     var MAX_NO_SPEECH = 3;
+    function setVoiceVideoRate(rate) { if (voiceBlobVideo) try { voiceBlobVideo.playbackRate = rate; } catch(e) {} }
 
     function openVoiceView() {
       var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
@@ -2016,6 +2001,7 @@ Deno.serve(async (req) => {
       homeView.classList.add('hidden');
       chatView.classList.remove('open');
       voiceStatus.textContent = 'Connecting...';
+      setVoiceVideoRate(0.5);
       voiceTranscript.textContent = '';
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
@@ -2049,6 +2035,7 @@ Deno.serve(async (req) => {
         recognition.onstart = function() {
           voiceView.classList.add('listening');
           voiceStatus.textContent = 'Listening...';
+          setVoiceVideoRate(1.0);
         };
 
         recognition.onresult = function(ev) {
@@ -2066,6 +2053,7 @@ Deno.serve(async (req) => {
             lastSpokenText = '';
             voiceStatus.textContent = 'Processing...';
             voiceView.classList.remove('listening');
+            setVoiceVideoRate(2.0);
             sendMessageText(finalTranscript.trim(), true);
             finalTranscript = '';
             voiceTranscript.textContent = '';
