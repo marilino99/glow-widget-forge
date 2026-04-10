@@ -2001,6 +2001,7 @@ Deno.serve(async (req) => {
       homeView.classList.add('hidden');
       chatView.classList.remove('open');
       voiceStatus.textContent = 'Connecting...';
+      setVoiceVideoRate(0.5);
       voiceTranscript.textContent = '';
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
@@ -2034,6 +2035,7 @@ Deno.serve(async (req) => {
         recognition.onstart = function() {
           voiceView.classList.add('listening');
           voiceStatus.textContent = 'Listening...';
+          setVoiceVideoRate(1.0);
         };
 
         recognition.onresult = function(ev) {
