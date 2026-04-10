@@ -50,20 +50,7 @@ const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false, baseCo
   }, [status, muted]);
 
   return (
-    <div style={{ width: 160, height: 160, position: 'relative' }}>
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: '50%',
-          background: baseColor,
-          opacity: glowOpacity,
-          filter: `blur(${glowSize}px)`,
-          transform: 'scale(0.6)',
-          transition: 'opacity 0.3s ease',
-          pointerEvents: 'none',
-        }}
-      />
+    <div style={{ width: 200, height: 200, position: 'relative' }}>
       <video
         ref={videoRef}
         src="/videos/voice-blob.webm"
