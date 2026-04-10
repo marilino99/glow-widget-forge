@@ -1,46 +1,72 @@
 
 
-## Piano: Nuovo Blob 3D con colore utente e reattività vocale
+## Piano: Blob vocale creato in After Effects
 
-### Cosa viene fatto
-Riscrivere completamente `VoiceBlob3D.tsx` con un nuovo blob 3D che:
-1. Prende il colore scelto dall'utente come colore dominante e solido
-2. Reagisce in tempo reale alla voce tramite gli stati (`connecting`, `listening`, `processing`)
-3. Ha un aspetto moderno, pulito, con effetto glossy/vetroso
+### Formato richiesto: Lottie (JSON)
 
-### Approccio: Blob sferico con distorsione noise + effetto glossy colorato
+Lottie è il formato ideale perché:
+- Leggero (JSON vettoriale, pochi KB)
+- Controllabile via codice (velocità, segmenti, direzione)
+- Qualità perfetta a qualsiasi risoluzione
+- Supporto nativo React con `lottie-react`
 
-Invece dell'attuale approccio "cromo metallico grigio", il nuovo blob sarà:
-- **Colore solido saturo** dell'utente come base dominante (~90%)
-- **Effetto glossy/vetro** con riflessi bianchi sottili (non cromo grigio)
-- **Deformazioni organiche** tramite simplex noise (mantenute, funzionano bene)
-- **Reattività vocale più marcata**: `processing` causa deformazioni molto più evidenti e veloci, `listening` è calmo con breathing, `connecting` è quasi fermo
-- **Glow esterno** con un alone colorato attorno al blob che pulsa con lo stato
+### Guida passo passo in After Effects
 
-### Dettaglio tecnico
+**1. Installa il plugin Bodymovin**
+- Vai su Window → Extensions → Bodymovin (se non l'hai, scaricalo da [aescripts.com/bodymovin](https://aescripts.com/bodymovin/) o cercalo su Adobe Exchange)
 
-**Fragment shader — nuovo approccio colore:**
-- `baseColor` usato direttamente come colore principale (~85-90% del colore finale)
-- Fresnel bianco puro per effetto vetro/glossy sui bordi
-- Un singolo specular highlight bianco per il riflesso lucido
-- Darkening nelle valli per profondità 3D
-- Nessun environment map grigio — il colore è il protagonista
+**2. Crea la composizione**
+- Dimensioni: **400×400 px** (quadrato)
+- Frame rate: **30 fps**
+- Sfondo: **trasparente** (NO sfondo nero)
 
-**Vertex shader — reattività migliorata:**
-- Aggiungere uniform `uAudioReactivity` (0-1) che varia con lo stato
-- `processing`: reactivity alta (0.8) → deformazioni ampie e veloci
-- `listening`: reactivity media (0.4) → movimento calmo organico
-- `connecting`: reactivity bassa (0.1) → quasi sferico, leggero breathing
+**3. Crea 3 animazioni (segmenti) nella stessa composizione**
+Dividi la timeline in 3 segmenti consecutivi:
 
-**Wrapper — glow effect:**
-- Aggiungere un `div` dietro il Canvas con `box-shadow` radiale colorato che pulsa
-- Il colore del glow segue `baseColor`
-- L'intensità del glow segue lo stato vocale
+```text
+Frame 0–90 (3s)    → "connecting"  — blob quasi fermo, leggero respiro
+Frame 91–180 (3s)  → "listening"   — movimento calmo, organico
+Frame 181–270 (3s) → "processing"  — deformazioni intense, rapide
+```
 
-### File coinvolti
-- `src/components/builder/VoiceBlob3D.tsx` — riscrittura completa
-- `src/components/builder/WidgetPreviewPanel.tsx` — nessuna modifica (già passa `baseColor` e `status`)
+Ogni segmento deve essere **loopabile** (ultimo frame = primo frame del segmento).
 
-### Risultato atteso
-Un blob 3D sferico con il colore forte e saturo scelto dall'utente, aspetto glossy/vetroso moderno, che si deforma visibilmente quando riceve e processa la voce, con un alone luminoso colorato che pulsa.
+**4. Regole per compatibilità Lottie**
+- Usa SOLO shape layers (no immagini raster, no video)
+- NO effetti After Effects (blur, glow, ecc.) — non supportati
+- Usa gradienti, maschere, e trasformazioni (posizione, scala, rotazione, opacità)
+- Per l'effetto glossy/lucido: usa gradienti radiali bianchi semitrasparenti sopra la forma
+- Per il colore: usa un colore placeholder (es. `#3B82F6`) — lo sostituiremo via codice con il colore scelto dall'utente
+
+**5. Esporta con Bodymovin**
+- Window → Extensions → Bodymovin
+- Seleziona la composizione
+- Settings: Standard, NO assets
+- Clicca Render → ottieni un file `.json`
+
+**6. Testa l'animazione**
+- Vai su [lottiefiles.com](https://lottiefiles.com) e trascina il JSON per verificare che funzioni
+
+### Cosa farò io dopo
+
+Una volta che carichi il file `.json` su Lovable:
+
+1. Installo `lottie-react` nel progetto
+2. Riscrivo `VoiceBlob3D.tsx` → `VoiceBlobLottie.tsx`
+3. Implemento il cambio segmento in base allo stato vocale (`connecting`/`listening`/`processing`)
+4. Sostituisco il colore placeholder con il colore scelto dall'utente (modificando il JSON a runtime)
+5. Rimuovo le dipendenze Three.js non più necessarie
+
+### Riepilogo formati
+
+| Cosa | Valore |
+|------|--------|
+| Formato export | Lottie JSON (Bodymovin) |
+| Dimensioni comp | 400×400 px |
+| Frame rate | 30 fps |
+| Sfondo | Trasparente |
+| Segmenti | 3 (connecting, listening, processing) |
+| Durata per segmento | 3 secondi (90 frame) |
+| Solo shape layers | Sì |
+| Colore base placeholder | #3B82F6 |
 
