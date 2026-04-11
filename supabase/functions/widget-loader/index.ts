@@ -2543,6 +2543,9 @@ Deno.serve(async (req) => {
     function sendMessageText(text, isVoice) {
       if (!text || !text.trim()) return;
       var msg = text.trim();
+      // Remove initial quick-action chips on first message
+      var initChips = d.getElementById('wj-chat-chips');
+      if (initChips) initChips.remove();
       var tempId = 'temp_' + Date.now();
       var tempMsg = { id: tempId, sender_type: 'visitor', content: msg };
       renderMessage(tempMsg);
