@@ -2097,6 +2097,33 @@ Deno.serve(async (req) => {
       });
     }
 
+    function clearVoiceProducts() {
+      var vpc = d.getElementById('wj-voice-products');
+      if (vpc) { vpc.innerHTML = ''; vpc.classList.remove('visible'); }
+      var blobWrap = d.getElementById('wj-voice-blob-wrap');
+      if (blobWrap) { blobWrap.classList.remove('has-products'); }
+    }
+
+    function showVoiceProducts(prods) {
+      var vpc = d.getElementById('wj-voice-products');
+      var blobWrap = d.getElementById('wj-voice-blob-wrap');
+      if (!vpc || !blobWrap || !prods || prods.length === 0) return;
+      var html = '';
+      prods.forEach(function(prod) {
+        var url = prod.productUrl || '#';
+        html += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" class="wj-voice-prod-card" style="text-decoration:none">';
+        if (prod.imageUrl) {
+          html += '<img src="' + esc(prod.imageUrl) + '" alt="' + esc(prod.title || '') + '"/>';
+        }
+        html += '<p class="wj-vpc-title">' + esc(prod.title || '') + '</p>';
+        if (prod.price) { html += '<p class="wj-vpc-price">' + esc(prod.price) + '</p>'; }
+        html += '</a>';
+      });
+      vpc.innerHTML = html;
+      blobWrap.classList.add('has-products');
+      requestAnimationFrame(function() { vpc.classList.add('visible'); });
+    }
+
     function closeVoiceView() {
       voiceView.classList.remove('open', 'listening');
       pendingReplyUtterance = null;
@@ -2104,6 +2131,7 @@ Deno.serve(async (req) => {
       stopTtsAudio();
       isSpeaking = false;
       voiceMuted = false;
+      clearVoiceProducts();
       chatView.classList.add('open');
       homeView.classList.add('hidden');
     }
