@@ -1983,9 +1983,24 @@ Deno.serve(async (req) => {
     var voiceRecognition = null;
     var voiceMuted = false;
     var lastSpokenText = '';
+    var pendingReplyUtterance = null;
     var noSpeechRetries = 0;
     var MAX_NO_SPEECH = 3;
+    var keepAliveInterval = null;
     function setVoiceVideoRate(rate) { if (voiceBlobVideo) try { voiceBlobVideo.playbackRate = rate; } catch(e) {} }
+
+    var voiceLangMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
+    function getVoiceLang() { return voiceLangMap[lang] || 'en-US'; }
+    function createUtterance(text) {
+      var u = new SpeechSynthesisUtterance(text || '');
+      u.lang = getVoiceLang();
+      u.rate = 1.0;
+      return u;
+    }
+    function nudgeSynth() {
+      if (!w.speechSynthesis) return;
+      try { w.speechSynthesis.resume(); } catch(e) {}
+    }
 
     function openVoiceView() {
       var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
@@ -1993,13 +2008,11 @@ Deno.serve(async (req) => {
         alert('Voice is not supported in this browser. Try Chrome or Safari.');
         return;
       }
-      // Prewarm speechSynthesis inside user-gesture context so fallback TTS works
-      if (w.speechSynthesis) {
-        try { w.speechSynthesis.cancel(); } catch(e) {}
-        var warmup = new SpeechSynthesisUtterance('');
-        warmup.volume = 0;
-        try { w.speechSynthesis.speak(warmup); } catch(e) {}
-      }
+      // Create greeting utterance NOW in user-gesture context
+      var greeting = tr.welcomeMessage || 'Welcome! How can I help you?';
+      var greetingUtterance = createUtterance(greeting);
+      pendingReplyUtterance = null;
+      nudgeSynth();
       voiceView.classList.add('open');
       homeView.classList.add('hidden');
       chatView.classList.remove('open');
@@ -2009,9 +2022,7 @@ Deno.serve(async (req) => {
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
       startPolling();
-      // AI speaks first with the same greeting shown in the widget
-      var greeting = tr.welcomeMessage || 'Welcome! How can I help you?';
-      speakText(greeting, function() { startVoiceRecognition(); });
+      speakText(greeting, function() { startVoiceRecognition(); }, greetingUtterance);
     }
 
     function closeVoiceView() {
