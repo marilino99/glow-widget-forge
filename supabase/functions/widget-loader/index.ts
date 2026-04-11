@@ -1993,6 +1993,13 @@ Deno.serve(async (req) => {
         alert('Voice is not supported in this browser. Try Chrome or Safari.');
         return;
       }
+      // Prewarm speechSynthesis inside user-gesture context so fallback TTS works
+      if (w.speechSynthesis) {
+        try { w.speechSynthesis.cancel(); } catch(e) {}
+        var warmup = new SpeechSynthesisUtterance('');
+        warmup.volume = 0;
+        try { w.speechSynthesis.speak(warmup); } catch(e) {}
+      }
       voiceView.classList.add('open');
       homeView.classList.add('hidden');
       chatView.classList.remove('open');
@@ -2002,8 +2009,8 @@ Deno.serve(async (req) => {
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
       startPolling();
-      // AI speaks first with a greeting using ElevenLabs TTS
-      var greeting = 'Welcome! How can I help you?';
+      // AI speaks first with the same greeting shown in the widget
+      var greeting = tr.welcomeMessage || 'Welcome! How can I help you?';
       speakWithElevenLabs(greeting, function() { startVoiceRecognition(); });
     }
 
@@ -2012,6 +2019,8 @@ Deno.serve(async (req) => {
       if (voiceRecognition) { try { voiceRecognition.abort(); } catch(e) {} voiceRecognition = null; }
       // Cancel TTS when closing voice view
       stopElevenLabsAudio();
+      isSpeaking = false;
+      if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
       chatView.classList.add('open');
       homeView.classList.add('hidden');
     }
@@ -2117,6 +2126,8 @@ Deno.serve(async (req) => {
         if (voiceMuted && voiceRecognition) {
           try { voiceRecognition.stop(); } catch(e) {}
           stopElevenLabsAudio();
+          isSpeaking = false;
+          if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
           voiceStatus.textContent = 'Muted';
           voiceView.classList.remove('listening');
         } else if (!voiceMuted) {
