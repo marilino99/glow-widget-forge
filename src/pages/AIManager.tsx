@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
+const ALLOWED_EMAILS = ["mattiatools@gmail.com", "a@gmail.com"];
 
 interface AILog {
   id: string;
