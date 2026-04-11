@@ -320,17 +320,50 @@ Deno.serve(async (req) => {
 
     let systemInstruction: string;
 
-    if (config.system_prompt_template) {
-      systemInstruction = config.system_prompt_template
+    // Select the appropriate template based on voice mode
+    const activeTemplate = voiceMode
+      ? (config.voice_system_prompt_template || null)
+      : (config.system_prompt_template || null);
+
+    const noProductsRule = !productCardsData || productCardsData.length === 0 ? "NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : "";
+
+    if (activeTemplate) {
+      systemInstruction = activeTemplate
         .replace(/\{\{CONTACT_NAME\}\}/g, config.contact_name || "Support")
         .replace(/\{\{LANGUAGE\}\}/g, config.language || "en")
         .replace(/\{\{KNOWLEDGE_BASE\}\}/g, knowledgeBase)
         .replace(/\{\{ADDITIONAL_INSTRUCTIONS\}\}/g, additionalInstructions)
         .replace(/\{\{LEAD_COLLECTION\}\}/g, "")
         .replace(/\{\{FORWARD_EMAIL\}\}/g, config.forward_email || "")
-        .replace(/\{\{VOICE_MODE_HINT\}\}/g, voiceMode ? "Since the visitor is using voice mode, you MUST list the available categories naturally in your response so they can hear the options (e.g. 'Ok, stai cercando skincare, haircare, abbigliamento o scarpe?'). Speak them aloud in a conversational way." : 'Just write a short question like "What type of product are you looking for?".')
-        .replace(/\{\{NO_PRODUCTS_RULE\}\}/g, !productCardsData || productCardsData.length === 0 ? "NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : "");
+        .replace(/\{\{VOICE_MODE_HINT\}\}/g, voiceMode ? "Since the visitor is using voice mode, you MUST list the available categories naturally in your response so they can hear the options. Speak them aloud in a conversational way." : 'Just write a short question like "What type of product are you looking for?".')
+        .replace(/\{\{NO_PRODUCTS_RULE\}\}/g, noProductsRule);
+    } else if (voiceMode) {
+      // Default voice prompt (no custom template)
+      systemInstruction = `You are an AI voice assistant named "${config.contact_name || "Support"}" for a business website. The visitor is interacting via VOICE — your responses will be read aloud by text-to-speech.
+Language: Your default language is ${config.language || "en"}, but you MUST detect the language the visitor is speaking in and ALWAYS reply in that same language.
+
+${knowledgeBase}
+${additionalInstructions}
+
+VOICE-SPECIFIC RULES — CRITICAL:
+1. Keep responses SHORT: 1-2 sentences max. The visitor is LISTENING, not reading.
+2. Use a natural, conversational tone. Avoid formal or robotic phrasing.
+3. NEVER use bullet points, numbered lists, or markdown formatting.
+4. NEVER use emojis.
+5. Instead of lists, speak naturally: "We have skincare, haircare, and accessories".
+6. YOUR PRIMARY SOURCE OF TRUTH IS THE KNOWLEDGE BASE ABOVE. Search it before answering.
+7. If the knowledge base contains relevant info, use it. Be accurate.
+8. If the question is NOT covered, say you don't have that info and suggest contacting ${config.contact_name || "the business"} directly.
+9. NEVER invent or fabricate information.
+10. If the FAQ section contains a matching question, use that answer but rephrase it conversationally.
+11. PRODUCT RECOMMENDATIONS: Keep spoken response to ONE short sentence. Append: [PRODUCTS: exact title 1, exact title 2]. Use EXACT titles from catalog.
+12. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): When the visitor wants help choosing, list the available categories naturally in your spoken response so they can HEAR the options. DO NOT show [PRODUCTS:] during discovery.
+12b. GOAL DISCOVERY: After category selection, ask about their goal/need. Append [CHIPS:] with 3-5 goals. Always include "Inspire me" as the last chip.
+12c. INSPIRE ME SHORTCUT: When "Inspire me" is selected, immediately show popular products with [PRODUCTS:].
+12d. SKIN/HAIR TYPE: For beauty categories, ask one more question about skin/hair type after goal selection.
+${noProductsRule}`;
     } else {
+      // Default chat prompt (no custom template)
       systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
 Language: Your default language is ${config.language || "en"}, but you MUST detect the language the visitor is writing in and ALWAYS reply in that same language. If the visitor writes in Spanish, reply in Spanish. If they write in French, reply in French. Always match the visitor's language.
 
@@ -345,22 +378,13 @@ STRICT RULES:
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
-- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product (for example: "Find the right product for me", "Help me choose", "Aiutami a scegliere"), DO NOT show product cards yet. Ask what category/type they want. The category chips will be added automatically by the system — you do NOT need to append a [CHIPS:] marker for categories. ${voiceMode ? "Since the visitor is using voice mode, you MUST list the available categories naturally in your response so they can hear the options (e.g. 'Ok, stai cercando skincare, haircare, abbigliamento o scarpe?'). Speak them aloud in a conversational way." : 'Just write a short question like "What type of product are you looking for?".'}
-- GOAL DISCOVERY FLOW (SECOND STEP): When the visitor selects a category (e.g. clicks "Skincare", "Haircare", "Clothing"), DO NOT show products yet. Instead, ask what their goal or need is within that category. Append a [CHIPS:] marker with 3-5 relevant goals/needs for that category. Do NOT prepend any emoji to goal chips. ALWAYS include a translated version of "Inspire me" as the LAST chip in every category (translations: "Ispirami" in Italian, "Inspírame" in Spanish, "Inspire-moi" in French, "Inspirier mich" in German, "Inspire me" in English). Examples by category:
-  * Skincare → [CHIPS: Hydration, Anti-aging, Acne & Blemishes, Radiance, Sensitive skin, Inspire me]
-  * Haircare → [CHIPS: Hydration & Repair, Volume, Shine & Smoothness, Scalp care, Inspire me]
-  * Clothing → [CHIPS: Casual, Formal, Sportswear, Summer, Inspire me]
-  * Accessories → [CHIPS: Bags, Jewelry, Scarves, Eyewear, Inspire me]
-  * Fragrance → [CHIPS: Floral, Woody, Fresh & Citrus, Evening, Inspire me]
+- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product, DO NOT show product cards yet. Ask what category/type they want. The category chips will be added automatically by the system. Just write a short question like "What type of product are you looking for?".
+- GOAL DISCOVERY FLOW (SECOND STEP): When the visitor selects a category, DO NOT show products yet. Ask what their goal or need is. Append [CHIPS:] with 3-5 relevant goals. Always include "Inspire me" as the last chip.
   Adapt the goals to the actual products in the catalog. Write goals in the visitor's language. Do NOT add emojis to goal chips.
-- INSPIRE ME SHORTCUT: When the visitor selects "Inspire me" (or its translation), skip ALL further discovery steps (skin type, hair type, etc.) and immediately show the most popular products from the selected category using the [PRODUCTS:] marker. Show 3-5 products.
-- SKIN/HAIR TYPE DISCOVERY (THIRD STEP): After the visitor selects a goal OTHER THAN "Inspire me" (e.g. "Hydration", "Anti-aging"), DO NOT show products yet. Ask one more question about their specific type/condition. Do NOT add emojis to these chips either. Examples:
-  * Skincare goals → Ask skin type: [CHIPS: Oily, Dry, Combination, Sensitive]
-  * Haircare goals → Ask hair type: [CHIPS: Thin, Thick, Curly, Straight]
-  * For non-beauty categories (Clothing, Accessories, Fragrance), skip this step and show products directly after the goal.
-  Translate chip labels into the visitor's language. Only AFTER this third step (or after goal for non-beauty), show the matching products using the [PRODUCTS:] marker.
-- PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
-${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
+- INSPIRE ME SHORTCUT: When the visitor selects "Inspire me" (or its translation), skip ALL further discovery steps and immediately show popular products using [PRODUCTS:]. Show 3-5 products.
+- SKIN/HAIR TYPE DISCOVERY (THIRD STEP): After the visitor selects a goal OTHER THAN "Inspire me", ask about their specific type/condition for beauty categories. Skip for non-beauty categories.
+- PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products AND there is a Product Catalog above, recommend relevant products. Keep text VERY SHORT (1 sentence). Append: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT titles from catalog. NEVER describe product details in text — cards handle that.
+${noProductsRule}`;
     }
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({

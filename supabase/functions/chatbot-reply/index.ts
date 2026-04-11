@@ -513,17 +513,24 @@ Deno.serve(async (req) => {
 
     let systemInstruction: string;
 
-    if (config.system_prompt_template) {
+    // Select the appropriate template based on voice mode
+    const activeTemplate = voiceMode
+      ? (config.voice_system_prompt_template || null)
+      : (config.system_prompt_template || null);
+
+    const noProductsRule = !productCardsData || productCardsData.length === 0 ? "NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : "";
+
+    if (activeTemplate) {
       // Use custom system prompt template with placeholder replacements
-      systemInstruction = config.system_prompt_template
+      systemInstruction = activeTemplate
         .replace(/\{\{CONTACT_NAME\}\}/g, config.contact_name || "Support")
         .replace(/\{\{LANGUAGE\}\}/g, config.language || "en")
         .replace(/\{\{KNOWLEDGE_BASE\}\}/g, knowledgeBase)
         .replace(/\{\{ADDITIONAL_INSTRUCTIONS\}\}/g, additionalInstructions)
         .replace(/\{\{LEAD_COLLECTION\}\}/g, leadCollectionInstruction)
         .replace(/\{\{FORWARD_EMAIL\}\}/g, config.forward_email || "")
-        .replace(/\{\{VOICE_MODE_HINT\}\}/g, voiceMode ? "Since the visitor is using voice mode, you MUST list the available categories naturally in your response so they can hear the options (e.g. 'Ok, stai cercando skincare, haircare, abbigliamento o scarpe?'). Speak them aloud in a conversational way." : "Just write a short question.")
-        .replace(/\{\{NO_PRODUCTS_RULE\}\}/g, !productCardsData || productCardsData.length === 0 ? "NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : "");
+        .replace(/\{\{VOICE_MODE_HINT\}\}/g, voiceMode ? "Since the visitor is using voice mode, you MUST list the available categories naturally in your response so they can hear the options. Speak them aloud in a conversational way." : "Just write a short question.")
+        .replace(/\{\{NO_PRODUCTS_RULE\}\}/g, noProductsRule);
     } else {
       // Default hardcoded system prompt
       systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
