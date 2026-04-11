@@ -2478,6 +2478,7 @@ Deno.serve(async (req) => {
     function stopTtsAudio() {
       clearPrimeBrowserTtsTimeout();
       clearKeepAlive();
+      if (currentTtsXhr) { try { currentTtsXhr.abort(); } catch(e) {} currentTtsXhr = null; }
       if (currentAudio) { try { currentAudio.pause(); currentAudio.src = ''; } catch(e) {} currentAudio = null; }
       if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
     }
