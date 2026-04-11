@@ -2419,8 +2419,9 @@ Deno.serve(async (req) => {
       if (el) el.remove();
     }
 
-    // Browser TTS helpers
+    // TTS helpers — ElevenLabs via edge function, fallback to browser speechSynthesis
     var isSpeaking = false;
+    var currentAudio = null;
 
     function clearKeepAlive() {
       if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
@@ -2428,6 +2429,7 @@ Deno.serve(async (req) => {
 
     function stopTtsAudio() {
       clearKeepAlive();
+      if (currentAudio) { try { currentAudio.pause(); currentAudio.src = ''; } catch(e) {} currentAudio = null; }
       if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
     }
 
@@ -2442,7 +2444,26 @@ Deno.serve(async (req) => {
       }
     }
 
-    function speakText(text, onDone, preCreatedUtterance) {
+    function speakBrowserFallback(clean, finish) {
+      if (!w.speechSynthesis) { finish(); return; }
+      try { w.speechSynthesis.cancel(); } catch(e) {}
+      nudgeSynth();
+      var utter = createUtterance(clean);
+      utter.lang = getVoiceLang();
+      utter.rate = 1.0;
+      var started = false;
+      utter.onstart = function() { started = true; nudgeSynth(); };
+      utter.onend = finish;
+      utter.onerror = function() { finish(); };
+      try {
+        w.speechSynthesis.speak(utter);
+        nudgeSynth();
+        keepAliveInterval = setInterval(function() { if (!isSpeaking) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
+        setTimeout(function() { if (!started && isSpeaking) { finish(); } }, 2500);
+      } catch(e) { finish(); }
+    }
+
+    function speakText(text, onDone) {
       if (!text) { pendingReplyUtterance = null; if (onDone) onDone(); return; }
       if (!voiceView || !voiceView.classList.contains('open') || voiceMuted) { pendingReplyUtterance = null; if (onDone) onDone(); return; }
       if (!onDone && text === lastSpokenText) { pendingReplyUtterance = null; return; }
@@ -2453,6 +2474,7 @@ Deno.serve(async (req) => {
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} voiceRecognition = null; }
       if (voiceView) voiceView.classList.remove('listening');
       if (voiceStatus) voiceStatus.textContent = 'Speaking...';
+      pendingReplyUtterance = null;
 
       var clean = text.replace(/[*_#]/g, '').replace(/\x60/g, '').split('[').join('').split(']').join('').split(String.fromCharCode(10)).join('. ');
 
@@ -2461,37 +2483,50 @@ Deno.serve(async (req) => {
         if (done) return;
         done = true;
         clearKeepAlive();
-        pendingReplyUtterance = null;
+        currentAudio = null;
         isSpeaking = false;
         if (onDone) onDone();
         else resumeListening();
       }
 
-      if (!w.speechSynthesis) { finish(); return; }
-
-      try { w.speechSynthesis.cancel(); } catch(e) {}
-      nudgeSynth();
-
-      // Use pre-created utterance (gesture-context) or pending or fresh
-      var utter = preCreatedUtterance || pendingReplyUtterance || createUtterance('');
-      pendingReplyUtterance = null;
-      utter.text = clean;
-      utter.lang = getVoiceLang();
-      utter.rate = 1.0;
-
-      var started = false;
-      utter.onstart = function() { started = true; nudgeSynth(); };
-      utter.onend = finish;
-      utter.onerror = function() { finish(); };
-
-      try {
-        w.speechSynthesis.speak(utter);
-        nudgeSynth();
-        // Keep-alive: Chrome pauses long TTS without resume()
-        keepAliveInterval = setInterval(function() { if (done) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
-        // Safety: if speech never starts within 2.5s, give up
-        setTimeout(function() { if (!started && !done) { finish(); } }, 2500);
-      } catch(e) { finish(); }
+      // Try ElevenLabs edge function first
+      var ttsUrl = u + '/functions/v1/elevenlabs-tts';
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', ttsUrl, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.responseType = 'blob';
+      xhr.timeout = 10000;
+      xhr.onload = function() {
+        if (xhr.status !== 200) { speakBrowserFallback(clean, finish); return; }
+        var ct = xhr.getResponseHeader('Content-Type') || '';
+        if (ct.indexOf('audio') !== -1) {
+          // Got audio — play it
+          try {
+            var blobUrl = URL.createObjectURL(xhr.response);
+            var audio = new Audio(blobUrl);
+            currentAudio = audio;
+            audio.onended = function() { URL.revokeObjectURL(blobUrl); finish(); };
+            audio.onerror = function() { URL.revokeObjectURL(blobUrl); speakBrowserFallback(clean, finish); };
+            audio.play().catch(function() { URL.revokeObjectURL(blobUrl); speakBrowserFallback(clean, finish); });
+          } catch(e) { speakBrowserFallback(clean, finish); }
+        } else {
+          // JSON response — check for fallback flag
+          try {
+            var reader = new FileReader();
+            reader.onload = function() {
+              try {
+                var json = JSON.parse(reader.result);
+                if (json.fallback) { speakBrowserFallback(clean, finish); }
+                else { speakBrowserFallback(clean, finish); }
+              } catch(e) { speakBrowserFallback(clean, finish); }
+            };
+            reader.readAsText(xhr.response);
+          } catch(e) { speakBrowserFallback(clean, finish); }
+        }
+      };
+      xhr.onerror = function() { speakBrowserFallback(clean, finish); };
+      xhr.ontimeout = function() { speakBrowserFallback(clean, finish); };
+      xhr.send(JSON.stringify({ text: clean, widgetId: id }));
     }
 
     function pollMessages() {
