@@ -2027,10 +2027,11 @@ Deno.serve(async (req) => {
 
     function closeVoiceView() {
       voiceView.classList.remove('open', 'listening');
+      pendingReplyUtterance = null;
       if (voiceRecognition) { try { voiceRecognition.abort(); } catch(e) {} voiceRecognition = null; }
-      // Cancel TTS when closing voice view
       stopTtsAudio();
       isSpeaking = false;
+      voiceMuted = false;
       chatView.classList.add('open');
       homeView.classList.add('hidden');
     }
@@ -2040,7 +2041,7 @@ Deno.serve(async (req) => {
       if (!SpeechRecognition) return;
       try {
         var recognition = new SpeechRecognition();
-        recognition.lang = lang || 'en';
+        recognition.lang = getVoiceLang();
         recognition.interimResults = true;
         recognition.continuous = false;
         voiceRecognition = recognition;
@@ -2066,6 +2067,8 @@ Deno.serve(async (req) => {
           if (finalTranscript.trim()) {
             noSpeechRetries = 0;
             lastSpokenText = '';
+            // Pre-create utterance NOW while still in gesture-adjacent context
+            pendingReplyUtterance = createUtterance('');
             voiceStatus.textContent = 'Processing...';
             voiceView.classList.remove('listening');
             setVoiceVideoRate(2.0);
@@ -2133,13 +2136,15 @@ Deno.serve(async (req) => {
       voiceMuteBtn.onclick = function() {
         voiceMuted = !voiceMuted;
         voiceMuteBtn.classList.toggle('muted');
-        if (voiceMuted && voiceRecognition) {
-          try { voiceRecognition.stop(); } catch(e) {}
+        if (voiceMuted) {
+          pendingReplyUtterance = null;
+          if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
           stopTtsAudio();
           isSpeaking = false;
           voiceStatus.textContent = 'Muted';
           voiceView.classList.remove('listening');
-        } else if (!voiceMuted) {
+        } else {
+          nudgeSynth();
           startVoiceRecognition();
         }
       };
@@ -2417,7 +2422,12 @@ Deno.serve(async (req) => {
     // Browser TTS helpers
     var isSpeaking = false;
 
+    function clearKeepAlive() {
+      if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
+    }
+
     function stopTtsAudio() {
+      clearKeepAlive();
       if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
     }
 
@@ -2432,16 +2442,14 @@ Deno.serve(async (req) => {
       }
     }
 
-    function speakText(text, onDone) {
-      if (!text) { if (onDone) onDone(); return; }
-      if (!voiceView || !voiceView.classList.contains('open') || voiceMuted) { if (onDone) onDone(); return; }
-      // Prevent repeating the same text
-      if (!onDone && text === lastSpokenText) return;
+    function speakText(text, onDone, preCreatedUtterance) {
+      if (!text) { pendingReplyUtterance = null; if (onDone) onDone(); return; }
+      if (!voiceView || !voiceView.classList.contains('open') || voiceMuted) { pendingReplyUtterance = null; if (onDone) onDone(); return; }
+      if (!onDone && text === lastSpokenText) { pendingReplyUtterance = null; return; }
       if (!onDone) lastSpokenText = text;
 
       isSpeaking = true;
       stopTtsAudio();
-      // Pause mic while speaking
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} voiceRecognition = null; }
       if (voiceView) voiceView.classList.remove('listening');
       if (voiceStatus) voiceStatus.textContent = 'Speaking...';
@@ -2452,29 +2460,38 @@ Deno.serve(async (req) => {
       function finish() {
         if (done) return;
         done = true;
+        clearKeepAlive();
+        pendingReplyUtterance = null;
         isSpeaking = false;
         if (onDone) onDone();
         else resumeListening();
       }
-      if (w.speechSynthesis) {
-        try { w.speechSynthesis.cancel(); } catch(e) {}
-        var utter = new SpeechSynthesisUtterance(clean);
-        var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-        utter.lang = langMap[lang] || 'en-US';
-        utter.rate = 1.0;
-        // Track whether speech actually started
-        var started = false;
-        utter.onstart = function() { started = true; };
-        utter.onend = finish;
-        utter.onerror = function() { finish(); };
-        try {
-          w.speechSynthesis.speak(utter);
-          // Only use a fallback timeout if speech never starts (browser quirk)
-          setTimeout(function() {
-            if (!started && !done) { finish(); }
-          }, 3000);
-        } catch(e) { finish(); }
-      } else { finish(); }
+
+      if (!w.speechSynthesis) { finish(); return; }
+
+      try { w.speechSynthesis.cancel(); } catch(e) {}
+      nudgeSynth();
+
+      // Use pre-created utterance (gesture-context) or pending or fresh
+      var utter = preCreatedUtterance || pendingReplyUtterance || createUtterance('');
+      pendingReplyUtterance = null;
+      utter.text = clean;
+      utter.lang = getVoiceLang();
+      utter.rate = 1.0;
+
+      var started = false;
+      utter.onstart = function() { started = true; nudgeSynth(); };
+      utter.onend = finish;
+      utter.onerror = function() { finish(); };
+
+      try {
+        w.speechSynthesis.speak(utter);
+        nudgeSynth();
+        // Keep-alive: Chrome pauses long TTS without resume()
+        keepAliveInterval = setInterval(function() { if (done) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
+        // Safety: if speech never starts within 2.5s, give up
+        setTimeout(function() { if (!started && !done) { finish(); } }, 2500);
+      } catch(e) { finish(); }
     }
 
     function pollMessages() {
