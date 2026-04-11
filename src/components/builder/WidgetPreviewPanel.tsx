@@ -526,6 +526,14 @@ const WidgetPreviewPanel = ({
 
   // Voice session for voice view overlay
   const startVoiceSession = () => {
+    // Prewarm speechSynthesis inside user-gesture context so fallback TTS works
+    if (window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch(_) {}
+      const warmup = new SpeechSynthesisUtterance('');
+      warmup.volume = 0;
+      try { window.speechSynthesis.speak(warmup); } catch(_) {}
+    }
+
     setShowVoiceView(true);
     setVoiceStatus("connecting");
     setVoiceMuted(false);
@@ -536,14 +544,20 @@ const WidgetPreviewPanel = ({
       return;
     }
 
-    // AI speaks first with a greeting, then starts listening
-    const greeting = "Welcome! How can I help you?";
+    // AI speaks first with the welcome message, then starts listening
+    const langMessages: Record<string, string> = {
+      en: "Welcome! How can I help you?",
+      it: "Benvenuto! In che modo posso esserti utile?",
+      es: "¡Bienvenido! ¿Cómo puedo ayudarte?",
+      fr: "Bienvenue ! Comment puis-je vous aider ?",
+      de: "Willkommen! Wie kann ich Ihnen helfen?",
+      pt: "Bem-vindo! Como posso ajudar?",
+    };
+    const greeting = langMessages[language || "en"] || langMessages.en;
 
-    setTimeout(() => {
-      speakWithElevenLabs(greeting, () => {
-        startVoiceRecognitionInternal(SpeechRecognition);
-      });
-    }, 500);
+    speakWithElevenLabs(greeting, () => {
+      startVoiceRecognitionInternal(SpeechRecognition);
+    });
   };
 
   const startVoiceRecognitionInternal = (SpeechRecognition: any) => {
