@@ -2056,12 +2056,13 @@ Deno.serve(async (req) => {
       // Reset preferBrowserTts so ElevenLabs is retried each session
       preferBrowserTts = false;
 
-      // Unlock audio playback on mobile (user gesture context)
+      // Unlock a persistent Audio element in user gesture context (critical for iOS)
       try {
-        var silentAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=');
-        silentAudio.volume = 0;
-        silentAudio.play().then(function(){silentAudio.pause();}).catch(function(){});
-      } catch(e){}
+        unlockedAudio = new Audio();
+        unlockedAudio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+        unlockedAudio.volume = 1;
+        unlockedAudio.play().then(function(){ unlockedAudio.pause(); unlockedAudio.currentTime = 0; }).catch(function(){ unlockedAudio = null; });
+      } catch(e){ unlockedAudio = null; }
 
       voiceView.classList.add('open');
       homeView.classList.add('hidden');
