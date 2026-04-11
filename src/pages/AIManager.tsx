@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import SystemPromptSection from "@/components/builder/SystemPromptSection";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ArrowLeft, Save, Loader2, RefreshCw, AlertTriangle,
-  CheckCircle, Clock, MessageSquare, Mic, Filter,
+  CheckCircle, Clock, MessageSquare, Mic, Filter, Code, ChevronDown, ChevronUp,
 } from "lucide-react";
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
@@ -180,6 +181,9 @@ const AIManager = () => {
             <TabsTrigger value="instructions" className="gap-2">
               <MessageSquare className="h-4 w-4" /> Istruzioni
             </TabsTrigger>
+            <TabsTrigger value="system-prompt" className="gap-2">
+              <Code className="h-4 w-4" /> Prompt di Sistema
+            </TabsTrigger>
             <TabsTrigger value="logs" className="gap-2">
               <AlertTriangle className="h-4 w-4" /> Log & Errori
             </TabsTrigger>
@@ -276,6 +280,11 @@ const AIManager = () => {
                 </Card>
               </>
             )}
+          </TabsContent>
+
+          {/* SYSTEM PROMPT TAB */}
+          <TabsContent value="system-prompt" className="space-y-6">
+            <SystemPromptSection />
           </TabsContent>
 
           {/* LOGS TAB */}
