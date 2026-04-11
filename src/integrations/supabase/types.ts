@@ -691,6 +691,7 @@ export type Database = {
           user_id: string
           voice_enabled: boolean
           voice_instructions: string | null
+          voice_system_prompt_template: string | null
           website_url: string | null
           whatsapp_country_code: string | null
           whatsapp_enabled: boolean | null
@@ -743,6 +744,7 @@ export type Database = {
           user_id: string
           voice_enabled?: boolean
           voice_instructions?: string | null
+          voice_system_prompt_template?: string | null
           website_url?: string | null
           whatsapp_country_code?: string | null
           whatsapp_enabled?: boolean | null
@@ -795,6 +797,7 @@ export type Database = {
           user_id?: string
           voice_enabled?: boolean
           voice_instructions?: string | null
+          voice_system_prompt_template?: string | null
           website_url?: string | null
           whatsapp_country_code?: string | null
           whatsapp_enabled?: boolean | null
