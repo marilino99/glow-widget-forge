@@ -75,7 +75,7 @@ const AIManager = () => {
       const { data, error } = await (supabase
         .from("widget_configurations") as any)
         .select("id, chatbot_instructions, voice_instructions")
-        .eq("user_id", ADMIN_USER_ID)
+        .eq("user_id", user!.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -106,7 +106,7 @@ const AIManager = () => {
       const { error } = await (supabase
         .from("widget_configurations") as any)
         .update({ [field]: value })
-        .eq("user_id", ADMIN_USER_ID);
+        .eq("user_id", user!.id);
 
       if (error) throw error;
       originalSetter(value);
