@@ -1,0 +1,2 @@
+ALTER TABLE public.widget_configurations
+ADD COLUMN voice_system_prompt_template text DEFAULT NULL;
