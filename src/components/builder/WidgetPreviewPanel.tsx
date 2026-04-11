@@ -3327,6 +3327,44 @@ const WidgetPreviewPanel = ({
                     </div>
                   </div>
 
+                  {voiceChips.length > 0 && voiceProducts.length === 0 && (
+                    <div 
+                      className="absolute left-0 right-0 flex flex-wrap justify-center gap-2 px-5 animate-fade-in"
+                      style={{ bottom: 170 }}
+                    >
+                      {voiceChips.map((chip, idx) => {
+                        // Strip emoji prefix for display
+                        let label = chip;
+                        const cp = chip.codePointAt(0) || 0;
+                        if (cp > 0x2300) {
+                          let pos = cp > 0xFFFF ? 2 : 1;
+                          if (chip.charCodeAt(pos) === 0xFE0F) pos++;
+                          while (chip.charCodeAt(pos) === 0x200D) {
+                            pos++;
+                            const nextCp = chip.codePointAt(pos) || 0;
+                            if (nextCp) pos += nextCp > 0xFFFF ? 2 : 1;
+                            if (chip.charCodeAt(pos) === 0xFE0F) pos++;
+                          }
+                          if (chip.charAt(pos) === ' ') pos++;
+                          label = chip.slice(pos);
+                        }
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              setVoiceChips([]);
+                              handleSendChatMessage(chip);
+                            }}
+                            className="border-none cursor-pointer px-4 py-2.5 rounded-[20px] text-[13px] font-medium text-slate-700 transition-all hover:bg-white hover:scale-[1.04] active:scale-[0.97]"
+                            style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
                   {voiceProducts.length > 0 && (
                     <div 
                       className="absolute left-0 right-0 flex gap-2.5 overflow-x-auto px-4 animate-fade-in"
