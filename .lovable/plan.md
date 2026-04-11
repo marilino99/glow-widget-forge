@@ -1,28 +1,33 @@
 
 
-## Voice Mode: Verbalize Categories Instead of Chips
+## Hide Initial Chips When Voice Mode Sends a Message
 
 ### Problem
-After unifying chat and voice responses, both modes now rely on visual chips for the category discovery flow. But chips are a visual UI element — in voice mode, the user hears the AI response via TTS but can't "see" the chips. The AI needs to **say the categories aloud** in voice mode so the listener knows their options.
+When users speak in voice mode, their messages appear in the chat via `sendMessageText()`, but the initial quick-action chips ("Cercare il prodotto adatto a me", "Tracciare il mio ordine", "Ho bisogno di piu informazioni") remain visible. When returning to chat view, these chips clutter the conversation alongside the user's actual spoken messages.
 
-### Approach
-Add a small voice-mode-aware instruction **only for the category discovery step** in both `chatbot-reply/index.ts` and `chatbot-preview/index.ts`. Everything else stays unified.
+### Solution
+Remove the initial chips container (`#wj-chat-chips`) inside `sendMessageText()` so that any message -- whether typed, chip-clicked, or voice-spoken -- automatically hides the initial chips.
 
-### What changes
-In the system prompt's **Category Discovery Flow** rule (rule 11 / the equivalent in preview), add a conditional sentence:
+### Changes
 
-- **Chat mode** (current behavior): "The category chips will be added automatically — just write a short question."
-- **Voice mode** (new): "List the available categories naturally in your response, e.g. 'Ok, stai cercando skincare, haircare, abbigliamento o scarpe?' so the listener can hear the options."
+**File: `supabase/functions/widget-loader/index.ts`**
+- In the `sendMessageText()` function (around line 2543), add a line to remove the initial chips container right after the message is rendered:
+  ```js
+  function sendMessageText(text, isVoice) {
+    if (!text || !text.trim()) return;
+    var msg = text.trim();
+    // Remove initial quick-action chips on first message
+    var initChips = d.getElementById('wj-chat-chips');
+    if (initChips) initChips.remove();
+    // ... rest of function
+  }
+  ```
 
-The `voiceMode` flag is already passed to both functions. We just need to use it to toggle one line in the system prompt.
+**File: `src/components/builder/WidgetPreviewPanel.tsx`**
+- Apply the same logic in the preview panel's equivalent send function so the builder preview matches the live widget behavior.
 
-### Files modified
-1. `supabase/functions/chatbot-reply/index.ts` — add voice-mode conditional text in the category discovery rule
-2. `supabase/functions/chatbot-preview/index.ts` — same change
-
-### What stays the same
-- The full discovery flow (category → goal → skin/hair type → products) is identical
-- Product cards, `[PRODUCTS:]` markers, `[CHIPS:]` markers all work the same
-- Voice UI, TTS, blob — unchanged
+### Scope
+- Two files modified, one line added in each
 - No database changes
+- Redeploy `widget-loader` edge function
 
