@@ -20,7 +20,7 @@ const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
   }, [status, muted]);
 
   return (
-    <div style={{ width: 200, height: 200, position: 'relative' }}>
+    <div style={{ width: 200, height: 200, position: 'relative', borderRadius: '50%', overflow: 'hidden' }}>
       <video
         ref={videoRef}
         src="/videos/voice-blob.webm"
@@ -31,7 +31,7 @@ const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'contain',
+          objectFit: 'cover',
           position: 'relative',
           zIndex: 1,
           background: 'transparent',
