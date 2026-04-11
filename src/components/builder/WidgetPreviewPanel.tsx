@@ -300,11 +300,16 @@ const WidgetPreviewPanel = ({
       const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
       utterance.lang = langMap[language || 'en'] || 'en-US';
       utterance.rate = 1.0;
+      let started = false;
+      utterance.onstart = () => { started = true; setVoiceStatus("processing"); };
       utterance.onend = finish;
-      utterance.onerror = finish;
+      utterance.onerror = () => { finish(); };
       try {
         window.speechSynthesis.speak(utterance);
-        window.setTimeout(finish, Math.min(Math.max(cleanText.length * 60, 2000), 15000));
+        // Fallback only if speech never starts (browser quirk)
+        window.setTimeout(() => {
+          if (!started && !done) { finish(); }
+        }, 3000);
       } catch (_) { finish(); }
     } else { finish(); }
   };
