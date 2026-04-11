@@ -1,38 +1,43 @@
 
 
-## Piano: Separare il Prompt di Sistema in Chat e Voice
+## Piano: Fix doppia voce — speakText chiamato ad ogni poll
 
-### Cosa cambia
+### Problema trovato
 
-Attualmente c'è un unico `system_prompt_template` con un placeholder `{{VOICE_MODE_HINT}}`. Il piano è creare due prompt indipendenti, ciascuno ottimizzato per il proprio canale.
+Nel polling dei messaggi (ogni 3 secondi), il codice chiama `speakText` per ogni messaggio bot ricevuto, **anche se il messaggio è già stato renderizzato**. Il motivo:
 
-### Modifiche
+```text
+res.messages.forEach(function(msg) {
+  renderMessage(msg);       // ← ritorna silenziosamente se msg.id già visto
+  if (msg.sender_type !== 'visitor' && msg.content) {
+    speakText(msg.content); // ← viene eseguito SEMPRE, anche se già parlato
+  }
+});
+```
 
-**1. Database**
-- Aggiungere colonna `voice_system_prompt_template` (text, nullable) alla tabella `widget_configurations`
+`renderMessage` ha un guard (`renderedMessageIds`), ma `speakText` è chiamato dopo, fuori da quel guard. Quindi ogni tick del poll ri-triggera la sintesi vocale sullo stesso testo, causando la sovrapposizione tra ElevenLabs (ancora in riproduzione) e una nuova istanza.
 
-**2. UI — SystemPromptSection.tsx**
-- Trasformare in due sezioni con tabs o accordion: "Prompt Chat" e "Prompt Voice"
-- Ciascuna con il proprio textarea, pulsante salva, e reset to default
-- Il prompt chat di default sarà quello attuale senza `{{VOICE_MODE_HINT}}`
-- Il prompt voice di default sarà una versione ottimizzata: risposte brevi (1-2 frasi), tono conversazionale, categorie elencate a voce, niente elenchi puntati
+### Soluzione
 
-**3. Edge Functions (chatbot-reply + chatbot-preview)**
-- Leggere anche `voice_system_prompt_template` dalla config
-- Se `voiceMode === true` e `voice_system_prompt_template` esiste → usare quello
-- Se `voiceMode === true` ma non c'è template voice → fallback al default voice hardcoded
-- Se `voiceMode === false` → usare `system_prompt_template` (o default chat)
+**1. Aggiungere un guard prima di `speakText` nel polling** (`widget-loader/index.ts`)
 
-**4. Placeholder semplificato**
-- Rimuovere `{{VOICE_MODE_HINT}}` dal prompt chat (non serve più)
-- Il prompt voice avrà le sue regole native senza bisogno di hint condizionali
+Controllare se il messaggio è già stato renderizzato (cioè `renderedMessageIds[msg.id]` era già `true` prima di `renderMessage`):
 
-### Dettagli tecnici
+```javascript
+res.messages.forEach(function(msg) {
+  var alreadySeen = !!renderedMessageIds[msg.id];
+  renderMessage(msg);
+  if (!alreadySeen && msg.sender_type !== 'visitor' && msg.content) {
+    speakText(msg.content);
+  }
+});
+```
 
-| Elemento | Dettaglio |
+**2. Deploy** della edge function `widget-loader`
+
+### File modificati
+
+| File | Modifica |
 |---|---|
-| Nuova colonna DB | `voice_system_prompt_template text DEFAULT NULL` |
-| File UI | `src/components/builder/SystemPromptSection.tsx` |
-| Edge functions | `chatbot-reply/index.ts`, `chatbot-preview/index.ts` |
-| Logica fallback | Chat: `system_prompt_template` → default chat. Voice: `voice_system_prompt_template` → default voice |
+| `supabase/functions/widget-loader/index.ts` | Guard `alreadySeen` prima di `speakText` nel loop di polling |
 
