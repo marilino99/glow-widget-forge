@@ -55,10 +55,11 @@ Deno.serve(async (req) => {
 
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY") || Deno.env.get("ELEVENLABS_API_KEY_1");
     if (!ELEVENLABS_API_KEY) {
+      // No key configured — tell client to use browser TTS fallback
       return new Response(
-        JSON.stringify({ error: "ElevenLabs API key not configured" }),
+        JSON.stringify({ fallback: true }),
         {
-          status: 500,
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
@@ -96,9 +97,10 @@ Deno.serve(async (req) => {
       console.error("ElevenLabs API error:", response.status, errorText);
       
       if (response.status === 401) {
+        // Invalid key — fallback to browser TTS
         return new Response(
-          JSON.stringify({ error: "Invalid ElevenLabs API key" }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ fallback: true }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
       if (response.status === 429) {
