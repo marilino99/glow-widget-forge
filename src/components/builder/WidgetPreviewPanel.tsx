@@ -249,6 +249,7 @@ const WidgetPreviewPanel = ({
   const [showVoiceView, setShowVoiceView] = useState(false);
   const [voiceStatus, setVoiceStatus] = useState<"connecting" | "listening" | "processing" | "speaking">("connecting");
   const [voiceMuted, setVoiceMuted] = useState(false);
+  const [voiceProducts, setVoiceProducts] = useState<Array<{ title: string; imageUrl?: string; price?: string; productUrl?: string }>>([]);
   const voiceRecognitionRef = useRef<any>(null);
   const showVoiceViewRef = useRef(false);
   const voiceMutedRef = useRef(false);
