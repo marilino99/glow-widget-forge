@@ -255,7 +255,7 @@ const WidgetPreviewPanel = ({
   const lastSpokenTextRef = useRef<string>("");
   const noSpeechRetryRef = useRef(0);
   const preparedUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const isSpeakingRef = useRef(false);
   const keepAliveRef = useRef<number | undefined>(undefined);
   const MAX_NO_SPEECH_RETRIES = 3;
@@ -288,9 +288,10 @@ const WidgetPreviewPanel = ({
     }
   };
 
-  // Browser TTS helpers
+  // TTS helpers — ElevenLabs via edge function, fallback to browser speechSynthesis
   const stopTtsAudio = () => {
     clearKeepAlive();
+    if (currentAudioRef.current) { try { currentAudioRef.current.pause(); currentAudioRef.current.src = ''; } catch(_) {} currentAudioRef.current = null; }
     if (window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch(_) {} }
   };
 
@@ -306,11 +307,29 @@ const WidgetPreviewPanel = ({
     }
   };
 
+  const speakBrowserFallback = (cleanText: string, finish: () => void) => {
+    if (!window.speechSynthesis) { finish(); return; }
+    try { window.speechSynthesis.cancel(); } catch (_) {}
+    nudgeSynth();
+    const utterance = createUtterance(cleanText);
+    utterance.lang = getVoiceLang();
+    utterance.rate = 1.0;
+    let started = false;
+    utterance.onstart = () => { started = true; nudgeSynth(); };
+    utterance.onend = finish;
+    utterance.onerror = () => finish();
+    try {
+      window.speechSynthesis.speak(utterance);
+      nudgeSynth();
+      keepAliveRef.current = window.setInterval(() => { if (!isSpeakingRef.current) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
+      window.setTimeout(() => { if (!started && isSpeakingRef.current) finish(); }, 2500);
+    } catch (_) { finish(); }
+  };
+
   /**
-   * Speak text via browser TTS.
-   * Pass a pre-created utterance (from gesture context) to guarantee playback.
+   * Speak text via ElevenLabs API, fallback to browser TTS.
    */
-  const speakBrowserTts = (text: string, onDone?: () => void, preCreated?: SpeechSynthesisUtterance | null) => {
+  const speakBrowserTts = (text: string, onDone?: () => void) => {
     if (!text) { preparedUtteranceRef.current = null; if (onDone) onDone(); return; }
 
     isSpeakingRef.current = true;
@@ -319,50 +338,52 @@ const WidgetPreviewPanel = ({
     setVoiceStatus("processing");
 
     const cleanText = text.replace(/[*_#`[\]]/g, "").replace(/\n{2,}/g, ". ");
+    preparedUtteranceRef.current = null;
 
     let done = false;
     const finish = () => {
       if (done) return;
       done = true;
       clearKeepAlive();
-      preparedUtteranceRef.current = null;
+      currentAudioRef.current = null;
       isSpeakingRef.current = false;
       if (onDone) onDone(); else resumeListening();
     };
 
-    if (!window.speechSynthesis) { finish(); return; }
+    if (!widgetId) { speakBrowserFallback(cleanText, finish); return; }
 
-    try { window.speechSynthesis.cancel(); } catch (_) {}
-    nudgeSynth();
-
-    // Use provided utterance (gesture-context) or create new one
-    const utterance = preCreated ?? preparedUtteranceRef.current ?? createUtterance();
-    preparedUtteranceRef.current = null;
-    utterance.text = cleanText;
-    utterance.lang = getVoiceLang();
-    utterance.rate = 1.0;
-
-    let started = false;
-    utterance.onstart = () => { started = true; setVoiceStatus("processing"); nudgeSynth(); };
-    utterance.onend = finish;
-    utterance.onerror = () => finish();
-
-    try {
-      window.speechSynthesis.speak(utterance);
-      nudgeSynth();
-      // Keep-alive: Chrome pauses TTS after ~15s without resume()
-      keepAliveRef.current = window.setInterval(() => { if (done) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
-      // Safety: if speech never starts within 2.5s, give up
-      window.setTimeout(() => { if (!started && !done) finish(); }, 2500);
-    } catch (_) { finish(); }
+    // Try ElevenLabs edge function via raw fetch (need blob response)
+    const ttsUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
+    fetch(ttsUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+      body: JSON.stringify({ text: cleanText, widgetId }),
+    }).then(async (res) => {
+      if (!res.ok) { speakBrowserFallback(cleanText, finish); return; }
+      const ct = res.headers.get("Content-Type") || "";
+      if (ct.includes("audio")) {
+        try {
+          const blob = await res.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          const audio = new Audio(blobUrl);
+          currentAudioRef.current = audio;
+          audio.onended = () => { URL.revokeObjectURL(blobUrl); finish(); };
+          audio.onerror = () => { URL.revokeObjectURL(blobUrl); speakBrowserFallback(cleanText, finish); };
+          audio.play().catch(() => { URL.revokeObjectURL(blobUrl); speakBrowserFallback(cleanText, finish); });
+        } catch (_) { speakBrowserFallback(cleanText, finish); }
+      } else {
+        // JSON response (fallback flag)
+        speakBrowserFallback(cleanText, finish);
+      }
+    }).catch(() => { speakBrowserFallback(cleanText, finish); });
   };
 
   // Speak assistant reply
-  const speakAssistantReply = (text: string, preCreated?: SpeechSynthesisUtterance | null) => {
+  const speakAssistantReply = (text: string) => {
     if (!showVoiceViewRef.current || voiceMutedRef.current) { preparedUtteranceRef.current = null; return; }
     if (text === lastSpokenTextRef.current) { preparedUtteranceRef.current = null; return; }
     lastSpokenTextRef.current = text;
-    speakBrowserTts(text, undefined, preCreated ?? preparedUtteranceRef.current);
+    speakBrowserTts(text);
   };
 
   // Auto-show FAQ pills after delay when bottom bar is expanded
@@ -535,13 +556,9 @@ const WidgetPreviewPanel = ({
 
   // Voice session for voice view overlay
   const startVoiceSession = () => {
-    // Immediately create utterance in gesture context
-    const greetingUtterance = createUtterance(t.welcomeMessage);
-
     showVoiceViewRef.current = true;
     voiceMutedRef.current = false;
     preparedUtteranceRef.current = null;
-    nudgeSynth();
 
     setShowVoiceView(true);
     setVoiceStatus("connecting");
@@ -550,13 +567,13 @@ const WidgetPreviewPanel = ({
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      speakBrowserTts(t.welcomeMessage, () => setVoiceStatus("listening"), greetingUtterance);
+      speakBrowserTts(t.welcomeMessage, () => setVoiceStatus("listening"));
       return;
     }
 
     speakBrowserTts(t.welcomeMessage, () => {
       startVoiceRecognitionInternal(SpeechRecognition);
-    }, greetingUtterance);
+    });
   };
 
   const startVoiceRecognitionInternal = (SpeechRecognition: any) => {
@@ -686,11 +703,6 @@ const WidgetPreviewPanel = ({
 
     if (!widgetId) return;
 
-    // If in voice mode, pre-create utterance for the reply (gesture context)
-    if (showVoiceViewRef.current && !voiceMutedRef.current && !preparedUtteranceRef.current) {
-      preparedUtteranceRef.current = createUtterance();
-    }
-
     setIsBotTyping(true);
     try {
       const allMessages = [...chatMessages, userMsg].map(m => ({ text: m.text, sender: m.sender }));
@@ -706,10 +718,9 @@ const WidgetPreviewPanel = ({
           setChatMessages(prev => [...prev, { text: "⚠️ Si è verificato un errore. Riprova più tardi.", sender: "bot" as const }]);
         }
       } else if (data?.reply) {
-        const savedUtterance = preparedUtteranceRef.current;
         preparedUtteranceRef.current = null;
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
-        speakAssistantReply(data.reply, savedUtterance);
+        speakAssistantReply(data.reply);
       } else {
         preparedUtteranceRef.current = null;
       }
