@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ArrowLeft, Save, Loader2, RefreshCw, AlertTriangle,
-  CheckCircle, Clock, MessageSquare, Mic, Filter,
+  CheckCircle, Clock, MessageSquare, Mic, Filter, Code, ChevronDown, ChevronUp,
 } from "lucide-react";
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
