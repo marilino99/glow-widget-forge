@@ -216,6 +216,14 @@ export const useShopifyConnection = () => {
       } catch (uninstallErr) {
         console.warn("Could not uninstall widget from Shopify theme:", uninstallErr);
       }
+      // Delete all product cards imported from Shopify
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
+        .from("product_cards")
+        .delete()
+        .eq("user_id", user.id)
+        .not("shopify_product_id", "is", null);
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase as any)
         .from("shopify_connections")
