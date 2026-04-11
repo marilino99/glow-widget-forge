@@ -228,8 +228,10 @@ const WidgetPreviewPanel = ({
   inspireVideos = [],
   inspireStoreProducts,
   homeSectionOrder = ["product-carousel", "faq", "custom-links", "inspire-me"],
+  customChips: customChipsProp,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
+  const chipLabels = (Array.isArray(customChipsProp) && customChipsProp.some(c => c.length > 0)) ? customChipsProp : [t.chipFind, t.chipTrack, t.chipInfo];
   const [previewUrl, setPreviewUrl] = useState("");
   const [proxyHtml, setProxyHtml] = useState<string | null>(null);
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
