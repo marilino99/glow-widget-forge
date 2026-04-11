@@ -2723,6 +2723,10 @@ Deno.serve(async (req) => {
               if (!alreadySeen && msg.sender_type !== 'visitor' && msg.content) {
                 speakText(msg.content);
               }
+              // Show product cards in voice view when voice is open
+              if (!alreadySeen && msg.sender_type !== 'visitor' && voiceView.classList.contains('open') && msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
+                showVoiceProducts(msg.metadata.products);
+              }
             });
           }
         } catch(e) {
