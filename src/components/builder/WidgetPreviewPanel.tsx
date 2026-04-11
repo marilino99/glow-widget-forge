@@ -270,7 +270,7 @@ const WidgetPreviewPanel = ({
   useEffect(() => { voiceMutedRef.current = voiceMuted; }, [voiceMuted]);
 
   const getVoiceLang = () => voiceLangMap[language || "en"] || "en-US";
-  const getVoiceGreeting = () => sayHello?.trim() || t.welcomeMessage;
+  const getVoiceGreeting = () => t.welcomeMessage;
 
   // Create an utterance synchronously (preserves user-gesture context)
   const createUtterance = (text = "") => {
