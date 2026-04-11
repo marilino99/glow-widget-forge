@@ -3315,12 +3315,36 @@ const WidgetPreviewPanel = ({
                     </button>
                   </div>
 
-                  <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                  <div className="flex-1 flex flex-col items-center justify-center gap-6" style={{ transition: 'transform 0.4s ease', transform: voiceProducts.length > 0 ? 'translateY(-60px)' : 'translateY(0)' }}>
                     <VoiceBlob3D status={voiceStatus as 'connecting' | 'listening' | 'processing' | 'speaking'} muted={voiceMuted} baseColor={actualHexColor} />
                     <div className="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)' }}>
                       {voiceStatus === "connecting" ? "Connecting..." : voiceStatus === "processing" ? "Processing..." : voiceStatus === "speaking" ? "Speaking..." : "Listening..."}
                     </div>
                   </div>
+
+                  {voiceProducts.length > 0 && (
+                    <div 
+                      className="absolute left-0 right-0 flex gap-2.5 overflow-x-auto px-4 animate-fade-in"
+                      style={{ bottom: 160, scrollbarWidth: 'none' }}
+                    >
+                      {voiceProducts.map((prod, idx) => (
+                        <a
+                          key={idx}
+                          href={prod.productUrl || '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-shrink-0 rounded-xl overflow-hidden flex flex-col bg-white shadow-md"
+                          style={{ width: 120, textDecoration: 'none' }}
+                        >
+                          {prod.imageUrl && (
+                            <img src={prod.imageUrl} alt={prod.title} className="w-full aspect-square object-cover" />
+                          )}
+                          <p className="text-[10px] font-medium text-slate-700 px-2 pt-1 truncate">{prod.title}</p>
+                          {prod.price && <p className="text-[11px] font-bold text-slate-900 px-2 pb-1.5">{prod.price}</p>}
+                        </a>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="flex items-center gap-6 pb-6">
                     <button 
