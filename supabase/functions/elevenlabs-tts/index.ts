@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY") || Deno.env.get("ELEVENLABS_API_KEY_1");
+    const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY_MANUAL") || Deno.env.get("ELEVENLABS_API_KEY") || Deno.env.get("ELEVENLABS_API_KEY_1");
     if (!ELEVENLABS_API_KEY) {
       // No key configured — tell client to use browser TTS fallback
       return new Response(
