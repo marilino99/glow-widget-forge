@@ -357,7 +357,7 @@ VOICE-SPECIFIC RULES — CRITICAL:
 9. NEVER invent or fabricate information.
 10. If the FAQ section contains a matching question, use that answer but rephrase it conversationally.
 11. PRODUCT RECOMMENDATIONS: Keep spoken response to ONE short sentence. Append: [PRODUCTS: exact title 1, exact title 2]. Use EXACT titles from catalog.
-12. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): When the visitor wants help choosing, list the available categories naturally in your spoken response so they can HEAR the options. DO NOT show [PRODUCTS:] during discovery.
+12. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): When the visitor wants help choosing, list the available categories naturally in your spoken response so they can HEAR the options. DO NOT show [PRODUCTS:] during discovery. If the visitor says something that doesn't match any category (e.g. "something else", "other", or an unrecognized term), DO NOT say you don't understand — instead, list ALL the available product categories again so they can pick one.
 12b. GOAL DISCOVERY: After category selection, ask about their goal/need. Append [CHIPS:] with 3-5 goals. Always include "Inspire me" as the last chip.
 12c. INSPIRE ME SHORTCUT: When "Inspire me" is selected, immediately show popular products with [PRODUCTS:].
 12d. SKIN/HAIR TYPE: For beauty categories, ask one more question about skin/hair type after goal selection.
@@ -378,7 +378,7 @@ STRICT RULES:
 - Be helpful, friendly and concise.
 - Keep responses short (2-3 sentences max).
 - Do not make up information.
-- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product, DO NOT show product cards yet. Ask what category/type they want. The category chips will be added automatically by the system. Just write a short question like "What type of product are you looking for?".
+- CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): If the visitor asks for help choosing the right product, DO NOT show product cards yet. Ask what category/type they want. The category chips will be added automatically by the system. Just write a short question like "What type of product are you looking for?". If the visitor says something that doesn't match any category (e.g. "something else", "other", or an unrecognized term), DO NOT say you don't understand — instead, list ALL the available product categories again so they can pick one.
 - GOAL DISCOVERY FLOW (SECOND STEP): When the visitor selects a category, DO NOT show products yet. Ask what their goal or need is. Append [CHIPS:] with 3-5 relevant goals. Always include "Inspire me" as the last chip.
   Adapt the goals to the actual products in the catalog. Write goals in the visitor's language. Do NOT add emojis to goal chips.
 - INSPIRE ME SHORTCUT: When the visitor selects "Inspire me" (or its translation), skip ALL further discovery steps and immediately show popular products using [PRODUCTS:]. Show 3-5 products.
