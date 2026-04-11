@@ -699,11 +699,6 @@ const WidgetPreviewPanel = ({
 
     if (!widgetId) return;
 
-    // If in voice mode, pre-create utterance for the reply (gesture context)
-    if (showVoiceViewRef.current && !voiceMutedRef.current && !preparedUtteranceRef.current) {
-      preparedUtteranceRef.current = createUtterance();
-    }
-
     setIsBotTyping(true);
     try {
       const allMessages = [...chatMessages, userMsg].map(m => ({ text: m.text, sender: m.sender }));
