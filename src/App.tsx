@@ -59,6 +59,13 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/ai-manager"
+              element={
+                <ProtectedRoute>
+                  <AIManager />
+                </ProtectedRoute>
+              }
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
