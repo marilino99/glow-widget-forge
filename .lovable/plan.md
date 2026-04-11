@@ -1,33 +1,55 @@
 
 
-## Hide Initial Chips When Voice Mode Sends a Message
+## Fix Voice Mode TTS: Make the Chatbot Speak Responses Aloud
 
-### Problem
-When users speak in voice mode, their messages appear in the chat via `sendMessageText()`, but the initial quick-action chips ("Cercare il prodotto adatto a me", "Tracciare il mio ordine", "Ho bisogno di piu informazioni") remain visible. When returning to chat view, these chips clutter the conversation alongside the user's actual spoken messages.
+### Root Cause
+Two issues are preventing voice responses:
 
-### Solution
-Remove the initial chips container (`#wj-chat-chips`) inside `sendMessageText()` so that any message -- whether typed, chip-clicked, or voice-spoken -- automatically hides the initial chips.
+1. **ElevenLabs API key is invalid** — every call returns 401, so the system falls back to browser Web Speech API.
+2. **Browser fallback has a critical double-callback bug** — the safety timeout (line 2467-2470) fires `resumeListening()` after ~1-5 seconds regardless of whether the utterance is still playing. This cancels the speech mid-sentence (because `resumeListening` restarts recognition, which can interfere) or triggers the callback twice, breaking the flow.
 
-### Changes
+### Plan
 
-**File: `supabase/functions/widget-loader/index.ts`**
-- In the `sendMessageText()` function (around line 2543), add a line to remove the initial chips container right after the message is rendered:
-  ```js
-  function sendMessageText(text, isVoice) {
-    if (!text || !text.trim()) return;
-    var msg = text.trim();
-    // Remove initial quick-action chips on first message
-    var initChips = d.getElementById('wj-chat-chips');
-    if (initChips) initChips.remove();
-    // ... rest of function
+**1. Fix the `fallbackSpeak` double-callback bug in `widget-loader/index.ts`**
+- Add a `done` flag so that `onend`, `onerror`, and the safety timeout only fire the callback **once**.
+- The safety timeout should only act if neither `onend` nor `onerror` have fired yet.
+- Increase the safety timeout ceiling from 5s to 15s — long AI responses need more time to be spoken.
+
+```js
+function fallbackSpeak(text, onDone) {
+  var done = false;
+  function finish() {
+    if (done) return;
+    done = true;
+    if (onDone) onDone();
+    else resumeListening();
   }
-  ```
+  if (w.speechSynthesis) {
+    try { w.speechSynthesis.cancel(); } catch(e) {}
+    var utter = new SpeechSynthesisUtterance(text);
+    utter.lang = langMap[lang] || 'en-US';
+    utter.rate = 1.0;
+    utter.onend = finish;
+    utter.onerror = finish;
+    try {
+      w.speechSynthesis.speak(utter);
+      // Safety net with generous timeout
+      setTimeout(finish, Math.min(Math.max(text.length * 60, 2000), 15000));
+    } catch(e) { finish(); }
+  } else { finish(); }
+}
+```
 
-**File: `src/components/builder/WidgetPreviewPanel.tsx`**
-- Apply the same logic in the preview panel's equivalent send function so the builder preview matches the live widget behavior.
+**2. Apply same fix in `WidgetPreviewPanel.tsx`**
+- Mirror the double-callback fix in the builder preview's fallback TTS function.
 
-### Scope
-- Two files modified, one line added in each
+**3. Redeploy `widget-loader` edge function**
+
+### What stays the same
+- ElevenLabs TTS flow — it will automatically work once a valid API key is configured via the connector
+- Voice recognition, blob UI, voice mute — unchanged
 - No database changes
-- Redeploy `widget-loader` edge function
+
+### Note on ElevenLabs
+The API key configured in the connector is currently invalid (all calls return 401). The browser fallback will work with this fix, but for premium voice quality, the ElevenLabs connector needs to be reconnected with a valid key via **Settings > Connectors > ElevenLabs**.
 
