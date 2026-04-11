@@ -2051,6 +2051,17 @@ Deno.serve(async (req) => {
       }
       var greeting = (hello || tr.welcomeMessage || 'Welcome! How can I help you?').trim();
       pendingReplyUtterance = createUtterance('');
+
+      // Reset preferBrowserTts so ElevenLabs is retried each session
+      preferBrowserTts = false;
+
+      // Unlock audio playback on mobile (user gesture context)
+      try {
+        var silentAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=');
+        silentAudio.volume = 0;
+        silentAudio.play().then(function(){silentAudio.pause();}).catch(function(){});
+      } catch(e){}
+
       voiceView.classList.add('open');
       homeView.classList.add('hidden');
       chatView.classList.remove('open');
@@ -2061,16 +2072,10 @@ Deno.serve(async (req) => {
       voiceMuteBtn.classList.remove('muted');
       startPolling();
 
-      primeBrowserTts(function() {
-        if (!voiceView.classList.contains('open') || voiceMuted) {
-          pendingReplyUtterance = null;
-          return;
-        }
-
-        speakBrowserFallback(greeting, function() {
-          if (!voiceView.classList.contains('open') || voiceMuted) return;
-          startVoiceRecognition();
-        });
+      // Use speakText so ElevenLabs is attempted for greeting too
+      speakText(greeting, function() {
+        if (!voiceView.classList.contains('open') || voiceMuted) return;
+        startVoiceRecognition();
       });
     }
 
@@ -2601,7 +2606,8 @@ Deno.serve(async (req) => {
       xhr.onload = function() {
         currentTtsXhr = null;
         if (myGen !== ttsGeneration) return;
-        if (xhr.status !== 200) { preferBrowserTts = true; safeBrowserFallback(); return; }
+        if (xhr.status === 401) { preferBrowserTts = true; safeBrowserFallback(); return; }
+        if (xhr.status !== 200) { safeBrowserFallback(); return; }
         var ct = xhr.getResponseHeader('Content-Type') || '';
         if (ct.indexOf('audio') !== -1) {
           try {
@@ -2616,7 +2622,7 @@ Deno.serve(async (req) => {
             audio.onended = function() { URL.revokeObjectURL(blobUrl); finish(); };
             audio.onerror = function() {
               URL.revokeObjectURL(blobUrl);
-              preferBrowserTts = true;
+              // Don't set preferBrowserTts for play errors (autoplay policy)
               safeBrowserFallback();
             };
             audio.play()
@@ -2627,10 +2633,10 @@ Deno.serve(async (req) => {
               })
               .catch(function() {
                 URL.revokeObjectURL(blobUrl);
-                preferBrowserTts = true;
+                // Don't set preferBrowserTts for play errors (autoplay policy)
                 safeBrowserFallback();
               });
-          } catch(e) { preferBrowserTts = true; safeBrowserFallback(); }
+          } catch(e) { safeBrowserFallback(); }
         } else {
           try {
             var reader = new FileReader();
@@ -2645,8 +2651,8 @@ Deno.serve(async (req) => {
           } catch(e) { preferBrowserTts = true; safeBrowserFallback(); }
         }
       };
-      xhr.onerror = function() { currentTtsXhr = null; preferBrowserTts = true; safeBrowserFallback(); };
-      xhr.ontimeout = function() { currentTtsXhr = null; preferBrowserTts = true; safeBrowserFallback(); };
+      xhr.onerror = function() { currentTtsXhr = null; safeBrowserFallback(); };
+      xhr.ontimeout = function() { currentTtsXhr = null; safeBrowserFallback(); };
       xhr.send(JSON.stringify({ text: clean, widgetId: id }));
     }
 
