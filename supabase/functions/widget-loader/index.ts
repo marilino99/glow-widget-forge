@@ -2775,9 +2775,13 @@ Deno.serve(async (req) => {
               if (!alreadySeen && msg.sender_type !== 'visitor' && msg.content) {
                 speakText(msg.content);
               }
-              // Show product cards in voice view when voice is open
-              if (!alreadySeen && msg.sender_type !== 'visitor' && voiceView.classList.contains('open') && msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
-                showVoiceProducts(msg.metadata.products);
+              // Show chips or product cards in voice view when voice is open
+              if (!alreadySeen && msg.sender_type !== 'visitor' && voiceView.classList.contains('open')) {
+                if (msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
+                  showVoiceProducts(msg.metadata.products);
+                } else if (msg.metadata && msg.metadata.chips && msg.metadata.chips.length > 0) {
+                  showVoiceChips(msg.metadata.chips);
+                }
               }
             });
           }
