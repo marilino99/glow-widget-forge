@@ -262,12 +262,9 @@ const WidgetPreviewPanel = ({
   useEffect(() => { showVoiceViewRef.current = showVoiceView; }, [showVoiceView]);
   useEffect(() => { voiceMutedRef.current = voiceMuted; }, [voiceMuted]);
 
-  // ElevenLabs TTS helpers
-  const stopElevenLabsAudio = () => {
-    if (currentAudioRef.current) {
-      try { currentAudioRef.current.pause(); currentAudioRef.current.currentTime = 0; } catch(_) {}
-      currentAudioRef.current = null;
-    }
+  // Browser TTS helpers
+  const stopTtsAudio = () => {
+    if (window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch(_) {} }
   };
 
   const resumeListening = () => {
@@ -282,50 +279,14 @@ const WidgetPreviewPanel = ({
     }
   };
 
-  const speakWithElevenLabs = async (text: string, onDone?: () => void) => {
+  const speakBrowserTts = (text: string, onDone?: () => void) => {
     if (!text) { if (onDone) onDone(); return; }
     isSpeakingRef.current = true;
-    stopElevenLabsAudio();
+    stopTtsAudio();
     if (voiceRecognitionRef.current) { try { voiceRecognitionRef.current.stop(); } catch(_) {} }
     setVoiceStatus("processing");
     const cleanText = text.replace(/[*_#`\[\]]/g, '').replace(/\n{2,}/g, '. ');
 
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: cleanText, widgetId }),
-        }
-      );
-
-      const ct = response.headers.get('Content-Type') || '';
-      if (response.ok && ct.includes('audio')) {
-        const blob = await response.blob();
-        const audioUrl = URL.createObjectURL(blob);
-        const audio = new Audio(audioUrl);
-        currentAudioRef.current = audio;
-        audio.onended = () => {
-          isSpeakingRef.current = false;
-          stopElevenLabsAudio();
-          URL.revokeObjectURL(audioUrl);
-          if (onDone) onDone();
-          else resumeListening();
-        };
-        audio.onerror = () => {
-          isSpeakingRef.current = false;
-          stopElevenLabsAudio();
-          URL.revokeObjectURL(audioUrl);
-          if (onDone) onDone();
-          else resumeListening();
-        };
-        await audio.play();
-        return;
-      }
-    } catch(_) {}
-
-    // Fallback to Web Speech API
     let done = false;
     const finish = () => {
       if (done) return;
@@ -348,12 +309,12 @@ const WidgetPreviewPanel = ({
     } else { finish(); }
   };
 
-  // Speak assistant reply using ElevenLabs TTS
+  // Speak assistant reply
   const speakAssistantReply = (text: string) => {
     if (!showVoiceViewRef.current || voiceMutedRef.current) return;
     if (text === lastSpokenTextRef.current) return;
     lastSpokenTextRef.current = text;
-    speakWithElevenLabs(text);
+    speakBrowserTts(text);
   };
 
   // Auto-show FAQ pills after delay when bottom bar is expanded

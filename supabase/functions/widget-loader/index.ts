@@ -2405,22 +2405,22 @@ Deno.serve(async (req) => {
       if (el) el.remove();
     }
 
-    // ElevenLabs TTS helpers
-    var currentAudio = null;
+    // Browser TTS helpers
     var isSpeaking = false;
 
-    function stopElevenLabsAudio() {
-      if (currentAudio) {
-        try { currentAudio.pause(); currentAudio.currentTime = 0; } catch(e) {}
-        if (currentAudio._objectUrl) { try { URL.revokeObjectURL(currentAudio._objectUrl); } catch(e) {} }
-        currentAudio = null;
-      }
+    function stopTtsAudio() {
+      if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
     }
 
-    function speakWithElevenLabs(text, onDone) {
+    function speakText(text, onDone) {
       if (!text) { if (onDone) onDone(); return; }
+      if (!voiceView || !voiceView.classList.contains('open') || voiceMuted) { if (onDone) onDone(); return; }
+      // Prevent repeating the same text
+      if (!onDone && text === lastSpokenText) return;
+      if (!onDone) lastSpokenText = text;
+
       isSpeaking = true;
-      stopElevenLabsAudio();
+      stopTtsAudio();
       // Pause mic while speaking
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
       if (voiceView) voiceView.classList.remove('listening');
@@ -2428,46 +2428,6 @@ Deno.serve(async (req) => {
 
       var clean = text.replace(/[*_#]/g, '').replace(/\x60/g, '').split('[').join('').split(']').join('').split(String.fromCharCode(10)).join('. ');
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', u + '/functions/v1/elevenlabs-tts', true);
-      xhr.responseType = 'blob';
-      xhr.setRequestHeader('Content-Type', 'application/json');
-       xhr.onload = function() {
-         var ct = xhr.getResponseHeader('Content-Type') || '';
-         if (xhr.status === 200 && ct.indexOf('audio') !== -1 && xhr.response) {
-           var audioUrl = URL.createObjectURL(xhr.response);
-           var audio = new Audio(audioUrl);
-           audio._objectUrl = audioUrl;
-           currentAudio = audio;
-           audio.onended = function() {
-             isSpeaking = false;
-             stopElevenLabsAudio();
-             if (onDone) { onDone(); }
-             else { resumeListening(); }
-           };
-           audio.onerror = function() {
-             isSpeaking = false;
-             stopElevenLabsAudio();
-             if (onDone) { onDone(); }
-             else { resumeListening(); }
-           };
-           audio.play().catch(function() {
-             stopElevenLabsAudio();
-             // Fallback to Web Speech API if autoplay blocked
-             fallbackSpeak(clean, onDone);
-           });
-         } else {
-           // Fallback to Web Speech API (server returned fallback or error)
-           fallbackSpeak(clean, onDone);
-         }
-       };
-      xhr.onerror = function() {
-        fallbackSpeak(clean, onDone);
-      };
-      xhr.send(JSON.stringify({ text: clean, widgetId: id }));
-    }
-
-    function fallbackSpeak(text, onDone) {
       var done = false;
       function finish() {
         if (done) return;
@@ -2478,7 +2438,7 @@ Deno.serve(async (req) => {
       }
       if (w.speechSynthesis) {
         try { w.speechSynthesis.cancel(); } catch(e) {}
-        var utter = new SpeechSynthesisUtterance(text);
+        var utter = new SpeechSynthesisUtterance(clean);
         var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
         utter.lang = langMap[lang] || 'en-US';
         utter.rate = 1.0;
@@ -2486,30 +2446,9 @@ Deno.serve(async (req) => {
         utter.onerror = finish;
         try {
           w.speechSynthesis.speak(utter);
-          setTimeout(finish, Math.min(Math.max(text.length * 60, 2000), 15000));
+          setTimeout(finish, Math.min(Math.max(clean.length * 60, 2000), 15000));
         } catch(e) { finish(); }
       } else { finish(); }
-    }
-
-    function resumeListening() {
-      if (voiceView && voiceView.classList.contains('open') && !voiceMuted && !isSpeaking) {
-        setTimeout(function() {
-          if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted && !isSpeaking) {
-            noSpeechRetries = 0;
-            try { voiceRecognition.start(); } catch(e) {}
-            voiceView.classList.add('listening');
-            if (voiceStatus) voiceStatus.textContent = 'Listening...';
-          }
-        }, 300);
-      }
-    }
-
-    function speakText(text) {
-      if (!voiceView || !voiceView.classList.contains('open') || voiceMuted) return;
-      // Prevent repeating the same text
-      if (text === lastSpokenText) return;
-      lastSpokenText = text;
-      speakWithElevenLabs(text, null);
     }
 
     function pollMessages() {
