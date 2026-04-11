@@ -2011,16 +2011,15 @@ Deno.serve(async (req) => {
       startPolling();
       // AI speaks first with the same greeting shown in the widget
       var greeting = tr.welcomeMessage || 'Welcome! How can I help you?';
-      speakWithElevenLabs(greeting, function() { startVoiceRecognition(); });
+      speakText(greeting, function() { startVoiceRecognition(); });
     }
 
     function closeVoiceView() {
       voiceView.classList.remove('open', 'listening');
       if (voiceRecognition) { try { voiceRecognition.abort(); } catch(e) {} voiceRecognition = null; }
       // Cancel TTS when closing voice view
-      stopElevenLabsAudio();
+      stopTtsAudio();
       isSpeaking = false;
-      if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
       chatView.classList.add('open');
       homeView.classList.add('hidden');
     }
@@ -2125,9 +2124,8 @@ Deno.serve(async (req) => {
         voiceMuteBtn.classList.toggle('muted');
         if (voiceMuted && voiceRecognition) {
           try { voiceRecognition.stop(); } catch(e) {}
-          stopElevenLabsAudio();
+          stopTtsAudio();
           isSpeaking = false;
-          if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
           voiceStatus.textContent = 'Muted';
           voiceView.classList.remove('listening');
         } else if (!voiceMuted) {
