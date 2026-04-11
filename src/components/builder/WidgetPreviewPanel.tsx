@@ -255,6 +255,7 @@ const WidgetPreviewPanel = ({
   const lastSpokenTextRef = useRef<string>("");
   const noSpeechRetryRef = useRef(0);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const isSpeakingRef = useRef(false);
   const MAX_NO_SPEECH_RETRIES = 3;
 
   // Sync refs with state so callbacks always see current values
@@ -270,9 +271,9 @@ const WidgetPreviewPanel = ({
   };
 
   const resumeListening = () => {
-    if (showVoiceViewRef.current && !voiceMutedRef.current) {
+    if (showVoiceViewRef.current && !voiceMutedRef.current && !isSpeakingRef.current) {
       setTimeout(() => {
-        if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+        if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current && !isSpeakingRef.current) {
           noSpeechRetryRef.current = 0;
           try { voiceRecognitionRef.current.start(); } catch(_) {}
           setVoiceStatus("listening");
@@ -283,6 +284,7 @@ const WidgetPreviewPanel = ({
 
   const speakWithElevenLabs = async (text: string, onDone?: () => void) => {
     if (!text) { if (onDone) onDone(); return; }
+    isSpeakingRef.current = true;
     stopElevenLabsAudio();
     if (voiceRecognitionRef.current) { try { voiceRecognitionRef.current.stop(); } catch(_) {} }
     setVoiceStatus("processing");
@@ -305,12 +307,14 @@ const WidgetPreviewPanel = ({
         const audio = new Audio(audioUrl);
         currentAudioRef.current = audio;
         audio.onended = () => {
+          isSpeakingRef.current = false;
           stopElevenLabsAudio();
           URL.revokeObjectURL(audioUrl);
           if (onDone) onDone();
           else resumeListening();
         };
         audio.onerror = () => {
+          isSpeakingRef.current = false;
           stopElevenLabsAudio();
           URL.revokeObjectURL(audioUrl);
           if (onDone) onDone();
@@ -326,6 +330,7 @@ const WidgetPreviewPanel = ({
     const finish = () => {
       if (done) return;
       done = true;
+      isSpeakingRef.current = false;
       if (onDone) onDone(); else resumeListening();
     };
     if (window.speechSynthesis) {
@@ -566,17 +571,15 @@ const WidgetPreviewPanel = ({
       };
 
       recognition.onend = () => {
-        // Only auto-restart if voice view is open, not muted, and under retry limit
-        if (voiceRecognitionRef.current && !voiceMutedRef.current && showVoiceViewRef.current) {
+        if (voiceRecognitionRef.current && !voiceMutedRef.current && showVoiceViewRef.current && !isSpeakingRef.current) {
           if (noSpeechRetryRef.current < MAX_NO_SPEECH_RETRIES) {
             noSpeechRetryRef.current++;
             setTimeout(() => {
-              if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current) {
+              if (voiceRecognitionRef.current && showVoiceViewRef.current && !voiceMutedRef.current && !isSpeakingRef.current) {
                 try { recognition.start(); } catch(_) {}
               }
             }, 300);
           }
-          // After max retries, just stay in "listening" state visually but don't loop
         }
       };
 
@@ -599,6 +602,8 @@ const WidgetPreviewPanel = ({
   };
 
   const stopVoiceSession = () => {
+    showVoiceViewRef.current = false;
+    isSpeakingRef.current = false;
     if (voiceRecognitionRef.current) {
       const ref = voiceRecognitionRef.current;
       voiceRecognitionRef.current = null;
@@ -613,10 +618,13 @@ const WidgetPreviewPanel = ({
 
   const toggleVoiceMute = () => {
     if (voiceMuted && voiceRecognitionRef.current) {
+      voiceMutedRef.current = false;
       try { voiceRecognitionRef.current.start(); } catch(_) {}
       setVoiceMuted(false);
       setVoiceStatus("listening");
     } else if (voiceRecognitionRef.current) {
+      voiceMutedRef.current = true;
+      isSpeakingRef.current = false;
       try { voiceRecognitionRef.current.stop(); } catch(_) {}
       // Also stop TTS if speaking
       stopElevenLabsAudio();
