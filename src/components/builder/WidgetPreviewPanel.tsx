@@ -2986,18 +2986,27 @@ const WidgetPreviewPanel = ({
                       <p id="wj-chelp" className={`text-sm ${isSolidMode ? "text-white" : ""}`}>{offerHelp}</p>
                     </div>
                     {voiceEnabled && (
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); startVoiceSession(); }}
-                      className="flex h-9 w-9 items-center justify-center rounded-full flex-shrink-0 transition-transform hover:scale-105"
-                      style={{ backgroundColor: actualHexColor }}
-                    >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <rect x="4" y="8" width="2.5" height="8" rx="1.25" fill="white" opacity="0.9"/>
-                        <rect x="8.5" y="5" width="2.5" height="14" rx="1.25" fill="white"/>
-                        <rect x="13" y="7" width="2.5" height="10" rx="1.25" fill="white"/>
-                        <rect x="17.5" y="9" width="2.5" height="6" rx="1.25" fill="white" opacity="0.9"/>
-                      </svg>
-                    </button>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); startVoiceSession(); }}
+                        className="flex h-9 w-9 items-center justify-center rounded-full transition-transform hover:scale-105"
+                        style={{ backgroundColor: actualHexColor }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                          <rect x="4" y="8" width="2.5" height="8" rx="1.25" fill="white" opacity="0.9"/>
+                          <rect x="8.5" y="5" width="2.5" height="14" rx="1.25" fill="white"/>
+                          <rect x="13" y="7" width="2.5" height="10" rx="1.25" fill="white"/>
+                          <rect x="17.5" y="9" width="2.5" height="6" rx="1.25" fill="white" opacity="0.9"/>
+                        </svg>
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); startVoiceSession(); }}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border-2 transition-transform hover:scale-105"
+                        style={{ borderColor: actualHexColor, backgroundColor: 'transparent' }}
+                      >
+                        <Mic className="h-4 w-4" style={{ color: actualHexColor }} />
+                      </button>
+                    </div>
                     )}
                     </div>
                     <Button 
