@@ -402,7 +402,15 @@ Deno.serve(async (req) => {
       #wj-voice-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.8);color:#6b7280;transition:color .15s;z-index:2;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
       #wj-voice-close:hover{color:#374151}
       #wj-voice-close svg{width:20px;height:20px}
-      #wj-voice-blob-wrap{width:200px;height:200px;margin-top:auto;margin-bottom:auto;position:relative;border-radius:50%;overflow:hidden}
+      #wj-voice-blob-wrap{width:200px;height:200px;margin-top:auto;margin-bottom:auto;position:relative;border-radius:50%;overflow:hidden;transition:transform 0.4s ease}
+      #wj-voice-blob-wrap.has-products{transform:translateY(-60px)}
+      #wj-voice-products{display:none;gap:10px;padding:0 16px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;position:absolute;bottom:160px;left:0;right:0;z-index:10;opacity:0;transform:translateY(20px);transition:opacity 0.4s ease,transform 0.4s ease}
+      #wj-voice-products.visible{display:flex;opacity:1;transform:translateY(0)}
+      #wj-voice-products::-webkit-scrollbar{display:none}
+      .wj-voice-prod-card{flex-shrink:0;width:120px;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+      .wj-voice-prod-card img{width:100%;aspect-ratio:1/1;object-fit:cover}
+      .wj-voice-prod-card .wj-vpc-title{font-size:10px;padding:4px 8px 2px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#374151;font-weight:500}
+      .wj-voice-prod-card .wj-vpc-price{font-size:11px;font-weight:700;padding:0 8px 6px;margin:0;color:#111}
       #wj-voice-blob-video{width:140%;height:140%;object-fit:cover;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;background:transparent}
       #wj-voice-bottom{display:flex;flex-direction:column;align-items:center;padding-bottom:12px}
       #wj-voice-status{font-size:16px;font-weight:500;color:#6b7280;background:rgba(255,255,255,0.7);padding:6px 20px;border-radius:20px;backdrop-filter:blur(8px)}
@@ -594,7 +602,15 @@ Deno.serve(async (req) => {
       #wj-voice-close{position:absolute !important;top:16px !important;right:16px !important;width:32px !important;height:32px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:rgba(255,255,255,0.8) !important;color:#6b7280 !important;transition:color .15s;z-index:2 !important;box-shadow:0 1px 2px rgba(0,0,0,0.05) !important}
       #wj-voice-close:hover{color:#374151 !important}
       #wj-voice-close svg{width:20px !important;height:20px !important}
-      #wj-voice-blob-wrap{width:200px !important;height:200px !important;margin-top:auto !important;margin-bottom:auto !important;position:relative !important;border-radius:50% !important;overflow:hidden !important}
+      #wj-voice-blob-wrap{width:200px !important;height:200px !important;margin-top:auto !important;margin-bottom:auto !important;position:relative !important;border-radius:50% !important;overflow:hidden !important;transition:transform 0.4s ease !important}
+      #wj-voice-blob-wrap.has-products{transform:translateY(-60px) !important}
+      #wj-voice-products{display:none !important;gap:10px !important;padding:0 16px !important;overflow-x:auto !important;scrollbar-width:none !important;-ms-overflow-style:none !important;position:absolute !important;bottom:160px !important;left:0 !important;right:0 !important;z-index:10 !important;opacity:0 !important;transform:translateY(20px) !important;transition:opacity 0.4s ease,transform 0.4s ease !important}
+      #wj-voice-products.visible{display:flex !important;opacity:1 !important;transform:translateY(0) !important}
+      #wj-voice-products::-webkit-scrollbar{display:none !important}
+      .wj-voice-prod-card{flex-shrink:0 !important;width:120px !important;border-radius:12px !important;overflow:hidden !important;display:flex !important;flex-direction:column !important;background:#fff !important;box-shadow:0 2px 8px rgba(0,0,0,0.1) !important}
+      .wj-voice-prod-card img{width:100% !important;aspect-ratio:1/1 !important;object-fit:cover !important}
+      .wj-voice-prod-card .wj-vpc-title{font-size:10px !important;padding:4px 8px 2px !important;margin:0 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;color:#374151 !important;font-weight:500 !important}
+      .wj-voice-prod-card .wj-vpc-price{font-size:11px !important;font-weight:700 !important;padding:0 8px 6px !important;margin:0 !important;color:#111 !important}
       #wj-voice-blob-video{width:140% !important;height:140% !important;object-fit:cover !important;position:absolute !important;top:50% !important;left:50% !important;transform:translate(-50%,-50%) !important;z-index:1 !important;background:transparent !important}
       #wj-voice-bottom{display:flex !important;flex-direction:column !important;align-items:center !important;padding-bottom:12px !important}
       #wj-voice-status{font-size:16px !important;font-weight:500 !important;color:#6b7280 !important;background:rgba(255,255,255,0.7) !important;padding:6px 20px !important;border-radius:20px !important;backdrop-filter:blur(8px) !important}
