@@ -682,7 +682,8 @@ const WidgetPreviewPanel = ({
         return;
       }
 
-      speakBrowserFallback(getVoiceGreeting(), startRecognition);
+      // Use speakBrowserTts which tries ElevenLabs first, then falls back to browser TTS
+      speakBrowserTts(getVoiceGreeting(), startRecognition);
     });
   };
 
