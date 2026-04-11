@@ -2155,6 +2155,7 @@ Deno.serve(async (req) => {
     }
 
     function showVoiceProducts(prods) {
+      clearVoiceChips();
       var vpc = d.getElementById('wj-voice-products');
       var blobWrap = d.getElementById('wj-voice-blob-wrap');
       if (!vpc || !blobWrap || !prods || prods.length === 0) return;
@@ -2181,6 +2182,7 @@ Deno.serve(async (req) => {
       stopTtsAudio();
       isSpeaking = false;
       voiceMuted = false;
+      clearVoiceChips();
       clearVoiceProducts();
       chatView.classList.add('open');
       homeView.classList.add('hidden');
