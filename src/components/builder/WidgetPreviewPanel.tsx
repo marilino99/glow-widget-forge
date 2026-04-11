@@ -352,15 +352,19 @@ const WidgetPreviewPanel = ({
 
     if (!widgetId) { speakBrowserFallback(cleanText, finish); return; }
 
-    // Try ElevenLabs edge function
-    supabase.functions.invoke("elevenlabs-tts", {
-      body: { text: cleanText, widgetId },
-    }).then(({ data, error }) => {
-      if (error || !data) { speakBrowserFallback(cleanText, finish); return; }
-      // Check if it's a blob (audio) or JSON (fallback)
-      if (data instanceof Blob && data.type?.includes("audio")) {
+    // Try ElevenLabs edge function via raw fetch (need blob response)
+    const ttsUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
+    fetch(ttsUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+      body: JSON.stringify({ text: cleanText, widgetId }),
+    }).then(async (res) => {
+      if (!res.ok) { speakBrowserFallback(cleanText, finish); return; }
+      const ct = res.headers.get("Content-Type") || "";
+      if (ct.includes("audio")) {
         try {
-          const blobUrl = URL.createObjectURL(data);
+          const blob = await res.blob();
+          const blobUrl = URL.createObjectURL(blob);
           const audio = new Audio(blobUrl);
           currentAudioRef.current = audio;
           audio.onended = () => { URL.revokeObjectURL(blobUrl); finish(); };
@@ -368,7 +372,7 @@ const WidgetPreviewPanel = ({
           audio.play().catch(() => { URL.revokeObjectURL(blobUrl); speakBrowserFallback(cleanText, finish); });
         } catch (_) { speakBrowserFallback(cleanText, finish); }
       } else {
-        // JSON response with fallback flag
+        // JSON response (fallback flag)
         speakBrowserFallback(cleanText, finish);
       }
     }).catch(() => { speakBrowserFallback(cleanText, finish); });
