@@ -2636,7 +2636,7 @@ Deno.serve(async (req) => {
                 // Don't set preferBrowserTts for play errors (autoplay policy)
                 safeBrowserFallback();
               });
-          } catch(e) { preferBrowserTts = true; safeBrowserFallback(); }
+          } catch(e) { safeBrowserFallback(); }
         } else {
           try {
             var reader = new FileReader();
@@ -2651,8 +2651,8 @@ Deno.serve(async (req) => {
           } catch(e) { preferBrowserTts = true; safeBrowserFallback(); }
         }
       };
-      xhr.onerror = function() { currentTtsXhr = null; preferBrowserTts = true; safeBrowserFallback(); };
-      xhr.ontimeout = function() { currentTtsXhr = null; preferBrowserTts = true; safeBrowserFallback(); };
+      xhr.onerror = function() { currentTtsXhr = null; safeBrowserFallback(); };
+      xhr.ontimeout = function() { currentTtsXhr = null; safeBrowserFallback(); };
       xhr.send(JSON.stringify({ text: clean, widgetId: id }));
     }
 
