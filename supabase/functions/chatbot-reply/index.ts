@@ -491,29 +491,8 @@ Deno.serve(async (req) => {
 
     console.log(`Knowledge base: ${ragUsed ? "RAG" : "fallback"}, ${faqItems?.length || 0} FAQs, ${productCardsData?.length || 0} products, total chars: ${knowledgeBase.length}`);
 
-    const activeInstructions = voiceMode && config.voice_instructions
-      ? config.voice_instructions
-      : config.chatbot_instructions;
-    const additionalInstructions = activeInstructions
-      ? `\n\nThe site owner has provided these additional instructions:\n${activeInstructions}`
-      : "";
-
-    const voiceModeRules = voiceMode
-      ? `\n\nVOICE MODE RULES (the visitor is speaking via voice, your reply will be read aloud by TTS):
-- Keep responses very short: 1-3 sentences max
-- Use natural, conversational language
-- Avoid markdown formatting, bullet points, or lists
-- Do not use emojis
-- Be direct and concise
-
-VOICE DISCOVERY RULES:
-- Do NOT use [CHIPS:] markers in voice mode. Instead, list the options naturally in your spoken reply.
-  Example: "What are you looking for? We have Skincare, Haircare, Clothing, and Shoes."
-- Follow the same category → goal → type discovery flow as text chat, but speak the options aloud.
-- Ask one question at a time and wait for the user's spoken answer before proceeding.
-- When recommending products, still use the [PRODUCTS:] marker so they appear visually in the chat, but also briefly mention 1-2 product names in your spoken reply.
-  Example: "I'd recommend the Hydrating Serum and the Daily Moisturizer — you can see them in the chat below."
-- Keep the conversational tone warm and guiding, like a real sales assistant.`
+    const additionalInstructions = config.chatbot_instructions
+      ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
 
     // Check if contact already exists for this conversation
@@ -538,7 +517,7 @@ Language: Your default language is ${config.language || "en"}, but you MUST dete
 ${knowledgeBase}
 ${additionalInstructions}
 ${leadCollectionInstruction}
-${voiceModeRules}
+
 
 CRITICAL RULES — YOU MUST FOLLOW THESE:
 1. YOUR PRIMARY SOURCE OF TRUTH IS THE KNOWLEDGE BASE ABOVE. Before answering ANY question, search through the entire knowledge base for relevant information.
