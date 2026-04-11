@@ -1,37 +1,38 @@
 
 
-## Piano: Pannello di Gestione AI (Chat & Voice)
+## Piano: Separare il Prompt di Sistema in Chat e Voice
 
-Una nuova pagina `/ai-manager` accessibile solo a te (stesso controllo admin dell'AdminDashboard), con un'interfaccia semplice e visuale per gestire le istruzioni del chatbot e monitorare gli errori.
+### Cosa cambia
 
----
+Attualmente c'è un unico `system_prompt_template` con un placeholder `{{VOICE_MODE_HINT}}`. Il piano è creare due prompt indipendenti, ciascuno ottimizzato per il proprio canale.
 
-### Cosa verrà costruito
+### Modifiche
 
-**Pagina `/ai-manager`** con due sezioni principali:
+**1. Database**
+- Aggiungere colonna `voice_system_prompt_template` (text, nullable) alla tabella `widget_configurations`
 
-**1. Istruzioni Chatbot**
-- Un campo di testo grande e modificabile per le istruzioni della chat (quelle che ora sono nascoste dentro "Data Sources")
-- Un campo separato per le istruzioni specifiche della voce
-- Pulsante "Salva" per ciascun campo
-- Indicatore visivo di salvataggio avvenuto
+**2. UI — SystemPromptSection.tsx**
+- Trasformare in due sezioni con tabs o accordion: "Prompt Chat" e "Prompt Voice"
+- Ciascuna con il proprio textarea, pulsante salva, e reset to default
+- Il prompt chat di default sarà quello attuale senza `{{VOICE_MODE_HINT}}`
+- Il prompt voice di default sarà una versione ottimizzata: risposte brevi (1-2 frasi), tono conversazionale, categorie elencate a voce, niente elenchi puntati
 
-**2. Log & Errori**
-- Tabella con le ultime risposte AI (conversazione, messaggio del visitatore, risposta AI, tempo di risposta)
-- Filtro per vedere solo gli errori o i blocchi (risposte lente >5s, errori TTS)
-- Dati presi dai log delle edge function `chatbot-preview`, `chatbot-reply`, `elevenlabs-tts`
-- Refresh manuale con un pulsante
+**3. Edge Functions (chatbot-reply + chatbot-preview)**
+- Leggere anche `voice_system_prompt_template` dalla config
+- Se `voiceMode === true` e `voice_system_prompt_template` esiste → usare quello
+- Se `voiceMode === true` ma non c'è template voice → fallback al default voice hardcoded
+- Se `voiceMode === false` → usare `system_prompt_template` (o default chat)
 
----
+**4. Placeholder semplificato**
+- Rimuovere `{{VOICE_MODE_HINT}}` dal prompt chat (non serve più)
+- Il prompt voice avrà le sue regole native senza bisogno di hint condizionali
 
 ### Dettagli tecnici
 
-| Componente | Dettaglio |
+| Elemento | Dettaglio |
 |---|---|
-| Nuova pagina | `src/pages/AIManager.tsx` |
-| Rotta | `/ai-manager` in App.tsx, protetta + check admin ID |
-| Accesso | Solo `ADMIN_USER_ID` (43c72ef7...) come AdminDashboard |
-| Istruzioni | Legge/scrive `widget_configurations.chatbot_instructions` e `voice_instructions` via Supabase client |
-| Log | Nuova edge function `ai-logs` che usa service role per leggere i log dalle tabelle `chat_messages` (filtra `is_ai_response=true`) e dai metadata |
-| Nessuna migrazione DB | I dati necessari esistono già nelle tabelle `widget_configurations` e `chat_messages` |
+| Nuova colonna DB | `voice_system_prompt_template text DEFAULT NULL` |
+| File UI | `src/components/builder/SystemPromptSection.tsx` |
+| Edge functions | `chatbot-reply/index.ts`, `chatbot-preview/index.ts` |
+| Logica fallback | Chat: `system_prompt_template` → default chat. Voice: `voice_system_prompt_template` → default voice |
 
