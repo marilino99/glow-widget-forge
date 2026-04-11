@@ -2126,6 +2126,8 @@ Deno.serve(async (req) => {
         if (voiceMuted && voiceRecognition) {
           try { voiceRecognition.stop(); } catch(e) {}
           stopElevenLabsAudio();
+          isSpeaking = false;
+          if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
           voiceStatus.textContent = 'Muted';
           voiceView.classList.remove('listening');
         } else if (!voiceMuted) {
