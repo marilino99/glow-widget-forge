@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 const ADMIN_USER_ID = "43c72ef7-a716-4d7f-af75-1a64aba01c24";
+const ALLOWED_EMAILS = ["mattiatools@gmail.com", "a@gmail.com"];
 
 interface AILog {
   id: string;
@@ -53,18 +54,20 @@ const AIManager = () => {
   const [showErrorsOnly, setShowErrorsOnly] = useState(false);
 
   // Auth guard
+  const isAdmin = user && (user.id === ADMIN_USER_ID || ALLOWED_EMAILS.includes(user.email || ""));
+
   useEffect(() => {
-    if (!authLoading && (!user || user.id !== ADMIN_USER_ID)) {
+    if (!authLoading && !isAdmin) {
       navigate("/");
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, isAdmin]);
 
   // Load config
   useEffect(() => {
-    if (user?.id === ADMIN_USER_ID) {
+    if (isAdmin) {
       loadConfig();
     }
-  }, [user]);
+  }, [isAdmin]);
 
   const loadConfig = async () => {
     setLoadingConfig(true);
@@ -140,12 +143,12 @@ const AIManager = () => {
   }, [showErrorsOnly]);
 
   useEffect(() => {
-    if (user?.id === ADMIN_USER_ID) {
+    if (isAdmin) {
       fetchLogs();
     }
-  }, [user, showErrorsOnly]);
+  }, [isAdmin, showErrorsOnly]);
 
-  if (authLoading || !user || user.id !== ADMIN_USER_ID) {
+  if (authLoading || !isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
