@@ -395,7 +395,7 @@ ${noProductsRule}`;
     }));
 
     // Use faster model for voice mode to reduce latency
-    const modelName = voiceMode ? "gemini-2.5-flash-lite" : "gemini-2.5-flash";
+    const modelName = voiceMode ? "gemini-2.5-flash" : "gemini-2.5-pro";
 
     const geminiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiApiKey}`,
