@@ -2614,7 +2614,9 @@ Deno.serve(async (req) => {
         if (ct.indexOf('audio') !== -1) {
           try {
             var blobUrl = URL.createObjectURL(xhr.response);
-            var audio = new Audio(blobUrl);
+            // Reuse the unlocked Audio element if available (iOS requires same element from gesture)
+            var audio = unlockedAudio || new Audio();
+            unlockedAudio = null; // consume it — next time a new one will be created
             currentAudio = audio;
             audio.onplay = function() {
               if (myGen !== ttsGeneration) { audio.pause(); URL.revokeObjectURL(blobUrl); return; }
@@ -2624,9 +2626,9 @@ Deno.serve(async (req) => {
             audio.onended = function() { URL.revokeObjectURL(blobUrl); finish(); };
             audio.onerror = function() {
               URL.revokeObjectURL(blobUrl);
-              // Don't set preferBrowserTts for play errors (autoplay policy)
               safeBrowserFallback();
             };
+            audio.src = blobUrl;
             audio.play()
               .then(function() {
                 if (myGen !== ttsGeneration) { audio.pause(); return; }
@@ -2635,7 +2637,6 @@ Deno.serve(async (req) => {
               })
               .catch(function() {
                 URL.revokeObjectURL(blobUrl);
-                // Don't set preferBrowserTts for play errors (autoplay policy)
                 safeBrowserFallback();
               });
           } catch(e) { safeBrowserFallback(); }
