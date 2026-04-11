@@ -1,57 +1,59 @@
 
 
-# Voice Mode: Product Cards Visibility
+# Voice Mode: Full Discovery Flow Parity
 
-## What we're building
+## Problem
 
-When the user is in voice mode and the AI recommends products (via `[PRODUCTS:]` marker in the response), the voice view will:
-1. Animate the blob upward to make room
-2. Show product cards at the bottom of the voice view, scrollable horizontally
-3. For generic product questions, the AI already lists categories verbally (this is already implemented via the `VOICE_MODE_HINT` in the system prompt)
+Currently in voice mode, when the user asks for product help, the AI follows the discovery flow (categories → goals → products) but:
+- **Chips (categories/goals) are only rendered in the hidden chat view** — the user in voice mode never sees them
+- The user can only respond by speaking, with no visual feedback about available options
+- Products already show correctly in voice view (blob shifts up + cards appear)
 
-## Current state
+The user wants the **exact same multi-step flow as chat** replicated in voice, with chips shown visually at each step and products only at the final step.
 
-- Voice view is a full-screen overlay (`#wj-voice-view`) with blob centered and controls at the bottom
-- Product cards are rendered only inside chat messages (`renderMessage`) — they are invisible when voice view is open
-- Builder preview (`WidgetPreviewPanel.tsx`) has a similar voice overlay with `VoiceBlob3D` centered
+## Plan
 
-## Technical plan
+### 1. Add Voice Chips Container (widget-loader)
 
-### 1. Widget Loader (`supabase/functions/widget-loader/index.ts`)
+Add a `#wj-voice-chips` container inside `#wj-voice-view`, positioned below the blob (above controls). When the AI sends `metadata.chips`, render them as tappable buttons in the voice overlay — same style as chat chips but adapted for the voice view layout.
 
-**Add CSS for voice product cards:**
-- Add `#wj-voice-products` container style: horizontal scroll, positioned at the bottom above the controls
-- Add transition on `#wj-voice-blob-wrap` for smooth upward movement (`transition: transform 0.4s ease`)
-- When products are shown, blob gets `transform: translateY(-60px)` class
+**CSS additions:**
+- `#wj-voice-chips`: horizontal wrap layout, centered, positioned between blob and controls
+- `.wj-voice-chip`: styled like discovery chips but slightly larger for touch targets
 
-**Add HTML container:**
-- Insert an empty `#wj-voice-products` container inside `#wj-voice-view`, between the blob and the bottom controls
+**HTML:** Add empty `<div id="wj-voice-chips"></div>` inside voice view
 
-**Modify `renderMessage` / polling logic:**
-- When voice view is open and a new message arrives with `metadata.products`, populate `#wj-voice-products` with the same product card HTML used in chat
-- Add class to blob wrap to trigger upward animation
-- Clear voice products when voice session ends
+### 2. Show Chips in Voice View on Poll (widget-loader)
 
-### 2. Builder Preview (`src/components/builder/WidgetPreviewPanel.tsx`)
+In the polling loop (around line 2720), when voice view is open and a new bot message has `metadata.chips`:
+- Populate `#wj-voice-chips` with chip buttons
+- Each chip sends its text as a message when tapped (same as chat chips)
+- Clear previous chips when new ones arrive
+- Clear chips when products arrive (final step)
 
-**Add voice products state:**
-- Track `voiceProducts` state — populated when a bot reply in voice mode contains product metadata
+### 3. Chips Click → Send as Voice Message (widget-loader)
 
-**Modify voice view render:**
-- When `voiceProducts` is populated, shift the blob upward with CSS transition
-- Render a horizontal product card carousel below the blob (reuse existing card markup style)
+When a voice chip is clicked:
+- Send the chip text as a visitor message via `sendMessageText()`
+- Remove the chips container
+- Show typing/processing state
 
-**Update `speakAssistantReply` / message handling:**
-- When in voice mode, extract product metadata from the latest bot message and set `voiceProducts`
-- Clear on voice session end
+### 4. Clear Chips on Voice Session End (widget-loader)
 
-### 3. Voice session cleanup
-- On `stopVoiceSession`, clear voice products and reset blob position in both widget-loader and builder
+In `closeVoiceView()` and `clearVoiceProducts()`, also clear `#wj-voice-chips`.
+
+### 5. Builder Preview Parity (WidgetPreviewPanel.tsx)
+
+- Add `voiceChips` state alongside `voiceProducts`
+- When in voice mode and bot reply has `metadata.chips`, set `voiceChips`
+- Render chip buttons in the voice overlay (below blob, above controls)
+- Chip click sends message and clears chips
+- Clear chips when products arrive or voice session ends
 
 ## Files to modify
 
 | File | Change |
 |---|---|
-| `supabase/functions/widget-loader/index.ts` | Add voice products CSS, HTML container, render logic on poll, blob animation |
-| `src/components/builder/WidgetPreviewPanel.tsx` | Add voiceProducts state, blob shift animation, product cards in voice overlay |
+| `supabase/functions/widget-loader/index.ts` | Add voice chips CSS, HTML container, render on poll, click handler, cleanup |
+| `src/components/builder/WidgetPreviewPanel.tsx` | Add voiceChips state, render in voice overlay, click handling, cleanup |
 
