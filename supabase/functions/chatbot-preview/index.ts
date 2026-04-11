@@ -202,7 +202,7 @@ Deno.serve(async (req) => {
     // Get widget config
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, voice_instructions, contact_name, language, user_id, forward_email, system_prompt_template")
+      .select("chatbot_enabled, chatbot_instructions, voice_instructions, contact_name, language, user_id, forward_email, system_prompt_template, voice_system_prompt_template")
       .eq("id", widgetId)
       .single();
 
