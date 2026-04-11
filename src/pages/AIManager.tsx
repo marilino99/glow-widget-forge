@@ -180,6 +180,9 @@ const AIManager = () => {
             <TabsTrigger value="instructions" className="gap-2">
               <MessageSquare className="h-4 w-4" /> Istruzioni
             </TabsTrigger>
+            <TabsTrigger value="system-prompt" className="gap-2">
+              <Code className="h-4 w-4" /> Prompt di Sistema
+            </TabsTrigger>
             <TabsTrigger value="logs" className="gap-2">
               <AlertTriangle className="h-4 w-4" /> Log & Errori
             </TabsTrigger>
