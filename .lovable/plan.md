@@ -1,57 +1,37 @@
 
-Obiettivo
 
-Far sì che la Voice Mode legga davvero:
-1. il saluto iniziale;
-2. ogni risposta del chatbot dopo che l’utente parla;
-sia nel preview sia nel widget live.
+## Piano: Pannello di Gestione AI (Chat & Voice)
 
-Diagnosi reale
+Una nuova pagina `/ai-manager` accessibile solo a te (stesso controllo admin dell'AdminDashboard), con un'interfaccia semplice e visuale per gestire le istruzioni del chatbot e monitorare gli errori.
 
-- Il bot risponde già correttamente: i log di `chatbot-preview` mostrano la reply AI, e nel live i messaggi arrivano in chat.
-- Quindi il problema non è il chatbot: è il layer TTS del browser.
-- Dopo la rimozione di ElevenLabs, preview e live dipendono solo da `speechSynthesis`.
-- Il codice attuale prova a parlare, ma poi usa un timeout che “chiude” lo speech anche quando il browser non ha mai iniziato davvero l’audio.
-- Risultato: la UI passa da `Processing` a `Listening`, ma non senti nulla. Il replay conferma proprio questo comportamento.
-- Inoltre il saluto iniziale non usa la stessa frase realmente visibile nel widget, quindi anche il greeting va riallineato.
+---
 
-Piano
+### Cosa verrà costruito
 
-1. Correggere il motore TTS nel widget live
-- File: `supabase/functions/widget-loader/index.ts`
-- Sostituire il flusso attuale con un controller TTS browser-only più robusto.
-- Gestire esplicitamente `onstart`, `onend`, `onerror` e uno stato reale `speaking`.
-- Non far mai ripartire il microfono se la voce non è partita davvero.
-- Se `speechSynthesis` non parte entro un breve timeout, fare un retry controllato invece di fingere che abbia parlato.
-- Usare come saluto la stessa stringa mostrata nel widget, non una frase separata.
+**Pagina `/ai-manager`** con due sezioni principali:
 
-2. Allineare il preview al live
-- File: `src/components/builder/WidgetPreviewPanel.tsx`
-- Applicare la stessa identica logica TTS del widget live.
-- Introdurre anche nel preview uno stato visibile `speaking`, così si vede quando il bot sta davvero leggendo.
-- Rimuovere il timeout “falso positivo” che oggi fa tornare a `Listening` anche senza audio.
-- Tenere identici greeting, mute, close e resume listening tra preview e live.
+**1. Istruzioni Chatbot**
+- Un campo di testo grande e modificabile per le istruzioni della chat (quelle che ora sono nascoste dentro "Data Sources")
+- Un campo separato per le istruzioni specifiche della voce
+- Pulsante "Salva" per ciascun campo
+- Indicatore visivo di salvataggio avvenuto
 
-3. Sistemare i race condition tra TTS e microfono
-- In entrambi i file:
-  - fermare il recognition prima di parlare;
-  - riattivarlo solo dopo fine speech reale;
-  - sincronizzare subito ref e state (`showVoiceView`, `voiceMuted`, `isSpeaking`) per evitare stati incoerenti;
-  - cancellare davvero TTS e recognition su mute/close.
+**2. Log & Errori**
+- Tabella con le ultime risposte AI (conversazione, messaggio del visitatore, risposta AI, tempo di risposta)
+- Filtro per vedere solo gli errori o i blocchi (risposte lente >5s, errori TTS)
+- Dati presi dai log delle edge function `chatbot-preview`, `chatbot-reply`, `elevenlabs-tts`
+- Refresh manuale con un pulsante
 
-4. QA finale
-- Preview:
-  - apri voice mode → il saluto si sente subito;
-  - dici “hello” → il bot risponde a voce;
-  - lo stato mostra `Speaking` mentre legge.
-- Live:
-  - stesso comportamento del preview;
-  - mute/close interrompono davvero l’audio;
-  - tornando in chat i messaggi restano corretti.
+---
 
-Dettagli tecnici
+### Dettagli tecnici
 
-- File coinvolti: `supabase/functions/widget-loader/index.ts`, `src/components/builder/WidgetPreviewPanel.tsx`
-- Nessuna modifica a database o permessi.
-- Non serve toccare la logica AI: le risposte già esistono, il problema è solo nel TTS client.
-- Punto chiave da correggere: oggi il codice tratta il TTS come “finito” anche quando il browser non ha mai iniziato a parlare.
+| Componente | Dettaglio |
+|---|---|
+| Nuova pagina | `src/pages/AIManager.tsx` |
+| Rotta | `/ai-manager` in App.tsx, protetta + check admin ID |
+| Accesso | Solo `ADMIN_USER_ID` (43c72ef7...) come AdminDashboard |
+| Istruzioni | Legge/scrive `widget_configurations.chatbot_instructions` e `voice_instructions` via Supabase client |
+| Log | Nuova edge function `ai-logs` che usa service role per leggere i log dalle tabelle `chat_messages` (filtra `is_ai_response=true`) e dai metadata |
+| Nessuna migrazione DB | I dati necessari esistono già nelle tabelle `widget_configurations` e `chat_messages` |
+
