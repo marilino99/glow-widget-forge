@@ -143,10 +143,10 @@ const AIManager = () => {
   }, [showErrorsOnly]);
 
   useEffect(() => {
-    if (user?.id === ADMIN_USER_ID) {
+    if (isAdmin) {
       fetchLogs();
     }
-  }, [user, showErrorsOnly]);
+  }, [isAdmin, showErrorsOnly]);
 
   if (authLoading || !user || user.id !== ADMIN_USER_ID) {
     return (
