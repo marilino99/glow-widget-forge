@@ -275,7 +275,7 @@ Deno.serve(async (req) => {
     // Get widget config with chatbot settings
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, voice_instructions, contact_name, language, ai_provider, ai_api_key, user_id, forward_email")
+      .select("chatbot_enabled, chatbot_instructions, voice_instructions, contact_name, language, ai_provider, ai_api_key, user_id, forward_email, system_prompt_template")
       .eq("id", widgetId)
       .single();
 
@@ -511,7 +511,22 @@ Deno.serve(async (req) => {
 - Do not insist if they decline.`
       : "";
 
-    const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
+    let systemInstruction: string;
+
+    if (config.system_prompt_template) {
+      // Use custom system prompt template with placeholder replacements
+      systemInstruction = config.system_prompt_template
+        .replace(/\{\{CONTACT_NAME\}\}/g, config.contact_name || "Support")
+        .replace(/\{\{LANGUAGE\}\}/g, config.language || "en")
+        .replace(/\{\{KNOWLEDGE_BASE\}\}/g, knowledgeBase)
+        .replace(/\{\{ADDITIONAL_INSTRUCTIONS\}\}/g, additionalInstructions)
+        .replace(/\{\{LEAD_COLLECTION\}\}/g, leadCollectionInstruction)
+        .replace(/\{\{FORWARD_EMAIL\}\}/g, config.forward_email || "")
+        .replace(/\{\{VOICE_MODE_HINT\}\}/g, voiceMode ? "Since the visitor is using voice mode, you MUST list the available categories naturally in your response so they can hear the options (e.g. 'Ok, stai cercando skincare, haircare, abbigliamento o scarpe?'). Speak them aloud in a conversational way." : "Just write a short question.")
+        .replace(/\{\{NO_PRODUCTS_RULE\}\}/g, !productCardsData || productCardsData.length === 0 ? "NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : "");
+    } else {
+      // Default hardcoded system prompt
+      systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
 Language: Your default language is ${config.language || "en"}, but you MUST detect the language the visitor is writing in and ALWAYS reply in that same language. If the visitor writes in Spanish, reply in Spanish. If they write in French, reply in French. Always match the visitor's language.
 
 ${knowledgeBase}
@@ -547,6 +562,7 @@ CRITICAL RULES — YOU MUST FOLLOW THESE:
    * For non-beauty categories (Clothing, Accessories, Fragrance), skip this step and show products directly after the goal.
    Translate chip labels into the visitor's language. Only AFTER this third step (or after goal for non-beauty), show the matching products using [PRODUCTS:].
 ${!productCardsData || productCardsData.length === 0 ? "12. NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
+    }
 
     // Determine which API key and model to use
     const userApiKey = config.ai_api_key;

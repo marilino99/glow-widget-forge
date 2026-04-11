@@ -202,7 +202,7 @@ Deno.serve(async (req) => {
     // Get widget config
     const { data: config, error: configError } = await supabase
       .from("widget_configurations")
-      .select("chatbot_enabled, chatbot_instructions, voice_instructions, contact_name, language, user_id, forward_email")
+      .select("chatbot_enabled, chatbot_instructions, voice_instructions, contact_name, language, user_id, forward_email, system_prompt_template")
       .eq("id", widgetId)
       .single();
 
@@ -318,7 +318,20 @@ Deno.serve(async (req) => {
       ? `\n\nThe site owner has provided these additional instructions:\n${config.chatbot_instructions}`
       : "";
 
-      const systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
+    let systemInstruction: string;
+
+    if (config.system_prompt_template) {
+      systemInstruction = config.system_prompt_template
+        .replace(/\{\{CONTACT_NAME\}\}/g, config.contact_name || "Support")
+        .replace(/\{\{LANGUAGE\}\}/g, config.language || "en")
+        .replace(/\{\{KNOWLEDGE_BASE\}\}/g, knowledgeBase)
+        .replace(/\{\{ADDITIONAL_INSTRUCTIONS\}\}/g, additionalInstructions)
+        .replace(/\{\{LEAD_COLLECTION\}\}/g, "")
+        .replace(/\{\{FORWARD_EMAIL\}\}/g, config.forward_email || "")
+        .replace(/\{\{VOICE_MODE_HINT\}\}/g, voiceMode ? "Since the visitor is using voice mode, you MUST list the available categories naturally in your response so they can hear the options (e.g. 'Ok, stai cercando skincare, haircare, abbigliamento o scarpe?'). Speak them aloud in a conversational way." : 'Just write a short question like "What type of product are you looking for?".')
+        .replace(/\{\{NO_PRODUCTS_RULE\}\}/g, !productCardsData || productCardsData.length === 0 ? "NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : "");
+    } else {
+      systemInstruction = `You are an AI assistant named "${config.contact_name || "Support"}" for a business website.
 Language: Your default language is ${config.language || "en"}, but you MUST detect the language the visitor is writing in and ALWAYS reply in that same language. If the visitor writes in Spanish, reply in Spanish. If they write in French, reply in French. Always match the visitor's language.
 
 ${knowledgeBase}
@@ -348,6 +361,7 @@ STRICT RULES:
   Translate chip labels into the visitor's language. Only AFTER this third step (or after goal for non-beauty), show the matching products using the [PRODUCTS:] marker.
 - PRODUCT RECOMMENDATIONS (CRITICAL): When the visitor asks about products, shopping, items, or anything purchase-related AND there is a Product Catalog above, you MUST recommend relevant products. Keep your text response VERY SHORT (1 sentence max, e.g. "Ecco cosa abbiamo!" or "Here's what we have!") — do NOT describe the products in text because they will be shown as visual product cards automatically. ALWAYS append the marker at the VERY END of your response on a new line: [PRODUCTS: exact title 1, exact title 2, exact title 3]. Use EXACT product titles from the catalog. If the visitor asks generically (e.g. "what do you have?", "show me products", "cosa avete?"), include ALL products. If they ask about a specific category, include matching products. NEVER show only 1 product — always show at least 2-3. If only 1 product matches the query, add 1-2 other popular or related products from the catalog. NEVER describe product details like color, size, price in text — the cards handle that. NEVER say you don't have product information if the Product Catalog section exists above.
 ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: There are no products configured. If the visitor asks about products or pricing, answer based on the knowledge base if available, otherwise politely explain that you don't have specific product/pricing information and suggest contacting the business directly." : ""}`;
+    }
 
     const conversationHistory = messages.map((msg: { text: string; sender: string }) => ({
       role: msg.sender === "user" ? "user" : "model",

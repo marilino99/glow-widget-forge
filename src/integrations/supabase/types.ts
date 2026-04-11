@@ -686,6 +686,7 @@ export type Database = {
           say_hello: string
           selected_avatar: string | null
           show_branding: boolean
+          system_prompt_template: string | null
           updated_at: string
           user_id: string
           voice_enabled: boolean
@@ -737,6 +738,7 @@ export type Database = {
           say_hello?: string
           selected_avatar?: string | null
           show_branding?: boolean
+          system_prompt_template?: string | null
           updated_at?: string
           user_id: string
           voice_enabled?: boolean
@@ -788,6 +790,7 @@ export type Database = {
           say_hello?: string
           selected_avatar?: string | null
           show_branding?: boolean
+          system_prompt_template?: string | null
           updated_at?: string
           user_id?: string
           voice_enabled?: boolean
