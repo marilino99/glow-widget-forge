@@ -1,27 +1,28 @@
 
 
-## Problem
+## Voice Mode: Verbalize Categories Instead of Chips
 
-Currently, when `voiceMode` is active, two things change in `chatbot-reply` and `chatbot-preview`:
+### Problem
+After unifying chat and voice responses, both modes now rely on visual chips for the category discovery flow. But chips are a visual UI element — in voice mode, the user hears the AI response via TTS but can't "see" the chips. The AI needs to **say the categories aloud** in voice mode so the listener knows their options.
 
-1. **Different instructions**: The system uses `voice_instructions` instead of `chatbot_instructions`
-2. **VOICE MODE RULES appended**: These tell the AI to give short 1-3 sentence replies, skip `[CHIPS:]` markers, avoid markdown/emojis, and speak options aloud instead of showing them as interactive chips
+### Approach
+Add a small voice-mode-aware instruction **only for the category discovery step** in both `chatbot-reply/index.ts` and `chatbot-preview/index.ts`. Everything else stays unified.
 
-This means Voice mode gets a completely different (simplified) response flow compared to Chat mode.
+### What changes
+In the system prompt's **Category Discovery Flow** rule (rule 11 / the equivalent in preview), add a conditional sentence:
 
-## Plan
+- **Chat mode** (current behavior): "The category chips will be added automatically — just write a short question."
+- **Voice mode** (new): "List the available categories naturally in your response, e.g. 'Ok, stai cercando skincare, haircare, abbigliamento o scarpe?' so the listener can hear the options."
 
-**Remove the voice-specific divergence** in both `chatbot-reply/index.ts` and `chatbot-preview/index.ts`:
+The `voiceMode` flag is already passed to both functions. We just need to use it to toggle one line in the system prompt.
 
-1. **Always use `chatbot_instructions`** — remove the conditional that switches to `voice_instructions` when `voiceMode` is true
-2. **Remove the `voiceModeRules` block** — stop appending the VOICE MODE RULES that change AI behavior (short replies, no chips, no markdown, etc.)
-3. The `voiceMode` flag will still be passed through the pipeline (for potential future use), but it will no longer alter the AI's response logic
+### Files modified
+1. `supabase/functions/chatbot-reply/index.ts` — add voice-mode conditional text in the category discovery rule
+2. `supabase/functions/chatbot-preview/index.ts` — same change
 
 ### What stays the same
-- The voice UI (blob, mic, TTS playback) remains unchanged
-- The `voice_instructions` column stays in the DB (no migration needed)
-- The `sendMessageText(text, isVoice)` call in widget-loader still passes the flag
-
-### Result
-Both Chat and Voice will receive identical AI responses: same discovery flow, same chips, same product cards, same formatting.
+- The full discovery flow (category → goal → skin/hair type → products) is identical
+- Product cards, `[PRODUCTS:]` markers, `[CHIPS:]` markers all work the same
+- Voice UI, TTS, blob — unchanged
+- No database changes
 
