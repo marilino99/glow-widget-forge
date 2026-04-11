@@ -1990,6 +1990,8 @@ Deno.serve(async (req) => {
     var primeBrowserTtsTimeout = null;
     var browserTtsPrimed = false;
     var preferBrowserTts = false;
+    var currentTtsXhr = null;
+    var ttsGeneration = 0;
     function setVoiceVideoRate(rate) { if (voiceBlobVideo) try { voiceBlobVideo.playbackRate = rate; } catch(e) {} }
 
     var voiceLangMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
