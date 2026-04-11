@@ -783,6 +783,7 @@ const WidgetPreviewPanel = ({
     setShowVoiceView(false);
     setVoiceMuted(false);
     setVoiceProducts([]);
+    setVoiceChips([]);
     setShowChat(true);
   };
 
@@ -863,7 +864,10 @@ const WidgetPreviewPanel = ({
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
         // Show products in voice view if voice is active
         if (showVoiceViewRef.current && data.metadata?.products?.length > 0) {
+          setVoiceChips([]);
           setVoiceProducts(data.metadata.products);
+        } else if (showVoiceViewRef.current && data.metadata?.chips?.length > 0) {
+          setVoiceChips(data.metadata.chips);
         }
         speakAssistantReply(data.reply);
       } else {
