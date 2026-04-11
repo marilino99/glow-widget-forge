@@ -516,7 +516,7 @@ const WidgetPreviewPanel = ({
     };
     const greeting = langMessages[language || "en"] || langMessages.en;
 
-    speakWithElevenLabs(greeting, () => {
+    speakBrowserTts(greeting, () => {
       startVoiceRecognitionInternal(SpeechRecognition);
     });
   };
@@ -585,8 +585,7 @@ const WidgetPreviewPanel = ({
       try { ref.stop(); } catch(_) {}
     }
     // Cancel any ongoing TTS
-    stopElevenLabsAudio();
-    if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
+    stopTtsAudio();
     setShowVoiceView(false);
     setShowChat(true);
   };
@@ -602,8 +601,7 @@ const WidgetPreviewPanel = ({
       isSpeakingRef.current = false;
       try { voiceRecognitionRef.current.stop(); } catch(_) {}
       // Also stop TTS if speaking
-      stopElevenLabsAudio();
-      if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
+      stopTtsAudio();
       setVoiceMuted(true);
       setVoiceStatus("connecting");
     }
