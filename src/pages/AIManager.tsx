@@ -64,10 +64,10 @@ const AIManager = () => {
 
   // Load config
   useEffect(() => {
-    if (user?.id === ADMIN_USER_ID) {
+    if (isAdmin) {
       loadConfig();
     }
-  }, [user]);
+  }, [isAdmin]);
 
   const loadConfig = async () => {
     setLoadingConfig(true);
