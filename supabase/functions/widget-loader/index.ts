@@ -2410,6 +2410,17 @@ Deno.serve(async (req) => {
       if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
     }
 
+    function resumeListening() {
+      if (voiceView && voiceView.classList.contains('open') && !voiceMuted && !isSpeaking) {
+        setTimeout(function() {
+          if (voiceView && voiceView.classList.contains('open') && !voiceMuted && !isSpeaking) {
+            noSpeechRetries = 0;
+            startVoiceRecognition();
+          }
+        }, 300);
+      }
+    }
+
     function speakText(text, onDone) {
       if (!text) { if (onDone) onDone(); return; }
       if (!voiceView || !voiceView.classList.contains('open') || voiceMuted) { if (onDone) onDone(); return; }
@@ -2420,7 +2431,7 @@ Deno.serve(async (req) => {
       isSpeaking = true;
       stopTtsAudio();
       // Pause mic while speaking
-      if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
+      if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} voiceRecognition = null; }
       if (voiceView) voiceView.classList.remove('listening');
       if (voiceStatus) voiceStatus.textContent = 'Speaking...';
 
@@ -2440,11 +2451,17 @@ Deno.serve(async (req) => {
         var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
         utter.lang = langMap[lang] || 'en-US';
         utter.rate = 1.0;
+        // Track whether speech actually started
+        var started = false;
+        utter.onstart = function() { started = true; };
         utter.onend = finish;
-        utter.onerror = finish;
+        utter.onerror = function() { finish(); };
         try {
           w.speechSynthesis.speak(utter);
-          setTimeout(finish, Math.min(Math.max(clean.length * 60, 2000), 15000));
+          // Only use a fallback timeout if speech never starts (browser quirk)
+          setTimeout(function() {
+            if (!started && !done) { finish(); }
+          }, 3000);
         } catch(e) { finish(); }
       } else { finish(); }
     }
