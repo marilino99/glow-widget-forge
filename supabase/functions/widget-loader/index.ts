@@ -404,9 +404,14 @@ Deno.serve(async (req) => {
       #wj-voice-close svg{width:20px;height:20px}
       #wj-voice-blob-wrap{width:200px;height:200px;margin-top:auto;margin-bottom:auto;position:relative;border-radius:50%;overflow:hidden;transition:transform 0.4s ease}
       #wj-voice-blob-wrap.has-products{transform:translateY(-60px)}
-      #wj-voice-products{display:none;gap:10px;padding:0 16px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;position:absolute;bottom:160px;left:0;right:0;z-index:10;opacity:0;transform:translateY(20px);transition:opacity 0.4s ease,transform 0.4s ease}
-      #wj-voice-products.visible{display:flex;opacity:1;transform:translateY(0)}
-      #wj-voice-products::-webkit-scrollbar{display:none}
+     #wj-voice-products{display:none;gap:10px;padding:0 16px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;position:absolute;bottom:160px;left:0;right:0;z-index:10;opacity:0;transform:translateY(20px);transition:opacity 0.4s ease,transform 0.4s ease}
+     #wj-voice-products.visible{display:flex;opacity:1;transform:translateY(0)}
+     #wj-voice-products::-webkit-scrollbar{display:none}
+     #wj-voice-chips{display:none;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 20px;position:absolute;bottom:170px;left:0;right:0;z-index:10;opacity:0;transform:translateY(12px);transition:opacity 0.35s ease,transform 0.35s ease}
+     #wj-voice-chips.visible{display:flex;opacity:1;transform:translateY(0)}
+     .wj-voice-chip{border:none;cursor:pointer;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:500;color:#374151;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:background 0.15s,transform 0.15s}
+     .wj-voice-chip:hover{background:#fff;transform:scale(1.04)}
+     .wj-voice-chip:active{transform:scale(0.97)}
       .wj-voice-prod-card{flex-shrink:0;width:120px;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
       .wj-voice-prod-card img{width:100%;aspect-ratio:1/1;object-fit:cover}
       .wj-voice-prod-card .wj-vpc-title{font-size:10px;padding:4px 8px 2px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#374151;font-weight:500}
@@ -604,9 +609,14 @@ Deno.serve(async (req) => {
       #wj-voice-close svg{width:20px !important;height:20px !important}
       #wj-voice-blob-wrap{width:200px !important;height:200px !important;margin-top:auto !important;margin-bottom:auto !important;position:relative !important;border-radius:50% !important;overflow:hidden !important;transition:transform 0.4s ease !important}
       #wj-voice-blob-wrap.has-products{transform:translateY(-60px) !important}
-      #wj-voice-products{display:none !important;gap:10px !important;padding:0 16px !important;overflow-x:auto !important;scrollbar-width:none !important;-ms-overflow-style:none !important;position:absolute !important;bottom:160px !important;left:0 !important;right:0 !important;z-index:10 !important;opacity:0 !important;transform:translateY(20px) !important;transition:opacity 0.4s ease,transform 0.4s ease !important}
-      #wj-voice-products.visible{display:flex !important;opacity:1 !important;transform:translateY(0) !important}
-      #wj-voice-products::-webkit-scrollbar{display:none !important}
+     #wj-voice-products{display:none !important;gap:10px !important;padding:0 16px !important;overflow-x:auto !important;scrollbar-width:none !important;-ms-overflow-style:none !important;position:absolute !important;bottom:160px !important;left:0 !important;right:0 !important;z-index:10 !important;opacity:0 !important;transform:translateY(20px) !important;transition:opacity 0.4s ease,transform 0.4s ease !important}
+     #wj-voice-products.visible{display:flex !important;opacity:1 !important;transform:translateY(0) !important}
+     #wj-voice-products::-webkit-scrollbar{display:none !important}
+     #wj-voice-chips{display:none !important;flex-wrap:wrap !important;justify-content:center !important;gap:8px !important;padding:0 20px !important;position:absolute !important;bottom:170px !important;left:0 !important;right:0 !important;z-index:10 !important;opacity:0 !important;transform:translateY(12px) !important;transition:opacity 0.35s ease,transform 0.35s ease !important}
+     #wj-voice-chips.visible{display:flex !important;opacity:1 !important;transform:translateY(0) !important}
+     .wj-voice-chip{border:none !important;cursor:pointer !important;padding:10px 18px !important;border-radius:20px !important;font-size:13px !important;font-weight:500 !important;color:#374151 !important;background:rgba(255,255,255,0.85) !important;backdrop-filter:blur(8px) !important;box-shadow:0 2px 8px rgba(0,0,0,0.08) !important;transition:background 0.15s,transform 0.15s !important}
+     .wj-voice-chip:hover{background:#fff !important;transform:scale(1.04) !important}
+     .wj-voice-chip:active{transform:scale(0.97) !important}
       .wj-voice-prod-card{flex-shrink:0 !important;width:120px !important;border-radius:12px !important;overflow:hidden !important;display:flex !important;flex-direction:column !important;background:#fff !important;box-shadow:0 2px 8px rgba(0,0,0,0.1) !important}
       .wj-voice-prod-card img{width:100% !important;aspect-ratio:1/1 !important;object-fit:cover !important}
       .wj-voice-prod-card .wj-vpc-title{font-size:10px !important;padding:4px 8px 2px !important;margin:0 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;color:#374151 !important;font-weight:500 !important}
