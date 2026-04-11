@@ -1,49 +1,57 @@
 
 Obiettivo
 
-Ripristinare davvero la Voice Mode nel widget live, così il bot:
-1. legge subito il messaggio iniziale visibile in alto;
-2. legge ad alta voce ogni risposta dopo che l’utente parla.
+Far sì che la Voice Mode legga davvero:
+1. il saluto iniziale;
+2. ogni risposta del chatbot dopo che l’utente parla;
+sia nel preview sia nel widget live.
 
-Problema trovato
+Diagnosi reale
 
-- I log del backend confermano che la voce premium sta fallendo con `401 invalid_api_key`, quindi il widget sta ripiegando sulla voce nativa del browser.
-- Nel widget live questo fallback viene avviato solo dopo una chiamata async al backend: è proprio il caso che molti browser bloccano in silenzio, quindi il testo si vede ma non parte l’audio.
-- Nel preview c’è anche un ritardo iniziale prima del primo speak, che peggiora ulteriormente il problema del “gesture context”.
-- Per questo oggi tu vedi le risposte in chat, ma in voice mode non senti nulla.
+- Il bot risponde già correttamente: i log di `chatbot-preview` mostrano la reply AI, e nel live i messaggi arrivano in chat.
+- Quindi il problema non è il chatbot: è il layer TTS del browser.
+- Dopo la rimozione di ElevenLabs, preview e live dipendono solo da `speechSynthesis`.
+- Il codice attuale prova a parlare, ma poi usa un timeout che “chiude” lo speech anche quando il browser non ha mai iniziato davvero l’audio.
+- Risultato: la UI passa da `Processing` a `Listening`, ma non senti nulla. Il replay conferma proprio questo comportamento.
+- Inoltre il saluto iniziale non usa la stessa frase realmente visibile nel widget, quindi anche il greeting va riallineato.
 
 Piano
 
-1. Correggere il flusso voice nel widget live
+1. Correggere il motore TTS nel widget live
 - File: `supabase/functions/widget-loader/index.ts`
-- Aggiungere un “unlock/prewarm” della voce browser nel click che apre la Voice Mode.
-- Far usare al fallback browser una sessione TTS già preparata nel contesto utente, invece di crearla solo dopo il fetch async.
-- Far leggere come greeting la stessa frase realmente mostrata nel widget, non una stringa scollegata.
-- Mantenere le guardie `isSpeaking` e fermare anche `speechSynthesis` quando chiudi o muti la voice mode.
+- Sostituire il flusso attuale con un controller TTS browser-only più robusto.
+- Gestire esplicitamente `onstart`, `onend`, `onerror` e uno stato reale `speaking`.
+- Non far mai ripartire il microfono se la voce non è partita davvero.
+- Se `speechSynthesis` non parte entro un breve timeout, fare un retry controllato invece di fingere che abbia parlato.
+- Usare come saluto la stessa stringa mostrata nel widget, non una frase separata.
 
-2. Allineare la preview al live
+2. Allineare il preview al live
 - File: `src/components/builder/WidgetPreviewPanel.tsx`
-- Applicare la stessa logica del widget live.
-- Rimuovere il ritardo che spezza il primo speak.
-- Tenere la stessa gestione di mute/close, così preview e live restano identici.
+- Applicare la stessa identica logica TTS del widget live.
+- Introdurre anche nel preview uno stato visibile `speaking`, così si vede quando il bot sta davvero leggendo.
+- Rimuovere il timeout “falso positivo” che oggi fa tornare a `Listening` anche senza audio.
+- Tenere identici greeting, mute, close e resume listening tra preview e live.
 
-3. Ripristinare anche la voce premium
-- Verificare la configurazione del connettore ElevenLabs, perché i log mostrano chiaramente `invalid_api_key`.
-- Anche se la chiave restasse invalida, il fallback corretto dovrà comunque parlare.
-- Se la chiave viene riallineata, il widget tornerà a usare la voce naturale senza dipendere dal fallback browser.
+3. Sistemare i race condition tra TTS e microfono
+- In entrambi i file:
+  - fermare il recognition prima di parlare;
+  - riattivarlo solo dopo fine speech reale;
+  - sincronizzare subito ref e state (`showVoiceView`, `voiceMuted`, `isSpeaking`) per evitare stati incoerenti;
+  - cancellare davvero TTS e recognition su mute/close.
 
 4. QA finale
-- Test sul widget pubblicato:
-  - apertura voice mode → legge subito il messaggio iniziale;
-  - domanda vocale → risposta letta ad alta voce;
-  - ritorno alla chat → messaggi ancora visibili correttamente;
-  - mute/close → l’audio si interrompe davvero e il microfono non riparte male.
+- Preview:
+  - apri voice mode → il saluto si sente subito;
+  - dici “hello” → il bot risponde a voce;
+  - lo stato mostra `Speaking` mentre legge.
+- Live:
+  - stesso comportamento del preview;
+  - mute/close interrompono davvero l’audio;
+  - tornando in chat i messaggi restano corretti.
 
 Dettagli tecnici
 
 - File coinvolti: `supabase/functions/widget-loader/index.ts`, `src/components/builder/WidgetPreviewPanel.tsx`
 - Nessuna modifica a database o permessi.
-- La causa è una combinazione di:
-  - fallback browser avviato troppo tardi;
-  - contesto utente perso;
-  - chiave ElevenLabs non valida lato backend.
+- Non serve toccare la logica AI: le risposte già esistono, il problema è solo nel TTS client.
+- Punto chiave da correggere: oggi il codice tratta il TTS come “finito” anche quando il browser non ha mai iniziato a parlare.
