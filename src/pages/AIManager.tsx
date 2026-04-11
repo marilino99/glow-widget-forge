@@ -106,7 +106,7 @@ const AIManager = () => {
       const { error } = await (supabase
         .from("widget_configurations") as any)
         .update({ [field]: value })
-        .eq("user_id", ADMIN_USER_ID);
+        .eq("user_id", user!.id);
 
       if (error) throw error;
       originalSetter(value);
