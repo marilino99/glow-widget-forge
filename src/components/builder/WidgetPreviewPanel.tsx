@@ -56,6 +56,7 @@ interface WidgetPreviewPanelProps {
   inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null; linkedProductIds?: string[] }[];
   inspireStoreProducts?: ProductCardData[];
   homeSectionOrder?: string[];
+  customChips?: string[];
 }
 
 // Check if a color is a hex value
@@ -227,8 +228,10 @@ const WidgetPreviewPanel = ({
   inspireVideos = [],
   inspireStoreProducts,
   homeSectionOrder = ["product-carousel", "faq", "custom-links", "inspire-me"],
+  customChips: customChipsProp,
 }: WidgetPreviewPanelProps) => {
   const t = getTranslations(language);
+  const chipLabels = (Array.isArray(customChipsProp) && customChipsProp.some(c => c.length > 0)) ? customChipsProp : [t.chipFind, t.chipTrack, t.chipInfo];
   const [previewUrl, setPreviewUrl] = useState("");
   const [proxyHtml, setProxyHtml] = useState<string | null>(null);
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
@@ -1251,7 +1254,7 @@ const WidgetPreviewPanel = ({
                       {/* Quick action chips */}
                       {chatMessages.length === 0 && (
                         <div className="flex flex-col items-end gap-2 mt-3">
-                          {[t.chipFind, t.chipTrack, t.chipInfo].map((chip, i) => (
+                          {chipLabels.map((chip, i) => (
                             <button
                               key={i}
                               onClick={() => handleSendChatMessage(chip)}
@@ -1801,7 +1804,7 @@ const WidgetPreviewPanel = ({
                   {/* Quick action chips */}
                   {chatMessages.length === 0 && (
                     <div className="flex flex-col items-end gap-2 mt-3">
-                      {[t.chipFind, t.chipTrack, t.chipInfo].map((chip, i) => (
+                      {chipLabels.map((chip, i) => (
                         <button
                           key={i}
                           onClick={() => handleSendChatMessage(chip)}
