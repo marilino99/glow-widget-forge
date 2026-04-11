@@ -416,12 +416,22 @@ const WidgetPreviewPanel = ({
     if (voiceRecognitionRef.current) { try { voiceRecognitionRef.current.stop(); } catch(_) {} }
     setVoiceStatus("processing");
 
-    const cleanText = text.replace(/[*_#`[\]]/g, "").replace(/\n{2,}/g, ". ");
+    // Strip markdown, emoji, and excessive whitespace for clean TTS
+    const cleanText = text
+      .replace(/[*_#`[\]]/g, "")
+      .replace(/\n{2,}/g, ". ")
+      .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+
+    if (!cleanText) { preparedUtteranceRef.current = null; isSpeakingRef.current = false; if (onDone) onDone(); else resumeListening(); return; }
 
     let done = false;
+    let safetyTimer: number | undefined;
     const finish = () => {
       if (done) return;
       done = true;
+      if (safetyTimer !== undefined) window.clearTimeout(safetyTimer);
       clearKeepAlive();
       currentAudioRef.current = null;
       preparedUtteranceRef.current = null;
@@ -429,15 +439,29 @@ const WidgetPreviewPanel = ({
       if (onDone) onDone(); else resumeListening();
     };
 
+    // Safety timeout: if nothing resolves within 20s, force finish
+    safetyTimer = window.setTimeout(() => {
+      if (!done) {
+        console.warn("TTS safety timeout — forcing finish");
+        stopTtsAudio();
+        finish();
+      }
+    }, 20000);
+
     if (!widgetId || preferBrowserTtsRef.current) { speakBrowserFallback(cleanText, finish); return; }
 
-    // Try ElevenLabs edge function via raw fetch (need blob response)
+    // Try ElevenLabs edge function with abort timeout
+    const controller = new AbortController();
+    const fetchTimeout = window.setTimeout(() => controller.abort(), 12000);
+
     const ttsUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
     fetch(ttsUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json", "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
       body: JSON.stringify({ text: cleanText, widgetId }),
+      signal: controller.signal,
     }).then(async (res) => {
+      window.clearTimeout(fetchTimeout);
       if (!res.ok) {
         preferBrowserTtsRef.current = true;
         speakBrowserFallback(cleanText, finish);
@@ -469,11 +493,11 @@ const WidgetPreviewPanel = ({
           speakBrowserFallback(cleanText, finish);
         }
       } else {
-        // JSON response (fallback flag)
         preferBrowserTtsRef.current = true;
         speakBrowserFallback(cleanText, finish);
       }
     }).catch(() => {
+      window.clearTimeout(fetchTimeout);
       preferBrowserTtsRef.current = true;
       speakBrowserFallback(cleanText, finish);
     });
