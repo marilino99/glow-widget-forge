@@ -1992,6 +1992,7 @@ Deno.serve(async (req) => {
     var preferBrowserTts = false;
     var currentTtsXhr = null;
     var ttsGeneration = 0;
+    var unlockedAudio = null; // Persistent Audio element unlocked in user gesture
     function setVoiceVideoRate(rate) { if (voiceBlobVideo) try { voiceBlobVideo.playbackRate = rate; } catch(e) {} }
 
     var voiceLangMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
@@ -2055,12 +2056,13 @@ Deno.serve(async (req) => {
       // Reset preferBrowserTts so ElevenLabs is retried each session
       preferBrowserTts = false;
 
-      // Unlock audio playback on mobile (user gesture context)
+      // Unlock a persistent Audio element in user gesture context (critical for iOS)
       try {
-        var silentAudio = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=');
-        silentAudio.volume = 0;
-        silentAudio.play().then(function(){silentAudio.pause();}).catch(function(){});
-      } catch(e){}
+        unlockedAudio = new Audio();
+        unlockedAudio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+        unlockedAudio.volume = 1;
+        unlockedAudio.play().then(function(){ unlockedAudio.pause(); unlockedAudio.currentTime = 0; }).catch(function(){ unlockedAudio = null; });
+      } catch(e){ unlockedAudio = null; }
 
       voiceView.classList.add('open');
       homeView.classList.add('hidden');
@@ -2612,7 +2614,9 @@ Deno.serve(async (req) => {
         if (ct.indexOf('audio') !== -1) {
           try {
             var blobUrl = URL.createObjectURL(xhr.response);
-            var audio = new Audio(blobUrl);
+            // Reuse the unlocked Audio element if available (iOS requires same element from gesture)
+            var audio = unlockedAudio || new Audio();
+            unlockedAudio = null; // consume it — next time a new one will be created
             currentAudio = audio;
             audio.onplay = function() {
               if (myGen !== ttsGeneration) { audio.pause(); URL.revokeObjectURL(blobUrl); return; }
@@ -2622,9 +2626,9 @@ Deno.serve(async (req) => {
             audio.onended = function() { URL.revokeObjectURL(blobUrl); finish(); };
             audio.onerror = function() {
               URL.revokeObjectURL(blobUrl);
-              // Don't set preferBrowserTts for play errors (autoplay policy)
               safeBrowserFallback();
             };
+            audio.src = blobUrl;
             audio.play()
               .then(function() {
                 if (myGen !== ttsGeneration) { audio.pause(); return; }
@@ -2633,7 +2637,6 @@ Deno.serve(async (req) => {
               })
               .catch(function() {
                 URL.revokeObjectURL(blobUrl);
-                // Don't set preferBrowserTts for play errors (autoplay policy)
                 safeBrowserFallback();
               });
           } catch(e) { safeBrowserFallback(); }
