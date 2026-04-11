@@ -247,7 +247,7 @@ const WidgetPreviewPanel = ({
   const [showFaqPills, setShowFaqPills] = useState(false);
   const [isBottomBarExpanded, setIsBottomBarExpanded] = useState(false);
   const [showVoiceView, setShowVoiceView] = useState(false);
-  const [voiceStatus, setVoiceStatus] = useState<"connecting" | "listening" | "processing">("connecting");
+  const [voiceStatus, setVoiceStatus] = useState<"connecting" | "listening" | "processing" | "speaking">("connecting");
   const [voiceMuted, setVoiceMuted] = useState(false);
   const voiceRecognitionRef = useRef<any>(null);
   const showVoiceViewRef = useRef(false);
@@ -258,6 +258,9 @@ const WidgetPreviewPanel = ({
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const isSpeakingRef = useRef(false);
   const keepAliveRef = useRef<number | undefined>(undefined);
+  const primeBrowserTtsTimeoutRef = useRef<number | undefined>(undefined);
+  const browserTtsPrimedRef = useRef(false);
+  const preferBrowserTtsRef = useRef(false);
   const MAX_NO_SPEECH_RETRIES = 3;
   const voiceLangMap: Record<string, string> = { en: "en-US", it: "it-IT", es: "es-ES", fr: "fr-FR", de: "de-DE", pt: "pt-BR" };
 
@@ -266,6 +269,7 @@ const WidgetPreviewPanel = ({
   useEffect(() => { voiceMutedRef.current = voiceMuted; }, [voiceMuted]);
 
   const getVoiceLang = () => voiceLangMap[language || "en"] || "en-US";
+  const getVoiceGreeting = () => sayHello?.trim() || t.welcomeMessage;
 
   // Create an utterance synchronously (preserves user-gesture context)
   const createUtterance = (text = "") => {
@@ -288,8 +292,45 @@ const WidgetPreviewPanel = ({
     }
   };
 
+  const clearPrimeBrowserTtsTimeout = () => {
+    if (primeBrowserTtsTimeoutRef.current !== undefined) {
+      window.clearTimeout(primeBrowserTtsTimeoutRef.current);
+      primeBrowserTtsTimeoutRef.current = undefined;
+    }
+  };
+
+  const primeBrowserTts = (onReady?: () => void) => {
+    if (!window.speechSynthesis || browserTtsPrimedRef.current) {
+      onReady?.();
+      return;
+    }
+
+    clearPrimeBrowserTtsTimeout();
+
+    let completed = false;
+    const finishPriming = () => {
+      if (completed) return;
+      completed = true;
+      clearPrimeBrowserTtsTimeout();
+      browserTtsPrimedRef.current = true;
+      onReady?.();
+    };
+
+    try {
+      const primeUtterance = createUtterance(".");
+      primeUtterance.volume = 0;
+      primeUtterance.onend = finishPriming;
+      primeUtterance.onerror = finishPriming;
+      window.speechSynthesis.speak(primeUtterance);
+      primeBrowserTtsTimeoutRef.current = window.setTimeout(finishPriming, 120);
+    } catch (_) {
+      finishPriming();
+    }
+  };
+
   // TTS helpers — ElevenLabs via edge function, fallback to browser speechSynthesis
   const stopTtsAudio = () => {
+    clearPrimeBrowserTtsTimeout();
     clearKeepAlive();
     if (currentAudioRef.current) { try { currentAudioRef.current.pause(); currentAudioRef.current.src = ''; } catch(_) {} currentAudioRef.current = null; }
     if (window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch(_) {} }
@@ -307,30 +348,61 @@ const WidgetPreviewPanel = ({
     }
   };
 
-  const speakBrowserFallback = (cleanText: string, finish: () => void) => {
+  const speakBrowserFallback = (cleanText: string, finish: () => void, attempt = 0) => {
     if (!window.speechSynthesis) { preparedUtteranceRef.current = null; finish(); return; }
     try { window.speechSynthesis.cancel(); } catch (_) {}
-    nudgeSynth();
-    const utterance = preparedUtteranceRef.current ?? createUtterance();
+    const utterance = attempt === 0 ? (preparedUtteranceRef.current ?? createUtterance()) : createUtterance();
     preparedUtteranceRef.current = null;
     utterance.text = cleanText;
     utterance.lang = getVoiceLang();
     utterance.rate = 1.0;
     let started = false;
-    utterance.onstart = () => { started = true; nudgeSynth(); };
-    utterance.onend = finish;
-    utterance.onerror = () => finish();
+
+    let settled = false;
+    let startTimeout: number | undefined;
+    const finalize = (shouldRetry = false) => {
+      if (settled) return;
+      settled = true;
+      if (startTimeout !== undefined) {
+        window.clearTimeout(startTimeout);
+      }
+      clearKeepAlive();
+
+      if (shouldRetry && attempt < 1 && showVoiceViewRef.current && !voiceMutedRef.current) {
+        window.setTimeout(() => speakBrowserFallback(cleanText, finish, attempt + 1), 120);
+        return;
+      }
+
+      finish();
+    };
+
+    utterance.onstart = () => {
+      started = true;
+      setVoiceStatus("speaking");
+      nudgeSynth();
+      keepAliveRef.current = window.setInterval(() => {
+        if (!isSpeakingRef.current) {
+          clearKeepAlive();
+          return;
+        }
+        nudgeSynth();
+      }, 250);
+    };
+    utterance.onend = () => finalize();
+    utterance.onerror = () => finalize(true);
+
     try {
       window.speechSynthesis.speak(utterance);
       nudgeSynth();
-      keepAliveRef.current = window.setInterval(() => { if (!isSpeakingRef.current) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
-      window.setTimeout(() => {
+      startTimeout = window.setTimeout(() => {
         if (!started && isSpeakingRef.current) {
           try { window.speechSynthesis.cancel(); } catch (_) {}
-          finish();
+          finalize(true);
         }
-      }, 2500);
-    } catch (_) { finish(); }
+      }, 1400);
+    } catch (_) {
+      finalize(true);
+    }
   };
 
   /**
@@ -357,7 +429,7 @@ const WidgetPreviewPanel = ({
       if (onDone) onDone(); else resumeListening();
     };
 
-    if (!widgetId) { speakBrowserFallback(cleanText, finish); return; }
+    if (!widgetId || preferBrowserTtsRef.current) { speakBrowserFallback(cleanText, finish); return; }
 
     // Try ElevenLabs edge function via raw fetch (need blob response)
     const ttsUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
@@ -366,7 +438,11 @@ const WidgetPreviewPanel = ({
       headers: { "Content-Type": "application/json", "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
       body: JSON.stringify({ text: cleanText, widgetId }),
     }).then(async (res) => {
-      if (!res.ok) { speakBrowserFallback(cleanText, finish); return; }
+      if (!res.ok) {
+        preferBrowserTtsRef.current = true;
+        speakBrowserFallback(cleanText, finish);
+        return;
+      }
       const ct = res.headers.get("Content-Type") || "";
       if (ct.includes("audio")) {
         try {
@@ -374,15 +450,33 @@ const WidgetPreviewPanel = ({
           const blobUrl = URL.createObjectURL(blob);
           const audio = new Audio(blobUrl);
           currentAudioRef.current = audio;
+          audio.onplay = () => { setVoiceStatus("speaking"); };
           audio.onended = () => { URL.revokeObjectURL(blobUrl); finish(); };
-          audio.onerror = () => { URL.revokeObjectURL(blobUrl); speakBrowserFallback(cleanText, finish); };
-          audio.play().catch(() => { URL.revokeObjectURL(blobUrl); speakBrowserFallback(cleanText, finish); });
-        } catch (_) { speakBrowserFallback(cleanText, finish); }
+          audio.onerror = () => {
+            URL.revokeObjectURL(blobUrl);
+            preferBrowserTtsRef.current = true;
+            speakBrowserFallback(cleanText, finish);
+          };
+          audio.play()
+            .then(() => { setVoiceStatus("speaking"); })
+            .catch(() => {
+              URL.revokeObjectURL(blobUrl);
+              preferBrowserTtsRef.current = true;
+              speakBrowserFallback(cleanText, finish);
+            });
+        } catch (_) {
+          preferBrowserTtsRef.current = true;
+          speakBrowserFallback(cleanText, finish);
+        }
       } else {
         // JSON response (fallback flag)
+        preferBrowserTtsRef.current = true;
         speakBrowserFallback(cleanText, finish);
       }
-    }).catch(() => { speakBrowserFallback(cleanText, finish); });
+    }).catch(() => {
+      preferBrowserTtsRef.current = true;
+      speakBrowserFallback(cleanText, finish);
+    });
   };
 
   // Speak assistant reply
@@ -573,13 +667,22 @@ const WidgetPreviewPanel = ({
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      speakBrowserTts(t.welcomeMessage, () => setVoiceStatus("listening"));
-      return;
-    }
-
-    speakBrowserTts(t.welcomeMessage, () => {
+    const startRecognition = () => {
+      if (!showVoiceViewRef.current || voiceMutedRef.current) return;
+      if (!SpeechRecognition) {
+        setVoiceStatus("listening");
+        return;
+      }
       startVoiceRecognitionInternal(SpeechRecognition);
+    };
+
+    primeBrowserTts(() => {
+      if (!showVoiceViewRef.current || voiceMutedRef.current) {
+        preparedUtteranceRef.current = null;
+        return;
+      }
+
+      speakBrowserFallback(getVoiceGreeting(), startRecognition);
     });
   };
 
@@ -3182,9 +3285,9 @@ const WidgetPreviewPanel = ({
                   </div>
 
                   <div className="flex-1 flex flex-col items-center justify-center gap-6">
-                    <VoiceBlob3D status={voiceStatus as 'connecting' | 'listening' | 'processing'} muted={voiceMuted} baseColor={actualHexColor} />
+                    <VoiceBlob3D status={voiceStatus as 'connecting' | 'listening' | 'processing' | 'speaking'} muted={voiceMuted} baseColor={actualHexColor} />
                     <div className="px-4 py-1.5 rounded-full text-sm font-medium text-slate-600" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)' }}>
-                      {voiceStatus === "connecting" ? "Connecting..." : voiceStatus === "processing" ? "Processing..." : "Listening..."}
+                      {voiceStatus === "connecting" ? "Connecting..." : voiceStatus === "processing" ? "Processing..." : voiceStatus === "speaking" ? "Speaking..." : "Listening..."}
                     </div>
                   </div>
 
