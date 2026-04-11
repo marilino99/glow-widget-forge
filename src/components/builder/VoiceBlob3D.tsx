@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
 interface VoiceBlob3DProps {
-  status: 'connecting' | 'listening' | 'processing';
+  status: 'connecting' | 'listening' | 'processing' | 'speaking';
   muted?: boolean;
   baseColor?: string;
 }
@@ -14,6 +14,7 @@ const VoiceBlob3D: React.FC<VoiceBlob3DProps> = ({ status, muted = false }) => {
     const targetRate = muted ? 0.5 :
       status === 'connecting' ? 0.5 :
       status === 'processing' ? 2.0 :
+      status === 'speaking' ? 1.35 :
       1.0;
     videoRef.current.playbackRate = targetRate;
   }, [status, muted]);

@@ -1987,6 +1987,9 @@ Deno.serve(async (req) => {
     var noSpeechRetries = 0;
     var MAX_NO_SPEECH = 3;
     var keepAliveInterval = null;
+    var primeBrowserTtsTimeout = null;
+    var browserTtsPrimed = false;
+    var preferBrowserTts = false;
     function setVoiceVideoRate(rate) { if (voiceBlobVideo) try { voiceBlobVideo.playbackRate = rate; } catch(e) {} }
 
     var voiceLangMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
@@ -2002,14 +2005,50 @@ Deno.serve(async (req) => {
       try { w.speechSynthesis.resume(); } catch(e) {}
     }
 
+    function clearPrimeBrowserTtsTimeout() {
+      if (primeBrowserTtsTimeout) {
+        clearTimeout(primeBrowserTtsTimeout);
+        primeBrowserTtsTimeout = null;
+      }
+    }
+
+    function primeBrowserTts(onReady) {
+      if (!w.speechSynthesis || browserTtsPrimed) {
+        if (onReady) onReady();
+        return;
+      }
+
+      clearPrimeBrowserTtsTimeout();
+
+      var completed = false;
+      function finishPriming() {
+        if (completed) return;
+        completed = true;
+        clearPrimeBrowserTtsTimeout();
+        browserTtsPrimed = true;
+        if (onReady) onReady();
+      }
+
+      try {
+        var primeUtterance = createUtterance('.');
+        primeUtterance.volume = 0;
+        primeUtterance.onend = finishPriming;
+        primeUtterance.onerror = finishPriming;
+        w.speechSynthesis.speak(primeUtterance);
+        primeBrowserTtsTimeout = setTimeout(finishPriming, 120);
+      } catch(e) {
+        finishPriming();
+      }
+    }
+
     function openVoiceView() {
       var SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         alert('Voice is not supported in this browser. Try Chrome or Safari.');
         return;
       }
-      var greeting = tr.welcomeMessage || 'Welcome! How can I help you?';
-      pendingReplyUtterance = null;
+      var greeting = (hello || tr.welcomeMessage || 'Welcome! How can I help you?').trim();
+      pendingReplyUtterance = createUtterance('');
       voiceView.classList.add('open');
       homeView.classList.add('hidden');
       chatView.classList.remove('open');
@@ -2019,7 +2058,18 @@ Deno.serve(async (req) => {
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
       startPolling();
-      speakText(greeting, function() { startVoiceRecognition(); });
+
+      primeBrowserTts(function() {
+        if (!voiceView.classList.contains('open') || voiceMuted) {
+          pendingReplyUtterance = null;
+          return;
+        }
+
+        speakBrowserFallback(greeting, function() {
+          if (!voiceView.classList.contains('open') || voiceMuted) return;
+          startVoiceRecognition();
+        });
+      });
     }
 
     function closeVoiceView() {
@@ -2064,7 +2114,7 @@ Deno.serve(async (req) => {
           if (finalTranscript.trim()) {
             noSpeechRetries = 0;
             lastSpokenText = '';
-            pendingReplyUtterance = null;
+            pendingReplyUtterance = createUtterance('');
             voiceStatus.textContent = 'Processing...';
             voiceView.classList.remove('listening');
             setVoiceVideoRate(2.0);
@@ -2424,6 +2474,7 @@ Deno.serve(async (req) => {
     }
 
     function stopTtsAudio() {
+      clearPrimeBrowserTtsTimeout();
       clearKeepAlive();
       if (currentAudio) { try { currentAudio.pause(); currentAudio.src = ''; } catch(e) {} currentAudio = null; }
       if (w.speechSynthesis) { try { w.speechSynthesis.cancel(); } catch(e) {} }
@@ -2440,23 +2491,59 @@ Deno.serve(async (req) => {
       }
     }
 
-    function speakBrowserFallback(clean, finish) {
+    function speakBrowserFallback(clean, finish, attempt) {
       if (!w.speechSynthesis) { finish(); return; }
+      if (attempt == null) attempt = 0;
       try { w.speechSynthesis.cancel(); } catch(e) {}
-      nudgeSynth();
-      var utter = createUtterance(clean);
+      var utter = attempt === 0 && pendingReplyUtterance ? pendingReplyUtterance : createUtterance('');
+      pendingReplyUtterance = null;
+      utter.text = clean;
       utter.lang = getVoiceLang();
       utter.rate = 1.0;
       var started = false;
-      utter.onstart = function() { started = true; nudgeSynth(); };
-      utter.onend = finish;
-      utter.onerror = function() { finish(); };
+
+      var settled = false;
+      var startTimeout = null;
+      function finalize(shouldRetry) {
+        if (settled) return;
+        settled = true;
+        if (startTimeout) clearTimeout(startTimeout);
+        clearKeepAlive();
+
+        if (shouldRetry && attempt < 1 && voiceView.classList.contains('open') && !voiceMuted) {
+          setTimeout(function() { speakBrowserFallback(clean, finish, attempt + 1); }, 120);
+          return;
+        }
+
+        finish();
+      }
+
+      utter.onstart = function() {
+        started = true;
+        voiceStatus.textContent = 'Speaking...';
+        setVoiceVideoRate(1.35);
+        nudgeSynth();
+        keepAliveInterval = setInterval(function() {
+          if (!isSpeaking) {
+            clearKeepAlive();
+            return;
+          }
+          nudgeSynth();
+        }, 250);
+      };
+      utter.onend = function() { finalize(false); };
+      utter.onerror = function() { finalize(true); };
+
       try {
         w.speechSynthesis.speak(utter);
         nudgeSynth();
-        keepAliveInterval = setInterval(function() { if (!isSpeaking) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
-        setTimeout(function() { if (!started && isSpeaking) { finish(); } }, 2500);
-      } catch(e) { finish(); }
+        startTimeout = setTimeout(function() {
+          if (!started && isSpeaking) {
+            try { w.speechSynthesis.cancel(); } catch(e) {}
+            finalize(true);
+          }
+        }, 1400);
+      } catch(e) { finalize(true); }
     }
 
     function speakText(text, onDone) {
@@ -2480,9 +2567,15 @@ Deno.serve(async (req) => {
         done = true;
         clearKeepAlive();
         currentAudio = null;
+        pendingReplyUtterance = null;
         isSpeaking = false;
         if (onDone) onDone();
         else resumeListening();
+      }
+
+      if (preferBrowserTts) {
+        speakBrowserFallback(clean, finish);
+        return;
       }
 
       // Try ElevenLabs edge function first
@@ -2493,7 +2586,7 @@ Deno.serve(async (req) => {
       xhr.responseType = 'blob';
       xhr.timeout = 10000;
       xhr.onload = function() {
-        if (xhr.status !== 200) { speakBrowserFallback(clean, finish); return; }
+        if (xhr.status !== 200) { preferBrowserTts = true; speakBrowserFallback(clean, finish); return; }
         var ct = xhr.getResponseHeader('Content-Type') || '';
         if (ct.indexOf('audio') !== -1) {
           // Got audio — play it
@@ -2501,10 +2594,27 @@ Deno.serve(async (req) => {
             var blobUrl = URL.createObjectURL(xhr.response);
             var audio = new Audio(blobUrl);
             currentAudio = audio;
+            audio.onplay = function() {
+              voiceStatus.textContent = 'Speaking...';
+              setVoiceVideoRate(1.35);
+            };
             audio.onended = function() { URL.revokeObjectURL(blobUrl); finish(); };
-            audio.onerror = function() { URL.revokeObjectURL(blobUrl); speakBrowserFallback(clean, finish); };
-            audio.play().catch(function() { URL.revokeObjectURL(blobUrl); speakBrowserFallback(clean, finish); });
-          } catch(e) { speakBrowserFallback(clean, finish); }
+            audio.onerror = function() {
+              URL.revokeObjectURL(blobUrl);
+              preferBrowserTts = true;
+              speakBrowserFallback(clean, finish);
+            };
+            audio.play()
+              .then(function() {
+                voiceStatus.textContent = 'Speaking...';
+                setVoiceVideoRate(1.35);
+              })
+              .catch(function() {
+                URL.revokeObjectURL(blobUrl);
+                preferBrowserTts = true;
+                speakBrowserFallback(clean, finish);
+              });
+          } catch(e) { preferBrowserTts = true; speakBrowserFallback(clean, finish); }
         } else {
           // JSON response — check for fallback flag
           try {
@@ -2512,16 +2622,16 @@ Deno.serve(async (req) => {
             reader.onload = function() {
               try {
                 var json = JSON.parse(reader.result);
-                if (json.fallback) { speakBrowserFallback(clean, finish); }
-                else { speakBrowserFallback(clean, finish); }
-              } catch(e) { speakBrowserFallback(clean, finish); }
+                preferBrowserTts = !!json.fallback || preferBrowserTts;
+                speakBrowserFallback(clean, finish);
+              } catch(e) { preferBrowserTts = true; speakBrowserFallback(clean, finish); }
             };
             reader.readAsText(xhr.response);
-          } catch(e) { speakBrowserFallback(clean, finish); }
+          } catch(e) { preferBrowserTts = true; speakBrowserFallback(clean, finish); }
         }
       };
-      xhr.onerror = function() { speakBrowserFallback(clean, finish); };
-      xhr.ontimeout = function() { speakBrowserFallback(clean, finish); };
+      xhr.onerror = function() { preferBrowserTts = true; speakBrowserFallback(clean, finish); };
+      xhr.ontimeout = function() { preferBrowserTts = true; speakBrowserFallback(clean, finish); };
       xhr.send(JSON.stringify({ text: clean, widgetId: id }));
     }
 
