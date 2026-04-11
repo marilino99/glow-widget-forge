@@ -2064,8 +2064,7 @@ Deno.serve(async (req) => {
           if (finalTranscript.trim()) {
             noSpeechRetries = 0;
             lastSpokenText = '';
-            // Pre-create utterance NOW while still in gesture-adjacent context
-            pendingReplyUtterance = createUtterance('');
+            pendingReplyUtterance = null;
             voiceStatus.textContent = 'Processing...';
             voiceView.classList.remove('listening');
             setVoiceVideoRate(2.0);
