@@ -1,55 +1,49 @@
 
+Obiettivo
 
-## Fix Voice Mode TTS: Make the Chatbot Speak Responses Aloud
+Ripristinare davvero la Voice Mode nel widget live, così il bot:
+1. legge subito il messaggio iniziale visibile in alto;
+2. legge ad alta voce ogni risposta dopo che l’utente parla.
 
-### Root Cause
-Two issues are preventing voice responses:
+Problema trovato
 
-1. **ElevenLabs API key is invalid** — every call returns 401, so the system falls back to browser Web Speech API.
-2. **Browser fallback has a critical double-callback bug** — the safety timeout (line 2467-2470) fires `resumeListening()` after ~1-5 seconds regardless of whether the utterance is still playing. This cancels the speech mid-sentence (because `resumeListening` restarts recognition, which can interfere) or triggers the callback twice, breaking the flow.
+- I log del backend confermano che la voce premium sta fallendo con `401 invalid_api_key`, quindi il widget sta ripiegando sulla voce nativa del browser.
+- Nel widget live questo fallback viene avviato solo dopo una chiamata async al backend: è proprio il caso che molti browser bloccano in silenzio, quindi il testo si vede ma non parte l’audio.
+- Nel preview c’è anche un ritardo iniziale prima del primo speak, che peggiora ulteriormente il problema del “gesture context”.
+- Per questo oggi tu vedi le risposte in chat, ma in voice mode non senti nulla.
 
-### Plan
+Piano
 
-**1. Fix the `fallbackSpeak` double-callback bug in `widget-loader/index.ts`**
-- Add a `done` flag so that `onend`, `onerror`, and the safety timeout only fire the callback **once**.
-- The safety timeout should only act if neither `onend` nor `onerror` have fired yet.
-- Increase the safety timeout ceiling from 5s to 15s — long AI responses need more time to be spoken.
+1. Correggere il flusso voice nel widget live
+- File: `supabase/functions/widget-loader/index.ts`
+- Aggiungere un “unlock/prewarm” della voce browser nel click che apre la Voice Mode.
+- Far usare al fallback browser una sessione TTS già preparata nel contesto utente, invece di crearla solo dopo il fetch async.
+- Far leggere come greeting la stessa frase realmente mostrata nel widget, non una stringa scollegata.
+- Mantenere le guardie `isSpeaking` e fermare anche `speechSynthesis` quando chiudi o muti la voice mode.
 
-```js
-function fallbackSpeak(text, onDone) {
-  var done = false;
-  function finish() {
-    if (done) return;
-    done = true;
-    if (onDone) onDone();
-    else resumeListening();
-  }
-  if (w.speechSynthesis) {
-    try { w.speechSynthesis.cancel(); } catch(e) {}
-    var utter = new SpeechSynthesisUtterance(text);
-    utter.lang = langMap[lang] || 'en-US';
-    utter.rate = 1.0;
-    utter.onend = finish;
-    utter.onerror = finish;
-    try {
-      w.speechSynthesis.speak(utter);
-      // Safety net with generous timeout
-      setTimeout(finish, Math.min(Math.max(text.length * 60, 2000), 15000));
-    } catch(e) { finish(); }
-  } else { finish(); }
-}
-```
+2. Allineare la preview al live
+- File: `src/components/builder/WidgetPreviewPanel.tsx`
+- Applicare la stessa logica del widget live.
+- Rimuovere il ritardo che spezza il primo speak.
+- Tenere la stessa gestione di mute/close, così preview e live restano identici.
 
-**2. Apply same fix in `WidgetPreviewPanel.tsx`**
-- Mirror the double-callback fix in the builder preview's fallback TTS function.
+3. Ripristinare anche la voce premium
+- Verificare la configurazione del connettore ElevenLabs, perché i log mostrano chiaramente `invalid_api_key`.
+- Anche se la chiave restasse invalida, il fallback corretto dovrà comunque parlare.
+- Se la chiave viene riallineata, il widget tornerà a usare la voce naturale senza dipendere dal fallback browser.
 
-**3. Redeploy `widget-loader` edge function**
+4. QA finale
+- Test sul widget pubblicato:
+  - apertura voice mode → legge subito il messaggio iniziale;
+  - domanda vocale → risposta letta ad alta voce;
+  - ritorno alla chat → messaggi ancora visibili correttamente;
+  - mute/close → l’audio si interrompe davvero e il microfono non riparte male.
 
-### What stays the same
-- ElevenLabs TTS flow — it will automatically work once a valid API key is configured via the connector
-- Voice recognition, blob UI, voice mute — unchanged
-- No database changes
+Dettagli tecnici
 
-### Note on ElevenLabs
-The API key configured in the connector is currently invalid (all calls return 401). The browser fallback will work with this fix, but for premium voice quality, the ElevenLabs connector needs to be reconnected with a valid key via **Settings > Connectors > ElevenLabs**.
-
+- File coinvolti: `supabase/functions/widget-loader/index.ts`, `src/components/builder/WidgetPreviewPanel.tsx`
+- Nessuna modifica a database o permessi.
+- La causa è una combinazione di:
+  - fallback browser avviato troppo tardi;
+  - contesto utente perso;
+  - chiave ElevenLabs non valida lato backend.
