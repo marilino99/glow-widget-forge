@@ -2419,32 +2419,33 @@ Deno.serve(async (req) => {
       xhr.open('POST', u + '/functions/v1/elevenlabs-tts', true);
       xhr.responseType = 'blob';
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onload = function() {
-        if (xhr.status === 200 && xhr.response) {
-          var audioUrl = URL.createObjectURL(xhr.response);
-          var audio = new Audio(audioUrl);
-          audio._objectUrl = audioUrl;
-          currentAudio = audio;
-          audio.onended = function() {
-            stopElevenLabsAudio();
-            if (onDone) { onDone(); }
-            else { resumeListening(); }
-          };
-          audio.onerror = function() {
-            stopElevenLabsAudio();
-            if (onDone) { onDone(); }
-            else { resumeListening(); }
-          };
-          audio.play().catch(function() {
-            stopElevenLabsAudio();
-            // Fallback to Web Speech API if autoplay blocked
-            fallbackSpeak(clean, onDone);
-          });
-        } else {
-          // Fallback to Web Speech API on error
-          fallbackSpeak(clean, onDone);
-        }
-      };
+       xhr.onload = function() {
+         var ct = xhr.getResponseHeader('Content-Type') || '';
+         if (xhr.status === 200 && ct.indexOf('audio') !== -1 && xhr.response) {
+           var audioUrl = URL.createObjectURL(xhr.response);
+           var audio = new Audio(audioUrl);
+           audio._objectUrl = audioUrl;
+           currentAudio = audio;
+           audio.onended = function() {
+             stopElevenLabsAudio();
+             if (onDone) { onDone(); }
+             else { resumeListening(); }
+           };
+           audio.onerror = function() {
+             stopElevenLabsAudio();
+             if (onDone) { onDone(); }
+             else { resumeListening(); }
+           };
+           audio.play().catch(function() {
+             stopElevenLabsAudio();
+             // Fallback to Web Speech API if autoplay blocked
+             fallbackSpeak(clean, onDone);
+           });
+         } else {
+           // Fallback to Web Speech API (server returned fallback or error)
+           fallbackSpeak(clean, onDone);
+         }
+       };
       xhr.onerror = function() {
         fallbackSpeak(clean, onDone);
       };

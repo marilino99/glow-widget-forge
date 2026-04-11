@@ -298,7 +298,8 @@ const WidgetPreviewPanel = ({
         }
       );
 
-      if (response.ok) {
+      const ct = response.headers.get('Content-Type') || '';
+      if (response.ok && ct.includes('audio')) {
         const blob = await response.blob();
         const audioUrl = URL.createObjectURL(blob);
         const audio = new Audio(audioUrl);
