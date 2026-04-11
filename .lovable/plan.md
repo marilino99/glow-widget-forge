@@ -1,43 +1,57 @@
 
 
-## Piano: Fix doppia voce — speakText chiamato ad ogni poll
+## Piano: Integrare Google Cloud TTS come alternativa economica a ElevenLabs
 
-### Problema trovato
+### Perché Google Cloud TTS
 
-Nel polling dei messaggi (ogni 3 secondi), il codice chiama `speakText` per ogni messaggio bot ricevuto, **anche se il messaggio è già stato renderizzato**. Il motivo:
+Google Cloud Text-to-Speech offre voci **Neural2** e **Journey** con qualità quasi umana, comparabile a ElevenLabs, ma con un piano gratuito molto generoso:
+- **1 milione di caratteri/mese gratis** per voci Neural2
+- **4 milioni di caratteri/mese gratis** per voci Standard
+- Dopo il free tier: ~$16 per 1M caratteri (Neural2)
+
+### Come funziona
+
+Il sistema proverà **prima Google Cloud TTS**, e se non disponibile userà il **browser TTS** come fallback. ElevenLabs resterà come opzione se in futuro vorrai riattivarlo.
+
+### Modifiche
+
+**1. Nuovo secret: `GOOGLE_CLOUD_TTS_API_KEY`**
+- Serve una API key di Google Cloud con l'API "Cloud Text-to-Speech" abilitata
+- Si ottiene dalla [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+
+**2. Modificare `supabase/functions/elevenlabs-tts/index.ts`**
+- Rinominare logicamente in un TTS generico (o creare una nuova funzione `google-tts`)
+- Aggiungere la logica: se `GOOGLE_CLOUD_TTS_API_KEY` è presente, usare Google Cloud TTS
+- Altrimenti provare ElevenLabs, altrimenti fallback browser
+- Endpoint Google: `https://texttospeech.googleapis.com/v1/text:synthesize`
+- Voce consigliata: `it-IT-Neural2-A` (italiano) o `en-US-Neural2-F` (inglese) — selezionata automaticamente in base alla lingua del widget
+- L'audio viene restituito in base64, da convertire in binary per lo streaming
+
+**3. Nessuna modifica al widget-loader**
+- Il widget chiama sempre lo stesso endpoint `/functions/v1/elevenlabs-tts`
+- La logica di selezione del provider è tutta server-side
+
+### Mappa delle voci per lingua
+
+| Lingua | Voce Google Neural2 |
+|--------|---------------------|
+| it | it-IT-Neural2-A (femminile) |
+| en | en-US-Neural2-F (femminile) |
+| es | es-ES-Neural2-A (femminile) |
+| fr | fr-FR-Neural2-A (femminile) |
+| de | de-DE-Neural2-A (femminile) |
+
+### Flusso di priorità TTS
 
 ```text
-res.messages.forEach(function(msg) {
-  renderMessage(msg);       // ← ritorna silenziosamente se msg.id già visto
-  if (msg.sender_type !== 'visitor' && msg.content) {
-    speakText(msg.content); // ← viene eseguito SEMPRE, anche se già parlato
-  }
-});
+1. Google Cloud TTS (se GOOGLE_CLOUD_TTS_API_KEY presente)
+2. ElevenLabs (se ELEVENLABS_API_KEY presente)
+3. { fallback: true } → browser speechSynthesis
 ```
 
-`renderMessage` ha un guard (`renderedMessageIds`), ma `speakText` è chiamato dopo, fuori da quel guard. Quindi ogni tick del poll ri-triggera la sintesi vocale sullo stesso testo, causando la sovrapposizione tra ElevenLabs (ancora in riproduzione) e una nuova istanza.
+### Prossimi passi
 
-### Soluzione
-
-**1. Aggiungere un guard prima di `speakText` nel polling** (`widget-loader/index.ts`)
-
-Controllare se il messaggio è già stato renderizzato (cioè `renderedMessageIds[msg.id]` era già `true` prima di `renderMessage`):
-
-```javascript
-res.messages.forEach(function(msg) {
-  var alreadySeen = !!renderedMessageIds[msg.id];
-  renderMessage(msg);
-  if (!alreadySeen && msg.sender_type !== 'visitor' && msg.content) {
-    speakText(msg.content);
-  }
-});
-```
-
-**2. Deploy** della edge function `widget-loader`
-
-### File modificati
-
-| File | Modifica |
-|---|---|
-| `supabase/functions/widget-loader/index.ts` | Guard `alreadySeen` prima di `speakText` nel loop di polling |
+1. Dovrai creare un progetto Google Cloud (gratuito) e abilitare l'API Text-to-Speech
+2. Generare una API key dalla console
+3. Io la salverò come secret e aggiornerò l'edge function
 
