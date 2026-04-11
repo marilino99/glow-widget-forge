@@ -281,6 +281,11 @@ const AIManager = () => {
             )}
           </TabsContent>
 
+          {/* SYSTEM PROMPT TAB */}
+          <TabsContent value="system-prompt" className="space-y-6">
+            <SystemPromptSection />
+          </TabsContent>
+
           {/* LOGS TAB */}
           <TabsContent value="logs" className="space-y-4">
             <div className="flex items-center justify-between">
