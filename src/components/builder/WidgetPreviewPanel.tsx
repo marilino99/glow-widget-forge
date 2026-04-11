@@ -860,6 +860,10 @@ const WidgetPreviewPanel = ({
         }
       } else if (data?.reply) {
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
+        // Show products in voice view if voice is active
+        if (showVoiceViewRef.current && data.metadata?.products?.length > 0) {
+          setVoiceProducts(data.metadata.products);
+        }
         speakAssistantReply(data.reply);
       } else {
         preparedUtteranceRef.current = null;
