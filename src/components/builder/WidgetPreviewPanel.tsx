@@ -254,7 +254,7 @@ const WidgetPreviewPanel = ({
   const voiceMutedRef = useRef(false);
   const lastSpokenTextRef = useRef<string>("");
   const noSpeechRetryRef = useRef(0);
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  
   const isSpeakingRef = useRef(false);
   const MAX_NO_SPEECH_RETRIES = 3;
 
