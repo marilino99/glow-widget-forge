@@ -2664,9 +2664,10 @@ Deno.serve(async (req) => {
           if (res.messages && res.messages.length > 0) {
             hideTypingIndicator();
             res.messages.forEach(function(msg) {
+              var alreadySeen = !!renderedMessageIds[msg.id];
               renderMessage(msg);
-              // TTS for bot/owner messages when voice view is open
-              if (msg.sender_type !== 'visitor' && msg.content) {
+              // TTS for bot/owner messages when voice view is open (only for NEW messages)
+              if (!alreadySeen && msg.sender_type !== 'visitor' && msg.content) {
                 speakText(msg.content);
               }
             });
