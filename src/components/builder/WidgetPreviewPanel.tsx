@@ -323,14 +323,23 @@ const WidgetPreviewPanel = ({
 
     // Fallback to Web Speech API
     if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
+      try { window.speechSynthesis.cancel(); } catch (_) {}
       const utterance = new SpeechSynthesisUtterance(cleanText);
       const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
       utterance.lang = langMap[language || 'en'] || 'en-US';
       utterance.rate = 1.0;
       utterance.onend = () => { if (onDone) onDone(); else resumeListening(); };
       utterance.onerror = () => { if (onDone) onDone(); else resumeListening(); };
-      window.speechSynthesis.speak(utterance);
+      try {
+        window.speechSynthesis.speak(utterance);
+        // Safety net: continue even if browser TTS silently stalls
+        window.setTimeout(() => {
+          if (onDone) onDone();
+          else resumeListening();
+        }, Math.min(Math.max(cleanText.length * 45, 1200), 5000));
+      } catch (_) {
+        if (onDone) onDone(); else resumeListening();
+      }
     } else {
       if (onDone) onDone(); else resumeListening();
     }
