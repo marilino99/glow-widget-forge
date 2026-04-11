@@ -56,6 +56,7 @@ interface WidgetPreviewPanelProps {
   inspireVideos?: { id: string; videoUrl: string; thumbnailUrl: string | null; linkedProductIds?: string[] }[];
   inspireStoreProducts?: ProductCardData[];
   homeSectionOrder?: string[];
+  customChips?: string[];
 }
 
 // Check if a color is a hex value

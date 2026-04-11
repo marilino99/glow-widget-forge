@@ -923,8 +923,9 @@ const Builder = () => {
                   inspireEnabled={config.inspireEnabled}
                   inspireVideos={inspireVideos}
                   inspireStoreProducts={rawProductCards}
-                  homeSectionOrder={config.homeSectionOrder}
-                  minimal
+                   homeSectionOrder={config.homeSectionOrder}
+                   customChips={config.customChips}
+                   minimal
                 />
               </div>
           </div>
@@ -1003,6 +1004,7 @@ const Builder = () => {
                 inspireVideos={inspireVideos}
                 inspireStoreProducts={rawProductCards}
                 homeSectionOrder={config.homeSectionOrder}
+                customChips={config.customChips}
               />
             </div>
           </>
