@@ -254,16 +254,43 @@ const WidgetPreviewPanel = ({
   const voiceMutedRef = useRef(false);
   const lastSpokenTextRef = useRef<string>("");
   const noSpeechRetryRef = useRef(0);
+  const preparedUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   
   const isSpeakingRef = useRef(false);
+  const keepAliveRef = useRef<number | undefined>(undefined);
   const MAX_NO_SPEECH_RETRIES = 3;
+  const voiceLangMap: Record<string, string> = { en: "en-US", it: "it-IT", es: "es-ES", fr: "fr-FR", de: "de-DE", pt: "pt-BR" };
 
   // Sync refs with state so callbacks always see current values
   useEffect(() => { showVoiceViewRef.current = showVoiceView; }, [showVoiceView]);
   useEffect(() => { voiceMutedRef.current = voiceMuted; }, [voiceMuted]);
 
+  const getVoiceLang = () => voiceLangMap[language || "en"] || "en-US";
+
+  // Create an utterance synchronously (preserves user-gesture context)
+  const createUtterance = (text = "") => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = getVoiceLang();
+    u.rate = 1.0;
+    return u;
+  };
+
+  // Keep Chrome from pausing long utterances & ensure engine stays active
+  const nudgeSynth = () => {
+    if (!window.speechSynthesis) return;
+    try { window.speechSynthesis.resume(); } catch (_) {}
+  };
+
+  const clearKeepAlive = () => {
+    if (keepAliveRef.current !== undefined) {
+      window.clearInterval(keepAliveRef.current);
+      keepAliveRef.current = undefined;
+    }
+  };
+
   // Browser TTS helpers
   const stopTtsAudio = () => {
+    clearKeepAlive();
     if (window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch(_) {} }
   };
 
@@ -279,47 +306,63 @@ const WidgetPreviewPanel = ({
     }
   };
 
-  const speakBrowserTts = (text: string, onDone?: () => void) => {
-    if (!text) { if (onDone) onDone(); return; }
+  /**
+   * Speak text via browser TTS.
+   * Pass a pre-created utterance (from gesture context) to guarantee playback.
+   */
+  const speakBrowserTts = (text: string, onDone?: () => void, preCreated?: SpeechSynthesisUtterance | null) => {
+    if (!text) { preparedUtteranceRef.current = null; if (onDone) onDone(); return; }
+
     isSpeakingRef.current = true;
     stopTtsAudio();
     if (voiceRecognitionRef.current) { try { voiceRecognitionRef.current.stop(); } catch(_) {} }
     setVoiceStatus("processing");
-    const cleanText = text.replace(/[*_#`\[\]]/g, '').replace(/\n{2,}/g, '. ');
+
+    const cleanText = text.replace(/[*_#`[\]]/g, "").replace(/\n{2,}/g, ". ");
 
     let done = false;
     const finish = () => {
       if (done) return;
       done = true;
+      clearKeepAlive();
+      preparedUtteranceRef.current = null;
       isSpeakingRef.current = false;
       if (onDone) onDone(); else resumeListening();
     };
-    if (window.speechSynthesis) {
-      try { window.speechSynthesis.cancel(); } catch (_) {}
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      const langMap: Record<string, string> = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
-      utterance.lang = langMap[language || 'en'] || 'en-US';
-      utterance.rate = 1.0;
-      let started = false;
-      utterance.onstart = () => { started = true; setVoiceStatus("processing"); };
-      utterance.onend = finish;
-      utterance.onerror = () => { finish(); };
-      try {
-        window.speechSynthesis.speak(utterance);
-        // Fallback only if speech never starts (browser quirk)
-        window.setTimeout(() => {
-          if (!started && !done) { finish(); }
-        }, 3000);
-      } catch (_) { finish(); }
-    } else { finish(); }
+
+    if (!window.speechSynthesis) { finish(); return; }
+
+    try { window.speechSynthesis.cancel(); } catch (_) {}
+    nudgeSynth();
+
+    // Use provided utterance (gesture-context) or create new one
+    const utterance = preCreated ?? preparedUtteranceRef.current ?? createUtterance();
+    preparedUtteranceRef.current = null;
+    utterance.text = cleanText;
+    utterance.lang = getVoiceLang();
+    utterance.rate = 1.0;
+
+    let started = false;
+    utterance.onstart = () => { started = true; setVoiceStatus("processing"); nudgeSynth(); };
+    utterance.onend = finish;
+    utterance.onerror = () => finish();
+
+    try {
+      window.speechSynthesis.speak(utterance);
+      nudgeSynth();
+      // Keep-alive: Chrome pauses TTS after ~15s without resume()
+      keepAliveRef.current = window.setInterval(() => { if (done) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
+      // Safety: if speech never starts within 2.5s, give up
+      window.setTimeout(() => { if (!started && !done) finish(); }, 2500);
+    } catch (_) { finish(); }
   };
 
   // Speak assistant reply
-  const speakAssistantReply = (text: string) => {
-    if (!showVoiceViewRef.current || voiceMutedRef.current) return;
-    if (text === lastSpokenTextRef.current) return;
+  const speakAssistantReply = (text: string, preCreated?: SpeechSynthesisUtterance | null) => {
+    if (!showVoiceViewRef.current || voiceMutedRef.current) { preparedUtteranceRef.current = null; return; }
+    if (text === lastSpokenTextRef.current) { preparedUtteranceRef.current = null; return; }
     lastSpokenTextRef.current = text;
-    speakBrowserTts(text);
+    speakBrowserTts(text, undefined, preCreated ?? preparedUtteranceRef.current);
   };
 
   // Auto-show FAQ pills after delay when bottom bar is expanded
@@ -492,48 +535,40 @@ const WidgetPreviewPanel = ({
 
   // Voice session for voice view overlay
   const startVoiceSession = () => {
-    // Prewarm speechSynthesis inside user-gesture context so fallback TTS works
-    if (window.speechSynthesis) {
-      try { window.speechSynthesis.cancel(); } catch(_) {}
-      const warmup = new SpeechSynthesisUtterance('');
-      warmup.volume = 0;
-      try { window.speechSynthesis.speak(warmup); } catch(_) {}
-    }
+    // Immediately create utterance in gesture context
+    const greetingUtterance = createUtterance(t.welcomeMessage);
+
+    showVoiceViewRef.current = true;
+    voiceMutedRef.current = false;
+    preparedUtteranceRef.current = null;
+    nudgeSynth();
 
     setShowVoiceView(true);
     setVoiceStatus("connecting");
     setVoiceMuted(false);
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
     if (!SpeechRecognition) {
-      setVoiceStatus("listening");
+      speakBrowserTts(t.welcomeMessage, () => setVoiceStatus("listening"), greetingUtterance);
       return;
     }
 
-    // AI speaks first with the welcome message, then starts listening
-    const langMessages: Record<string, string> = {
-      en: "Welcome! How can I help you?",
-      it: "Benvenuto! In che modo posso esserti utile?",
-      es: "¡Bienvenido! ¿Cómo puedo ayudarte?",
-      fr: "Bienvenue ! Comment puis-je vous aider ?",
-      de: "Willkommen! Wie kann ich Ihnen helfen?",
-      pt: "Bem-vindo! Como posso ajudar?",
-    };
-    const greeting = langMessages[language || "en"] || langMessages.en;
-
-    speakBrowserTts(greeting, () => {
+    speakBrowserTts(t.welcomeMessage, () => {
       startVoiceRecognitionInternal(SpeechRecognition);
-    });
+    }, greetingUtterance);
   };
 
   const startVoiceRecognitionInternal = (SpeechRecognition: any) => {
     try {
       const recognition = new SpeechRecognition();
-      recognition.lang = language || "en";
+      recognition.lang = getVoiceLang();
       recognition.interimResults = false;
       recognition.continuous = false;
       voiceRecognitionRef.current = recognition;
       noSpeechRetryRef.current = 0;
+
+      recognition.onstart = () => { setVoiceStatus("listening"); };
 
       recognition.onresult = (event: any) => {
         let transcript = "";
@@ -544,7 +579,9 @@ const WidgetPreviewPanel = ({
         }
         if (transcript.trim()) {
           noSpeechRetryRef.current = 0;
-          lastSpokenTextRef.current = ""; // Reset so the next AI reply can be spoken
+          lastSpokenTextRef.current = "";
+          // Pre-create utterance NOW while we still have gesture context
+          preparedUtteranceRef.current = createUtterance();
           setVoiceStatus("processing");
           handleSendChatMessage(transcript.trim());
         }
@@ -565,15 +602,13 @@ const WidgetPreviewPanel = ({
 
       recognition.onerror = (e: any) => {
         console.error("Voice error:", e.error);
-        if (e.error === 'no-speech') {
-          // Count as a retry
+        if (e.error === "no-speech") {
           noSpeechRetryRef.current++;
-        } else if (e.error !== 'aborted') {
+        } else if (e.error !== "aborted") {
           setVoiceStatus("listening");
         }
       };
 
-      setVoiceStatus("listening");
       recognition.start();
     } catch (e) {
       console.error("Failed to start voice session:", e);
@@ -584,32 +619,36 @@ const WidgetPreviewPanel = ({
   const stopVoiceSession = () => {
     showVoiceViewRef.current = false;
     isSpeakingRef.current = false;
+    preparedUtteranceRef.current = null;
     if (voiceRecognitionRef.current) {
       const ref = voiceRecognitionRef.current;
       voiceRecognitionRef.current = null;
       try { ref.stop(); } catch(_) {}
     }
-    // Cancel any ongoing TTS
     stopTtsAudio();
     setShowVoiceView(false);
+    setVoiceMuted(false);
     setShowChat(true);
   };
 
   const toggleVoiceMute = () => {
-    if (voiceMuted && voiceRecognitionRef.current) {
+    if (voiceMuted) {
       voiceMutedRef.current = false;
-      try { voiceRecognitionRef.current.start(); } catch(_) {}
       setVoiceMuted(false);
+      nudgeSynth();
+      if (voiceRecognitionRef.current) {
+        try { voiceRecognitionRef.current.start(); } catch(_) {}
+      }
       setVoiceStatus("listening");
-    } else if (voiceRecognitionRef.current) {
-      voiceMutedRef.current = true;
-      isSpeakingRef.current = false;
-      try { voiceRecognitionRef.current.stop(); } catch(_) {}
-      // Also stop TTS if speaking
-      stopTtsAudio();
-      setVoiceMuted(true);
-      setVoiceStatus("connecting");
+      return;
     }
+    voiceMutedRef.current = true;
+    isSpeakingRef.current = false;
+    preparedUtteranceRef.current = null;
+    if (voiceRecognitionRef.current) { try { voiceRecognitionRef.current.stop(); } catch(_) {} }
+    stopTtsAudio();
+    setVoiceMuted(true);
+    setVoiceStatus("connecting");
   };
 
   useEffect(() => {
@@ -642,18 +681,24 @@ const WidgetPreviewPanel = ({
   const handleSendChatMessage = async (text: string) => {
     const userMsg = { text, sender: "user" as const };
     setChatMessages(prev => [...prev, userMsg]);
-    setChatInputValue('');
+    setChatInputValue("");
     setShowEmojiPicker(false);
 
     if (!widgetId) return;
 
+    // If in voice mode, pre-create utterance for the reply (gesture context)
+    if (showVoiceViewRef.current && !voiceMutedRef.current && !preparedUtteranceRef.current) {
+      preparedUtteranceRef.current = createUtterance();
+    }
+
     setIsBotTyping(true);
     try {
       const allMessages = [...chatMessages, userMsg].map(m => ({ text: m.text, sender: m.sender }));
-      const { data, error } = await supabase.functions.invoke('chatbot-preview', {
+      const { data, error } = await supabase.functions.invoke("chatbot-preview", {
         body: { messages: allMessages, widgetId, voiceMode: showVoiceViewRef.current },
       });
       if (error) {
+        preparedUtteranceRef.current = null;
         const status = (error as any)?.context?.status;
         if (status === 429) {
           setChatMessages(prev => [...prev, { text: "⚠️ Hai raggiunto il limite di richieste AI. Riprova tra qualche minuto.", sender: "bot" as const }]);
@@ -661,12 +706,16 @@ const WidgetPreviewPanel = ({
           setChatMessages(prev => [...prev, { text: "⚠️ Si è verificato un errore. Riprova più tardi.", sender: "bot" as const }]);
         }
       } else if (data?.reply) {
+        const savedUtterance = preparedUtteranceRef.current;
+        preparedUtteranceRef.current = null;
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
-        // TTS: read reply aloud if voice view is active (uses refs)
-        speakAssistantReply(data.reply);
+        speakAssistantReply(data.reply, savedUtterance);
+      } else {
+        preparedUtteranceRef.current = null;
       }
     } catch (err) {
-      console.error('Preview chatbot error:', err);
+      preparedUtteranceRef.current = null;
+      console.error("Preview chatbot error:", err);
       setChatMessages(prev => [...prev, { text: "⚠️ Errore di connessione. Riprova più tardi.", sender: "bot" as const }]);
     } finally {
       setIsBotTyping(false);
