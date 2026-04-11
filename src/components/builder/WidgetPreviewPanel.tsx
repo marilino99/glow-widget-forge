@@ -1254,7 +1254,7 @@ const WidgetPreviewPanel = ({
                       {/* Quick action chips */}
                       {chatMessages.length === 0 && (
                         <div className="flex flex-col items-end gap-2 mt-3">
-                          {[t.chipFind, t.chipTrack, t.chipInfo].map((chip, i) => (
+                          {chipLabels.map((chip, i) => (
                             <button
                               key={i}
                               onClick={() => handleSendChatMessage(chip)}
@@ -1804,7 +1804,7 @@ const WidgetPreviewPanel = ({
                   {/* Quick action chips */}
                   {chatMessages.length === 0 && (
                     <div className="flex flex-col items-end gap-2 mt-3">
-                      {[t.chipFind, t.chipTrack, t.chipInfo].map((chip, i) => (
+                      {chipLabels.map((chip, i) => (
                         <button
                           key={i}
                           onClick={() => handleSendChatMessage(chip)}
