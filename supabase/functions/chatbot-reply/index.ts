@@ -641,7 +641,7 @@ ${noProductsRule}`;
       }));
 
       const geminiResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${effectiveApiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${effectiveApiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
