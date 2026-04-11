@@ -2008,11 +2008,8 @@ Deno.serve(async (req) => {
         alert('Voice is not supported in this browser. Try Chrome or Safari.');
         return;
       }
-      // Create greeting utterance NOW in user-gesture context
       var greeting = tr.welcomeMessage || 'Welcome! How can I help you?';
-      var greetingUtterance = createUtterance(greeting);
       pendingReplyUtterance = null;
-      nudgeSynth();
       voiceView.classList.add('open');
       homeView.classList.add('hidden');
       chatView.classList.remove('open');
@@ -2022,7 +2019,7 @@ Deno.serve(async (req) => {
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
       startPolling();
-      speakText(greeting, function() { startVoiceRecognition(); }, greetingUtterance);
+      speakText(greeting, function() { startVoiceRecognition(); });
     }
 
     function closeVoiceView() {
