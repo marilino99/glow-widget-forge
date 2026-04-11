@@ -2453,29 +2453,26 @@ Deno.serve(async (req) => {
     }
 
     function fallbackSpeak(text, onDone) {
+      var done = false;
+      function finish() {
+        if (done) return;
+        done = true;
+        if (onDone) onDone();
+        else resumeListening();
+      }
       if (w.speechSynthesis) {
         try { w.speechSynthesis.cancel(); } catch(e) {}
         var utter = new SpeechSynthesisUtterance(text);
         var langMap = { en: 'en-US', it: 'it-IT', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-BR' };
         utter.lang = langMap[lang] || 'en-US';
         utter.rate = 1.0;
-        utter.onend = function() { if (onDone) { onDone(); } else { resumeListening(); } };
-        utter.onerror = function() { if (onDone) { onDone(); } else { resumeListening(); } };
+        utter.onend = finish;
+        utter.onerror = finish;
         try {
           w.speechSynthesis.speak(utter);
-          // Safety net: if browser TTS silently fails, continue the flow anyway
-          setTimeout(function() {
-            if (onDone) { onDone(); }
-            else { resumeListening(); }
-          }, Math.min(Math.max(text.length * 45, 1200), 5000));
-        } catch(e) {
-          if (onDone) onDone();
-          else resumeListening();
-        }
-      } else {
-        if (onDone) onDone();
-        else resumeListening();
-      }
+          setTimeout(finish, Math.min(Math.max(text.length * 60, 2000), 15000));
+        } catch(e) { finish(); }
+      } else { finish(); }
     }
 
     function resumeListening() {
