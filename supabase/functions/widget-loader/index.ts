@@ -402,7 +402,15 @@ Deno.serve(async (req) => {
       #wj-voice-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.8);color:#6b7280;transition:color .15s;z-index:2;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
       #wj-voice-close:hover{color:#374151}
       #wj-voice-close svg{width:20px;height:20px}
-      #wj-voice-blob-wrap{width:200px;height:200px;margin-top:auto;margin-bottom:auto;position:relative;border-radius:50%;overflow:hidden}
+      #wj-voice-blob-wrap{width:200px;height:200px;margin-top:auto;margin-bottom:auto;position:relative;border-radius:50%;overflow:hidden;transition:transform 0.4s ease}
+      #wj-voice-blob-wrap.has-products{transform:translateY(-60px)}
+      #wj-voice-products{display:none;gap:10px;padding:0 16px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;position:absolute;bottom:160px;left:0;right:0;z-index:10;opacity:0;transform:translateY(20px);transition:opacity 0.4s ease,transform 0.4s ease}
+      #wj-voice-products.visible{display:flex;opacity:1;transform:translateY(0)}
+      #wj-voice-products::-webkit-scrollbar{display:none}
+      .wj-voice-prod-card{flex-shrink:0;width:120px;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+      .wj-voice-prod-card img{width:100%;aspect-ratio:1/1;object-fit:cover}
+      .wj-voice-prod-card .wj-vpc-title{font-size:10px;padding:4px 8px 2px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#374151;font-weight:500}
+      .wj-voice-prod-card .wj-vpc-price{font-size:11px;font-weight:700;padding:0 8px 6px;margin:0;color:#111}
       #wj-voice-blob-video{width:140%;height:140%;object-fit:cover;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;background:transparent}
       #wj-voice-bottom{display:flex;flex-direction:column;align-items:center;padding-bottom:12px}
       #wj-voice-status{font-size:16px;font-weight:500;color:#6b7280;background:rgba(255,255,255,0.7);padding:6px 20px;border-radius:20px;backdrop-filter:blur(8px)}
@@ -594,7 +602,15 @@ Deno.serve(async (req) => {
       #wj-voice-close{position:absolute !important;top:16px !important;right:16px !important;width:32px !important;height:32px !important;border-radius:50% !important;border:none !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;background:rgba(255,255,255,0.8) !important;color:#6b7280 !important;transition:color .15s;z-index:2 !important;box-shadow:0 1px 2px rgba(0,0,0,0.05) !important}
       #wj-voice-close:hover{color:#374151 !important}
       #wj-voice-close svg{width:20px !important;height:20px !important}
-      #wj-voice-blob-wrap{width:200px !important;height:200px !important;margin-top:auto !important;margin-bottom:auto !important;position:relative !important;border-radius:50% !important;overflow:hidden !important}
+      #wj-voice-blob-wrap{width:200px !important;height:200px !important;margin-top:auto !important;margin-bottom:auto !important;position:relative !important;border-radius:50% !important;overflow:hidden !important;transition:transform 0.4s ease !important}
+      #wj-voice-blob-wrap.has-products{transform:translateY(-60px) !important}
+      #wj-voice-products{display:none !important;gap:10px !important;padding:0 16px !important;overflow-x:auto !important;scrollbar-width:none !important;-ms-overflow-style:none !important;position:absolute !important;bottom:160px !important;left:0 !important;right:0 !important;z-index:10 !important;opacity:0 !important;transform:translateY(20px) !important;transition:opacity 0.4s ease,transform 0.4s ease !important}
+      #wj-voice-products.visible{display:flex !important;opacity:1 !important;transform:translateY(0) !important}
+      #wj-voice-products::-webkit-scrollbar{display:none !important}
+      .wj-voice-prod-card{flex-shrink:0 !important;width:120px !important;border-radius:12px !important;overflow:hidden !important;display:flex !important;flex-direction:column !important;background:#fff !important;box-shadow:0 2px 8px rgba(0,0,0,0.1) !important}
+      .wj-voice-prod-card img{width:100% !important;aspect-ratio:1/1 !important;object-fit:cover !important}
+      .wj-voice-prod-card .wj-vpc-title{font-size:10px !important;padding:4px 8px 2px !important;margin:0 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;color:#374151 !important;font-weight:500 !important}
+      .wj-voice-prod-card .wj-vpc-price{font-size:11px !important;font-weight:700 !important;padding:0 8px 6px !important;margin:0 !important;color:#111 !important}
       #wj-voice-blob-video{width:140% !important;height:140% !important;object-fit:cover !important;position:absolute !important;top:50% !important;left:50% !important;transform:translate(-50%,-50%) !important;z-index:1 !important;background:transparent !important}
       #wj-voice-bottom{display:flex !important;flex-direction:column !important;align-items:center !important;padding-bottom:12px !important}
       #wj-voice-status{font-size:16px !important;font-weight:500 !important;color:#6b7280 !important;background:rgba(255,255,255,0.7) !important;padding:6px 20px !important;border-radius:20px !important;backdrop-filter:blur(8px) !important}
@@ -1933,7 +1949,7 @@ Deno.serve(async (req) => {
     // ====== VOICE VIEW ======
     var voiceView = d.createElement('div');
     voiceView.id = 'wj-voice-view';
-    voiceView.innerHTML = '<button id="wj-voice-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button><div id="wj-voice-blob-wrap"><video id="wj-voice-blob-video" src="https://widjett.lovable.app/videos/voice-blob.webm" autoplay loop muted playsinline></video></div><div id="wj-voice-bottom"><div id="wj-voice-status">Connecting</div><div id="wj-voice-transcript"></div><div id="wj-voice-controls"><button id="wj-voice-stop"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button><button id="wj-voice-mute"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="2" x2="22" y2="22"/></svg></button></div>' + (showBranding ? '<div id="wj-voice-powered">' + poweredHtml + '</div>' : '') + '</div>';
+    voiceView.innerHTML = '<button id="wj-voice-close"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button><div id="wj-voice-blob-wrap"><video id="wj-voice-blob-video" src="https://widjett.lovable.app/videos/voice-blob.webm" autoplay loop muted playsinline></video></div><div id="wj-voice-products"></div><div id="wj-voice-bottom"><div id="wj-voice-status">Connecting</div><div id="wj-voice-transcript"></div><div id="wj-voice-controls"><button id="wj-voice-stop"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button><button id="wj-voice-mute"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="2" x2="22" y2="22"/></svg></button></div>' + (showBranding ? '<div id="wj-voice-powered">' + poweredHtml + '</div>' : '') + '</div>';
     pop.appendChild(voiceView);
 
     function hideLauncher() {
@@ -2081,6 +2097,33 @@ Deno.serve(async (req) => {
       });
     }
 
+    function clearVoiceProducts() {
+      var vpc = d.getElementById('wj-voice-products');
+      if (vpc) { vpc.innerHTML = ''; vpc.classList.remove('visible'); }
+      var blobWrap = d.getElementById('wj-voice-blob-wrap');
+      if (blobWrap) { blobWrap.classList.remove('has-products'); }
+    }
+
+    function showVoiceProducts(prods) {
+      var vpc = d.getElementById('wj-voice-products');
+      var blobWrap = d.getElementById('wj-voice-blob-wrap');
+      if (!vpc || !blobWrap || !prods || prods.length === 0) return;
+      var html = '';
+      prods.forEach(function(prod) {
+        var url = prod.productUrl || '#';
+        html += '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" class="wj-voice-prod-card" style="text-decoration:none">';
+        if (prod.imageUrl) {
+          html += '<img src="' + esc(prod.imageUrl) + '" alt="' + esc(prod.title || '') + '"/>';
+        }
+        html += '<p class="wj-vpc-title">' + esc(prod.title || '') + '</p>';
+        if (prod.price) { html += '<p class="wj-vpc-price">' + esc(prod.price) + '</p>'; }
+        html += '</a>';
+      });
+      vpc.innerHTML = html;
+      blobWrap.classList.add('has-products');
+      requestAnimationFrame(function() { vpc.classList.add('visible'); });
+    }
+
     function closeVoiceView() {
       voiceView.classList.remove('open', 'listening');
       pendingReplyUtterance = null;
@@ -2088,6 +2131,7 @@ Deno.serve(async (req) => {
       stopTtsAudio();
       isSpeaking = false;
       voiceMuted = false;
+      clearVoiceProducts();
       chatView.classList.add('open');
       homeView.classList.add('hidden');
     }
@@ -2678,6 +2722,10 @@ Deno.serve(async (req) => {
               // TTS for bot/owner messages when voice view is open (only for NEW messages)
               if (!alreadySeen && msg.sender_type !== 'visitor' && msg.content) {
                 speakText(msg.content);
+              }
+              // Show product cards in voice view when voice is open
+              if (!alreadySeen && msg.sender_type !== 'visitor' && voiceView.classList.contains('open') && msg.metadata && msg.metadata.products && msg.metadata.products.length > 0) {
+                showVoiceProducts(msg.metadata.products);
               }
             });
           }
