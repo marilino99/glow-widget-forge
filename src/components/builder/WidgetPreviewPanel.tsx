@@ -308,10 +308,12 @@ const WidgetPreviewPanel = ({
   };
 
   const speakBrowserFallback = (cleanText: string, finish: () => void) => {
-    if (!window.speechSynthesis) { finish(); return; }
+    if (!window.speechSynthesis) { preparedUtteranceRef.current = null; finish(); return; }
     try { window.speechSynthesis.cancel(); } catch (_) {}
     nudgeSynth();
-    const utterance = createUtterance(cleanText);
+    const utterance = preparedUtteranceRef.current ?? createUtterance();
+    preparedUtteranceRef.current = null;
+    utterance.text = cleanText;
     utterance.lang = getVoiceLang();
     utterance.rate = 1.0;
     let started = false;
@@ -322,7 +324,12 @@ const WidgetPreviewPanel = ({
       window.speechSynthesis.speak(utterance);
       nudgeSynth();
       keepAliveRef.current = window.setInterval(() => { if (!isSpeakingRef.current) { clearKeepAlive(); return; } nudgeSynth(); }, 250);
-      window.setTimeout(() => { if (!started && isSpeakingRef.current) finish(); }, 2500);
+      window.setTimeout(() => {
+        if (!started && isSpeakingRef.current) {
+          try { window.speechSynthesis.cancel(); } catch (_) {}
+          finish();
+        }
+      }, 2500);
     } catch (_) { finish(); }
   };
 
@@ -338,7 +345,6 @@ const WidgetPreviewPanel = ({
     setVoiceStatus("processing");
 
     const cleanText = text.replace(/[*_#`[\]]/g, "").replace(/\n{2,}/g, ". ");
-    preparedUtteranceRef.current = null;
 
     let done = false;
     const finish = () => {
@@ -346,6 +352,7 @@ const WidgetPreviewPanel = ({
       done = true;
       clearKeepAlive();
       currentAudioRef.current = null;
+      preparedUtteranceRef.current = null;
       isSpeakingRef.current = false;
       if (onDone) onDone(); else resumeListening();
     };
@@ -558,7 +565,7 @@ const WidgetPreviewPanel = ({
   const startVoiceSession = () => {
     showVoiceViewRef.current = true;
     voiceMutedRef.current = false;
-    preparedUtteranceRef.current = null;
+    preparedUtteranceRef.current = createUtterance();
 
     setShowVoiceView(true);
     setVoiceStatus("connecting");
@@ -703,6 +710,10 @@ const WidgetPreviewPanel = ({
 
     if (!widgetId) return;
 
+    if (showVoiceViewRef.current && !preparedUtteranceRef.current) {
+      preparedUtteranceRef.current = createUtterance();
+    }
+
     setIsBotTyping(true);
     try {
       const allMessages = [...chatMessages, userMsg].map(m => ({ text: m.text, sender: m.sender }));
@@ -718,7 +729,6 @@ const WidgetPreviewPanel = ({
           setChatMessages(prev => [...prev, { text: "⚠️ Si è verificato un errore. Riprova più tardi.", sender: "bot" as const }]);
         }
       } else if (data?.reply) {
-        preparedUtteranceRef.current = null;
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
         speakAssistantReply(data.reply);
       } else {
