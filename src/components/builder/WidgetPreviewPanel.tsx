@@ -552,13 +552,9 @@ const WidgetPreviewPanel = ({
 
   // Voice session for voice view overlay
   const startVoiceSession = () => {
-    // Immediately create utterance in gesture context
-    const greetingUtterance = createUtterance(t.welcomeMessage);
-
     showVoiceViewRef.current = true;
     voiceMutedRef.current = false;
     preparedUtteranceRef.current = null;
-    nudgeSynth();
 
     setShowVoiceView(true);
     setVoiceStatus("connecting");
@@ -567,13 +563,13 @@ const WidgetPreviewPanel = ({
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      speakBrowserTts(t.welcomeMessage, () => setVoiceStatus("listening"), greetingUtterance);
+      speakBrowserTts(t.welcomeMessage, () => setVoiceStatus("listening"));
       return;
     }
 
     speakBrowserTts(t.welcomeMessage, () => {
       startVoiceRecognitionInternal(SpeechRecognition);
-    }, greetingUtterance);
+    });
   };
 
   const startVoiceRecognitionInternal = (SpeechRecognition: any) => {
@@ -723,10 +719,9 @@ const WidgetPreviewPanel = ({
           setChatMessages(prev => [...prev, { text: "⚠️ Si è verificato un errore. Riprova più tardi.", sender: "bot" as const }]);
         }
       } else if (data?.reply) {
-        const savedUtterance = preparedUtteranceRef.current;
         preparedUtteranceRef.current = null;
         setChatMessages(prev => [...prev, { text: data.reply, sender: "bot" as const, metadata: data.metadata || undefined }]);
-        speakAssistantReply(data.reply, savedUtterance);
+        speakAssistantReply(data.reply);
       } else {
         preparedUtteranceRef.current = null;
       }
