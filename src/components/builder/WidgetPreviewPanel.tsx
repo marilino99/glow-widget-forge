@@ -781,6 +781,7 @@ const WidgetPreviewPanel = ({
     stopTtsAudio();
     setShowVoiceView(false);
     setVoiceMuted(false);
+    setVoiceProducts([]);
     setShowChat(true);
   };
 
