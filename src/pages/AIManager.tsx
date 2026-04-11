@@ -54,11 +54,13 @@ const AIManager = () => {
   const [showErrorsOnly, setShowErrorsOnly] = useState(false);
 
   // Auth guard
+  const isAdmin = user && (user.id === ADMIN_USER_ID || ALLOWED_EMAILS.includes(user.email || ""));
+
   useEffect(() => {
-    if (!authLoading && (!user || user.id !== ADMIN_USER_ID)) {
+    if (!authLoading && !isAdmin) {
       navigate("/");
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, isAdmin]);
 
   // Load config
   useEffect(() => {
