@@ -2072,10 +2072,10 @@ Deno.serve(async (req) => {
       voiceTranscript.textContent = '';
       voiceMuted = false;
       voiceMuteBtn.classList.remove('muted');
-      startPolling();
 
-      // Use speakText so ElevenLabs is attempted for greeting too
+      // Speak greeting FIRST, then start polling to avoid race conditions
       speakText(greeting, function() {
+        startPolling();
         if (!voiceView.classList.contains('open') || voiceMuted) return;
         startVoiceRecognition();
       });
