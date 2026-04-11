@@ -16,6 +16,7 @@ import Privacy from "./pages/Privacy";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
+import AIManager from "./pages/AIManager";
 
 const queryClient = new QueryClient();
 
