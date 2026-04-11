@@ -2050,7 +2050,7 @@ Deno.serve(async (req) => {
         alert('Voice is not supported in this browser. Try Chrome or Safari.');
         return;
       }
-      var greeting = (hello || tr.welcomeMessage || 'Welcome! How can I help you?').trim();
+      var greeting = (tr.welcomeMessage || hello || 'Welcome! How can I help you?').trim();
       pendingReplyUtterance = createUtterance('');
 
       // Reset preferBrowserTts so ElevenLabs is retried each session
