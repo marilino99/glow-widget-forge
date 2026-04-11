@@ -227,76 +227,79 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch product cards for ALL users (manual + Shopify)
-    const { data: productCardsData } = await supabase
-      .from("product_cards")
-      .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
-      .eq("user_id", config.user_id)
-      .order("sort_order", { ascending: true });
-
     // Get user's last message for RAG query
     const lastUserMessage = messages.filter((m: { sender: string }) => m.sender === "user").pop();
     const queryText = lastUserMessage?.text || "";
     const productIntent = isProductIntent(queryText);
     const categoryDiscoveryIntent = isCategoryDiscoveryIntent(queryText);
 
-    // RAG: Try similarity search first
-    let knowledgeBase = "";
-    let usedRag = false;
-
-    if (queryText) {
-      const queryEmbedding = await generateEmbedding(queryText, geminiApiKey);
-      if (queryEmbedding) {
-        const { data: chunks } = await supabase.rpc("match_training_chunks", {
-          query_embedding: JSON.stringify(queryEmbedding),
-          match_user_id: config.user_id,
-          match_threshold: 0.25,
-          match_count: 8,
-        });
-
-        if (chunks && chunks.length > 0) {
-          usedRag = true;
-          knowledgeBase += "\n## RELEVANT KNOWLEDGE BASE EXCERPTS\n";
-          for (const chunk of chunks) {
-            knowledgeBase += `\n---\n${chunk.content}\n`;
-          }
-        }
-      }
-    }
-
-    // Fallback: load training sources directly if RAG returned nothing.
-    // For product intent without Shopify, avoid broad fallback context to prevent product hallucinations.
-    if (!usedRag) {
-      const { data: trainingSources } = await supabase
+    // ===== PARALLELIZED DATA FETCHING =====
+    // Run all independent DB queries + embedding generation in parallel
+    const [productCardsResult, faqResult, trainingSourcesResult, embeddingResult] = await Promise.all([
+      // 1. Product cards
+      supabase
+        .from("product_cards")
+        .select("title, subtitle, product_url, image_url, price, old_price, promo_badge, shopify_variant_id")
+        .eq("user_id", config.user_id)
+        .order("sort_order", { ascending: true }),
+      // 2. FAQ items
+      supabase
+        .from("faq_items")
+        .select("question, answer")
+        .eq("user_id", config.user_id)
+        .order("sort_order", { ascending: true }),
+      // 3. Training sources (will be used as fallback if RAG returns nothing)
+      supabase
         .from("training_sources")
         .select("title, content, source_type")
         .eq("user_id", config.user_id)
         .neq("content", "")
-        .limit(20);
+        .limit(20),
+      // 4. Embedding generation (runs in parallel with DB queries)
+      queryText ? generateEmbedding(queryText, geminiApiKey) : Promise.resolve(null),
+    ]);
 
-      if (trainingSources && trainingSources.length > 0) {
-        knowledgeBase += "\n## Website Knowledge Base\n";
-        for (const source of trainingSources) {
-          const content = source.content.substring(0, 3000);
-          knowledgeBase += `\n### ${source.title}\n${content}\n`;
+    const productCardsData = productCardsResult.data;
+    const faqItems = faqResult.data;
+    const trainingSources = trainingSourcesResult.data;
+
+    // RAG: similarity search (depends on embedding result)
+    let knowledgeBase = "";
+    let usedRag = false;
+
+    if (embeddingResult) {
+      const { data: chunks } = await supabase.rpc("match_training_chunks", {
+        query_embedding: JSON.stringify(embeddingResult),
+        match_user_id: config.user_id,
+        match_threshold: 0.25,
+        match_count: 8,
+      });
+
+      if (chunks && chunks.length > 0) {
+        usedRag = true;
+        knowledgeBase += "\n## RELEVANT KNOWLEDGE BASE EXCERPTS\n";
+        for (const chunk of chunks) {
+          knowledgeBase += `\n---\n${chunk.content}\n`;
         }
       }
     }
 
-    // Fetch FAQ items
-    const { data: faqItems } = await supabase
-      .from("faq_items")
-      .select("question, answer")
-      .eq("user_id", config.user_id)
-      .order("sort_order", { ascending: true });
+    // Fallback: use training sources if RAG returned nothing
+    if (!usedRag && trainingSources && trainingSources.length > 0) {
+      knowledgeBase += "\n## Website Knowledge Base\n";
+      for (const source of trainingSources) {
+        const content = source.content.substring(0, 3000);
+        knowledgeBase += `\n### ${source.title}\n${content}\n`;
+      }
+    }
 
+    // Add FAQ
     if (faqItems && faqItems.length > 0) {
       knowledgeBase += "\n## Frequently Asked Questions\n";
       for (const faq of faqItems) {
         knowledgeBase += `\n**Q: ${faq.question}**\nA: ${faq.answer}\n`;
       }
     }
-
 
     // Add product catalog
     if (productCardsData && productCardsData.length > 0) {
@@ -351,8 +354,11 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
       parts: [{ text: msg.text }],
     }));
 
+    // Use faster model for voice mode to reduce latency
+    const modelName = voiceMode ? "gemini-2.5-flash-lite" : "gemini-2.5-flash";
+
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiApiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -363,7 +369,7 @@ ${!productCardsData || productCardsData.length === 0 ? "- NO PRODUCT CATALOG: Th
           contents: conversationHistory,
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 800,
+            maxOutputTokens: voiceMode ? 400 : 800,
           },
         }),
       }
