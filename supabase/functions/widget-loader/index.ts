@@ -2557,6 +2557,8 @@ Deno.serve(async (req) => {
 
       isSpeaking = true;
       stopTtsAudio();
+      ttsGeneration++;
+      var myGen = ttsGeneration;
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} voiceRecognition = null; }
       if (voiceView) voiceView.classList.remove('listening');
       if (voiceStatus) voiceStatus.textContent = 'Speaking...';
@@ -2567,37 +2569,47 @@ Deno.serve(async (req) => {
       var done = false;
       function finish() {
         if (done) return;
+        if (myGen !== ttsGeneration) return;
         done = true;
         clearKeepAlive();
         currentAudio = null;
+        currentTtsXhr = null;
         pendingReplyUtterance = null;
         isSpeaking = false;
         if (onDone) onDone();
         else resumeListening();
       }
 
-      if (preferBrowserTts) {
+      function safeBrowserFallback() {
+        if (myGen !== ttsGeneration) return;
         speakBrowserFallback(clean, finish);
+      }
+
+      if (preferBrowserTts) {
+        safeBrowserFallback();
         return;
       }
 
       // Try ElevenLabs edge function first
       var ttsUrl = u + '/functions/v1/elevenlabs-tts';
       var xhr = new XMLHttpRequest();
+      currentTtsXhr = xhr;
       xhr.open('POST', ttsUrl, true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.responseType = 'blob';
       xhr.timeout = 10000;
       xhr.onload = function() {
-        if (xhr.status !== 200) { preferBrowserTts = true; speakBrowserFallback(clean, finish); return; }
+        currentTtsXhr = null;
+        if (myGen !== ttsGeneration) return;
+        if (xhr.status !== 200) { preferBrowserTts = true; safeBrowserFallback(); return; }
         var ct = xhr.getResponseHeader('Content-Type') || '';
         if (ct.indexOf('audio') !== -1) {
-          // Got audio — play it
           try {
             var blobUrl = URL.createObjectURL(xhr.response);
             var audio = new Audio(blobUrl);
             currentAudio = audio;
             audio.onplay = function() {
+              if (myGen !== ttsGeneration) { audio.pause(); URL.revokeObjectURL(blobUrl); return; }
               voiceStatus.textContent = 'Speaking...';
               setVoiceVideoRate(1.35);
             };
@@ -2605,36 +2617,36 @@ Deno.serve(async (req) => {
             audio.onerror = function() {
               URL.revokeObjectURL(blobUrl);
               preferBrowserTts = true;
-              speakBrowserFallback(clean, finish);
+              safeBrowserFallback();
             };
             audio.play()
               .then(function() {
+                if (myGen !== ttsGeneration) { audio.pause(); return; }
                 voiceStatus.textContent = 'Speaking...';
                 setVoiceVideoRate(1.35);
               })
               .catch(function() {
                 URL.revokeObjectURL(blobUrl);
                 preferBrowserTts = true;
-                speakBrowserFallback(clean, finish);
+                safeBrowserFallback();
               });
-          } catch(e) { preferBrowserTts = true; speakBrowserFallback(clean, finish); }
+          } catch(e) { preferBrowserTts = true; safeBrowserFallback(); }
         } else {
-          // JSON response — check for fallback flag
           try {
             var reader = new FileReader();
             reader.onload = function() {
               try {
                 var json = JSON.parse(reader.result);
                 preferBrowserTts = !!json.fallback || preferBrowserTts;
-                speakBrowserFallback(clean, finish);
-              } catch(e) { preferBrowserTts = true; speakBrowserFallback(clean, finish); }
+                safeBrowserFallback();
+              } catch(e) { preferBrowserTts = true; safeBrowserFallback(); }
             };
             reader.readAsText(xhr.response);
-          } catch(e) { preferBrowserTts = true; speakBrowserFallback(clean, finish); }
+          } catch(e) { preferBrowserTts = true; safeBrowserFallback(); }
         }
       };
-      xhr.onerror = function() { preferBrowserTts = true; speakBrowserFallback(clean, finish); };
-      xhr.ontimeout = function() { preferBrowserTts = true; speakBrowserFallback(clean, finish); };
+      xhr.onerror = function() { currentTtsXhr = null; preferBrowserTts = true; safeBrowserFallback(); };
+      xhr.ontimeout = function() { currentTtsXhr = null; preferBrowserTts = true; safeBrowserFallback(); };
       xhr.send(JSON.stringify({ text: clean, widgetId: id }));
     }
 
