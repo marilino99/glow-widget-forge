@@ -1,57 +1,57 @@
 
 
-## Piano: Integrare Google Cloud TTS come alternativa economica a ElevenLabs
+# Voice Mode: Product Cards Visibility
 
-### Perché Google Cloud TTS
+## What we're building
 
-Google Cloud Text-to-Speech offre voci **Neural2** e **Journey** con qualità quasi umana, comparabile a ElevenLabs, ma con un piano gratuito molto generoso:
-- **1 milione di caratteri/mese gratis** per voci Neural2
-- **4 milioni di caratteri/mese gratis** per voci Standard
-- Dopo il free tier: ~$16 per 1M caratteri (Neural2)
+When the user is in voice mode and the AI recommends products (via `[PRODUCTS:]` marker in the response), the voice view will:
+1. Animate the blob upward to make room
+2. Show product cards at the bottom of the voice view, scrollable horizontally
+3. For generic product questions, the AI already lists categories verbally (this is already implemented via the `VOICE_MODE_HINT` in the system prompt)
 
-### Come funziona
+## Current state
 
-Il sistema proverà **prima Google Cloud TTS**, e se non disponibile userà il **browser TTS** come fallback. ElevenLabs resterà come opzione se in futuro vorrai riattivarlo.
+- Voice view is a full-screen overlay (`#wj-voice-view`) with blob centered and controls at the bottom
+- Product cards are rendered only inside chat messages (`renderMessage`) — they are invisible when voice view is open
+- Builder preview (`WidgetPreviewPanel.tsx`) has a similar voice overlay with `VoiceBlob3D` centered
 
-### Modifiche
+## Technical plan
 
-**1. Nuovo secret: `GOOGLE_CLOUD_TTS_API_KEY`**
-- Serve una API key di Google Cloud con l'API "Cloud Text-to-Speech" abilitata
-- Si ottiene dalla [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+### 1. Widget Loader (`supabase/functions/widget-loader/index.ts`)
 
-**2. Modificare `supabase/functions/elevenlabs-tts/index.ts`**
-- Rinominare logicamente in un TTS generico (o creare una nuova funzione `google-tts`)
-- Aggiungere la logica: se `GOOGLE_CLOUD_TTS_API_KEY` è presente, usare Google Cloud TTS
-- Altrimenti provare ElevenLabs, altrimenti fallback browser
-- Endpoint Google: `https://texttospeech.googleapis.com/v1/text:synthesize`
-- Voce consigliata: `it-IT-Neural2-A` (italiano) o `en-US-Neural2-F` (inglese) — selezionata automaticamente in base alla lingua del widget
-- L'audio viene restituito in base64, da convertire in binary per lo streaming
+**Add CSS for voice product cards:**
+- Add `#wj-voice-products` container style: horizontal scroll, positioned at the bottom above the controls
+- Add transition on `#wj-voice-blob-wrap` for smooth upward movement (`transition: transform 0.4s ease`)
+- When products are shown, blob gets `transform: translateY(-60px)` class
 
-**3. Nessuna modifica al widget-loader**
-- Il widget chiama sempre lo stesso endpoint `/functions/v1/elevenlabs-tts`
-- La logica di selezione del provider è tutta server-side
+**Add HTML container:**
+- Insert an empty `#wj-voice-products` container inside `#wj-voice-view`, between the blob and the bottom controls
 
-### Mappa delle voci per lingua
+**Modify `renderMessage` / polling logic:**
+- When voice view is open and a new message arrives with `metadata.products`, populate `#wj-voice-products` with the same product card HTML used in chat
+- Add class to blob wrap to trigger upward animation
+- Clear voice products when voice session ends
 
-| Lingua | Voce Google Neural2 |
-|--------|---------------------|
-| it | it-IT-Neural2-A (femminile) |
-| en | en-US-Neural2-F (femminile) |
-| es | es-ES-Neural2-A (femminile) |
-| fr | fr-FR-Neural2-A (femminile) |
-| de | de-DE-Neural2-A (femminile) |
+### 2. Builder Preview (`src/components/builder/WidgetPreviewPanel.tsx`)
 
-### Flusso di priorità TTS
+**Add voice products state:**
+- Track `voiceProducts` state — populated when a bot reply in voice mode contains product metadata
 
-```text
-1. Google Cloud TTS (se GOOGLE_CLOUD_TTS_API_KEY presente)
-2. ElevenLabs (se ELEVENLABS_API_KEY presente)
-3. { fallback: true } → browser speechSynthesis
-```
+**Modify voice view render:**
+- When `voiceProducts` is populated, shift the blob upward with CSS transition
+- Render a horizontal product card carousel below the blob (reuse existing card markup style)
 
-### Prossimi passi
+**Update `speakAssistantReply` / message handling:**
+- When in voice mode, extract product metadata from the latest bot message and set `voiceProducts`
+- Clear on voice session end
 
-1. Dovrai creare un progetto Google Cloud (gratuito) e abilitare l'API Text-to-Speech
-2. Generare una API key dalla console
-3. Io la salverò come secret e aggiornerò l'edge function
+### 3. Voice session cleanup
+- On `stopVoiceSession`, clear voice products and reset blob position in both widget-loader and builder
+
+## Files to modify
+
+| File | Change |
+|---|---|
+| `supabase/functions/widget-loader/index.ts` | Add voice products CSS, HTML container, render logic on poll, blob animation |
+| `src/components/builder/WidgetPreviewPanel.tsx` | Add voiceProducts state, blob shift animation, product cards in voice overlay |
 
