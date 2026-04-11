@@ -2057,11 +2057,11 @@ Deno.serve(async (req) => {
         };
 
         recognition.onend = function() {
-          if (voiceView.classList.contains('open') && !voiceMuted) {
+          if (voiceView.classList.contains('open') && !voiceMuted && !isSpeaking) {
             if (noSpeechRetries < MAX_NO_SPEECH) {
               noSpeechRetries++;
               setTimeout(function() {
-                if (voiceView.classList.contains('open') && !voiceMuted && voiceRecognition) {
+                if (voiceView.classList.contains('open') && !voiceMuted && !isSpeaking && voiceRecognition) {
                   try { recognition.start(); } catch(e) {}
                 }
               }, 300);
@@ -2396,6 +2396,7 @@ Deno.serve(async (req) => {
 
     // ElevenLabs TTS helpers
     var currentAudio = null;
+    var isSpeaking = false;
 
     function stopElevenLabsAudio() {
       if (currentAudio) {
@@ -2407,6 +2408,7 @@ Deno.serve(async (req) => {
 
     function speakWithElevenLabs(text, onDone) {
       if (!text) { if (onDone) onDone(); return; }
+      isSpeaking = true;
       stopElevenLabsAudio();
       // Pause mic while speaking
       if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} }
@@ -2427,11 +2429,13 @@ Deno.serve(async (req) => {
            audio._objectUrl = audioUrl;
            currentAudio = audio;
            audio.onended = function() {
+             isSpeaking = false;
              stopElevenLabsAudio();
              if (onDone) { onDone(); }
              else { resumeListening(); }
            };
            audio.onerror = function() {
+             isSpeaking = false;
              stopElevenLabsAudio();
              if (onDone) { onDone(); }
              else { resumeListening(); }
@@ -2457,6 +2461,7 @@ Deno.serve(async (req) => {
       function finish() {
         if (done) return;
         done = true;
+        isSpeaking = false;
         if (onDone) onDone();
         else resumeListening();
       }
@@ -2476,9 +2481,9 @@ Deno.serve(async (req) => {
     }
 
     function resumeListening() {
-      if (voiceView && voiceView.classList.contains('open') && !voiceMuted) {
+      if (voiceView && voiceView.classList.contains('open') && !voiceMuted && !isSpeaking) {
         setTimeout(function() {
-          if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted) {
+          if (voiceRecognition && voiceView.classList.contains('open') && !voiceMuted && !isSpeaking) {
             noSpeechRetries = 0;
             try { voiceRecognition.start(); } catch(e) {}
             voiceView.classList.add('listening');
