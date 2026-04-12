@@ -93,7 +93,7 @@ function deriveProductCategories(
   language: string,
 ): string[] {
   if (!products || products.length === 0) {
-    return FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
+    return [];
   }
 
   const matchedCategories: string[] = [];
