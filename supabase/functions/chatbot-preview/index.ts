@@ -111,7 +111,7 @@ function deriveProductCategories(
   language: string,
 ): string[] {
   if (!products || products.length === 0) {
-    return FALLBACK_DISCOVERY_CHIPS[language] || FALLBACK_DISCOVERY_CHIPS.en;
+    return [];
   }
 
   const matchedCategories: string[] = [];
@@ -455,7 +455,7 @@ ${noProductsRule}`;
       }
     }
 
-    if (categoryDiscoveryIntent) {
+    if (categoryDiscoveryIntent && productCardsData && productCardsData.length > 0) {
       cleanReply = cleanReply
         .replace(/\[PRODUCTS:\s*(.+?)\]?\s*$/s, "")
         .replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "")
@@ -463,7 +463,9 @@ ${noProductsRule}`;
 
       // Always force deterministic categories from the catalog
       const derivedChips = deriveDiscoveryChips(productCardsData, config.language || "en");
-      metadata = { ...(metadata || {}), chips: derivedChips };
+      if (derivedChips.length > 0) {
+        metadata = { ...(metadata || {}), chips: derivedChips };
+      }
       if (!cleanReply) {
         cleanReply = FALLBACK_DISCOVERY_REPLY[config.language || "en"] || FALLBACK_DISCOVERY_REPLY.en;
       }
