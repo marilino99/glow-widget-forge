@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
+import { useAuth } from "@/hooks/useAuth";
 import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, AlertTriangle, Send, MessageCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -38,10 +39,16 @@ const IntegrationsPanel = ({
   onWhatsappNumberChange,
   onSaveConfig,
 }: IntegrationsPanelProps) => {
+  const { user } = useAuth();
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const calendly = useCalendlyConnection();
   const instagram = useInstagramDMConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [shopifyRequestOpen, setShopifyRequestOpen] = useState(false);
+  const [shopEmail, setShopEmail] = useState("");
+  const [shopStore, setShopStore] = useState("");
+  const [shopSending, setShopSending] = useState(false);
+  const isAdminShopify = user?.email === "a@gmail.com";
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [calendlyDisconnectOpen, setCalendlyDisconnectOpen] = useState(false);
   const [instagramDisconnectOpen, setInstagramDisconnectOpen] = useState(false);
@@ -169,7 +176,7 @@ const IntegrationsPanel = ({
                 </>
               ) : (
                 <button
-                  onClick={() => setDialogOpen(true)}
+                  onClick={() => isAdminShopify ? setDialogOpen(true) : setShopifyRequestOpen(true)}
                   className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
                 >
                   Connect
