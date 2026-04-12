@@ -263,6 +263,24 @@ Deno.serve(async (req) => {
     const faqItems = faqResult.data;
     const trainingSources = trainingSourcesResult.data;
 
+    if ((!productCardsData || productCardsData.length === 0) && categoryDiscoveryIntent) {
+      const noCatalogDiscoveryReplies: Record<string, string> = {
+        it: "Non ci sono ancora prodotti configurati: collega Shopify o aggiungi dei product card per attivare i consigli prodotto.",
+        en: "There are no products configured yet: connect Shopify or add product cards to enable product recommendations.",
+        es: "Todavía no hay productos configurados: conecta Shopify o añade tarjetas de producto para activar las recomendaciones.",
+        fr: "Aucun produit n'est encore configuré : connectez Shopify ou ajoutez des fiches produit pour activer les recommandations.",
+        de: "Es sind noch keine Produkte konfiguriert: Verbinde Shopify oder füge Produktkarten hinzu, um Produktempfehlungen zu aktivieren.",
+      };
+
+      return new Response(
+        JSON.stringify({
+          reply: noCatalogDiscoveryReplies[config.language || "en"] || noCatalogDiscoveryReplies.en,
+          metadata: undefined,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // RAG: similarity search (depends on embedding result)
     let knowledgeBase = "";
     let usedRag = false;
