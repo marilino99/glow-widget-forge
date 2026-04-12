@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ShopifyConnectDialog from "./ShopifyConnectDialog";
 import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, AlertTriangle, Send, MessageCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
