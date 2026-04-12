@@ -508,146 +508,50 @@ useEffect(() => {
                   </p>
                 </div>
 
-                {/* Live diagnostics */}
-                {diagnostics && shopifyInstalled && (
-                  <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                      <Activity className="h-3 w-3" />
-                      Widget diagnostics (last 24h)
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div>
-                        <span className="text-muted-foreground">Admin tag:</span>{" "}
-                        <span className={diagnostics.tagInstalled ? "text-green-600" : "text-destructive"}>
-                          {diagnostics.tagInstalled ? `✓ Installed (${diagnostics.method})` : "✗ Not found"}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Live storefront:</span>{" "}
-                        <span className={diagnostics.storefrontVerified ? "text-green-600 font-medium" : "text-amber-600"}>
-                          {diagnostics.storefrontVerified ? "✓ Confirmed" : "✗ Not confirmed"}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Loader boot:</span>{" "}
-                        <span className={diagnostics.loaderBooted ? "text-green-600" : "text-amber-600"}>
-                          {diagnostics.loaderBooted ? "✓ Yes" : "✗ No signal"}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Impressions:</span>{" "}
-                        <span className={diagnostics.recentImpressions > 0 ? "text-green-600 font-medium" : "text-amber-600"}>
-                          {diagnostics.recentImpressions}
-                        </span>
-                      </div>
-                    </div>
-                    {diagnostics.launcherChecked && (
-                      <div className="grid grid-cols-1 gap-1 text-xs">
-                        <div>
-                          <span className="text-muted-foreground">Launcher visibility:</span>{" "}
-                          <span className={diagnostics.launcherVisible ? "text-green-600 font-medium" : "text-destructive font-medium"}>
-                            {diagnostics.launcherVisible ? "✓ Confirmed visible" : "✗ Hidden or covered"}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                    {diagnostics.lastSeenUrl && (
-                      <div className="text-xs">
-                        <span className="text-muted-foreground">Last seen on:</span>{" "}
-                        <span className="text-foreground font-mono break-all">{diagnostics.lastSeenUrl}</span>
-                        {diagnostics.lastSeenAt && (
-                          <span className="text-muted-foreground ml-1">
-                            ({new Date(diagnostics.lastSeenAt).toLocaleString()})
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    {diagnostics.storefrontError && (
-                      <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3 shrink-0" />
-                        {diagnostics.storefrontError}
-                      </div>
-                    )}
-                    {diagnostics.tagInstalled && !diagnostics.loaderBooted && diagnostics.recentImpressions === 0 && (
-                      <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3 shrink-0" />
-                        Tag installed but loader never started — script may be blocked or store is password-protected.
-                      </div>
-                    )}
-                    {diagnostics.tagInstalled && diagnostics.recentImpressions > 0 && diagnostics.launcherChecked && !diagnostics.launcherVisible && (
-                      <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3 shrink-0" />
-                        Script loads but launcher is hidden — may be covered by theme CSS. Try reinstalling.
-                      </div>
-                    )}
-                    {diagnostics.otherDomainUrl && diagnostics.recentImpressions === 0 && (
-                      <div className="flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3 shrink-0" />
-                        Widget active on another domain ({diagnostics.otherDomainUrl}) but not on your connected store.
-                      </div>
-                    )}
-                  </div>
-                )}
-                
                 {shopifyInstalled ? (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 rounded-lg border p-4" style={{
-                      backgroundColor: diagnostics?.storefrontVerified ? 'hsl(var(--primary) / 0.1)' : 'hsl(45 93% 47% / 0.1)',
+                    {/* Simple status banner */}
+                    <div className="flex items-center gap-3 rounded-lg border p-4" style={{
+                      backgroundColor: diagnostics?.storefrontVerified ? 'hsl(var(--primary) / 0.08)' : 'hsl(45 93% 47% / 0.08)',
                       borderColor: diagnostics?.storefrontVerified ? 'hsl(var(--primary) / 0.2)' : 'hsl(45 93% 47% / 0.3)',
                     }}>
                       {diagnostics?.storefrontVerified ? (
-                        <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                        <CheckCircle className="h-5 w-5 text-green-600 shrink-0" />
                       ) : (
                         <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
                       )}
-                       <div>
-                         <p className="text-sm font-semibold text-foreground">
-                           {diagnostics?.storefrontVerified 
-                             ? "Widget live & verified!" 
-                             : "Installed in admin — not confirmed live"}
-                         </p>
-                         <p className="text-xs text-muted-foreground">
-                           {diagnostics?.storefrontVerified
-                             ? diagnostics.launcherChecked && diagnostics.launcherVisible
-                               ? "Widget confirmed live and visible on your store."
-                               : diagnostics.recentImpressions > 0
-                               ? "Script running — waiting for visibility confirmation."
-                               : "Script found on your live storefront."
-                             : diagnostics?.storefrontError 
-                               ? diagnostics.storefrontError
-                               : "The tag is in your theme, but the widget was not detected on the live storefront. Your store may be password-protected."}
-                         </p>
-                       </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {diagnostics?.storefrontVerified 
+                            ? "Widget attivo sul tuo store ✓" 
+                            : "Widget installato — verifica in corso"}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {diagnostics?.storefrontVerified
+                            ? "Il widget è live e funzionante."
+                            : diagnostics?.storefrontError 
+                              ? "Lo store potrebbe essere protetto da password o il tema non è pubblicato."
+                              : "Stiamo verificando che il widget sia visibile sul tuo store."}
+                        </p>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Button 
-                        onClick={() => handleShopifyReinstall(false)} 
-                        disabled={isInstallingShopify}
-                        variant="outline"
-                        className="gap-2 w-full"
-                        size="sm"
-                      >
-                        {isInstallingShopify ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Reinstalling...
-                          </>
-                        ) : (
-                          "Reinstall widget"
-                        )}
-                      </Button>
-                      {diagnostics && diagnostics.tagInstalled && diagnostics.recentImpressions === 0 && (
-                        <Button 
-                          onClick={() => handleShopifyReinstall(true)} 
-                          disabled={isInstallingShopify}
-                          variant="destructive"
-                          className="gap-2 w-full"
-                          size="sm"
-                        >
-                          Force reinstall (clear cache)
-                        </Button>
+
+                    <Button 
+                      onClick={() => handleShopifyReinstall(false)} 
+                      disabled={isInstallingShopify}
+                      variant="outline"
+                      className="gap-2 w-full"
+                      size="sm"
+                    >
+                      {isInstallingShopify ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Reinstallazione...
+                        </>
+                      ) : (
+                        "Reinstalla widget"
                       )}
-                    </div>
+                    </Button>
                   </div>
                 ) : (
                   <>
