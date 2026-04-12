@@ -692,12 +692,14 @@ ${noProductsRule}`;
       }
     }
 
-    if (categoryDiscoveryIntent) {
+    if (categoryDiscoveryIntent && productCardsData && productCardsData.length > 0) {
       cleanReply = cleanReply.replace(/\[(?:PROD(?:UCTS?)?:?\s*.*)?$/s, "").trim();
 
       // Always force deterministic categories from the catalog
       const derivedChips = deriveDiscoveryChips(productCardsData, config.language || "en");
-      metadata = { ...(metadata || {}), chips: derivedChips };
+      if (derivedChips.length > 0) {
+        metadata = { ...(metadata || {}), chips: derivedChips };
+      }
       if (!cleanReply) {
         cleanReply = FALLBACK_DISCOVERY_REPLY[config.language || "en"] || FALLBACK_DISCOVERY_REPLY.en;
       }
