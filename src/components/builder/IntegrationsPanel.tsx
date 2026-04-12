@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ShopifyConnectDialog from "./ShopifyConnectDialog";
+import { useAuth } from "@/hooks/useAuth";
 import { BookOpen, RefreshCw, Loader2, Unplug, CheckCircle2, ShoppingBag, AlertTriangle, Send, MessageCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -38,10 +39,16 @@ const IntegrationsPanel = ({
   onWhatsappNumberChange,
   onSaveConfig,
 }: IntegrationsPanelProps) => {
+  const { user } = useAuth();
   const { connection, isLoading, isSyncing, isConnecting, connectOAuth, sync, disconnect } = useShopifyConnection();
   const calendly = useCalendlyConnection();
   const instagram = useInstagramDMConnection();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [shopifyRequestOpen, setShopifyRequestOpen] = useState(false);
+  const [shopEmail, setShopEmail] = useState("");
+  const [shopStore, setShopStore] = useState("");
+  const [shopSending, setShopSending] = useState(false);
+  const isAdminShopify = user?.email === "a@gmail.com";
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [calendlyDisconnectOpen, setCalendlyDisconnectOpen] = useState(false);
   const [instagramDisconnectOpen, setInstagramDisconnectOpen] = useState(false);
@@ -169,7 +176,7 @@ const IntegrationsPanel = ({
                 </>
               ) : (
                 <button
-                  onClick={() => setDialogOpen(true)}
+                  onClick={() => isAdminShopify ? setDialogOpen(true) : setShopifyRequestOpen(true)}
                   className="flex-1 rounded-xl border border-border py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted inline-flex items-center justify-center gap-1.5"
                 >
                   Connect
@@ -385,12 +392,87 @@ const IntegrationsPanel = ({
         </div>
       </div>
 
-      {/* Shopify OAuth Connect Dialog */}
+      {/* Shopify OAuth Connect Dialog (admin only) */}
       <ShopifyConnectDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onConnect={connectOAuth}
       />
+
+      {/* Shopify Request Dialog (non-admin users) */}
+      <Dialog open={shopifyRequestOpen} onOpenChange={setShopifyRequestOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Connect Shopify</DialogTitle>
+            <DialogDescription>
+              Enter your details and we'll set up the Shopify integration for you.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!shopEmail.trim() || !shopStore.trim()) return;
+              setShopSending(true);
+              try {
+                const { data, error } = await supabase.functions.invoke("shopify-request", {
+                  body: { email: shopEmail.trim(), shopifyStore: shopStore.trim() },
+                });
+                if (error) throw error;
+                toast.success("Request sent! The Widjet team will contact you soon to set up the integration.");
+                setShopifyRequestOpen(false);
+                setShopEmail("");
+                setShopStore("");
+              } catch (err) {
+                console.error(err);
+                toast.error("Failed to send request. Please try again.");
+              } finally {
+                setShopSending(false);
+              }
+            }}
+            className="flex flex-col gap-4 mt-2"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="shop-email">Your email</Label>
+              <Input
+                id="shop-email"
+                type="email"
+                placeholder="you@example.com"
+                value={shopEmail}
+                onChange={(e) => setShopEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="shop-store">Shopify store URL</Label>
+              <Input
+                id="shop-store"
+                type="text"
+                placeholder="mystore.myshopify.com"
+                value={shopStore}
+                onChange={(e) => setShopStore(e.target.value)}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={shopSending || !shopEmail.trim() || !shopStore.trim()}
+              className="w-full rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 inline-flex items-center justify-center gap-2"
+            >
+              {shopSending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Sending…
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  Send Request
+                </>
+              )}
+            </button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={disconnectDialogOpen} onOpenChange={setDisconnectDialogOpen}>
         <AlertDialogContent>
