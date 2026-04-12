@@ -1013,7 +1013,7 @@ Deno.serve(async (req) => {
           if (bbRecognition) { bbRecognition.stop(); return; }
           try {
             var r = new SpeechRecognition2();
-            r.lang = lang || 'en';
+            // Do not set r.lang — let the browser use the user's OS/browser language for auto-detect
             r.interimResults = true;
             r.continuous = false;
             bbRecognition = r;
@@ -2193,7 +2193,7 @@ Deno.serve(async (req) => {
       if (!SpeechRecognition) return;
       try {
         var recognition = new SpeechRecognition();
-        recognition.lang = getVoiceLang();
+        // Do not set recognition.lang — let the browser use the user's OS/browser language for auto-detect
         recognition.interimResults = true;
         recognition.continuous = false;
         voiceRecognition = recognition;
@@ -2949,7 +2949,7 @@ Deno.serve(async (req) => {
           }
           try {
             var recognition = new SpeechRecognition();
-            recognition.lang = lang || 'en';
+            // Do not set recognition.lang — let the browser use the user's OS/browser language for auto-detect
             recognition.interimResults = true;
             recognition.continuous = false;
             wjRecognition = recognition;
