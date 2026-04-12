@@ -366,7 +366,33 @@ Deno.serve(async (req) => {
     // Get the last visitor message for RAG query
     const lastVisitorMessage = [...(messages || [])].reverse().find(m => m.sender_type === "visitor")?.content || "";
 
-    // === RAG RETRIEVAL ===
+    if ((!productCardsData || productCardsData.length === 0) && isCategoryDiscoveryIntent(lastVisitorMessage)) {
+      const noCatalogDiscoveryReplies: Record<string, string> = {
+        it: "Non ci sono ancora prodotti configurati: collega Shopify per sincronizzare il catalogo oppure aggiungi product card manuali.",
+        en: "There are no products configured yet: connect Shopify to sync your catalog or add manual product cards.",
+        es: "Todavía no hay productos configurados: conecta Shopify para sincronizar el catálogo o añade tarjetas de producto manuales.",
+        fr: "Aucun produit n'est encore configuré : connectez Shopify pour synchroniser votre catalogue ou ajoutez des fiches produit manuelles.",
+        de: "Es sind noch keine Produkte konfiguriert: Verbinde Shopify, um den Katalog zu synchronisieren, oder füge manuelle Produktkarten hinzu.",
+      };
+      const noCatalogReply = noCatalogDiscoveryReplies[config.language || "en"] || noCatalogDiscoveryReplies.en;
+
+      await supabase.from("chat_messages").insert({
+        conversation_id: conversationId,
+        sender_type: "owner",
+        content: noCatalogReply,
+        is_ai_response: true,
+      });
+
+      await supabase.from("conversations").update({
+        last_message: noCatalogReply,
+        last_message_at: new Date().toISOString(),
+      }).eq("id", conversationId);
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     let ragContext = "";
     let ragUsed = false;
 
