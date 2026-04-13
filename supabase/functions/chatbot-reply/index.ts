@@ -13,7 +13,7 @@ const PRO_LIMIT = 10000;
 const PRODUCT_KEYWORDS = [
   "product", "products", "prodott", "buy", "compra", "acquist", "shop", "store",
   "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo",
-  "cosa avete", "what do you have", "show me", "range", "collection",
+  "range", "collection",
   "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag",
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want",
   "membership", "abbonament", "pian", "subscription", "costo", "quanto costa", "tariff", "pricing",

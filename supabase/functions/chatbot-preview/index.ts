@@ -31,8 +31,7 @@ async function generateEmbedding(text: string, apiKey: string): Promise<number[]
 const PRODUCT_KEYWORDS = [
   "product", "products", "prodott", "buy", "compra", "acquist", "shop", "store",
   "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo",
-  "cosa avete", "what do you have", "show me", "range", "collection",
-  "what do you sell", "do you sell", "sell", "vend", "vendere", "vendita", "vendete", "cosa vendete",
+  "range", "collection",
   "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag",
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "cerco", "vorrei", "want"
 ];
