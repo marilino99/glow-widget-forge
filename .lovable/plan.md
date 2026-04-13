@@ -1,39 +1,28 @@
 
 
-# Fix: Voice Mode Must List All Categories on Unrecognized Input
+## Problema
 
-## Problem
+I chip appaiono ancora nella voice mode perché ci sono **due implementazioni separate**:
 
-When the user says "something else" or gives an unrecognized category in voice mode, the AI responds with "I'm not sure what you're looking for" instead of listing all available product categories.
+1. **Widget live** (`widget-loader/index.ts`) — qui il fix è stato applicato (`showVoiceChips` ritorna subito)
+2. **Builder preview** (`WidgetPreviewPanel.tsx`) — qui i chip vengono ancora renderizzati visivamente (linea 3330) e impostati via `setVoiceChips()` (linea 870)
 
-## Root Cause
+Lo screenshot mostra il builder preview, che non è stato aggiornato.
 
-The voice prompt (rule 12) says to "list the available categories naturally" but does not explicitly instruct the AI to **re-list all categories when the user's response doesn't match any known category**. The AI interprets an unrecognized answer as a dead end.
+## Piano
 
-## Fix
+### 1. Rimuovere i chip visivi dal builder preview
 
-Update rule 12 (CATEGORY DISCOVERY FLOW) in the **default voice prompt** of both `chatbot-reply` and `chatbot-preview` to add an explicit instruction:
+In `src/components/builder/WidgetPreviewPanel.tsx`:
+- **Linea 870**: Rimuovere la chiamata `setVoiceChips(data.metadata.chips)` — i chip non devono essere mostrati in voice mode, solo letti dal TTS
+- **Linee 3330-3365** (circa): Rimuovere il blocco JSX che renderizza `voiceChips` nella voice view
 
-> "If the visitor says something that doesn't match any category, or says 'something else' / 'other', DO NOT say you don't understand. Instead, list ALL available product categories again so the visitor can choose."
+I chip continueranno ad essere letti ad alta voce dal TTS perché il testo della risposta li include già verbalmente.
 
-### Files to modify
+### 2. Rideploy widget-loader
 
-| File | Change |
-|---|---|
-| `supabase/functions/chatbot-reply/index.ts` | Update voice prompt rule 12 + chat prompt category rule to handle unrecognized category input |
-| `supabase/functions/chatbot-preview/index.ts` | Same change for builder preview parity |
+Verificare che il `widget-loader` sia stato effettivamente deployato con il fix precedente, per sicurezza.
 
-### Exact prompt change (both files, voice section)
-
-Current rule 12:
-```
-12. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): When the visitor wants help choosing, list the available categories naturally in your spoken response so they can HEAR the options. DO NOT show [PRODUCTS:] during discovery.
-```
-
-Updated rule 12:
-```
-12. CATEGORY DISCOVERY FLOW (HIGHEST PRIORITY): When the visitor wants help choosing, list the available categories naturally in your spoken response so they can HEAR the options. DO NOT show [PRODUCTS:] during discovery. If the visitor says something that doesn't match any category (e.g. "something else", "other", or an unrecognized term), DO NOT say you don't understand — instead, list ALL the available categories again so they can pick one.
-```
-
-The same addition will be applied to the chat prompt's category discovery rule for full parity.
+### File modificati
+- `src/components/builder/WidgetPreviewPanel.tsx` — rimuovere rendering visivo dei chip in voice mode
 
