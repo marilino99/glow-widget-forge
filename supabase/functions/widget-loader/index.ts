@@ -2113,38 +2113,8 @@ Deno.serve(async (req) => {
     }
 
     function showVoiceChips(chips) {
-      var vc = d.getElementById('wj-voice-chips');
-      if (!vc || !chips || chips.length === 0) return;
-      clearVoiceProducts();
-      var html = '';
-      chips.forEach(function(chipText) {
-        var pos = 0;
-        var cp = chipText.codePointAt(0) || 0;
-        var isEmoji = cp > 0x2300;
-        if (isEmoji) {
-          pos += cp > 0xFFFF ? 2 : 1;
-          if (chipText.charCodeAt(pos) === 0xFE0F) pos++;
-          while (chipText.charCodeAt(pos) === 0x200D) {
-            pos++;
-            var nextCp = chipText.codePointAt(pos) || 0;
-            if (nextCp) { pos += nextCp > 0xFFFF ? 2 : 1; }
-            if (chipText.charCodeAt(pos) === 0xFE0F) pos++;
-          }
-          if (chipText.charAt(pos) === ' ') pos++;
-        }
-        var label = isEmoji && pos > 0 ? chipText.slice(pos) : chipText;
-        html += '<button class="wj-voice-chip">' + esc(label) + '</button>';
-      });
-      vc.innerHTML = html;
-      requestAnimationFrame(function() { vc.classList.add('visible'); });
-      // Bind click handlers
-      vc.querySelectorAll('.wj-voice-chip').forEach(function(btn, idx) {
-        btn.addEventListener('click', function() {
-          var text = chips[idx];
-          clearVoiceChips();
-          sendMessageText(text);
-        });
-      });
+      // Voice mode: chips are read aloud by TTS, not displayed visually
+      return;
     }
 
     function clearVoiceProducts() {
