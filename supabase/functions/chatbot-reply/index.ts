@@ -13,7 +13,7 @@ const PRO_LIMIT = 10000;
 const PRODUCT_KEYWORDS = [
   "product", "products", "prodott", "buy", "compra", "acquist", "shop", "store",
   "t-shirt", "tshirt", "magliett", "prezzo", "price", "catalog", "catalogo",
-  "cosa avete", "what do you have", "show me", "range", "collection",
+  "range", "collection",
   "skirt", "dress", "pants", "shirt", "jacket", "shoe", "bag",
   "gonna", "vestit", "pantalone", "scarpe", "borsa", "need", "looking for", "cerco", "vorrei", "want",
   "membership", "abbonament", "pian", "subscription", "costo", "quanto costa", "tariff", "pricing",
@@ -24,6 +24,10 @@ const CATEGORY_DISCOVERY_PATTERNS = [
   "cercare il prodotto adatto", "trova il prodotto", "cerco qualcosa", "looking for something",
   "i need help", "ho bisogno di aiuto", "consigliami", "recommend", "suggest",
   "quale prodotto", "which product", "what should i", "cosa mi consigli",
+  "trovare un prodotto", "find a product", "voglio trovare", "want to find",
+  "voglio un prodotto", "i want a product", "cerco un prodotto", "looking for a product",
+  "mi serve un prodotto", "i need a product", "show me products", "mostrami i prodotti",
+  "cosa avete", "what do you have", "what do you sell", "cosa vendete",
 ];
 
 const FALLBACK_DISCOVERY_REPLY: Record<string, string> = {
